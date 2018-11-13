@@ -58,7 +58,6 @@ def inspect_shipment3(shipment):
 
 def inspect_shipment4(shipment):
     for i in range(min(len(shipment['diseased']), 2)):
-        #print(i)
         if shipment['diseased'][i]:
             return False
     return True
@@ -142,7 +141,6 @@ def main():
         port = random.choice(ports)
         arrival_time = i
         shipment = generate_shipment(port, arrival_time)
-        #print(shipment)
         shipment_checked_ok = inspect_shipment1(shipment)
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
