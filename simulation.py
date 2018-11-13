@@ -130,7 +130,7 @@ class SuccessRates(object):
             self.reporter.fn()
 
 
-def main():
+def simulation():
     ports = ['RDU', 'Miami']
 
     reporter = MuteReporter()
@@ -147,8 +147,20 @@ def main():
             shipment_checked_ok, shipment_actually_ok, shipment)
 
     # TODO: here we have potential float division by zero
-    print("Missing {}% of diseased shipments.".format(
-        100 * float(success_rates.fp) / (num_shipments - success_rates.ok)))
+    num_diseased = num_shipments - success_rates.ok
+    missing = 100 * float(success_rates.fp) / (num_diseased)
+    print("Missing {}% of diseased shipments.".format(missing))
+    return missing
+
+
+def main():
+    missing = 0
+    num_simulations = 10
+    for i in range(num_simulations):
+        missing += simulation()
+    missing /= num_simulations
+    print("In average, missing {0:.0f}% of diseased shipments.".format(
+        missing))
 
 
 if __name__ == '__main__':
