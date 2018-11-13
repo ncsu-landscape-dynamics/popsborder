@@ -2,5 +2,5 @@ test:
   script:
   - apt-get update -qy
   - apt-get install -y pep8
-  - pep8 simulation.py test
-  - python simulation.py test
+  - pep8 simulation.py
+  - python simulation.py
