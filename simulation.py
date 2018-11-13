@@ -113,7 +113,7 @@ class SuccessRates(object):
         self.tp = 0
         self.tn = 0
         self.fp = 0
-        self.reporter = reporter 
+        self.reporter = reporter
 
     def record_success_rate(self, checked_ok, actually_ok, shipment):
         if checked_ok and actually_ok:
