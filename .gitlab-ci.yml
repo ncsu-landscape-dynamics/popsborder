@@ -1,0 +1,3 @@
+script:
+  - pep8 simulation.py test
+  - python simulation.py test
