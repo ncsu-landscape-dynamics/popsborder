@@ -89,13 +89,14 @@ def is_flower_of_the_day(cfrp, flower, date):
 
 
 def should_inspect1(shipment, date):
+    """Decided if the shipment should be expected based on CFRP and size"""
     flower = shipment['flower']
     cfrp = ['Rose', 'Tulip', 'Acer', 'Actinidia']
     if flower in cfrp and shipment['num_boxes'] <= 10:
         if is_flower_of_the_day(cfrp, flower, date):
-            return True  # FotD or large, inspect
-        return False  # not FotD, skip
-    return True  # not in CFRP, inspect
+            return True  # is FotD, inspect
+        return False  # not FotD, release
+    return True  # not in CFRP or large, inspect
 
 
 def should_inspect2(shipment, date):
@@ -205,7 +206,7 @@ def simulation(num_shipments):
     if num_diseased:
         # avoiding float division by zero
         missing = 100 * float(success_rates.fp) / (num_diseased)
-        print("Missing {}% of shipments with pest.".format(missing))
+        print("Missing {0:.0f}% of shipments with pest.".format(missing))
         return missing
     else:
         return 0  # we didn't miss anything
@@ -238,11 +239,13 @@ def main():
         sys.exit(USAGE.format(sys.argv[0]))
     num_simulations = int(num_simulations)
     num_shipments = int(num_shipments)
+    CONFIG = load_configuration(sys.argv[3])
+
     missing = 0
     for i in range(num_simulations):
         missing += simulation(num_shipments)
     missing /= num_simulations
-    print("In average, missing {0:.0f}% of shipments with pest.".format(
+    print("On average, missing {0:.0f}% of shipments with pest.".format(
         missing))
 
 
