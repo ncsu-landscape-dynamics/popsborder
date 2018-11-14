@@ -30,15 +30,18 @@ import random
 
 
 def generate_shipment(port, arrival_time):
-    flowers = ['rose', 'tulip']  # or commodities
+    # flowers or commodities
+    flowers = ['Rose', 'Tulip', 'Acer', 'Actinidia', 'Aegilops', 'Ananas']
+    countries = ['Argentina', 'Estonia', 'Taiwan', 'Hawaii']
     flower = random.choice(flowers)
+    origin = random.choice(countries)
     num_items = random.randint(1, 50)
     if random.random() < 0.2:
         diseased = [random.random() < 0.5 for i in range(num_items)]
     else:
         diseased = [False] * num_items
     return dict(flower=flower, num_items=num_items, arrival_time=arrival_time,
-                diseased=diseased)
+                diseased=diseased, origin=origin)
 
 
 def inspect_shipment1(shipment):
@@ -61,6 +64,29 @@ def inspect_shipment4(shipment):
     for i in range(min(len(shipment['diseased']), 2)):
         if shipment['diseased'][i]:
             return False
+    return True
+
+
+def is_flower_of_the_day(cfrp, flower, date):
+    i = date % len(cfrp)
+    if flower == cfrp[i]:
+        return True
+    return False
+
+
+def should_inspect1(shipment, date):
+    flower = shipment['flower']
+    cfrp = ['Rose', 'Tulip', 'Acer', 'Actinidia']
+    if flower in cfrp:
+        if (is_flower_of_the_day(cfrp, flower, date) or
+                shipment['num_items'] > 5):
+            return True  # FotD or large, inspect
+        return False  # not FotD, skip
+    return True  # not in CFRP, inspect
+
+
+def should_inspect2(shipment, date):
+    """Inspect always"""
     return True
 
 
@@ -136,15 +162,22 @@ def simulation(num_shipments):
 
     reporter = MuteReporter()
     success_rates = SuccessRates(reporter)
+    date = 1
 
     for i in range(num_shipments):
         port = random.choice(ports)
         arrival_time = i
         shipment = generate_shipment(port, arrival_time)
-        shipment_checked_ok = inspect_shipment1(shipment)
+        if should_inspect2(shipment, date):
+            shipment_checked_ok = inspect_shipment4(shipment)
+        else:
+            shipment_checked_ok = True  # assuming or hoping it's ok
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
             shipment_checked_ok, shipment_actually_ok, shipment)
+        # n shipments per day
+        if i % 10:
+            date += 1
 
     # TODO: here we have potential float division by zero
     num_diseased = num_shipments - success_rates.ok
