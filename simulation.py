@@ -160,7 +160,7 @@ class SuccessRates(object):
 def simulation(num_shipments):
     ports = ['RDU', 'Miami']
 
-    reporter = MuteReporter()
+    reporter = PrintReporter()
     success_rates = SuccessRates(reporter)
     date = 1
 
@@ -176,14 +176,17 @@ def simulation(num_shipments):
         success_rates.record_success_rate(
             shipment_checked_ok, shipment_actually_ok, shipment)
         # n shipments per day
-        if i % 10:
+        if i % 3:
             date += 1
 
-    # TODO: here we have potential float division by zero
     num_diseased = num_shipments - success_rates.ok
-    missing = 100 * float(success_rates.fp) / (num_diseased)
-    print("Missing {}% of diseased shipments.".format(missing))
-    return missing
+    if num_diseased:
+        # avoiding float division by zero
+        missing = 100 * float(success_rates.fp) / (num_diseased)
+        print("Missing {}% of diseased shipments.".format(missing))
+        return missing
+    else:
+        return 0  # we didn't miss anything
 
 
 USAGE = """Usage:
