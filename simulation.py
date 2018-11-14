@@ -29,22 +29,28 @@ import sys
 import random
 
 
+CONFIG = None
+
+
 def generate_shipment(port, arrival_time):
-    """
+    """Generate Inspectional Unit
 
-    Inspectional Unit
-
-    Each item in boxes is set to True if a pest/pathogen is there,
+    Each item (box) in boxes (list) is set to True if a pest/pathogen is there,
     False otherwise.
     """
     # flowers or commodities
-    flowers = ['Rose', 'Tulip', 'Acer', 'Actinidia', 'Aegilops', 'Ananas']
-    countries = ['Argentina', 'Estonia', 'Taiwan', 'Hawaii']
+    flowers = CONFIG['shipment']['flowers']
+    origins = CONFIG['shipment']['origins']
     flower = random.choice(flowers)
-    origin = random.choice(countries)
-    num_boxes = random.randint(1, 50)
-    if random.random() < 0.2:
-        boxes = [random.random() < 0.5 for i in range(num_boxes)]
+    origin = random.choice(origins)
+    num_boxes_min = CONFIG['shipment']['boxes']['min']
+    num_boxes_max = CONFIG['shipment']['boxes']['max']
+    num_boxes = random.randint(num_boxes_min, num_boxes_max)
+    pest_probability = CONFIG['shipment']['pest']['probability']
+    pest_ratio = CONFIG['shipment']['pest']['ratio']
+
+    if random.random() < pest_probability:
+        boxes = [random.random() < pest_ratio for i in range(num_boxes)]
     else:
         boxes = [False] * num_boxes
     return dict(flower=flower, num_boxes=num_boxes, arrival_time=arrival_time,
@@ -206,12 +212,25 @@ def simulation(num_shipments):
 
 
 USAGE = """Usage:
-  {} <number of simulations> <number of shipments>
+  {} <number of simulations> <number of shipments> <config file>
 """
 
 
+def load_configuration(filename):
+    if sys.argv[3].endswith(".json"):
+        import json
+        return json.load(open(sys.argv[3]))
+    elif sys.argv[3].endswith(".yaml") or sys.argv[3].endswith(".yml"):
+        import yaml
+        return yaml.load(open(sys.argv[3]))
+    else:
+        sys.exit("Unknown file extension (file: {})".format(sys.argv[3]))
+
+
 def main():
-    if len(sys.argv) != 3:
+    global CONFIG
+
+    if len(sys.argv) != 4 and all(sys.argv):
         sys.exit(USAGE.format(sys.argv[0]))
     num_simulations = sys.argv[1]
     num_shipments = sys.argv[2]

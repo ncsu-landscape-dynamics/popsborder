@@ -3,4 +3,4 @@ test:
   - apt-get update -qy
   - apt-get install -y pep8
   - pep8 simulation.py
-  - python simulation.py 5 50
+  - python simulation.py 5 50 config.yml
