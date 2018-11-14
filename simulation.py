@@ -25,6 +25,7 @@ Simulation for evaluataion of pathways
 
 from __future__ import print_function
 
+import sys
 import random
 
 
@@ -130,12 +131,11 @@ class SuccessRates(object):
             self.reporter.fn()
 
 
-def simulation():
+def simulation(num_shipments):
     ports = ['RDU', 'Miami']
 
     reporter = MuteReporter()
     success_rates = SuccessRates(reporter)
-    num_shipments = 1000
 
     for i in range(num_shipments):
         port = random.choice(ports)
@@ -153,11 +153,23 @@ def simulation():
     return missing
 
 
+USAGE = """Usage:
+  {} <number of simulations> <number of shipments>
+"""
+
+
 def main():
+    if len(sys.argv) != 3:
+        sys.exit(USAGE.format(sys.argv[0]))
+    num_simulations = sys.argv[1]
+    num_shipments = sys.argv[2]
+    if not num_simulations or not num_shipments:
+        sys.exit(USAGE.format(sys.argv[0]))
+    num_simulations = int(num_simulations)
+    num_shipments = int(num_shipments)
     missing = 0
-    num_simulations = 10
     for i in range(num_simulations):
-        missing += simulation()
+        missing += simulation(num_shipments)
     missing /= num_simulations
     print("In average, missing {0:.0f}% of diseased shipments.".format(
         missing))
