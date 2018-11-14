@@ -48,7 +48,7 @@ def generate_shipment(port, arrival_time):
     else:
         boxes = [False] * num_boxes
     return dict(flower=flower, num_boxes=num_boxes, arrival_time=arrival_time,
-                boxes=boxes, origin=origin)
+                boxes=boxes, origin=origin, port=port)
 
 
 def inspect_shipment1(shipment):
@@ -77,6 +77,7 @@ def inspect_shipment4(shipment):
 def is_flower_of_the_day(cfrp, flower, date):
     i = date % len(cfrp)
     if flower == cfrp[i]:
+        print("{} is flower of the day".format(flower))
         return True
     return False
 
@@ -84,9 +85,8 @@ def is_flower_of_the_day(cfrp, flower, date):
 def should_inspect1(shipment, date):
     flower = shipment['flower']
     cfrp = ['Rose', 'Tulip', 'Acer', 'Actinidia']
-    if flower in cfrp:
-        if (is_flower_of_the_day(cfrp, flower, date) or
-                shipment['num_boxes'] > 5):
+    if flower in cfrp and shipment['num_boxes'] <= 10:
+        if is_flower_of_the_day(cfrp, flower, date):
             return True  # FotD or large, inspect
         return False  # not FotD, skip
     return True  # not in CFRP, inspect
@@ -141,6 +141,13 @@ class MuteReporter(object):
         raise RuntimeError("False negative (programmer error)")
 
 
+class Form280(object):
+    def fill(self, shipment, ok):
+        dispensation = "RELEASE" if ok else "PROHIBIT"
+        print("F280: {port} {origin} {dispensation}".format(
+            dispensation=dispensation, **shipment))
+
+
 class SuccessRates(object):
     def __init__(self, reporter):
         self.ok = 0
@@ -167,6 +174,7 @@ class SuccessRates(object):
 def simulation(num_shipments):
     ports = ['RDU', 'Miami']
 
+    form280 = Form280()
     reporter = PrintReporter()
     success_rates = SuccessRates(reporter)
     date = 1
@@ -179,6 +187,7 @@ def simulation(num_shipments):
             shipment_checked_ok = inspect_shipment4(shipment)
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
+        form280.fill(shipment, shipment_checked_ok)
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
             shipment_checked_ok, shipment_actually_ok, shipment)
