@@ -30,28 +30,35 @@ import random
 
 
 def generate_shipment(port, arrival_time):
+    """
+
+    Inspectional Unit
+
+    Each item in boxes is set to True if a pest/pathogen is there,
+    False otherwise.
+    """
     # flowers or commodities
     flowers = ['Rose', 'Tulip', 'Acer', 'Actinidia', 'Aegilops', 'Ananas']
     countries = ['Argentina', 'Estonia', 'Taiwan', 'Hawaii']
     flower = random.choice(flowers)
     origin = random.choice(countries)
-    num_items = random.randint(1, 50)
+    num_boxes = random.randint(1, 50)
     if random.random() < 0.2:
-        diseased = [random.random() < 0.5 for i in range(num_items)]
+        boxes = [random.random() < 0.5 for i in range(num_boxes)]
     else:
-        diseased = [False] * num_items
-    return dict(flower=flower, num_items=num_items, arrival_time=arrival_time,
-                diseased=diseased, origin=origin)
+        boxes = [False] * num_boxes
+    return dict(flower=flower, num_boxes=num_boxes, arrival_time=arrival_time,
+                boxes=boxes, origin=origin)
 
 
 def inspect_shipment1(shipment):
-    if shipment['diseased'][0]:
+    if shipment['boxes'][0]:
         return False
     return True
 
 
 def inspect_shipment2(shipment):
-    if random.choice(shipment['diseased']):
+    if random.choice(shipment['boxes']):
         return False
     return True
 
@@ -61,8 +68,8 @@ def inspect_shipment3(shipment):
 
 
 def inspect_shipment4(shipment):
-    for i in range(min(len(shipment['diseased']), 2)):
-        if shipment['diseased'][i]:
+    for i in range(min(len(shipment['boxes']), 2)):
+        if shipment['boxes'][i]:
             return False
     return True
 
@@ -79,7 +86,7 @@ def should_inspect1(shipment, date):
     cfrp = ['Rose', 'Tulip', 'Acer', 'Actinidia']
     if flower in cfrp:
         if (is_flower_of_the_day(cfrp, flower, date) or
-                shipment['num_items'] > 5):
+                shipment['num_boxes'] > 5):
             return True  # FotD or large, inspect
         return False  # not FotD, skip
     return True  # not in CFRP, inspect
@@ -91,29 +98,29 @@ def should_inspect2(shipment, date):
 
 
 def is_shipment_diseased(shipment):
-    for item in shipment['diseased']:
-        if item:
+    for box in shipment['boxes']:
+        if box:
             return True
     return False
 
 
 def count_diseased(shipment):
     count = 0
-    for item in shipment['diseased']:
-        if item:
+    for box in shipment['boxes']:
+        if box:
             count += 1
     return count
 
 
 class PrintReporter(object):
     def tp(self):
-        print("Inspection worked, didn't miss anything (no disease) [TP]")
+        print("Inspection worked, didn't miss anything (no pest) [TP]")
 
     def tn(self):
-        print("Inspection worked, found diseased [TN]")
+        print("Inspection worked, found pest [TN]")
 
     def fp(self, shipment):
-        print("Inspection failed, missed {} diseased items [FP]".format(
+        print("Inspection failed, missed {} boxes with pest [FP]".format(
                 count_diseased(shipment)))
 
     def fn(self):
@@ -183,7 +190,7 @@ def simulation(num_shipments):
     if num_diseased:
         # avoiding float division by zero
         missing = 100 * float(success_rates.fp) / (num_diseased)
-        print("Missing {}% of diseased shipments.".format(missing))
+        print("Missing {}% of shipments with pest.".format(missing))
         return missing
     else:
         return 0  # we didn't miss anything
@@ -207,7 +214,7 @@ def main():
     for i in range(num_simulations):
         missing += simulation(num_shipments)
     missing /= num_simulations
-    print("In average, missing {0:.0f}% of diseased shipments.".format(
+    print("In average, missing {0:.0f}% of shipments with pest.".format(
         missing))
 
 
