@@ -34,6 +34,24 @@ Given a specific set of import rules, how much pest needs to be present
 in the shipments for us to detect it? Additionally, how much pest needs
 to be present to raise alarms?
 
+In the following example, we were checking two boxes of each shipment,
+one shipment contained between 1 and 50 boxes and CRFP was not active.
+We ran the simulations with different ratio of infested boxes in one
+infested shipment.
+
+| Infested boxes | Missed |
+| -------------- | ------ |
+| 90%            |  1%    |
+| 80%            |  4%    |
+| 70%            |  9%    |
+| 60%            | 16%    |
+| 50%            | 24%    |
+| 40%            | 34%    |
+| 30%            | 47%    |
+| 20%            | 61%    |
+| 10%            | 77%    |
+
+
 ### Does a new import rule increase chance of missing a pest?
 
 With a given a (example) configuration of the shipment generation and
