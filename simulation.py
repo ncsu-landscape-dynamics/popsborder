@@ -94,7 +94,8 @@ def should_inspect1(shipment, date):
     flower = shipment['flower']
     cfrp = CONFIG['inspection']['cfrp']['flowers']
     max_boxes = CONFIG['inspection']['cfrp']['max_boxes']
-    if flower in cfrp and shipment['num_boxes'] <= max_boxes:
+    # we have flowers in the CFRP, flower is in CFRP, and not too big shipment
+    if cfrp and flower in cfrp and shipment['num_boxes'] <= max_boxes:
         if is_flower_of_the_day(cfrp, flower, date):
             return True  # is FotD, inspect
         return False  # not FotD, release
@@ -193,7 +194,7 @@ def simulation(num_shipments):
         port = random.choice(ports)
         arrival_time = i
         shipment = generate_shipment(port, arrival_time)
-        if should_inspect2(shipment, date):
+        if should_inspect1(shipment, date):
             shipment_checked_ok = inspect_shipment4(shipment)
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
