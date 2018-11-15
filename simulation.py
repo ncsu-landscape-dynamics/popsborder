@@ -29,6 +29,7 @@ import sys
 import random
 
 
+# global configuration usable in all functions
 CONFIG = None
 
 
