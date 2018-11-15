@@ -76,7 +76,8 @@ def inspect_shipment3(shipment):
 
 
 def inspect_shipment4(shipment):
-    for i in range(min(len(shipment['boxes']), 2)):
+    boxes_to_inspect = CONFIG['inspection']['first_n_boxes']
+    for i in range(min(len(shipment['boxes']), boxes_to_inspect)):
         if shipment['boxes'][i]:
             return False
     return True

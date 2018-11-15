@@ -25,6 +25,7 @@ inspection:
     - Acer
     - Actinidia
     max_boxes: 10
+  first_n_boxes: 2
 ports:
   - RDU
   - Miami

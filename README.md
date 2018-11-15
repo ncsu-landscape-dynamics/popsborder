@@ -65,6 +65,19 @@ percentage of shipments with undiscovered pests:
 | 20    | 39%    |
 | inf   | 62%    |
 
+With a given ratio of boxes with pest in a shipment with pests
+(here 50%m but active CFRP), if we increase number of boxes we inspect
+in each shipment, our chances of detecting the pest increase:
+
+| Boxes | Missed |
+| ----- | ------ |
+| 0     | 100%   |
+| 1     | 54%    |
+| 2     | 31%    |
+| 3     | 20%    |
+| 4     | 15%    |
+| 5     | 12%    |
+
 ## Documentation
 
 The Python code runs with both Python 2.7 and Python 3.
