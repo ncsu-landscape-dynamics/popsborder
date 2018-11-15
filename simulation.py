@@ -203,7 +203,7 @@ def simulation(num_shipments):
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
             shipment_checked_ok, shipment_actually_ok, shipment)
-        # n shipments per day
+        # two shipments every nth day
         if i % 3:
             date += 1
 

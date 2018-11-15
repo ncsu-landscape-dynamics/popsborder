@@ -8,6 +8,19 @@ data and performs inspection on them.
 Here are examples of questions this tool can help to answer and
 types of results it can give.
 
+## Synthetic F280 records
+
+| Date | Port | Origin | Flower | Action |
+| ---- | ---- | ------ | ------ | ------ |
+| 1 | RDU | Estonia | Gloriosa | RELEASE |
+| 1 | Miami | Hawaii | Gladiolus | RELEASE |
+| 2 | RDU | Argentina | Actinidia | RELEASE |
+| 3 | Miami | Argentina | Gladiolus | RELEASE |
+| 3 | RDU | Hawaii | Ananas | RELEASE |
+| 4 | Miami | Hawaii | Acer | RELEASE |
+| 5 | Miami | Taiwan | Gladiolus | PROHIBIT |
+| 5 | RDU | Estonia | Aegilops | RELEASE |
+
 ### Will we intercept a new pest?
 
 Using a given system of border controls, will we intercept a new pest?
