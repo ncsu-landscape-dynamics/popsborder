@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Simulation for evaluataion of pathways
@@ -251,6 +252,7 @@ def main():
     missing /= num_simulations
     print("On average, missing {0:.0f}% of shipments with pest.".format(
         missing))
+    print("result={0:.2f}".format(missing))
 
 
 if __name__ == '__main__':
