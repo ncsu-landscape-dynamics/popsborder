@@ -28,6 +28,12 @@ In this case, we would modify the parameters how pests in shipments from
 a particular part of the world are added, e.g. by increasing their
 probability, based on another model projecting immersion of such pest.
 
+### How sensitive are our interception tests to level of infestation?
+
+Given a specific set of import rules, how much pest needs to be present
+in the shipments for us to detect it? Additionally, how much pest needs
+to be present to raise alarms?
+
 ### Does a new import rule increase chance of missing a pest?
 
 With a given a (example) configuration of the shipment generation and
