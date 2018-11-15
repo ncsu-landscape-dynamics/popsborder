@@ -180,7 +180,7 @@ class SuccessRates(object):
 
 
 def simulation(num_shipments):
-    ports = ['RDU', 'Miami']
+    ports = CONFIG['ports']
 
     form280 = Form280()
     reporter = PrintReporter()
