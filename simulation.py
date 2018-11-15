@@ -91,8 +91,9 @@ def is_flower_of_the_day(cfrp, flower, date):
 def should_inspect1(shipment, date):
     """Decided if the shipment should be expected based on CFRP and size"""
     flower = shipment['flower']
-    cfrp = ['Rose', 'Tulip', 'Acer', 'Actinidia']
-    if flower in cfrp and shipment['num_boxes'] <= 10:
+    cfrp = CONFIG['inspection']['cfrp']['flowers']
+    max_boxes = CONFIG['inspection']['cfrp']['max_boxes']
+    if flower in cfrp and shipment['num_boxes'] <= max_boxes:
         if is_flower_of_the_day(cfrp, flower, date):
             return True  # is FotD, inspect
         return False  # not FotD, release
