@@ -24,8 +24,7 @@ inspection:
     - Gladiolus
     - Acer
     - Actinidia
-  max_boxes: 10
+    max_boxes: 10
 ports:
   - RDU
   - Miami
-
