@@ -150,10 +150,11 @@ class MuteReporter(object):
 
 
 class Form280(object):
-    def fill(self, shipment, ok):
+    def fill(self, date, shipment, ok):
         dispensation = "RELEASE" if ok else "PROHIBIT"
-        print("F280: {port} {origin} {dispensation}".format(
-            dispensation=dispensation, **shipment))
+        print("F280: {date} {shipment[port]} {shipment[origin]}"
+              " {shipment[flower]} {dispensation}".format(
+                  shipment, **locals()))
 
 
 class SuccessRates(object):
@@ -195,7 +196,7 @@ def simulation(num_shipments):
             shipment_checked_ok = inspect_shipment4(shipment)
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
-        form280.fill(shipment, shipment_checked_ok)
+        form280.fill(date, shipment, shipment_checked_ok)
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
             shipment_checked_ok, shipment_actually_ok, shipment)
