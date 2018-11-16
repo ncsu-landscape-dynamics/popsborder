@@ -1,6 +1,17 @@
-test:
-  script:
+before_script:
   - apt-get update -qy
   - apt-get install -y pep8 python-yaml
+
+test:
+  script:
   - pep8 simulation.py
   - python simulation.py 5 50 config.yml
+
+data:
+  script:
+  - ./test_dataset.sh synthetic_records.csv "," 1000
+  artifacts:
+    paths:
+    - synthetic_records.csv
+  only:
+  - master
