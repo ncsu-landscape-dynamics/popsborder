@@ -98,6 +98,8 @@ in each shipment, our chances of detecting the pest increase:
 
 ## Documentation
 
+### Running the code
+
 The Python code runs with both Python 2.7 and Python 3.
 
 The configuration is provided in a file specified as a command line
@@ -105,3 +107,29 @@ parameter. The configuration format is JSON (extension `.json`) or YAML
 (extensions `.yml` or `.yaml`). The Python `json` package is part of
 the Python standard library while the `yaml` package needs to be
 installed (as of Python 3.6).
+
+### Obtaining pre-computed sample database records
+
+To download sample synthetic database records (F280),
+you can dowload the artifact data at the main project page
+(https://gitlab.com/vpetras/pathway-simulation).
+
+Alternatively, in a Linux command line (or in an equivalent environment),
+you can execute (assuing you have `wget` and `dtrx` installed):
+
+```
+wget https://gitlab.com/vpetras/pathway-simulation/-/jobs/artifacts/master/download?job=data -O data.zip
+dtrx -f data.zip
+ls synthetic_records.csv
+```
+
+The last command (`ls`) just confirms you have the data downloaded
+and uncompressed. If you need some troubleshooting,
+the following example might be helpful (relying of the program `file`).
+
+```
+$ file data.zip 
+data.zip: Zip archive data, at least v2.0 to extract
+$ file synthetic_records.csv
+synthetic_records.csv: ASCII text
+```
