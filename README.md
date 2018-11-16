@@ -105,6 +105,19 @@ in each shipment, our chances of detecting the pest increase:
 | 4     | 15%    |
 | 5     | 12%    |
 
+### How much pest is in the real shipments?
+
+Given know import rules and sampling rates and the actual collected
+data, how much pest is present the in shipments? By comparing the actual
+collected data and the simulated results, we can determine, for given
+sampling rates, how much pest is present in the shipments.
+
+### Is is better to inspect more shipments or a random box?
+
+Is our detection rate higher when we pick a random (randomly sampled)
+box in fewer amount of shipments or when we just look at the box at the
+top (an easily accessible one) in more (or all) shipments?
+
 ## Documentation
 
 ### Running the code
