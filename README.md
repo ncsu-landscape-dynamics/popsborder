@@ -1,7 +1,16 @@
 # Pathway Simulation
 
-Simulation for evaluation of pathway which generates synthetic shipment
-data and performs inspection on them.
+Simulation for evaluation of pathways which generates synthetic shipment
+data and performs inspection on them. It is using the following model
+to understand the system:
+
+```math
+f(x) \rightarrow y
+```
+
+where $`x`$ is all shipments with all information about them
+such as level of infestation, $`f`$ is a sampling function
+and $`y`$ is record in the database.
 
 ## Types of questions and results
 
