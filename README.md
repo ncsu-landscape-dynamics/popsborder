@@ -8,9 +8,22 @@ to understand the system:
 f(x) \rightarrow y
 ```
 
-where $`x`$ is all shipments with all information about them
-such as level of infestation, $`f`$ is a sampling function
-and $`y`$ is record in the database.
+where $`x`$ represents all shipments with all information about them
+such as the level of infestation, $`f`$ is a sampling function,
+i.e. import procedure used at the port,
+and $`y`$ represents the resulting record in the database.
+
+Since the simulation is generating $`x`$, we can compute:
+
+```math
+r = \frac{g(y)}{g(x)}
+```
+
+where $`x`$ and $`y`$ are defined in the same way as above,
+$`g`$ is a function giving level of infestation in each set
+(e.g. number of shipmets with a pest),
+and $`r`$ is the success rate in detecting infestation
+using the function $`f`$ from above.
 
 ## Types of questions and results
 
@@ -63,7 +76,7 @@ infested shipment.
 
 ### Does a new import rule increase chance of missing a pest?
 
-With a given a (example) configuration of the shipment generation and
+With a given (example) configuration of the shipment generation and
 the CFRP, we can get a table like this relating number of flowers in
 CFRP and percentage of shipments with undiscovered pests
 (total number of flowers is 6):
@@ -93,7 +106,7 @@ percentage of shipments with undiscovered pests:
 | inf   | 62%    |
 
 With a given ratio of boxes with pest in a shipment with pests
-(here 50%m but active CFRP), if we increase number of boxes we inspect
+(here 50%, but active CFRP), if we increase number of boxes we inspect
 in each shipment, our chances of detecting the pest increase:
 
 | Boxes | Missed |
@@ -107,15 +120,15 @@ in each shipment, our chances of detecting the pest increase:
 
 ### How much pest is in the real shipments?
 
-Given know import rules and sampling rates and the actual collected
-data, how much pest is present the in shipments? By comparing the actual
+Given known import rules and sampling rates and the actual collected
+data, how much pest is present in the actual shipments? By comparing the actual
 collected data and the simulated results, we can determine, for given
-sampling rates, how much pest is present in the shipments.
+sampling rates, how much pest is present in the actual shipments.
 
 ### Is is better to inspect more shipments or a random box?
 
 Is our detection rate higher when we pick a random (randomly sampled)
-box in fewer amount of shipments or when we just look at the box at the
+box in fewer amount of shipments or when we just look at a box on
 top (an easily accessible one) in more (or all) shipments?
 
 ## Documentation
@@ -124,7 +137,7 @@ top (an easily accessible one) in more (or all) shipments?
 
 The Python code runs with both Python 2.7 and Python 3.
 
-The configuration is provided in a file specified as a command line
+The configuration is provided in a file which is specified as a command line
 parameter. The configuration format is JSON (extension `.json`) or YAML
 (extensions `.yml` or `.yaml`). The Python `json` package is part of
 the Python standard library while the `yaml` package needs to be
@@ -137,7 +150,7 @@ you can dowload the artifact data at the main project page
 (https://gitlab.com/vpetras/pathway-simulation).
 
 Alternatively, in a Linux command line (or in an equivalent environment),
-you can execute (assuing you have `wget` and `dtrx` installed):
+you can execute (assuming you have `wget` and `dtrx` installed):
 
 ```
 wget https://gitlab.com/vpetras/pathway-simulation/-/jobs/artifacts/master/download?job=data -O data.zip
@@ -145,7 +158,7 @@ dtrx -f data.zip
 ls synthetic_records.csv
 ```
 
-The last command (`ls`) just confirms you have the data downloaded
+The last command (`ls`) just confirms that you have the data downloaded
 and uncompressed. If you need some troubleshooting,
 the following example might be helpful (relying of the program `file`).
 
