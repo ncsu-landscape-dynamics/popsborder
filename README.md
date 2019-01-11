@@ -147,7 +147,9 @@ installed (as of Python 3.6).
 
 To download sample synthetic database records (F280),
 you can dowload the artifact data at the main project page
-(https://gitlab.com/vpetras/pathway-simulation).
+(https://gitlab.com/vpetras/pathway-simulation)
+by clicking the download button and selecting Artifact called data
+or by clicking [this link](https://gitlab.com/vpetras/pathway-simulation/-/jobs/artifacts/master/download?job=data).
 
 Alternatively, in a Linux command line (or in an equivalent environment),
 you can execute (assuming you have `wget` and `dtrx` installed):
