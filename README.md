@@ -143,6 +143,32 @@ parameter. The configuration format is JSON (extension `.json`) or YAML
 the Python standard library while the `yaml` package needs to be
 installed (as of Python 3.6).
 
+A simple run (runs) of the simulation with predefined values
+covering both success rate in detection of pests and generation of F280
+records:
+
+```
+./run.sh
+```
+
+Generating a sample dataset with F280 records only:
+
+```
+./test_dataset.sh synthetic_records.csv "," 1000
+```
+
+Direct run of the simulation with 1000 shipments repeated 20 times:
+
+```
+./simulation.py 20 1000 config.yml
+```
+
+Get all command line options for the simulation by running:
+
+```
+./simulation.py --help
+```
+
 ### Obtaining pre-computed sample database records
 
 #### Download using a web browser
