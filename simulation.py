@@ -28,6 +28,7 @@ from __future__ import print_function
 
 import sys
 import random
+import argparse
 
 
 # global configuration usable in all functions
@@ -236,15 +237,14 @@ def load_configuration(filename):
 
 def main():
     global CONFIG
+    parser = argparse.ArgumentParser(description='Pathway Simulation')
+    parser.add_argument('num_simulations', type=int, help="Number of simulations")
+    parser.add_argument('num_shipments', type=int, help="Number of shipments")
+    parser.add_argument('config_file', type=file, help="Path to configuration file")
+    args = parser.parse_args()
 
-    if len(sys.argv) != 4 and all(sys.argv):
-        sys.exit(USAGE.format(sys.argv[0]))
-    num_simulations = sys.argv[1]
-    num_shipments = sys.argv[2]
-    if not num_simulations or not num_shipments:
-        sys.exit(USAGE.format(sys.argv[0]))
-    num_simulations = int(num_simulations)
-    num_shipments = int(num_shipments)
+    num_simulations = args.num_simulations
+    num_shipments = args.num_shipments
     CONFIG = load_configuration(sys.argv[3])
 
     missing = 0
