@@ -238,9 +238,12 @@ def load_configuration(filename):
 def main():
     global CONFIG
     parser = argparse.ArgumentParser(description='Pathway Simulation')
-    parser.add_argument('num_simulations', type=int, help="Number of simulations")
-    parser.add_argument('num_shipments', type=int, help="Number of shipments")
-    parser.add_argument('config_file', type=file, help="Path to configuration file")
+    parser.add_argument('num_simulations', type=int,
+                        help="Number of simulations")
+    parser.add_argument('num_shipments', type=int,
+                        help="Number of shipments")
+    parser.add_argument('config_file', type=file,
+                        help="Path to configuration file")
     args = parser.parse_args()
 
     num_simulations = args.num_simulations
