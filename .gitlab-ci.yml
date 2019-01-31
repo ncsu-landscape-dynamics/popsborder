@@ -5,7 +5,7 @@ before_script:
 test:
   script:
   - pep8 simulation.py
-  - python simulation.py 5 50 config.yml
+  - python simulation.py --num-simulations 5 --num-shipments 50 --config-file config.yml
 
 data:
   script:
