@@ -225,30 +225,31 @@ USAGE = """Usage:
 
 
 def load_configuration(filename):
-    if sys.argv[3].endswith(".json"):
+    if filename.endswith(".json"):
         import json
-        return json.load(open(sys.argv[3]))
-    elif sys.argv[3].endswith(".yaml") or sys.argv[3].endswith(".yml"):
+        return json.load(open(filename))
+    elif filename.endswith(".yaml") or filename.endswith(".yml"):
         import yaml
-        return yaml.load(open(sys.argv[3]))
+        return yaml.load(open(filename))
     else:
-        sys.exit("Unknown file extension (file: {})".format(sys.argv[3]))
+        sys.exit("Unknown file extension (file: {})".format(filename))
 
 
 def main():
     global CONFIG
     parser = argparse.ArgumentParser(description='Pathway Simulation')
-    parser.add_argument('num_simulations', type=int,
-                        help="Number of simulations")
-    parser.add_argument('num_shipments', type=int,
-                        help="Number of shipments")
-    parser.add_argument('config_file', type=file,
-                        help="Path to configuration file")
+    required = parser.add_argument_group('required arguments')
+    required.add_argument('--num-simulations', type=int, required=True,
+                          help="Number of simulations")
+    required.add_argument('--num-shipments', type=int, required=True,
+                          help="Number of shipments")
+    required.add_argument('--config-file', type=str, required=True,
+                          help="Path to configuration file")
     args = parser.parse_args()
 
     num_simulations = args.num_simulations
     num_shipments = args.num_shipments
-    CONFIG = load_configuration(sys.argv[3])
+    CONFIG = load_configuration(args.config_file)
 
     missing = 0
     for i in range(num_simulations):
