@@ -158,8 +158,9 @@ class Form280(object):
     def fill(self, date, shipment, ok, output_file):
         dispensation = "RELEASE" if ok else "PROHIBIT"
         if output_file:
-            output_file.write(",".join([str(date), shipment['port'], shipment['origin'],
-                              shipment['flower'], dispensation]))
+            output_file.write(",".join([str(date), shipment['port'],
+                              shipment['origin'], shipment['flower'],
+                              dispensation]))
             output_file.write('\n')
 
         print("F280: {date} {shipment[port]} {shipment[origin]}"
