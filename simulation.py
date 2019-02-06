@@ -155,8 +155,13 @@ class MuteReporter(object):
 
 
 class Form280(object):
-    def fill(self, date, shipment, ok):
+    def fill(self, date, shipment, ok, output_file):
         dispensation = "RELEASE" if ok else "PROHIBIT"
+        if output_file:
+            output_file.write(",".join([str(date), shipment['port'], shipment['origin'],
+                              shipment['flower'], dispensation]))
+            output_file.write('\n')
+
         print("F280: {date} {shipment[port]} {shipment[origin]}"
               " {shipment[flower]} {dispensation}".format(
                   shipment, **locals()))
@@ -185,9 +190,8 @@ class SuccessRates(object):
             self.reporter.fn()
 
 
-def simulation(num_shipments):
+def simulation(num_shipments, output_file):
     ports = CONFIG['ports']
-
     form280 = Form280()
     reporter = PrintReporter()
     success_rates = SuccessRates(reporter)
@@ -201,7 +205,7 @@ def simulation(num_shipments):
             shipment_checked_ok = inspect_shipment4(shipment)
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
-        form280.fill(date, shipment, shipment_checked_ok)
+        form280.fill(date, shipment, shipment_checked_ok, output_file)
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
             shipment_checked_ok, shipment_actually_ok, shipment)
@@ -245,6 +249,8 @@ def main():
                           help="Number of shipments")
     required.add_argument('--config-file', type=str, required=True,
                           help="Path to configuration file")
+    required.add_argument('--output-file', type=str, required=False,
+                          help="Path to output F280 csv file")
     args = parser.parse_args()
 
     num_simulations = args.num_simulations
@@ -252,12 +258,17 @@ def main():
     CONFIG = load_configuration(args.config_file)
 
     missing = 0
+    f = None
+    if args.output_file:
+        f = open(args.output_file, 'w')
     for i in range(num_simulations):
-        missing += simulation(num_shipments)
+        missing += simulation(num_shipments, f)
     missing /= num_simulations
     print("On average, missing {0:.0f}% of shipments with pest.".format(
         missing))
     print("result={0:.2f}".format(missing))
+    if f:
+        f.close()
 
 
 if __name__ == '__main__':
