@@ -200,3 +200,18 @@ data.zip: Zip archive data, at least v2.0 to extract
 $ file synthetic_records.csv
 synthetic_records.csv: ASCII text
 ```
+
+## Authors
+
+* Vaclav Petras
+* Anna Petrasova
+
+## License
+
+The simulation code is open source under GNU GPL >=v2
+(see the LICENSE file for details).
+
+## Acknowledgment and Disclaimer
+
+This research is funded by USDA APHIS. The findings do not necessarily
+represent the views of USDA APHIS.
