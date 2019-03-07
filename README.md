@@ -215,3 +215,7 @@ The simulation code is open source under GNU GPL >=v2
 
 This research is funded by USDA APHIS. The findings do not necessarily
 represent the views of USDA APHIS.
+
+Please note that this is a simulation and it needs to be calibrated
+to give any realistic or actionable results. Results presented here
+are examples for demonstrations purposes.
