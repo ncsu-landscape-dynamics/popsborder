@@ -94,20 +94,21 @@ def is_flower_of_the_day(cfrp, flower, date):
 
 def should_inspect1(shipment, date):
     """Decided if the shipment should be expected based on CFRP and size"""
+    # returns 2 bools: should_inspect, CFRP applied
     flower = shipment['flower']
     cfrp = CONFIG['inspection']['cfrp']['flowers']
     max_boxes = CONFIG['inspection']['cfrp']['max_boxes']
     # we have flowers in the CFRP, flower is in CFRP, and not too big shipment
     if cfrp and flower in cfrp and shipment['num_boxes'] <= max_boxes:
         if is_flower_of_the_day(cfrp, flower, date):
-            return True  # is FotD, inspect
-        return False  # not FotD, release
-    return True  # not in CFRP or large, inspect
+            return True, True  # is FotD, inspect
+        return False, True  # not FotD, release
+    return True, False  # not in CFRP or large, inspect
 
 
 def should_inspect2(shipment, date):
     """Inspect always"""
-    return True
+    return True, False
 
 
 def is_shipment_diseased(shipment):
@@ -155,16 +156,35 @@ class MuteReporter(object):
 
 
 class Form280(object):
-    def fill(self, date, shipment, ok, output_file):
-        dispensation = "RELEASE" if ok else "PROHIBIT"
+
+    def dispensation(self, ok, must_inspect, cfrp_active):
+        if cfrp_active:
+            if must_inspect:
+                if ok:
+                    dispensation = 'IRAR'
+                else:
+                    dispensation = 'FUAR'
+            else:
+                dispensation = 'REAR'
+        else:
+            if ok:
+                dispensation = 'IRMR'
+            else:
+                dispensation = 'FUAP'
+        return dispensation
+
+    def fill(self, date, shipment, ok, must_inspect,
+             cfrp_active, output_file):
+
+        dispens = self.dispensation(ok, must_inspect, cfrp_active)
         if output_file:
             output_file.write(",".join([str(date), shipment['port'],
                               shipment['origin'], shipment['flower'],
-                              dispensation]))
+                              dispens]))
             output_file.write('\n')
 
         print("F280: {date} {shipment[port]} {shipment[origin]}"
-              " {shipment[flower]} {dispensation}".format(
+              " {shipment[flower]} {dispens}".format(
                   shipment, **locals()))
 
 
@@ -202,11 +222,13 @@ def simulation(num_shipments, output_file):
         port = random.choice(ports)
         arrival_time = i
         shipment = generate_shipment(port, arrival_time)
-        if should_inspect1(shipment, date):
+        must_inspect, cfrp_active = should_inspect1(shipment, date)
+        if must_inspect:
             shipment_checked_ok = inspect_shipment4(shipment)
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
-        form280.fill(date, shipment, shipment_checked_ok, output_file)
+        form280.fill(date, shipment, shipment_checked_ok,
+                     must_inspect, cfrp_active, output_file)
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
             shipment_checked_ok, shipment_actually_ok, shipment)
