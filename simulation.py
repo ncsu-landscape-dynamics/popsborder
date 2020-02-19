@@ -49,15 +49,19 @@ def generate_shipment(port, arrival_time):
     num_boxes_min = CONFIG['shipment']['boxes']['min']
     num_boxes_max = CONFIG['shipment']['boxes']['max']
     num_boxes = random.randint(num_boxes_min, num_boxes_max)
-    pest_probability = CONFIG['shipment']['pest']['probability']
-    pest_ratio = CONFIG['shipment']['pest']['ratio']
-
-    if random.random() < pest_probability:
-        boxes = [random.random() < pest_ratio for i in range(num_boxes)]
-    else:
-        boxes = [False] * num_boxes
+    boxes = [False] * num_boxes
     return dict(flower=flower, num_boxes=num_boxes, arrival_time=arrival_time,
                 boxes=boxes, origin=origin, port=port)
+
+
+def add_pest(shipment):
+    pest_probability = CONFIG['shipment']['pest']['probability']
+    pest_ratio = CONFIG['shipment']['pest']['ratio']
+    if random.random() < pest_probability:
+        return
+    for i in range(len(shipment["boxes"])):
+        if random.random() < pest_ratio:
+            shipment["boxes"][i] = True
 
 
 def inspect_shipment1(shipment):
@@ -222,6 +226,7 @@ def simulation(num_shipments, output_file):
         port = random.choice(ports)
         arrival_time = i
         shipment = generate_shipment(port, arrival_time)
+        add_pest(shipment)
         must_inspect, cfrp_active = should_inspect1(shipment, date)
         if must_inspect:
             shipment_checked_ok = inspect_shipment4(shipment)
