@@ -109,26 +109,27 @@ def add_pest(shipment):
 
 def inspect_shipment1(shipment):
     if shipment["boxes"][0]:
-        return False
-    return True
+        return False, 1
+    return True, 1
 
 
 def inspect_shipment2(shipment):
     if random.choice(shipment["boxes"]):
-        return False
-    return True
+        return False, 1
+    return True, 1
 
 
 def inspect_shipment3(shipment):
-    return not is_shipment_diseased(shipment)
+    return not is_shipment_diseased(shipment), 1
 
 
 def inspect_shipment4(shipment):
     boxes_to_inspect = CONFIG["inspection"]["first_n_boxes"]
-    for i in range(min(len(shipment["boxes"]), boxes_to_inspect)):
+    boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
+    for i in range(boxes_to_inspect):
         if shipment["boxes"][i]:
-            return False
-    return True
+            return False, i + 1
+    return True, boxes_to_inspect
 
 
 def is_flower_of_the_day(cfrp, flower, date):
@@ -273,6 +274,8 @@ def simulation(num_shipments, output_file):
     form280 = Form280()
     reporter = PrintReporter()
     success_rates = SuccessRates(reporter)
+    num_inspections = 0
+    total_num_boxes_inspected = 0
     date = 1
 
     if "input_F280" in CONFIG:
@@ -288,7 +291,9 @@ def simulation(num_shipments, output_file):
         add_pest(shipment)
         must_inspect, cfrp_active = should_inspect1(shipment, date)
         if must_inspect:
-            shipment_checked_ok = inspect_shipment4(shipment)
+            shipment_checked_ok, num_boxes_inspected = inspect_shipment4(shipment)
+            num_inspections += 1
+            total_num_boxes_inspected += num_boxes_inspected
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
         form280.fill(
@@ -307,9 +312,10 @@ def simulation(num_shipments, output_file):
         # avoiding float division by zero
         missing = 100 * float(success_rates.fp) / (num_diseased)
         print("Missing {0:.0f}% of shipments with pest.".format(missing))
-        return missing
+        return missing, num_inspections, total_num_boxes_inspected
     else:
-        return 0  # we didn't miss anything
+        # we didn't miss anything
+        return 0, num_inspections, total_num_boxes_inspected
 
 
 USAGE = """Usage:
@@ -352,15 +358,29 @@ def main():
     num_shipments = args.num_shipments
     CONFIG = load_configuration(args.config_file)
 
-    missing = 0
+    total_missing = 0
+    total_num_inspections = 0
+    total_num_boxes_inspected = 0
     f = None
     if args.output_file:
         f = open(args.output_file, "w")
     for i in range(num_simulations):
-        missing += simulation(num_shipments, f)
-    missing /= num_simulations
-    print("On average, missing {0:.0f}% of shipments with pest.".format(missing))
-    print("result={0:.2f}".format(missing))
+        missing, num_inspections, num_boxes_inspected = simulation(num_shipments, f)
+        total_missing += missing
+        total_num_inspections += num_inspections
+        total_num_boxes_inspected += num_boxes_inspected
+    total_missing /= num_simulations
+    total_num_inspections /= num_simulations
+    total_num_boxes_inspected /= num_simulations
+    print("On average, missing {0:.0f}% of shipments with pest.".format(total_missing))
+    print(
+        "On average, inspecting {0:.0f}% of shipments.".format(
+            100 * total_num_inspections / float(num_shipments)
+        )
+    )
+    print("On average, inspected {0:.0f} boxes.".format(total_num_boxes_inspected))
+    print("result={0:.2f}".format(total_missing))
+    print("num_inspections={0:.0f}".format(total_num_inspections))
     if f:
         f.close()
 
