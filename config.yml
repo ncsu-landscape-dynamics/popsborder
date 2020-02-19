@@ -43,3 +43,10 @@ ports:
   - WA Seattle Air CBP
   - TX Brownsville CBP
   - WA Blaine CBP
+# input_F280: F280_sample.csv
+stems_per_box:
+  default: 200
+  air:
+    default: 200
+  maritime:
+    default: 700

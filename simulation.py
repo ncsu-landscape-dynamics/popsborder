@@ -29,11 +29,11 @@ from __future__ import print_function
 import sys
 import random
 import argparse
+import csv
 
 
 # global configuration usable in all functions
 CONFIG = None
-
 
 def generate_shipment(port, arrival_time):
     """Generate Inspectional Unit
@@ -52,6 +52,40 @@ def generate_shipment(port, arrival_time):
     boxes = [False] * num_boxes
     return dict(flower=flower, num_boxes=num_boxes, arrival_time=arrival_time,
                 boxes=boxes, origin=origin, port=port)
+
+
+class F280ShipmentGenerator:
+    def __init__(self, filename, separator=","):
+        self.infile = open(filename)
+        self.reader = csv.DictReader(self.infile, delimiter=separator)
+        self.stems_per_box = CONFIG["stems_per_box"]
+
+    def generate_shipment(self):
+        try:
+            record = self.reader.next()
+        except StopIteration:
+            raise RuntimeError("More shipments requested than number of records in provided F280")
+
+        stems = int(record["QUANTITY"])
+        if record["PATHWAY"] == "Airport":
+            stems_per_box = self.stems_per_box["air"]["default"]
+        elif record["PATHWAY"] == "Maritime":
+            stems_per_box = self.stems_per_box["Maritime"]["default"]
+        else:
+            stems_per_box = self.stems_per_box["default"]
+
+        num_boxes = int(round(stems / float(stems_per_box)))
+        if num_boxes < 1:
+            num_boxes = 1
+        boxes = [False] * num_boxes
+        return dict(
+            flower=record["COMMODITY"],
+            num_boxes=num_boxes,
+            arrival_time=record["REPORT_DT"],
+            boxes=boxes,
+            origin=record["ORIGIN_NM"],
+            port=record["LOCATION"],
+            )
 
 
 def add_pest(shipment):
@@ -222,10 +256,16 @@ def simulation(num_shipments, output_file):
     success_rates = SuccessRates(reporter)
     date = 1
 
+    if "input_F280" in CONFIG:
+        shipment_generator = F280ShipmentGenerator(CONFIG["input_F280"])
+
     for i in range(num_shipments):
-        port = random.choice(ports)
-        arrival_time = i
-        shipment = generate_shipment(port, arrival_time)
+        if "input_F280" in CONFIG:
+            shipment = shipment_generator.generate_shipment()
+        else:
+            port = random.choice(ports)
+            arrival_time = i
+            shipment = generate_shipment(port, arrival_time)
         add_pest(shipment)
         must_inspect, cfrp_active = should_inspect1(shipment, date)
         if must_inspect:
