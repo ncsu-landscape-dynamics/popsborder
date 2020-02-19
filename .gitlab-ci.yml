@@ -4,7 +4,7 @@ before_script:
 
 test:
   script:
-  - pep8 simulation.py
+  - pep8 --max-line-length=88 simulation.py
   - python simulation.py --num-simulations 5 --num-shipments 50 --config-file config.yml
 
 data:

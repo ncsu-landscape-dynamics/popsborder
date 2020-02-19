@@ -35,6 +35,7 @@ import csv
 # global configuration usable in all functions
 CONFIG = None
 
+
 def generate_shipment(port, arrival_time):
     """Generate Inspectional Unit
 
@@ -42,16 +43,22 @@ def generate_shipment(port, arrival_time):
     False otherwise.
     """
     # flowers or commodities
-    flowers = CONFIG['shipment']['flowers']
-    origins = CONFIG['shipment']['origins']
+    flowers = CONFIG["shipment"]["flowers"]
+    origins = CONFIG["shipment"]["origins"]
     flower = random.choice(flowers)
     origin = random.choice(origins)
-    num_boxes_min = CONFIG['shipment']['boxes']['min']
-    num_boxes_max = CONFIG['shipment']['boxes']['max']
+    num_boxes_min = CONFIG["shipment"]["boxes"]["min"]
+    num_boxes_max = CONFIG["shipment"]["boxes"]["max"]
     num_boxes = random.randint(num_boxes_min, num_boxes_max)
     boxes = [False] * num_boxes
-    return dict(flower=flower, num_boxes=num_boxes, arrival_time=arrival_time,
-                boxes=boxes, origin=origin, port=port)
+    return dict(
+        flower=flower,
+        num_boxes=num_boxes,
+        arrival_time=arrival_time,
+        boxes=boxes,
+        origin=origin,
+        port=port,
+    )
 
 
 class F280ShipmentGenerator:
@@ -64,7 +71,9 @@ class F280ShipmentGenerator:
         try:
             record = self.reader.next()
         except StopIteration:
-            raise RuntimeError("More shipments requested than number of records in provided F280")
+            raise RuntimeError(
+                "More shipments requested than number of records in provided F280"
+            )
 
         stems = int(record["QUANTITY"])
         if record["PATHWAY"] == "Airport":
@@ -85,12 +94,12 @@ class F280ShipmentGenerator:
             boxes=boxes,
             origin=record["ORIGIN_NM"],
             port=record["LOCATION"],
-            )
+        )
 
 
 def add_pest(shipment):
-    pest_probability = CONFIG['shipment']['pest']['probability']
-    pest_ratio = CONFIG['shipment']['pest']['ratio']
+    pest_probability = CONFIG["shipment"]["pest"]["probability"]
+    pest_ratio = CONFIG["shipment"]["pest"]["ratio"]
     if random.random() < pest_probability:
         return
     for i in range(len(shipment["boxes"])):
@@ -99,13 +108,13 @@ def add_pest(shipment):
 
 
 def inspect_shipment1(shipment):
-    if shipment['boxes'][0]:
+    if shipment["boxes"][0]:
         return False
     return True
 
 
 def inspect_shipment2(shipment):
-    if random.choice(shipment['boxes']):
+    if random.choice(shipment["boxes"]):
         return False
     return True
 
@@ -115,9 +124,9 @@ def inspect_shipment3(shipment):
 
 
 def inspect_shipment4(shipment):
-    boxes_to_inspect = CONFIG['inspection']['first_n_boxes']
-    for i in range(min(len(shipment['boxes']), boxes_to_inspect)):
-        if shipment['boxes'][i]:
+    boxes_to_inspect = CONFIG["inspection"]["first_n_boxes"]
+    for i in range(min(len(shipment["boxes"]), boxes_to_inspect)):
+        if shipment["boxes"][i]:
             return False
     return True
 
@@ -133,11 +142,11 @@ def is_flower_of_the_day(cfrp, flower, date):
 def should_inspect1(shipment, date):
     """Decided if the shipment should be expected based on CFRP and size"""
     # returns 2 bools: should_inspect, CFRP applied
-    flower = shipment['flower']
-    cfrp = CONFIG['inspection']['cfrp']['flowers']
-    max_boxes = CONFIG['inspection']['cfrp']['max_boxes']
+    flower = shipment["flower"]
+    cfrp = CONFIG["inspection"]["cfrp"]["flowers"]
+    max_boxes = CONFIG["inspection"]["cfrp"]["max_boxes"]
     # we have flowers in the CFRP, flower is in CFRP, and not too big shipment
-    if cfrp and flower in cfrp and shipment['num_boxes'] <= max_boxes:
+    if cfrp and flower in cfrp and shipment["num_boxes"] <= max_boxes:
         if is_flower_of_the_day(cfrp, flower, date):
             return True, True  # is FotD, inspect
         return False, True  # not FotD, release
@@ -150,7 +159,7 @@ def should_inspect2(shipment, date):
 
 
 def is_shipment_diseased(shipment):
-    for box in shipment['boxes']:
+    for box in shipment["boxes"]:
         if box:
             return True
     return False
@@ -158,7 +167,7 @@ def is_shipment_diseased(shipment):
 
 def count_diseased(shipment):
     count = 0
-    for box in shipment['boxes']:
+    for box in shipment["boxes"]:
         if box:
             count += 1
     return count
@@ -172,8 +181,11 @@ class PrintReporter(object):
         print("Inspection worked, found pest [TN]")
 
     def fp(self, shipment):
-        print("Inspection failed, missed {} boxes with pest [FP]".format(
-                count_diseased(shipment)))
+        print(
+            "Inspection failed, missed {} boxes with pest [FP]".format(
+                count_diseased(shipment)
+            )
+        )
 
     def fn(self):
         raise RuntimeError("False negative (programmer error)")
@@ -194,36 +206,43 @@ class MuteReporter(object):
 
 
 class Form280(object):
-
     def dispensation(self, ok, must_inspect, cfrp_active):
         if cfrp_active:
             if must_inspect:
                 if ok:
-                    dispensation = 'IRAR'
+                    dispensation = "IRAR"
                 else:
-                    dispensation = 'FUAR'
+                    dispensation = "FUAR"
             else:
-                dispensation = 'REAR'
+                dispensation = "REAR"
         else:
             if ok:
-                dispensation = 'IRMR'
+                dispensation = "IRMR"
             else:
-                dispensation = 'FUAP'
+                dispensation = "FUAP"
         return dispensation
 
-    def fill(self, date, shipment, ok, must_inspect,
-             cfrp_active, output_file):
+    def fill(self, date, shipment, ok, must_inspect, cfrp_active, output_file):
 
         dispens = self.dispensation(ok, must_inspect, cfrp_active)
         if output_file:
-            output_file.write(",".join([str(date), shipment['port'],
-                              shipment['origin'], shipment['flower'],
-                              dispens]))
-            output_file.write('\n')
+            output_file.write(
+                ",".join(
+                    [
+                        str(date),
+                        shipment["port"],
+                        shipment["origin"],
+                        shipment["flower"],
+                        dispens,
+                    ]
+                )
+            )
+            output_file.write("\n")
 
-        print("F280: {date} {shipment[port]} {shipment[origin]}"
-              " {shipment[flower]} {dispens}".format(
-                  shipment, **locals()))
+        print(
+            "F280: {date} {shipment[port]} {shipment[origin]}"
+            " {shipment[flower]} {dispens}".format(shipment, **locals())
+        )
 
 
 class SuccessRates(object):
@@ -250,7 +269,7 @@ class SuccessRates(object):
 
 
 def simulation(num_shipments, output_file):
-    ports = CONFIG['ports']
+    ports = CONFIG["ports"]
     form280 = Form280()
     reporter = PrintReporter()
     success_rates = SuccessRates(reporter)
@@ -272,11 +291,13 @@ def simulation(num_shipments, output_file):
             shipment_checked_ok = inspect_shipment4(shipment)
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
-        form280.fill(date, shipment, shipment_checked_ok,
-                     must_inspect, cfrp_active, output_file)
+        form280.fill(
+            date, shipment, shipment_checked_ok, must_inspect, cfrp_active, output_file
+        )
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
-            shipment_checked_ok, shipment_actually_ok, shipment)
+            shipment_checked_ok, shipment_actually_ok, shipment
+        )
         # two shipments every nth day
         if i % 3:
             date += 1
@@ -299,9 +320,11 @@ USAGE = """Usage:
 def load_configuration(filename):
     if filename.endswith(".json"):
         import json
+
         return json.load(open(filename))
     elif filename.endswith(".yaml") or filename.endswith(".yml"):
         import yaml
+
         return yaml.load(open(filename))
     else:
         sys.exit("Unknown file extension (file: {})".format(filename))
@@ -309,16 +332,20 @@ def load_configuration(filename):
 
 def main():
     global CONFIG
-    parser = argparse.ArgumentParser(description='Pathway Simulation')
-    required = parser.add_argument_group('required arguments')
-    required.add_argument('--num-simulations', type=int, required=True,
-                          help="Number of simulations")
-    required.add_argument('--num-shipments', type=int, required=True,
-                          help="Number of shipments")
-    required.add_argument('--config-file', type=str, required=True,
-                          help="Path to configuration file")
-    required.add_argument('--output-file', type=str, required=False,
-                          help="Path to output F280 csv file")
+    parser = argparse.ArgumentParser(description="Pathway Simulation")
+    required = parser.add_argument_group("required arguments")
+    required.add_argument(
+        "--num-simulations", type=int, required=True, help="Number of simulations"
+    )
+    required.add_argument(
+        "--num-shipments", type=int, required=True, help="Number of shipments"
+    )
+    required.add_argument(
+        "--config-file", type=str, required=True, help="Path to configuration file"
+    )
+    required.add_argument(
+        "--output-file", type=str, required=False, help="Path to output F280 csv file"
+    )
     args = parser.parse_args()
 
     num_simulations = args.num_simulations
@@ -328,16 +355,15 @@ def main():
     missing = 0
     f = None
     if args.output_file:
-        f = open(args.output_file, 'w')
+        f = open(args.output_file, "w")
     for i in range(num_simulations):
         missing += simulation(num_shipments, f)
     missing /= num_simulations
-    print("On average, missing {0:.0f}% of shipments with pest.".format(
-        missing))
+    print("On average, missing {0:.0f}% of shipments with pest.".format(missing))
     print("result={0:.2f}".format(missing))
     if f:
         f.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
