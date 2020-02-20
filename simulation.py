@@ -31,35 +31,53 @@ import random
 import argparse
 import csv
 from collections import namedtuple
+from datetime import datetime, timedelta
 
 
 # global configuration usable in all functions
 CONFIG = None
 
 
-def generate_shipment(port, arrival_time):
-    """Generate Inspectional Unit
+class ParameterShipmentGenerator:
+    def __init__(self, parameters, ports, start_date):
+        """Set parameters for shipement generation
 
-    Each item (box) in boxes (list) is set to True if a pest/pathogen is there,
-    False otherwise.
-    """
-    # flowers or commodities
-    flowers = CONFIG["shipment"]["flowers"]
-    origins = CONFIG["shipment"]["origins"]
-    flower = random.choice(flowers)
-    origin = random.choice(origins)
-    num_boxes_min = CONFIG["shipment"]["boxes"]["min"]
-    num_boxes_max = CONFIG["shipment"]["boxes"]["max"]
-    num_boxes = random.randint(num_boxes_min, num_boxes_max)
-    boxes = [False] * num_boxes
-    return dict(
-        flower=flower,
-        num_boxes=num_boxes,
-        arrival_time=arrival_time,
-        boxes=boxes,
-        origin=origin,
-        port=port,
-    )
+        :param parameters: Shipment parameters
+        :param ports: List of ports to choose from
+        """
+        self.params = parameters
+        self.ports = ports
+        self.num_generated = 0
+        if isinstance(start_date, str):
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        self.date = start_date
+
+    def generate_shipment(self):
+        """Generate Inspection Unit"""
+        # flowers or commodities
+        port = random.choice(self.ports)
+        flowers = self.params["flowers"]
+        origins = self.params["origins"]
+        flower = random.choice(flowers)
+        origin = random.choice(origins)
+        num_boxes_min = self.params["boxes"]["min"]
+        num_boxes_max = self.params["boxes"]["max"]
+        num_boxes = random.randint(num_boxes_min, num_boxes_max)
+        boxes = [False] * num_boxes
+        self.num_generated += 1
+        # two shipments every nth day
+        if self.num_generated % 3:
+            print(self.date, timedelta(days=1))
+            self.date += timedelta(days=1)
+
+        return dict(
+            flower=flower,
+            num_boxes=num_boxes,
+            arrival_time=self.date,
+            boxes=boxes,
+            origin=origin,
+            port=port,
+        )
 
 
 class F280ShipmentGenerator:
@@ -88,10 +106,12 @@ class F280ShipmentGenerator:
         if num_boxes < 1:
             num_boxes = 1
         boxes = [False] * num_boxes
+
+        date = datetime.strptime(record["REPORT_DT"], "%Y-%m-%d")
         return dict(
             flower=record["COMMODITY"],
             num_boxes=num_boxes,
-            arrival_time=record["REPORT_DT"],
+            arrival_time=date,
             boxes=boxes,
             origin=record["ORIGIN_NM"],
             port=record["LOCATION"],
@@ -99,6 +119,13 @@ class F280ShipmentGenerator:
 
 
 def add_pest(shipment):
+    """Add pest to shipment
+
+    Assuming a list of boxes with the non-infested boxes set to False.
+
+    Each item (box) in boxes (list) is set to True if a pest/pathogen is
+    there, False otherwise.
+    """
     pest_probability = CONFIG["shipment"]["pest"]["probability"]
     pest_ratio = CONFIG["shipment"]["pest"]["ratio"]
     if random.random() < pest_probability:
@@ -134,7 +161,7 @@ def inspect_shipment4(shipment):
 
 
 def is_flower_of_the_day(cfrp, flower, date):
-    i = date % len(cfrp)
+    i = date.day % len(cfrp)
     if flower == cfrp[i]:
         print("{} is flower of the day".format(flower))
         return True
@@ -277,27 +304,26 @@ SimulationResult = namedtuple(
 
 
 def simulation(num_shipments, output_file):
-    ports = CONFIG["ports"]
     form280 = Form280()
     reporter = PrintReporter()
     success_rates = SuccessRates(reporter)
     num_inspections = 0
     total_num_boxes_inspected = 0
     total_num_boxes = 0
-    date = 1
 
     if "input_F280" in CONFIG:
         shipment_generator = F280ShipmentGenerator(CONFIG["input_F280"])
+    else:
+        shipment_generator = ParameterShipmentGenerator(
+            parameters=CONFIG["shipment"],
+            ports=CONFIG["ports"],
+            start_date="2020-04-01",
+        )
 
     for i in range(num_shipments):
-        if "input_F280" in CONFIG:
-            shipment = shipment_generator.generate_shipment()
-        else:
-            port = random.choice(ports)
-            arrival_time = i
-            shipment = generate_shipment(port, arrival_time)
+        shipment = shipment_generator.generate_shipment()
         add_pest(shipment)
-        must_inspect, cfrp_active = should_inspect1(shipment, date)
+        must_inspect, cfrp_active = should_inspect1(shipment, shipment["arrival_time"])
         if must_inspect:
             shipment_checked_ok, num_boxes_inspected = inspect_shipment4(shipment)
             num_inspections += 1
@@ -306,15 +332,17 @@ def simulation(num_shipments, output_file):
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
         form280.fill(
-            date, shipment, shipment_checked_ok, must_inspect, cfrp_active, output_file
+            shipment["arrival_time"],
+            shipment,
+            shipment_checked_ok,
+            must_inspect,
+            cfrp_active,
+            output_file,
         )
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
             shipment_checked_ok, shipment_actually_ok, shipment
         )
-        # two shipments every nth day
-        if i % 3:
-            date += 1
 
     num_diseased = num_shipments - success_rates.ok
     if num_diseased:
