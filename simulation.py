@@ -249,19 +249,20 @@ class Form280(object):
             self.writer.writerow(columns)
 
     def dispensation(self, ok, must_inspect, cfrp_active):
+        codes = CONFIG["disposition_codes"]
         if cfrp_active:
             if must_inspect:
                 if ok:
-                    dispensation = "IRAR"
+                    dispensation = codes.get("cfrp_inspected_ok", "IRAR")
                 else:
-                    dispensation = "FUAR"
+                    dispensation = codes.get("cfrp_inspected_pest", "FUAR")
             else:
-                dispensation = "REAR"
+                dispensation = codes.get("cfrp_not_inspected", "REAR")
         else:
             if ok:
-                dispensation = "IRMR"
+                dispensation = codes.get("inspected_ok", "IRMR")
             else:
-                dispensation = "FUAP"
+                dispensation = codes.get("inspected_pest", "FUAP")
         return dispensation
 
     def fill(self, date, shipment, ok, must_inspect, cfrp_active):
@@ -407,6 +408,9 @@ def main():
     num_simulations = args.num_simulations
     num_shipments = args.num_shipments
     CONFIG = load_configuration(args.config_file)
+    # allow for an empty disposition code specification
+    if "disposition_codes" not in CONFIG:
+        CONFIG["disposition_codes"] = {}
 
     total_missing = 0
     total_num_inspections = 0
