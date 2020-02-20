@@ -238,10 +238,15 @@ class Form280(object):
         self.file = file
         # selection and order of columns to output
         columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY", "dispensation"]
-        self.writer = csv.writer(
-            self.file, delimiter=separator, quotechar='"', quoting=csv.QUOTE_NONNUMERIC
-        )
-        self.writer.writerow(columns)
+
+        if self.file:
+            self.writer = csv.writer(
+                self.file,
+                delimiter=separator,
+                quotechar='"',
+                quoting=csv.QUOTE_NONNUMERIC,
+            )
+            self.writer.writerow(columns)
 
     def dispensation(self, ok, must_inspect, cfrp_active):
         if cfrp_active:
@@ -273,8 +278,8 @@ class Form280(object):
             )
         else:
             print(
-                "F280: {date:%Y-%m-%d} {shipment[port]} {shipment[origin]}"
-                " {shipment[flower]} {dispens}".format(shipment, **locals())
+                "F280: {date:%Y-%m-%d} | {shipment[port]} | {shipment[origin]}"
+                " | {shipment[flower]} | {dispens}".format(shipment, **locals())
             )
 
 
@@ -407,7 +412,7 @@ def main():
     total_num_inspections = 0
     total_num_boxes = 0
     total_num_boxes_inspected = 0
-    f280_file = sys.stdout
+    f280_file = None
     if args.output_file:
         f280_file = open(args.output_file, "w")
     for i in range(num_simulations):
