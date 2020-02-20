@@ -141,7 +141,7 @@ The configuration is provided in a file which is specified as a command line
 parameter. The configuration format is JSON (extension `.json`) or YAML
 (extensions `.yml` or `.yaml`). The Python `json` package is part of
 the Python standard library while the `yaml` package needs to be
-installed (as of Python 3.6).
+installed (as of Python 3.8).
 
 A simple run (runs) of the simulation with predefined values
 covering both success rate in detection of pests and generation of F280
@@ -154,13 +154,13 @@ records:
 Generating a sample dataset with F280 records only:
 
 ```
-./test_dataset.sh synthetic_records.csv "," 1000
+./generate_synthetic_F280_dataset.sh synthetic_records.csv 1000
 ```
 
 Direct run of the simulation with 1000 shipments repeated 20 times:
 
 ```
-./simulation.py 20 1000 config.yml
+./simulation.py --num-simulations 20 --num-shipments 1000 --config-file config.yml
 ```
 
 Get all command line options for the simulation by running:
@@ -195,7 +195,7 @@ and uncompressed. If you need some troubleshooting,
 the following example might be helpful (relying of the program `file`).
 
 ```
-$ file data.zip 
+$ file data.zip
 data.zip: Zip archive data, at least v2.0 to extract
 $ file synthetic_records.csv
 synthetic_records.csv: ASCII text
@@ -203,8 +203,9 @@ synthetic_records.csv: ASCII text
 
 ## Authors
 
-* Vaclav Petras
-* Anna Petrasova
+* Vaclav Petras, NCSU Center for Geospatial Analytics
+* Anna Petrasova, NCSU Center for Geospatial Analytics
+* Kellyn P. Montgomery, NCSU Center for Geospatial Analytics
 
 ## License
 
@@ -218,4 +219,4 @@ represent the views of USDA APHIS.
 
 Please note that this is a simulation and it needs to be calibrated
 to give any realistic or actionable results. Results presented here
-are examples for demonstrations purposes.
+are examples for demonstration purposes only.
