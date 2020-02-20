@@ -234,6 +234,13 @@ class MuteReporter(object):
 
 
 class Form280(object):
+    def __init__(self, file, separator=","):
+        self.file = file
+        # selection and order of columns to output
+        columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY", "dispensation"]
+        self.writer = csv.writer(self.file, delimiter=separator, quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
+        self.writer.writerow(columns)
+
     def dispensation(self, ok, must_inspect, cfrp_active):
         if cfrp_active:
             if must_inspect:
@@ -250,27 +257,23 @@ class Form280(object):
                 dispensation = "FUAP"
         return dispensation
 
-    def fill(self, date, shipment, ok, must_inspect, cfrp_active, output_file):
-
+    def fill(self, date, shipment, ok, must_inspect, cfrp_active):
         dispens = self.dispensation(ok, must_inspect, cfrp_active)
-        if output_file:
-            output_file.write(
-                ",".join(
+        if self.file:
+            self.writer.writerow(
                     [
-                        str(date),
+                        date.strftime("%Y-%m-%d"),
                         shipment["port"],
                         shipment["origin"],
                         shipment["flower"],
                         dispens,
                     ]
                 )
+        else:
+            print(
+                "F280: {date:%Y-%m-%d} {shipment[port]} {shipment[origin]}"
+                " {shipment[flower]} {dispens}".format(shipment, **locals())
             )
-            output_file.write("\n")
-
-        print(
-            "F280: {date:%Y-%m-%d} {shipment[port]} {shipment[origin]}"
-            " {shipment[flower]} {dispens}".format(shipment, **locals())
-        )
 
 
 class SuccessRates(object):
@@ -302,8 +305,8 @@ SimulationResult = namedtuple(
 )
 
 
-def simulation(num_shipments, output_file):
-    form280 = Form280()
+def simulation(num_shipments, f280_file):
+    form280 = Form280(f280_file)
     reporter = PrintReporter()
     success_rates = SuccessRates(reporter)
     num_inspections = 0
@@ -336,7 +339,6 @@ def simulation(num_shipments, output_file):
             shipment_checked_ok,
             must_inspect,
             cfrp_active,
-            output_file,
         )
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
@@ -403,11 +405,11 @@ def main():
     total_num_inspections = 0
     total_num_boxes = 0
     total_num_boxes_inspected = 0
-    f = None
+    f280_file = sys.stdout
     if args.output_file:
-        f = open(args.output_file, "w")
+        f280_file = open(args.output_file, "w")
     for i in range(num_simulations):
-        result = simulation(num_shipments, f)
+        result = simulation(num_shipments, f280_file)
         total_missing += result.missing
         total_num_inspections += result.num_inspections
         total_num_boxes += result.num_boxes
@@ -431,8 +433,8 @@ def main():
     print("result={0:.2f}".format(total_missing))
     print("num_inspections={0:.0f}".format(total_num_inspections))
     print("total_num_boxes_inspected={0:.0f}".format(total_num_boxes_inspected))
-    if f:
-        f.close()
+    if args.output_file:
+        f280_file.close()
 
 
 if __name__ == "__main__":
