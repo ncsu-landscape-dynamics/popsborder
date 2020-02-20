@@ -24,12 +24,13 @@ Simulation for evaluataion of pathways
 .. codeauthor:: Vaclav Petras <wenzeslaus gmail com>
 """
 
-from __future__ import print_function
+from __future__ import print_function, division
 
 import sys
 import random
 import argparse
 import csv
+from collections import namedtuple
 
 
 # global configuration usable in all functions
@@ -120,7 +121,7 @@ def inspect_shipment2(shipment):
 
 
 def inspect_shipment3(shipment):
-    return not is_shipment_diseased(shipment), 1
+    return not is_shipment_diseased(shipment), shipment["num_boxes"]
 
 
 def inspect_shipment4(shipment):
@@ -269,6 +270,12 @@ class SuccessRates(object):
             self.reporter.fn()
 
 
+SimulationResult = namedtuple(
+    "SimulationResult",
+    ["missing", "num_inspections", "num_boxes_inspected", "num_boxes"],
+)
+
+
 def simulation(num_shipments, output_file):
     ports = CONFIG["ports"]
     form280 = Form280()
@@ -276,6 +283,7 @@ def simulation(num_shipments, output_file):
     success_rates = SuccessRates(reporter)
     num_inspections = 0
     total_num_boxes_inspected = 0
+    total_num_boxes = 0
     date = 1
 
     if "input_F280" in CONFIG:
@@ -294,6 +302,7 @@ def simulation(num_shipments, output_file):
             shipment_checked_ok, num_boxes_inspected = inspect_shipment4(shipment)
             num_inspections += 1
             total_num_boxes_inspected += num_boxes_inspected
+            total_num_boxes += shipment["num_boxes"]
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
         form280.fill(
@@ -312,10 +321,15 @@ def simulation(num_shipments, output_file):
         # avoiding float division by zero
         missing = 100 * float(success_rates.fp) / (num_diseased)
         print("Missing {0:.0f}% of shipments with pest.".format(missing))
-        return missing, num_inspections, total_num_boxes_inspected
     else:
         # we didn't miss anything
-        return 0, num_inspections, total_num_boxes_inspected
+        missing = 0
+    return SimulationResult(
+        missing=missing,
+        num_inspections=num_inspections,
+        num_boxes=total_num_boxes,
+        num_boxes_inspected=total_num_boxes_inspected,
+    )
 
 
 USAGE = """Usage:
@@ -360,27 +374,36 @@ def main():
 
     total_missing = 0
     total_num_inspections = 0
+    total_num_boxes = 0
     total_num_boxes_inspected = 0
     f = None
     if args.output_file:
         f = open(args.output_file, "w")
     for i in range(num_simulations):
-        missing, num_inspections, num_boxes_inspected = simulation(num_shipments, f)
-        total_missing += missing
-        total_num_inspections += num_inspections
-        total_num_boxes_inspected += num_boxes_inspected
-    total_missing /= num_simulations
-    total_num_inspections /= num_simulations
-    total_num_boxes_inspected /= num_simulations
+        result = simulation(num_shipments, f)
+        total_missing += result.missing
+        total_num_inspections += result.num_inspections
+        total_num_boxes += result.num_boxes
+        total_num_boxes_inspected += result.num_boxes_inspected
+    # make these relative (reusing the variables)
+    total_missing /= float(num_simulations)
+    total_num_inspections /= float(num_simulations)
+    total_num_boxes /= float(num_simulations)
+    total_num_boxes_inspected /= float(num_simulations)
     print("On average, missing {0:.0f}% of shipments with pest.".format(total_missing))
     print(
         "On average, inspecting {0:.0f}% of shipments.".format(
             100 * total_num_inspections / float(num_shipments)
         )
     )
-    print("On average, inspected {0:.0f} boxes.".format(total_num_boxes_inspected))
+    print(
+        "On average, inspected {0:.0f}% of boxes.".format(
+            100 * total_num_boxes_inspected / total_num_boxes
+        )
+    )
     print("result={0:.2f}".format(total_missing))
     print("num_inspections={0:.0f}".format(total_num_inspections))
+    print("total_num_boxes_inspected={0:.0f}".format(total_num_boxes_inspected))
     if f:
         f.close()
 
