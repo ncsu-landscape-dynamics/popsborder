@@ -237,7 +237,7 @@ class Form280(object):
     def __init__(self, file, separator=","):
         self.file = file
         # selection and order of columns to output
-        columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY", "dispensation"]
+        columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY", "disposition"]
 
         if self.file:
             self.writer = csv.writer(
@@ -248,25 +248,25 @@ class Form280(object):
             )
             self.writer.writerow(columns)
 
-    def dispensation(self, ok, must_inspect, cfrp_active):
+    def disposition(self, ok, must_inspect, cfrp_active):
         codes = CONFIG["disposition_codes"]
         if cfrp_active:
             if must_inspect:
                 if ok:
-                    dispensation = codes.get("cfrp_inspected_ok", "IRAR")
+                    disposition = codes.get("cfrp_inspected_ok", "IRAR")
                 else:
-                    dispensation = codes.get("cfrp_inspected_pest", "FUAR")
+                    disposition = codes.get("cfrp_inspected_pest", "FUAR")
             else:
-                dispensation = codes.get("cfrp_not_inspected", "REAR")
+                disposition = codes.get("cfrp_not_inspected", "REAR")
         else:
             if ok:
-                dispensation = codes.get("inspected_ok", "IRMR")
+                disposition = codes.get("inspected_ok", "IRMR")
             else:
-                dispensation = codes.get("inspected_pest", "FUAP")
-        return dispensation
+                disposition = codes.get("inspected_pest", "FUAP")
+        return disposition
 
     def fill(self, date, shipment, ok, must_inspect, cfrp_active):
-        dispens = self.dispensation(ok, must_inspect, cfrp_active)
+        disposition_code = self.disposition(ok, must_inspect, cfrp_active)
         if self.file:
             self.writer.writerow(
                 [
@@ -274,7 +274,7 @@ class Form280(object):
                     shipment["port"],
                     shipment["origin"],
                     shipment["flower"],
-                    dispens,
+                    disposition_code,
                 ]
             )
         else:
