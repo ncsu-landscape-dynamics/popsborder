@@ -67,7 +67,6 @@ class ParameterShipmentGenerator:
         self.num_generated += 1
         # two shipments every nth day
         if self.num_generated % 3:
-            print(self.date, timedelta(days=1))
             self.date += timedelta(days=1)
 
         return dict(
@@ -269,7 +268,7 @@ class Form280(object):
             output_file.write("\n")
 
         print(
-            "F280: {date} {shipment[port]} {shipment[origin]}"
+            "F280: {date:%Y-%m-%d} {shipment[port]} {shipment[origin]}"
             " {shipment[flower]} {dispens}".format(shipment, **locals())
         )
 
