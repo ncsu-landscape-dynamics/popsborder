@@ -253,16 +253,18 @@ class Form280(object):
         if cfrp_active:
             if must_inspect:
                 if ok:
-                    disposition = codes.get("cfrp_inspected_ok", "IRAR")
+                    disposition = codes.get("cfrp_inspected_ok", "OK CFRP Inspected")
                 else:
-                    disposition = codes.get("cfrp_inspected_pest", "FUAR")
+                    disposition = codes.get(
+                        "cfrp_inspected_pest", "Pest Found CFRP Inspected"
+                    )
             else:
-                disposition = codes.get("cfrp_not_inspected", "REAR")
+                disposition = codes.get("cfrp_not_inspected", "CFRP Not Inspected")
         else:
             if ok:
-                disposition = codes.get("inspected_ok", "IRMR")
+                disposition = codes.get("inspected_ok", "OK Inspected")
             else:
-                disposition = codes.get("inspected_pest", "FUAP")
+                disposition = codes.get("inspected_pest", "Pest Found")
         return disposition
 
     def fill(self, date, shipment, ok, must_inspect, cfrp_active):

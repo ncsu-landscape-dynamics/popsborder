@@ -169,6 +169,19 @@ Get all command line options for the simulation by running:
 ./simulation.py --help
 ```
 
+### Configuring disposition codes:
+
+Here is an example with disposition codes close to what is used in F280:
+
+```
+disposition_codes:
+  inspected_ok: IRMR
+  inspected_pest: FUAP
+  cfrp_inspected_ok: IRAR
+  cfrp_inspected_pest: FUAR
+  cfrp_not_inspected: REAR
+```
+
 ### Obtaining pre-computed sample database records
 
 #### Download using a web browser
