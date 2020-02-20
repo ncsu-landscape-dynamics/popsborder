@@ -238,7 +238,9 @@ class Form280(object):
         self.file = file
         # selection and order of columns to output
         columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY", "dispensation"]
-        self.writer = csv.writer(self.file, delimiter=separator, quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
+        self.writer = csv.writer(
+            self.file, delimiter=separator, quotechar='"', quoting=csv.QUOTE_NONNUMERIC
+        )
         self.writer.writerow(columns)
 
     def dispensation(self, ok, must_inspect, cfrp_active):
@@ -261,14 +263,14 @@ class Form280(object):
         dispens = self.dispensation(ok, must_inspect, cfrp_active)
         if self.file:
             self.writer.writerow(
-                    [
-                        date.strftime("%Y-%m-%d"),
-                        shipment["port"],
-                        shipment["origin"],
-                        shipment["flower"],
-                        dispens,
-                    ]
-                )
+                [
+                    date.strftime("%Y-%m-%d"),
+                    shipment["port"],
+                    shipment["origin"],
+                    shipment["flower"],
+                    dispens,
+                ]
+            )
         else:
             print(
                 "F280: {date:%Y-%m-%d} {shipment[port]} {shipment[origin]}"
