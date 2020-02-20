@@ -9,7 +9,7 @@ test:
 
 data:
   script:
-  - ./test_dataset.sh synthetic_records.csv "," 1000
+  - ./generate_synthetic_F280_dataset.sh synthetic_records.csv 1000
   artifacts:
     paths:
     - synthetic_records.csv
