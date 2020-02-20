@@ -280,7 +280,7 @@ class Form280(object):
         else:
             print(
                 "F280: {date:%Y-%m-%d} | {shipment[port]} | {shipment[origin]}"
-                " | {shipment[flower]} | {dispens}".format(shipment, **locals())
+                " | {shipment[flower]} | {disposition_code}".format(shipment, **locals())
             )
 
 
