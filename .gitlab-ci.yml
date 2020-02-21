@@ -1,18 +1,15 @@
 default:
+  image: python:3.8
   before_script:
-  - apt-get update -qy
-  - apt-get install -y python3-yaml
+  - pip install yaml
 
 test:
   script:
-  - python3 simulation.py --num-simulations 5 --num-shipments 50 --config-file config.yml
+  - python simulation.py --num-simulations 5 --num-shipments 50 --config-file config.yml
 
 linting:
   before_script:
-  - apt-get update -qy
-  - apt-get install -y python3-pip
-  - python3 -m pip install --upgrade pip
-  - pip install flake8
+  - pip install yaml flake8
   script:
   - flake8 .
 
