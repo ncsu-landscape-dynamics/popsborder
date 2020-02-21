@@ -234,8 +234,9 @@ class MuteReporter(object):
 
 
 class Form280(object):
-    def __init__(self, file, separator=","):
+    def __init__(self, file, disposition_codes, separator=","):
         self.file = file
+        self.codes = disposition_codes
         # selection and order of columns to output
         columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY", "disposition"]
 
@@ -249,7 +250,7 @@ class Form280(object):
             self.writer.writerow(columns)
 
     def disposition(self, ok, must_inspect, cfrp_active):
-        codes = CONFIG["disposition_codes"]
+        codes = self.codes
         if cfrp_active:
             if must_inspect:
                 if ok:
@@ -318,7 +319,7 @@ SimulationResult = namedtuple(
 
 
 def simulation(num_shipments, f280_file):
-    form280 = Form280(f280_file)
+    form280 = Form280(f280_file, disposition_codes=CONFIG["disposition_codes"])
     reporter = PrintReporter()
     success_rates = SuccessRates(reporter)
     num_inspections = 0
