@@ -1,15 +1,21 @@
-before_script:
-  - apt-get update -qy
-  - apt-get install -y pep8 python-yaml
+default:
+  image: python:3.8
+  before_script:
+  - pip install PyYAML
 
 test:
   script:
-  - pep8 simulation.py
   - python simulation.py --num-simulations 5 --num-shipments 50 --config-file config.yml
+
+linting:
+  before_script:
+  - pip install PyYAML flake8
+  script:
+  - flake8 .
 
 data:
   script:
-  - ./test_dataset.sh synthetic_records.csv "," 1000
+  - ./generate_synthetic_F280_dataset.sh synthetic_records.csv 1000
   artifacts:
     paths:
     - synthetic_records.csv
