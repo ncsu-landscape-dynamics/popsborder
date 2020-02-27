@@ -446,9 +446,10 @@ def main():
             100 * total_num_boxes_inspected / total_num_boxes
         )
     )
-    print("result={0:.2f}".format(total_missing))
-    print("num_inspections={0:.0f}".format(total_num_inspections))
-    print("total_num_boxes_inspected={0:.0f}".format(total_num_boxes_inspected))
+    print("---")
+    print("slippage: {0:.2f}".format(total_missing))
+    print("num_inspections: {0:.0f}".format(total_num_inspections))
+    print("total_num_boxes_inspected: {0:.0f}".format(total_num_boxes_inspected))
     if args.output_file:
         f280_file.close()
 
