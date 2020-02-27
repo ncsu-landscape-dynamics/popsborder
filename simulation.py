@@ -387,6 +387,8 @@ def load_configuration(filename):
     elif filename.endswith(".yaml") or filename.endswith(".yml"):
         import yaml
 
+        if hasattr(yaml, "full_load"):
+            return yaml.full_load(open(filename))
         return yaml.load(open(filename))
     else:
         sys.exit("Unknown file extension (file: {})".format(filename))
