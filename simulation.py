@@ -28,6 +28,7 @@ from __future__ import print_function, division
 
 import sys
 import math
+import types
 import random
 import argparse
 import csv
@@ -441,6 +442,39 @@ def simulation(config, num_shipments, f280_file):
     )
 
 
+def run_simulation(config, num_simulations, num_shipments, output_f280_file):
+    try:
+        # namedtuple is not applicable since we need modifications
+        totals = types.SimpleNamespace(
+            missing=0, num_inspections=0, num_boxes=0, num_boxes_inspected=0,
+        )
+    except AttributeError:
+        # Python 2 fallback
+        totals = lambda: None  # noqa: E731
+        totals.missing = 0
+        totals.num_inspections = 0
+        totals.num_boxes = 0
+        totals.num_boxes_inspected = 0
+
+    f280_file = None
+    if output_f280_file:
+        f280_file = open(output_f280_file, "w")
+    for i in range(num_simulations):
+        result = simulation(config, num_shipments, f280_file)
+        totals.missing += result.missing
+        totals.num_inspections += result.num_inspections
+        totals.num_boxes += result.num_boxes
+        totals.num_boxes_inspected += result.num_boxes_inspected
+    # make these relative (reusing the variables)
+    totals.missing /= float(num_simulations)
+    totals.num_inspections /= float(num_simulations)
+    totals.num_boxes /= float(num_simulations)
+    totals.num_boxes_inspected /= float(num_simulations)
+    if output_f280_file:
+        f280_file.close()
+    return totals
+
+
 USAGE = """Usage:
   {} <number of simulations> <number of shipments> <config file>
 """
@@ -478,45 +512,28 @@ def main():
     )
     args = parser.parse_args()
 
-    num_simulations = args.num_simulations
-    num_shipments = args.num_shipments
-    config = load_configuration(args.config_file)
+    totals = run_simulation(
+        config=load_configuration(args.config_file),
+        num_simulations=args.num_simulations,
+        num_shipments=args.num_shipments,
+        output_f280_file=args.output_file,
+    )
 
-    total_missing = 0
-    total_num_inspections = 0
-    total_num_boxes = 0
-    total_num_boxes_inspected = 0
-    f280_file = None
-    if args.output_file:
-        f280_file = open(args.output_file, "w")
-    for i in range(num_simulations):
-        result = simulation(config, num_shipments, f280_file)
-        total_missing += result.missing
-        total_num_inspections += result.num_inspections
-        total_num_boxes += result.num_boxes
-        total_num_boxes_inspected += result.num_boxes_inspected
-    # make these relative (reusing the variables)
-    total_missing /= float(num_simulations)
-    total_num_inspections /= float(num_simulations)
-    total_num_boxes /= float(num_simulations)
-    total_num_boxes_inspected /= float(num_simulations)
-    print("On average, missing {0:.0f}% of shipments with pest.".format(total_missing))
+    print("On average, missing {0:.0f}% of shipments with pest.".format(totals.missing))
     print(
         "On average, inspecting {0:.0f}% of shipments.".format(
-            100 * total_num_inspections / float(num_shipments)
+            100 * totals.num_inspections / float(args.num_shipments)
         )
     )
     print(
         "On average, inspected {0:.0f}% of boxes.".format(
-            100 * total_num_boxes_inspected / total_num_boxes
+            100 * totals.num_boxes_inspected / totals.num_boxes
         )
     )
     print("---")
-    print("slippage: {0:.2f}".format(total_missing))
-    print("num_inspections: {0:.0f}".format(total_num_inspections))
-    print("total_num_boxes_inspected: {0:.0f}".format(total_num_boxes_inspected))
-    if args.output_file:
-        f280_file.close()
+    print("slippage: {0:.2f}".format(totals.missing))
+    print("num_inspections: {0:.0f}".format(totals.num_inspections))
+    print("total_num_boxes_inspected: {0:.0f}".format(totals.num_boxes_inspected))
 
 
 if __name__ == "__main__":
