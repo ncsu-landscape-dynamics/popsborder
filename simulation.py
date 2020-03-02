@@ -349,11 +349,11 @@ SimulationResult = namedtuple(
 )
 
 
-def simulation(config, num_shipments, f280_file, print_inspection_results=False):
+def simulation(config, num_shipments, f280_file, verbose=False):
     # allow for an empty disposition code specification
     disposition_codes = config.get("disposition_codes", {})
     form280 = Form280(f280_file, disposition_codes=disposition_codes)
-    if print_inspection_results:
+    if verbose:
         reporter = PrintReporter()
     else:
         reporter = MuteReporter()
@@ -441,7 +441,8 @@ def simulation(config, num_shipments, f280_file, print_inspection_results=False)
     if num_diseased:
         # avoiding float division by zero
         missing = 100 * float(success_rates.fp) / (num_diseased)
-        print("Missing {0:.0f}% of shipments with pest.".format(missing))
+        if verbose:
+            print("Missing {0:.0f}% of shipments with pest.".format(missing))
     else:
         # we didn't miss anything
         missing = 0
@@ -453,7 +454,7 @@ def simulation(config, num_shipments, f280_file, print_inspection_results=False)
     )
 
 
-def run_simulation(config, num_simulations, num_shipments, output_f280_file):
+def run_simulation(config, num_simulations, num_shipments, output_f280_file, verbose):
     try:
         # namedtuple is not applicable since we need modifications
         totals = types.SimpleNamespace(
@@ -468,7 +469,7 @@ def run_simulation(config, num_simulations, num_shipments, output_f280_file):
         totals.num_boxes_inspected = 0
 
     for i in range(num_simulations):
-        result = simulation(config, num_shipments, output_f280_file)
+        result = simulation(config, num_shipments, output_f280_file, verbose)
         totals.missing += result.missing
         totals.num_inspections += result.num_inspections
         totals.num_boxes += result.num_boxes
@@ -516,6 +517,9 @@ def main():
     required.add_argument(
         "--output-file", type=str, required=False, help="Path to output F280 csv file"
     )
+    required.add_argument(
+        "--verbose", action="store_true", help="Print a lot of diagnostic messages",
+    )
     args = parser.parse_args()
 
     totals = run_simulation(
@@ -523,6 +527,7 @@ def main():
         num_simulations=args.num_simulations,
         num_shipments=args.num_shipments,
         output_f280_file=args.output_file,
+        verbose=args.verbose,
     )
 
     print("On average, missing {0:.0f}% of shipments with pest.".format(totals.missing))
