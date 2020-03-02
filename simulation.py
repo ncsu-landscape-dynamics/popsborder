@@ -166,8 +166,8 @@ def inspect_shipment_percentage(shipment):
     min_boxes = config.get("min_boxes", 1)
     # closest higher integer
     boxes_to_inspect = int(math.ceil(ratio * len(shipment["boxes"])))
-    if boxes_to_inspect < min_boxes:
-        boxes_to_inspect = min_boxes
+    boxes_to_inspect = max(min_boxes, boxes_to_inspect)
+    boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
     # in any case, first n boxes
     strategy = config["strategy"]
     if strategy == "to_completion":
