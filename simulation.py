@@ -341,7 +341,9 @@ SimulationResult = namedtuple(
 
 
 def simulation(config, num_shipments, f280_file):
-    form280 = Form280(f280_file, disposition_codes=config["disposition_codes"])
+    # allow for an empty disposition code specification
+    disposition_codes = config.get("disposition_codes", {})
+    form280 = Form280(f280_file, disposition_codes=disposition_codes)
     reporter = PrintReporter()
     success_rates = SuccessRates(reporter)
     num_inspections = 0
@@ -479,9 +481,6 @@ def main():
     num_simulations = args.num_simulations
     num_shipments = args.num_shipments
     config = load_configuration(args.config_file)
-    # allow for an empty disposition code specification
-    if "disposition_codes" not in config:
-        config["disposition_codes"] = {}
 
     total_missing = 0
     total_num_inspections = 0
