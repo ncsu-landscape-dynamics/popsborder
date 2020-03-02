@@ -368,7 +368,9 @@ def simulation(num_shipments, f280_file):
         must_inspect, cfrp_active = should_inspect2(shipment, shipment["arrival_time"])
         if must_inspect:
             # TODO: make this configurable (2% or hypergeom)
-            shipment_checked_ok, num_boxes_inspected = inspect_shipment_percentage(shipment)
+            shipment_checked_ok, num_boxes_inspected = inspect_shipment_percentage(
+                shipment
+            )
             num_inspections += 1
             total_num_boxes_inspected += num_boxes_inspected
             total_num_boxes += shipment["num_boxes"]
