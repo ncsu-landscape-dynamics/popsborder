@@ -189,8 +189,8 @@ disposition_codes:
 Cut Flower Release Program (CFRP):
 
 ```
-inspection:
-  cfrp:
+release_programs:
+  naive_cfrp:
     flowers:
     - Hyacinthus
     - Gerbera

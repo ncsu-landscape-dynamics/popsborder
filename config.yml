@@ -24,6 +24,15 @@ shipment:
   boxes:
     min: 1
     max: 50
+release_programs:
+  naive_cfrp:
+    flowers:
+    - Hyacinthus
+    - Gerbera
+    - Rosa
+    - Actinidia
+    max_boxes: 10  # do not apply to shipments larger than
+
 inspection:
   strategy: percentage
   percentage:

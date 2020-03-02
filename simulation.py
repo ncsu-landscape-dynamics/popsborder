@@ -193,23 +193,23 @@ def is_flower_of_the_day(cfrp, flower, date):
     return False
 
 
-def should_inspect1(shipment, date):
+def naive_cfrp(config, shipment, date):
     """Decided if the shipment should be expected based on CFRP and size"""
     # returns 2 bools: should_inspect, CFRP applied
     flower = shipment["flower"]
-    cfrp = CONFIG["inspection"]["cfrp"]["flowers"]
-    max_boxes = CONFIG["inspection"]["cfrp"]["max_boxes"]
+    cfrp = config["flowers"]
+    max_boxes = config["max_boxes"]
     # we have flowers in the CFRP, flower is in CFRP, and not too big shipment
     if cfrp and flower in cfrp and shipment["num_boxes"] <= max_boxes:
         if is_flower_of_the_day(cfrp, flower, date):
-            return True, True  # is FotD, inspect
-        return False, True  # not FotD, release
-    return True, False  # not in CFRP or large, inspect
+            return True, "naive_cfrp"  # is FotD, inspect
+        return False, "naive_cfrp"  # not FotD, release
+    return True, None  # not in CFRP or large, inspect
 
 
-def should_inspect2(shipment, date):
+def inspect_always(shipment, date):
     """Inspect always"""
-    return True, False
+    return True, None
 
 
 def is_shipment_diseased(shipment):
@@ -275,9 +275,9 @@ class Form280(object):
             )
             self.writer.writerow(columns)
 
-    def disposition(self, ok, must_inspect, cfrp_active):
+    def disposition(self, ok, must_inspect, applied_program):
         codes = self.codes
-        if cfrp_active:
+        if applied_program in ["naive_cfrp"]:
             if must_inspect:
                 if ok:
                     disposition = codes.get("cfrp_inspected_ok", "OK CFRP Inspected")
@@ -294,8 +294,8 @@ class Form280(object):
                 disposition = codes.get("inspected_pest", "Pest Found")
         return disposition
 
-    def fill(self, date, shipment, ok, must_inspect, cfrp_active):
-        disposition_code = self.disposition(ok, must_inspect, cfrp_active)
+    def fill(self, date, shipment, ok, must_inspect, applied_program):
+        disposition_code = self.disposition(ok, must_inspect, applied_program)
         if self.file:
             self.writer.writerow(
                 [
@@ -352,6 +352,19 @@ def simulation(config, num_shipments, f280_file):
     total_num_boxes_inspected = 0
     total_num_boxes = 0
 
+    if "release_programs" in config:
+        if "naive_cfrp" in config["release_programs"]:
+
+            def is_inspection_needed(shipment, date):
+                return naive_cfrp(
+                    config["release_programs"]["naive_cfrp"], shipment, date
+                )
+
+        else:
+            raise RuntimeError("Unknown release program: {program}".format(**locals()))
+    else:
+        is_inspection_needed = inspect_always
+
     if "input_F280" in config:
         shipment_generator = F280ShipmentGenerator(
             stems_per_box=config["stems_per_box"], filename=config["input_F280"]
@@ -392,10 +405,10 @@ def simulation(config, num_shipments, f280_file):
     for i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
         add_pest(config, shipment)
-        # TODO: make this configurable (not use CFRP)
-        must_inspect, cfrp_active = should_inspect2(shipment, shipment["arrival_time"])
+        must_inspect, applied_program = is_inspection_needed(
+            shipment, shipment["arrival_time"]
+        )
         if must_inspect:
-            # TODO: make this configurable (2% or hypergeom)
             shipment_checked_ok, num_boxes_inspected = inspect(shipment)
             num_inspections += 1
             total_num_boxes_inspected += num_boxes_inspected
@@ -407,7 +420,7 @@ def simulation(config, num_shipments, f280_file):
             shipment,
             shipment_checked_ok,
             must_inspect,
-            cfrp_active,
+            applied_program,
         )
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
