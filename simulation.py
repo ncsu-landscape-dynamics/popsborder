@@ -81,10 +81,10 @@ class ParameterShipmentGenerator:
 
 
 class F280ShipmentGenerator:
-    def __init__(self, filename, separator=","):
+    def __init__(self, stems_per_box, filename, separator=","):
         self.infile = open(filename)
         self.reader = csv.DictReader(self.infile, delimiter=separator)
-        self.stems_per_box = CONFIG["stems_per_box"]
+        self.stems_per_box = stems_per_box
 
     def generate_shipment(self):
         try:
@@ -118,7 +118,7 @@ class F280ShipmentGenerator:
         )
 
 
-def add_pest(shipment):
+def add_pest(config, shipment):
     """Add pest to shipment
 
     Assuming a list of boxes with the non-infested boxes set to False.
@@ -126,8 +126,8 @@ def add_pest(shipment):
     Each item (box) in boxes (list) is set to True if a pest/pathogen is
     there, False otherwise.
     """
-    pest_probability = CONFIG["shipment"]["pest"]["probability"]
-    pest_ratio = CONFIG["shipment"]["pest"]["ratio"]
+    pest_probability = config["shipment"]["pest"]["probability"]
+    pest_ratio = config["shipment"]["pest"]["ratio"]
     if random.random() < pest_probability:
         return
     for i in range(len(shipment["boxes"])):
@@ -344,16 +344,18 @@ SimulationResult = namedtuple(
 )
 
 
-def simulation(num_shipments, f280_file):
-    form280 = Form280(f280_file, disposition_codes=CONFIG["disposition_codes"])
+def simulation(config, num_shipments, f280_file):
+    form280 = Form280(f280_file, disposition_codes=config["disposition_codes"])
     reporter = PrintReporter()
     success_rates = SuccessRates(reporter)
     num_inspections = 0
     total_num_boxes_inspected = 0
     total_num_boxes = 0
 
-    if "input_F280" in CONFIG:
-        shipment_generator = F280ShipmentGenerator(CONFIG["input_F280"])
+    if "input_F280" in config:
+        shipment_generator = F280ShipmentGenerator(
+            stems_per_box=config["stems_per_box"], filename=config["input_F280"]
+        )
     else:
         shipment_generator = ParameterShipmentGenerator(
             parameters=CONFIG["shipment"],
@@ -363,7 +365,7 @@ def simulation(num_shipments, f280_file):
 
     for i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
-        add_pest(shipment)
+        add_pest(config, shipment)
         # TODO: make this configurable (not use CFRP)
         must_inspect, cfrp_active = should_inspect2(shipment, shipment["arrival_time"])
         if must_inspect:
@@ -457,7 +459,7 @@ def main():
     if args.output_file:
         f280_file = open(args.output_file, "w")
     for i in range(num_simulations):
-        result = simulation(num_shipments, f280_file)
+        result = simulation(CONFIG, num_shipments, f280_file)
         total_missing += result.missing
         total_num_inspections += result.num_inspections
         total_num_boxes += result.num_boxes
