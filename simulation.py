@@ -84,7 +84,7 @@ class F280ShipmentGenerator:
 
     def generate_shipment(self):
         try:
-            record = self.reader.next()
+            record = next(self.reader)
         except StopIteration:
             raise RuntimeError(
                 "More shipments requested than number of records in provided F280"
