@@ -27,6 +27,7 @@ Simulation for evaluataion of pathways
 from __future__ import print_function, division
 
 import sys
+import math
 import random
 import argparse
 import csv
@@ -157,6 +158,31 @@ def inspect_shipment4(shipment):
         if shipment["boxes"][i]:
             return False, i + 1
     return True, boxes_to_inspect
+
+
+def inspect_shipment_percentage(shipment):
+    config = CONFIG["inspection"]
+    ratio = config["proportion"]
+    min_boxes = config.get("min_boxes", 1)
+    # closest higher integer
+    boxes_to_inspect = int(math.ceil(ratio * len(shipment["boxes"])))
+    if boxes_to_inspect < min_boxes:
+        boxes_to_inspect = min_boxes
+    # in any case, first n boxes
+    strategy = config["strategy"]
+    if strategy == "to_completion":
+        pest = 0
+        for i in range(boxes_to_inspect):
+            if shipment["boxes"][i]:
+                pest += 1
+        return pest == 0, boxes_to_inspect
+    elif strategy == "to_detection":
+        for i in range(boxes_to_inspect):
+            if shipment["boxes"][i]:
+                return False, i + 1
+        return True, boxes_to_inspect
+    else:
+        raise RuntimeError("Unknown strategy: {strategy}".format(**locals()))
 
 
 def is_flower_of_the_day(cfrp, flower, date):
@@ -338,9 +364,11 @@ def simulation(num_shipments, f280_file):
     for i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
         add_pest(shipment)
-        must_inspect, cfrp_active = should_inspect1(shipment, shipment["arrival_time"])
+        # TODO: make this configurable (not use CFRP)
+        must_inspect, cfrp_active = should_inspect2(shipment, shipment["arrival_time"])
         if must_inspect:
-            shipment_checked_ok, num_boxes_inspected = inspect_shipment4(shipment)
+            # TODO: make this configurable (2% or hypergeom)
+            shipment_checked_ok, num_boxes_inspected = inspect_shipment_percentage(shipment)
             num_inspections += 1
             total_num_boxes_inspected += num_boxes_inspected
             total_num_boxes += shipment["num_boxes"]
