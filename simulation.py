@@ -371,8 +371,8 @@ def simulation(config, num_shipments, f280_file):
         )
     else:
         shipment_generator = ParameterShipmentGenerator(
-            parameters=CONFIG["shipment"],
-            ports=CONFIG["ports"],
+            parameters=config["shipment"],
+            ports=config["ports"],
             start_date="2020-04-01",
         )
 
