@@ -25,9 +25,11 @@ shipment:
     min: 1
     max: 50
 inspection:
-  proportion: 0.02
-  min_boxes: 1
-  strategy: to_completion
+  strategy: percentage
+  percentage:
+      proportion: 0.02
+      min_boxes: 1
+      end_strategy: to_completion
 ports:
   - NY JFK CBP
   - FL Miami Air CBP

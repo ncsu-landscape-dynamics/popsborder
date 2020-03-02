@@ -135,33 +135,31 @@ def add_pest(config, shipment):
             shipment["boxes"][i] = True
 
 
-def inspect_shipment1(shipment):
+def inspect_first(shipment):
     if shipment["boxes"][0]:
         return False, 1
     return True, 1
 
 
-def inspect_shipment2(shipment):
+def inspect_one_random(shipment):
     if random.choice(shipment["boxes"]):
         return False, 1
     return True, 1
 
 
-def inspect_shipment3(shipment):
+def inspect_all(shipment):
     return not is_shipment_diseased(shipment), shipment["num_boxes"]
 
 
-def inspect_shipment4(shipment):
-    boxes_to_inspect = CONFIG["inspection"]["first_n_boxes"]
-    boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
-    for i in range(boxes_to_inspect):
+def inspect_first_n(num_boxes, shipment):
+    num_boxes = min(len(shipment["boxes"]), num_boxes)
+    for i in range(num_boxes):
         if shipment["boxes"][i]:
             return False, i + 1
-    return True, boxes_to_inspect
+    return True, num_boxes
 
 
-def inspect_shipment_percentage(shipment):
-    config = CONFIG["inspection"]
+def inspect_shipment_percentage(config, shipment):
     ratio = config["proportion"]
     min_boxes = config.get("min_boxes", 1)
     # closest higher integer
@@ -169,7 +167,7 @@ def inspect_shipment_percentage(shipment):
     boxes_to_inspect = max(min_boxes, boxes_to_inspect)
     boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
     # in any case, first n boxes
-    strategy = config["strategy"]
+    strategy = config["end_strategy"]
     if strategy == "to_completion":
         pest = 0
         for i in range(boxes_to_inspect):
@@ -182,7 +180,9 @@ def inspect_shipment_percentage(shipment):
                 return False, i + 1
         return True, boxes_to_inspect
     else:
-        raise RuntimeError("Unknown strategy: {strategy}".format(**locals()))
+        raise RuntimeError(
+            "Unknown end inspection strategy: {strategy}".format(**locals())
+        )
 
 
 def is_flower_of_the_day(cfrp, flower, date):
@@ -363,6 +363,32 @@ def simulation(config, num_shipments, f280_file):
             start_date="2020-04-01",
         )
 
+    inspection_strategy = config["inspection"]["strategy"]
+    if inspection_strategy == "percentage":
+
+        def inspect(shipment):
+            return inspect_shipment_percentage(
+                config=config["inspection"]["percentage"], shipment=shipment
+            )
+
+    elif inspection_strategy == "first_n":
+
+        def inspect(shipment):
+            return inspect_first_n(
+                num_boxes=config["inspection"]["first_n_boxes"], shipment=shipment
+            )
+
+    elif inspection_strategy == "first":
+        inspect = inspect_first
+    elif inspection_strategy == "one_random":
+        inspect = inspect_one_random
+    elif inspection_strategy == "all":
+        inspect = inspect_all
+    else:
+        raise RuntimeError(
+            "Unknown inspection strategy: {inspection_strategy}".format(**locals())
+        )
+
     for i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
         add_pest(config, shipment)
@@ -370,9 +396,7 @@ def simulation(config, num_shipments, f280_file):
         must_inspect, cfrp_active = should_inspect2(shipment, shipment["arrival_time"])
         if must_inspect:
             # TODO: make this configurable (2% or hypergeom)
-            shipment_checked_ok, num_boxes_inspected = inspect_shipment_percentage(
-                shipment
-            )
+            shipment_checked_ok, num_boxes_inspected = inspect(shipment)
             num_inspections += 1
             total_num_boxes_inspected += num_boxes_inspected
             total_num_boxes += shipment["num_boxes"]
