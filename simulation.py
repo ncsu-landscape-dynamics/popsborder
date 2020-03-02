@@ -35,10 +35,6 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 
 
-# global configuration usable in all functions
-CONFIG = None
-
-
 class ParameterShipmentGenerator:
     def __init__(self, parameters, ports, start_date):
         """Set parameters for shipement generation
@@ -464,7 +460,6 @@ def load_configuration(filename):
 
 
 def main():
-    global CONFIG
     parser = argparse.ArgumentParser(description="Pathway Simulation")
     required = parser.add_argument_group("required arguments")
     required.add_argument(
@@ -483,10 +478,10 @@ def main():
 
     num_simulations = args.num_simulations
     num_shipments = args.num_shipments
-    CONFIG = load_configuration(args.config_file)
+    config = load_configuration(args.config_file)
     # allow for an empty disposition code specification
-    if "disposition_codes" not in CONFIG:
-        CONFIG["disposition_codes"] = {}
+    if "disposition_codes" not in config:
+        config["disposition_codes"] = {}
 
     total_missing = 0
     total_num_inspections = 0
@@ -496,7 +491,7 @@ def main():
     if args.output_file:
         f280_file = open(args.output_file, "w")
     for i in range(num_simulations):
-        result = simulation(CONFIG, num_shipments, f280_file)
+        result = simulation(config, num_shipments, f280_file)
         total_missing += result.missing
         total_num_inspections += result.num_inspections
         total_num_boxes += result.num_boxes
