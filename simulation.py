@@ -31,6 +31,7 @@ import math
 import types
 import random
 import argparse
+import weakref
 import csv
 from collections import namedtuple
 from datetime import datetime, timedelta
@@ -258,7 +259,14 @@ class MuteReporter(object):
 
 class Form280(object):
     def __init__(self, file, disposition_codes, separator=","):
-        self.file = file
+        self.print_to_stdout = False
+        self.file = None
+        if file:
+            if file in ("-", "stdout", "print"):
+                self.print_to_stdout = True
+            else:
+                self.file = open(file, "w")
+                self._finalizer = weakref.finalize(self, self.file.close)
         self.codes = disposition_codes
         # selection and order of columns to output
         columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY", "disposition"]
@@ -303,7 +311,7 @@ class Form280(object):
                     disposition_code,
                 ]
             )
-        else:
+        elif self.print_to_stdout:
             print(
                 "F280: {date:%Y-%m-%d} | {shipment[port]} | {shipment[origin]}"
                 " | {shipment[flower]} | {disposition_code}".format(
@@ -341,11 +349,14 @@ SimulationResult = namedtuple(
 )
 
 
-def simulation(config, num_shipments, f280_file):
+def simulation(config, num_shipments, f280_file, print_inspection_results=False):
     # allow for an empty disposition code specification
     disposition_codes = config.get("disposition_codes", {})
     form280 = Form280(f280_file, disposition_codes=disposition_codes)
-    reporter = PrintReporter()
+    if print_inspection_results:
+        reporter = PrintReporter()
+    else:
+        reporter = MuteReporter()
     success_rates = SuccessRates(reporter)
     num_inspections = 0
     total_num_boxes_inspected = 0
@@ -456,11 +467,8 @@ def run_simulation(config, num_simulations, num_shipments, output_f280_file):
         totals.num_boxes = 0
         totals.num_boxes_inspected = 0
 
-    f280_file = None
-    if output_f280_file:
-        f280_file = open(output_f280_file, "w")
     for i in range(num_simulations):
-        result = simulation(config, num_shipments, f280_file)
+        result = simulation(config, num_shipments, output_f280_file)
         totals.missing += result.missing
         totals.num_inspections += result.num_inspections
         totals.num_boxes += result.num_boxes
@@ -470,8 +478,6 @@ def run_simulation(config, num_simulations, num_shipments, output_f280_file):
     totals.num_inspections /= float(num_simulations)
     totals.num_boxes /= float(num_simulations)
     totals.num_boxes_inspected /= float(num_simulations)
-    if output_f280_file:
-        f280_file.close()
     return totals
 
 
