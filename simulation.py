@@ -37,6 +37,10 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 
 
+if not hasattr(weakref, 'finalize'):
+    from backports import weakref
+
+
 class ParameterShipmentGenerator:
     def __init__(self, parameters, ports, start_date):
         """Set parameters for shipement generation
