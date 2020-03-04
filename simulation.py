@@ -42,6 +42,7 @@ if not hasattr(weakref, 'finalize'):
 
 
 class ParameterShipmentGenerator:
+    """Generate a shipments based on configuration parameters"""
     def __init__(self, parameters, ports, start_date):
         """Set parameters for shipement generation
 
@@ -56,7 +57,7 @@ class ParameterShipmentGenerator:
         self.date = start_date
 
     def generate_shipment(self):
-        """Generate Inspection Unit"""
+        """Generate a new shipment"""
         # flowers or commodities
         port = random.choice(self.ports)
         flowers = self.params["flowers"]
@@ -83,12 +84,14 @@ class ParameterShipmentGenerator:
 
 
 class F280ShipmentGenerator:
+    """Generate a shipments based on existing F280 records"""
     def __init__(self, stems_per_box, filename, separator=","):
         self.infile = open(filename)
         self.reader = csv.DictReader(self.infile, delimiter=separator)
         self.stems_per_box = stems_per_box
 
     def generate_shipment(self):
+        """Generate a new shipment"""
         try:
             record = next(self.reader)
         except StopIteration:
@@ -162,6 +165,11 @@ def inspect_first_n(num_boxes, shipment):
 
 
 def inspect_shipment_percentage(config, shipment):
+    """Inspect shipments based on the percetantage strategy
+
+    :param config: Configuration to be used
+    :param shipement: Shipment to be inspected
+    """
     ratio = config["proportion"]
     min_boxes = config.get("min_boxes", 1)
     # closest higher integer
@@ -188,6 +196,7 @@ def inspect_shipment_percentage(config, shipment):
 
 
 def is_flower_of_the_day(cfrp, flower, date):
+    """Return True if the flower is FoTD based on naive criteria"""
     i = date.day % len(cfrp)
     if flower == cfrp[i]:
         print("{} is flower of the day".format(flower))
@@ -325,6 +334,7 @@ class Form280(object):
 
 
 class SuccessRates(object):
+    """Record and accumulate success rates"""
     def __init__(self, reporter):
         self.ok = 0
         self.tp = 0
@@ -354,6 +364,13 @@ SimulationResult = namedtuple(
 
 
 def simulation(config, num_shipments, f280_file, verbose=False):
+    """Simulate shipments, their infestation, and their inspection
+
+    :param config: Simulation configuration as a dictionary
+    :param num_shipments: Number of shipments to generate
+    :param f280_file: Filename for output F280 records
+    :param verbose: If True, prints messages about each shipment
+    """
     # allow for an empty disposition code specification
     disposition_codes = config.get("disposition_codes", {})
     form280 = Form280(f280_file, disposition_codes=disposition_codes)
@@ -459,6 +476,12 @@ def simulation(config, num_shipments, f280_file, verbose=False):
 
 
 def run_simulation(config, num_simulations, num_shipments, output_f280_file, verbose):
+    """Run the simulation function specified number of times
+
+    See :func:`simulation` function for explanation of parameters.
+
+    Returns averages computed from the individual simulation runs.
+    """
     try:
         # namedtuple is not applicable since we need modifications
         totals = types.SimpleNamespace(
@@ -492,6 +515,7 @@ USAGE = """Usage:
 
 
 def load_configuration(filename):
+    """Get the configuration from a JSON or YAML file"""
     if filename.endswith(".json"):
         import json
 
@@ -507,6 +531,7 @@ def load_configuration(filename):
 
 
 def main():
+    """Process command line parameters and run the simulation"""
     parser = argparse.ArgumentParser(description="Pathway Simulation")
     required = parser.add_argument_group("required arguments")
     required.add_argument(
