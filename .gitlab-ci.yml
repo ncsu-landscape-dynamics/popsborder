@@ -13,7 +13,7 @@ linting:
   script:
   - flake8 .
   - pylint simulation.py
-  - black .
+  - black --check --diff .
 
 data:
   script:
