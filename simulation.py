@@ -38,7 +38,7 @@ from datetime import datetime, timedelta
 
 
 if not hasattr(weakref, "finalize"):
-    from backports import weakref
+    from backports import weakref  # pylint: disable=import-error
 
 
 class ParameterShipmentGenerator:
