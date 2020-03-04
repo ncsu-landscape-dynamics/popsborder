@@ -241,6 +241,8 @@ def count_diseased(shipment):
 
 
 class PrintReporter(object):
+    # Reporter objects carry functions, but many not use any attributes.
+    # pylint: disable=no-self-use
     def tp(self):
         print("Inspection worked, didn't miss anything (no pest) [TP]")
 
@@ -259,6 +261,7 @@ class PrintReporter(object):
 
 
 class MuteReporter(object):
+    # pylint: disable=no-self-use
     def tp(self):
         pass
 
@@ -374,6 +377,7 @@ def simulation(config, num_shipments, f280_file, verbose=False):
     :param f280_file: Filename for output F280 records
     :param verbose: If True, prints messages about each shipment
     """
+    # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     # allow for an empty disposition code specification
     disposition_codes = config.get("disposition_codes", {})
     form280 = Form280(f280_file, disposition_codes=disposition_codes)
