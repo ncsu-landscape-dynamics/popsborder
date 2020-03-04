@@ -241,38 +241,34 @@ def count_diseased(shipment):
 
 
 class PrintReporter(object):
+    """Reporter class which prints a message for each shipment"""
     # Reporter objects carry functions, but many not use any attributes.
-    # pylint: disable=no-self-use
-    def tp(self):
+    # pylint: disable=no-self-use,missing-function-docstring
+    def true_negative(self):
         print("Inspection worked, didn't miss anything (no pest) [TP]")
 
-    def tn(self):
+    def true_positive(self):
         print("Inspection worked, found pest [TN]")
 
-    def fp(self, shipment):
+    def false_negative(self, shipment):
         print(
             "Inspection failed, missed {} boxes with pest [FP]".format(
                 count_diseased(shipment)
             )
         )
 
-    def fn(self):
-        raise RuntimeError("False negative (programmer error)")
-
 
 class MuteReporter(object):
-    # pylint: disable=no-self-use
-    def tp(self):
+    """Reporter class which is completely silent"""
+    # pylint: disable=no-self-use,missing-function-docstring
+    def true_negative(self):
         pass
 
-    def tn(self):
+    def true_positive(self):
         pass
 
-    def fp(self, shipment):
+    def false_negative(self, shipment):
         pass
-
-    def fn(self):
-        raise RuntimeError("False negative (programmer error)")
 
 
 class Form280(object):
@@ -342,25 +338,35 @@ class SuccessRates(object):
     """Record and accumulate success rates"""
 
     def __init__(self, reporter):
+        """Initialize values to zero and set the reporter object"""
         self.ok = 0
-        self.tp = 0
-        self.tn = 0
-        self.fp = 0
+        self.true_positive = 0
+        self.true_negative = 0
+        self.false_negative = 0
         self.reporter = reporter
 
     def record_success_rate(self, checked_ok, actually_ok, shipment):
+        """Record testing result for one shipment
+
+        :param checked_ok: True if the shipment tested negative on presence of pest
+        :param checked_ok: True if the shipment actually does not have pest
+        :param shipmemt: The shipement itself (for reporting purposes)
+        """
         if checked_ok and actually_ok:
-            self.tp += 1
+            self.true_negative += 1
             self.ok += 1
-            self.reporter.tp()
+            self.reporter.true_negative()
         elif not checked_ok and not actually_ok:
-            self.tn += 1
-            self.reporter.tn()
+            self.true_negative += 1
+            self.reporter.true_negative()
         elif checked_ok and not actually_ok:
-            self.fp += 1
-            self.reporter.fp(shipment)
+            self.false_negative += 1
+            self.reporter.false_negative(shipment)
         elif not checked_ok and actually_ok:
-            self.reporter.fn()
+            raise RuntimeError(
+                "Inspection result is infested,"
+                " but actually the shipment is not infested (programmer error)"
+            )
 
 
 SimulationResult = namedtuple(
@@ -468,7 +474,7 @@ def simulation(config, num_shipments, f280_file, verbose=False):
     num_diseased = num_shipments - success_rates.ok
     if num_diseased:
         # avoiding float division by zero
-        missing = 100 * float(success_rates.fp) / (num_diseased)
+        missing = 100 * float(success_rates.false_negative) / (num_diseased)
         if verbose:
             print("Missing {0:.0f}% of shipments with pest.".format(missing))
     else:
