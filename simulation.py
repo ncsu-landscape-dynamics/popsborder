@@ -37,12 +37,13 @@ from collections import namedtuple
 from datetime import datetime, timedelta
 
 
-if not hasattr(weakref, 'finalize'):
+if not hasattr(weakref, "finalize"):
     from backports import weakref
 
 
 class ParameterShipmentGenerator:
     """Generate a shipments based on configuration parameters"""
+
     def __init__(self, parameters, ports, start_date):
         """Set parameters for shipement generation
 
@@ -85,6 +86,7 @@ class ParameterShipmentGenerator:
 
 class F280ShipmentGenerator:
     """Generate a shipments based on existing F280 records"""
+
     def __init__(self, stems_per_box, filename, separator=","):
         self.infile = open(filename)
         self.reader = csv.DictReader(self.infile, delimiter=separator)
@@ -335,6 +337,7 @@ class Form280(object):
 
 class SuccessRates(object):
     """Record and accumulate success rates"""
+
     def __init__(self, reporter):
         self.ok = 0
         self.tp = 0
