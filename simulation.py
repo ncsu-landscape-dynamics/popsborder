@@ -143,22 +143,30 @@ def add_pest(config, shipment):
 
 
 def inspect_first(shipment):
+    """Inspect only the first box in the shipment"""
     if shipment["boxes"][0]:
         return False, 1
     return True, 1
 
 
 def inspect_one_random(shipment):
+    """Inspect only one randomly picked box in the shipment"""
     if random.choice(shipment["boxes"]):
         return False, 1
     return True, 1
 
 
 def inspect_all(shipment):
+    """Inspect all boxes in the shipment"""
     return not is_shipment_diseased(shipment), shipment["num_boxes"]
 
 
 def inspect_first_n(num_boxes, shipment):
+    """Inspect only the first n boxes in the shipment
+
+    :param num_boxes: Number of boxes to inspect
+    :param shipment: Shipment to inspect
+    """
     num_boxes = min(len(shipment["boxes"]), num_boxes)
     for i in range(num_boxes):
         if shipment["boxes"][i]:
@@ -226,6 +234,7 @@ def inspect_always(shipment, date):  # pylint: disable=unused-argument
 
 
 def is_shipment_diseased(shipment):
+    """Return True if at least one box has pest"""
     for box in shipment["boxes"]:
         if box:
             return True
@@ -233,6 +242,7 @@ def is_shipment_diseased(shipment):
 
 
 def count_diseased(shipment):
+    """Return number of boxes with pest"""
     count = 0
     for box in shipment["boxes"]:
         if box:
@@ -242,6 +252,7 @@ def count_diseased(shipment):
 
 class PrintReporter(object):
     """Reporter class which prints a message for each shipment"""
+
     # Reporter objects carry functions, but many not use any attributes.
     # pylint: disable=no-self-use,missing-function-docstring
     def true_negative(self):
@@ -260,6 +271,7 @@ class PrintReporter(object):
 
 class MuteReporter(object):
     """Reporter class which is completely silent"""
+
     # pylint: disable=no-self-use,missing-function-docstring
     def true_negative(self):
         pass
@@ -272,7 +284,15 @@ class MuteReporter(object):
 
 
 class Form280(object):
+    """Creates F280 records from the simulated data"""
+
     def __init__(self, file, disposition_codes, separator=","):
+        """Prepares file for writing
+
+        :param file: Name of the file to write to or ``-`` (dash) for printing
+        :param disposition_codes: Conversion table for output disposition codes
+        :param separator: Value (field) separator for the output CSV file
+        """
         self.print_to_stdout = False
         self.file = None
         if file:
@@ -295,6 +315,13 @@ class Form280(object):
             self.writer.writerow(columns)
 
     def disposition(self, ok, must_inspect, applied_program):
+        """Get disposition code for the given parameters
+
+        Provides defaults if the disposition code table does not contain
+        a specific value.
+
+        See :meth:`fill` for details about the parameters.
+        """
         codes = self.codes
         if applied_program in ["naive_cfrp"]:
             if must_inspect:
@@ -314,6 +341,14 @@ class Form280(object):
         return disposition
 
     def fill(self, date, shipment, ok, must_inspect, applied_program):
+        """Fill one entry in the F280 form
+
+        :param date: Shipment or inspection date
+        :param shipment: Shipment which was tested
+        :param ok: True if the shipment was tested negative (no pest present)
+        :param must_inspect: True if the shipment was selected for inspection
+        :param apllied_program: Identifier of the program applied or None
+        """
         disposition_code = self.disposition(ok, must_inspect, applied_program)
         if self.file:
             self.writer.writerow(
