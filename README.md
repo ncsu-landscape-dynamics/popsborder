@@ -169,7 +169,9 @@ Get all command line options for the simulation by running:
 ./simulation.py --help
 ```
 
-### Configuring disposition codes:
+### Configuration
+
+#### Disposition codes
 
 Here is an example with disposition codes close to what is used in F280:
 
@@ -180,6 +182,28 @@ disposition_codes:
   cfrp_inspected_ok: IRAR
   cfrp_inspected_pest: FUAR
   cfrp_not_inspected: REAR
+```
+
+#### Inspection
+
+Cut Flower Release Program (CFRP):
+
+```
+release_programs:
+  naive_cfrp:
+    flowers:
+    - Hyacinthus
+    - Gerbera
+    - Rosa
+    - Actinidia
+    max_boxes: 10  # do not apply to shipments larger than
+```
+
+Tailgate with *n* boxes:
+
+```
+inspection:
+  first_n_boxes: 2
 ```
 
 ### Obtaining pre-computed sample database records

@@ -27,15 +27,18 @@ Simulation for evaluataion of pathways
 from __future__ import print_function, division
 
 import sys
+import math
+import types
 import random
 import argparse
+import weakref
 import csv
 from collections import namedtuple
 from datetime import datetime, timedelta
 
 
-# global configuration usable in all functions
-CONFIG = None
+if not hasattr(weakref, 'finalize'):
+    from backports import weakref
 
 
 class ParameterShipmentGenerator:
@@ -80,14 +83,14 @@ class ParameterShipmentGenerator:
 
 
 class F280ShipmentGenerator:
-    def __init__(self, filename, separator=","):
+    def __init__(self, stems_per_box, filename, separator=","):
         self.infile = open(filename)
         self.reader = csv.DictReader(self.infile, delimiter=separator)
-        self.stems_per_box = CONFIG["stems_per_box"]
+        self.stems_per_box = stems_per_box
 
     def generate_shipment(self):
         try:
-            record = self.reader.next()
+            record = next(self.reader)
         except StopIteration:
             raise RuntimeError(
                 "More shipments requested than number of records in provided F280"
@@ -117,7 +120,7 @@ class F280ShipmentGenerator:
         )
 
 
-def add_pest(shipment):
+def add_pest(config, shipment):
     """Add pest to shipment
 
     Assuming a list of boxes with the non-infested boxes set to False.
@@ -125,8 +128,8 @@ def add_pest(shipment):
     Each item (box) in boxes (list) is set to True if a pest/pathogen is
     there, False otherwise.
     """
-    pest_probability = CONFIG["shipment"]["pest"]["probability"]
-    pest_ratio = CONFIG["shipment"]["pest"]["ratio"]
+    pest_probability = config["shipment"]["pest"]["probability"]
+    pest_ratio = config["shipment"]["pest"]["ratio"]
     if random.random() < pest_probability:
         return
     for i in range(len(shipment["boxes"])):
@@ -134,29 +137,54 @@ def add_pest(shipment):
             shipment["boxes"][i] = True
 
 
-def inspect_shipment1(shipment):
+def inspect_first(shipment):
     if shipment["boxes"][0]:
         return False, 1
     return True, 1
 
 
-def inspect_shipment2(shipment):
+def inspect_one_random(shipment):
     if random.choice(shipment["boxes"]):
         return False, 1
     return True, 1
 
 
-def inspect_shipment3(shipment):
+def inspect_all(shipment):
     return not is_shipment_diseased(shipment), shipment["num_boxes"]
 
 
-def inspect_shipment4(shipment):
-    boxes_to_inspect = CONFIG["inspection"]["first_n_boxes"]
-    boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
-    for i in range(boxes_to_inspect):
+def inspect_first_n(num_boxes, shipment):
+    num_boxes = min(len(shipment["boxes"]), num_boxes)
+    for i in range(num_boxes):
         if shipment["boxes"][i]:
             return False, i + 1
-    return True, boxes_to_inspect
+    return True, num_boxes
+
+
+def inspect_shipment_percentage(config, shipment):
+    ratio = config["proportion"]
+    min_boxes = config.get("min_boxes", 1)
+    # closest higher integer
+    boxes_to_inspect = int(math.ceil(ratio * len(shipment["boxes"])))
+    boxes_to_inspect = max(min_boxes, boxes_to_inspect)
+    boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
+    # in any case, first n boxes
+    strategy = config["end_strategy"]
+    if strategy == "to_completion":
+        pest = 0
+        for i in range(boxes_to_inspect):
+            if shipment["boxes"][i]:
+                pest += 1
+        return pest == 0, boxes_to_inspect
+    elif strategy == "to_detection":
+        for i in range(boxes_to_inspect):
+            if shipment["boxes"][i]:
+                return False, i + 1
+        return True, boxes_to_inspect
+    else:
+        raise RuntimeError(
+            "Unknown end inspection strategy: {strategy}".format(**locals())
+        )
 
 
 def is_flower_of_the_day(cfrp, flower, date):
@@ -167,23 +195,23 @@ def is_flower_of_the_day(cfrp, flower, date):
     return False
 
 
-def should_inspect1(shipment, date):
+def naive_cfrp(config, shipment, date):
     """Decided if the shipment should be expected based on CFRP and size"""
     # returns 2 bools: should_inspect, CFRP applied
     flower = shipment["flower"]
-    cfrp = CONFIG["inspection"]["cfrp"]["flowers"]
-    max_boxes = CONFIG["inspection"]["cfrp"]["max_boxes"]
+    cfrp = config["flowers"]
+    max_boxes = config["max_boxes"]
     # we have flowers in the CFRP, flower is in CFRP, and not too big shipment
     if cfrp and flower in cfrp and shipment["num_boxes"] <= max_boxes:
         if is_flower_of_the_day(cfrp, flower, date):
-            return True, True  # is FotD, inspect
-        return False, True  # not FotD, release
-    return True, False  # not in CFRP or large, inspect
+            return True, "naive_cfrp"  # is FotD, inspect
+        return False, "naive_cfrp"  # not FotD, release
+    return True, None  # not in CFRP or large, inspect
 
 
-def should_inspect2(shipment, date):
+def inspect_always(shipment, date):
     """Inspect always"""
-    return True, False
+    return True, None
 
 
 def is_shipment_diseased(shipment):
@@ -235,7 +263,14 @@ class MuteReporter(object):
 
 class Form280(object):
     def __init__(self, file, disposition_codes, separator=","):
-        self.file = file
+        self.print_to_stdout = False
+        self.file = None
+        if file:
+            if file in ("-", "stdout", "print"):
+                self.print_to_stdout = True
+            else:
+                self.file = open(file, "w")
+                self._finalizer = weakref.finalize(self, self.file.close)
         self.codes = disposition_codes
         # selection and order of columns to output
         columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY", "disposition"]
@@ -249,9 +284,9 @@ class Form280(object):
             )
             self.writer.writerow(columns)
 
-    def disposition(self, ok, must_inspect, cfrp_active):
+    def disposition(self, ok, must_inspect, applied_program):
         codes = self.codes
-        if cfrp_active:
+        if applied_program in ["naive_cfrp"]:
             if must_inspect:
                 if ok:
                     disposition = codes.get("cfrp_inspected_ok", "OK CFRP Inspected")
@@ -268,8 +303,8 @@ class Form280(object):
                 disposition = codes.get("inspected_pest", "Pest Found")
         return disposition
 
-    def fill(self, date, shipment, ok, must_inspect, cfrp_active):
-        disposition_code = self.disposition(ok, must_inspect, cfrp_active)
+    def fill(self, date, shipment, ok, must_inspect, applied_program):
+        disposition_code = self.disposition(ok, must_inspect, applied_program)
         if self.file:
             self.writer.writerow(
                 [
@@ -280,7 +315,7 @@ class Form280(object):
                     disposition_code,
                 ]
             )
-        else:
+        elif self.print_to_stdout:
             print(
                 "F280: {date:%Y-%m-%d} | {shipment[port]} | {shipment[origin]}"
                 " | {shipment[flower]} | {disposition_code}".format(
@@ -318,29 +353,77 @@ SimulationResult = namedtuple(
 )
 
 
-def simulation(num_shipments, f280_file):
-    form280 = Form280(f280_file, disposition_codes=CONFIG["disposition_codes"])
-    reporter = PrintReporter()
+def simulation(config, num_shipments, f280_file, verbose=False):
+    # allow for an empty disposition code specification
+    disposition_codes = config.get("disposition_codes", {})
+    form280 = Form280(f280_file, disposition_codes=disposition_codes)
+    if verbose:
+        reporter = PrintReporter()
+    else:
+        reporter = MuteReporter()
     success_rates = SuccessRates(reporter)
     num_inspections = 0
     total_num_boxes_inspected = 0
     total_num_boxes = 0
 
-    if "input_F280" in CONFIG:
-        shipment_generator = F280ShipmentGenerator(CONFIG["input_F280"])
+    if "release_programs" in config:
+        if "naive_cfrp" in config["release_programs"]:
+
+            def is_inspection_needed(shipment, date):
+                return naive_cfrp(
+                    config["release_programs"]["naive_cfrp"], shipment, date
+                )
+
+        else:
+            raise RuntimeError("Unknown release program: {program}".format(**locals()))
+    else:
+        is_inspection_needed = inspect_always
+
+    if "input_F280" in config:
+        shipment_generator = F280ShipmentGenerator(
+            stems_per_box=config["stems_per_box"], filename=config["input_F280"]
+        )
     else:
         shipment_generator = ParameterShipmentGenerator(
-            parameters=CONFIG["shipment"],
-            ports=CONFIG["ports"],
+            parameters=config["shipment"],
+            ports=config["ports"],
             start_date="2020-04-01",
+        )
+
+    inspection_strategy = config["inspection"]["strategy"]
+    if inspection_strategy == "percentage":
+
+        def inspect(shipment):
+            return inspect_shipment_percentage(
+                config=config["inspection"]["percentage"], shipment=shipment
+            )
+
+    elif inspection_strategy == "first_n":
+
+        def inspect(shipment):
+            return inspect_first_n(
+                num_boxes=config["inspection"]["first_n_boxes"], shipment=shipment
+            )
+
+    elif inspection_strategy == "first":
+        inspect = inspect_first
+    elif inspection_strategy == "one_random":
+        inspect = inspect_one_random
+    elif inspection_strategy == "all":
+        inspect = inspect_all
+    else:
+        raise RuntimeError(
+            "Unknown inspection strategy: {inspection_strategy}".format(**locals())
         )
 
     for i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
-        add_pest(shipment)
-        must_inspect, cfrp_active = should_inspect1(shipment, shipment["arrival_time"])
+        add_pest(config, shipment)
+        must_inspect, applied_program = is_inspection_needed(
+            shipment, shipment["arrival_time"]
+        )
         if must_inspect:
-            shipment_checked_ok, num_boxes_inspected = inspect_shipment4(shipment)
+            shipment_checked_ok, num_boxes_inspected = inspect(shipment)
             num_inspections += 1
             total_num_boxes_inspected += num_boxes_inspected
             total_num_boxes += shipment["num_boxes"]
@@ -351,7 +434,7 @@ def simulation(num_shipments, f280_file):
             shipment,
             shipment_checked_ok,
             must_inspect,
-            cfrp_active,
+            applied_program,
         )
         shipment_actually_ok = not is_shipment_diseased(shipment)
         success_rates.record_success_rate(
@@ -362,7 +445,8 @@ def simulation(num_shipments, f280_file):
     if num_diseased:
         # avoiding float division by zero
         missing = 100 * float(success_rates.fp) / (num_diseased)
-        print("Missing {0:.0f}% of shipments with pest.".format(missing))
+        if verbose:
+            print("Missing {0:.0f}% of shipments with pest.".format(missing))
     else:
         # we didn't miss anything
         missing = 0
@@ -372,6 +456,34 @@ def simulation(num_shipments, f280_file):
         num_boxes=total_num_boxes,
         num_boxes_inspected=total_num_boxes_inspected,
     )
+
+
+def run_simulation(config, num_simulations, num_shipments, output_f280_file, verbose):
+    try:
+        # namedtuple is not applicable since we need modifications
+        totals = types.SimpleNamespace(
+            missing=0, num_inspections=0, num_boxes=0, num_boxes_inspected=0,
+        )
+    except AttributeError:
+        # Python 2 fallback
+        totals = lambda: None  # noqa: E731
+        totals.missing = 0
+        totals.num_inspections = 0
+        totals.num_boxes = 0
+        totals.num_boxes_inspected = 0
+
+    for i in range(num_simulations):
+        result = simulation(config, num_shipments, output_f280_file, verbose)
+        totals.missing += result.missing
+        totals.num_inspections += result.num_inspections
+        totals.num_boxes += result.num_boxes
+        totals.num_boxes_inspected += result.num_boxes_inspected
+    # make these relative (reusing the variables)
+    totals.missing /= float(num_simulations)
+    totals.num_inspections /= float(num_simulations)
+    totals.num_boxes /= float(num_simulations)
+    totals.num_boxes_inspected /= float(num_simulations)
+    return totals
 
 
 USAGE = """Usage:
@@ -395,7 +507,6 @@ def load_configuration(filename):
 
 
 def main():
-    global CONFIG
     parser = argparse.ArgumentParser(description="Pathway Simulation")
     required = parser.add_argument_group("required arguments")
     required.add_argument(
@@ -410,50 +521,34 @@ def main():
     required.add_argument(
         "--output-file", type=str, required=False, help="Path to output F280 csv file"
     )
+    required.add_argument(
+        "--verbose", action="store_true", help="Print a lot of diagnostic messages",
+    )
     args = parser.parse_args()
 
-    num_simulations = args.num_simulations
-    num_shipments = args.num_shipments
-    CONFIG = load_configuration(args.config_file)
-    # allow for an empty disposition code specification
-    if "disposition_codes" not in CONFIG:
-        CONFIG["disposition_codes"] = {}
+    totals = run_simulation(
+        config=load_configuration(args.config_file),
+        num_simulations=args.num_simulations,
+        num_shipments=args.num_shipments,
+        output_f280_file=args.output_file,
+        verbose=args.verbose,
+    )
 
-    total_missing = 0
-    total_num_inspections = 0
-    total_num_boxes = 0
-    total_num_boxes_inspected = 0
-    f280_file = None
-    if args.output_file:
-        f280_file = open(args.output_file, "w")
-    for i in range(num_simulations):
-        result = simulation(num_shipments, f280_file)
-        total_missing += result.missing
-        total_num_inspections += result.num_inspections
-        total_num_boxes += result.num_boxes
-        total_num_boxes_inspected += result.num_boxes_inspected
-    # make these relative (reusing the variables)
-    total_missing /= float(num_simulations)
-    total_num_inspections /= float(num_simulations)
-    total_num_boxes /= float(num_simulations)
-    total_num_boxes_inspected /= float(num_simulations)
-    print("On average, missing {0:.0f}% of shipments with pest.".format(total_missing))
+    print("On average, missing {0:.0f}% of shipments with pest.".format(totals.missing))
     print(
         "On average, inspecting {0:.0f}% of shipments.".format(
-            100 * total_num_inspections / float(num_shipments)
+            100 * totals.num_inspections / float(args.num_shipments)
         )
     )
     print(
         "On average, inspected {0:.0f}% of boxes.".format(
-            100 * total_num_boxes_inspected / total_num_boxes
+            100 * totals.num_boxes_inspected / totals.num_boxes
         )
     )
     print("---")
-    print("slippage: {0:.2f}".format(total_missing))
-    print("num_inspections: {0:.0f}".format(total_num_inspections))
-    print("total_num_boxes_inspected: {0:.0f}".format(total_num_boxes_inspected))
-    if args.output_file:
-        f280_file.close()
+    print("slippage: {0:.2f}".format(totals.missing))
+    print("num_inspections: {0:.0f}".format(totals.num_inspections))
+    print("total_num_boxes_inspected: {0:.0f}".format(totals.num_boxes_inspected))
 
 
 if __name__ == "__main__":

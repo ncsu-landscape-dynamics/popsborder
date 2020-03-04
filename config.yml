@@ -18,21 +18,36 @@ shipment:
   - Mokara
   - Anemone
   - Actinidia
-  pest:
-    probability: 0.2
-    ratio: 0.5
   boxes:
     min: 1
     max: 50
-inspection:
-  cfrp:
+  pest:
+    probability: 0.2
+    ratio: 0.5
+pest:
+  infestation_rate:
+    distribution: beta
+    parameters: 4, 60
+  arrangement: random | clustered
+  clustered:
+    max_pest_per_cluster: 5000
+    distribution: gamma
+    parameters: 4, 20
+release_programs:
+  naive_cfrp:
     flowers:
     - Hyacinthus
     - Gerbera
     - Rosa
     - Actinidia
-    max_boxes: 10
-  first_n_boxes: 2
+    max_boxes: 10  # do not apply to shipments larger than
+
+inspection:
+  strategy: percentage
+  percentage:
+      proportion: 0.02
+      min_boxes: 1
+      end_strategy: to_completion
 ports:
   - NY JFK CBP
   - FL Miami Air CBP
