@@ -60,8 +60,8 @@ ports:
   - WA Blaine CBP
 # input_F280: F280_sample.csv
 stems_per_box:
-  default: 200
+  default: 10
   air:
-    default: 200
+    default: 20
   maritime:
-    default: 700
+    default: 30
