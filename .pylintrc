@@ -63,7 +63,6 @@ confidence=
 disable=missing-class-docstring,
         missing-function-docstring,
         bad-continuation,
-        import-error,
         print-statement,
         parameter-unpacking,
         unpacking-in-except,
