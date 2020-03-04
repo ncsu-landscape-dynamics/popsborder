@@ -517,11 +517,11 @@ USAGE = """Usage:
 def load_configuration(filename):
     """Get the configuration from a JSON or YAML file"""
     if filename.endswith(".json"):
-        import json
+        import json  # pylint: disable=import-outside-toplevel
 
         return json.load(open(filename))
     elif filename.endswith(".yaml") or filename.endswith(".yml"):
-        import yaml
+        import yaml  # pylint: disable=import-outside-toplevel
 
         if hasattr(yaml, "full_load"):
             return yaml.full_load(open(filename))

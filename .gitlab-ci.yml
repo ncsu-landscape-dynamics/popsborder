@@ -9,9 +9,10 @@ test:
 
 linting:
   before_script:
-  - pip install PyYAML flake8
+  - pip install PyYAML flake8 pylint
   script:
   - flake8 .
+  - pylint simulation.py
 
 data:
   script:
