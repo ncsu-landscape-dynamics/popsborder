@@ -63,8 +63,6 @@ confidence=
 disable=bad-continuation,
         missing-function-docstring,
         missing-class-docstring,
-        unused-argument,
-        unused-variable,
         invalid-name,
         import-error,
         print-statement,

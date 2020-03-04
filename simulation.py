@@ -220,7 +220,7 @@ def naive_cfrp(config, shipment, date):
     return True, None  # not in CFRP or large, inspect
 
 
-def inspect_always(shipment, date):
+def inspect_always(shipment, date):  # pylint: disable=unused-argument
     """Inspect always"""
     return True, None
 
@@ -436,7 +436,7 @@ def simulation(config, num_shipments, f280_file, verbose=False):
             "Unknown inspection strategy: {inspection_strategy}".format(**locals())
         )
 
-    for i in range(num_shipments):
+    for unused_i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
         add_pest(config, shipment)
         must_inspect, applied_program = is_inspection_needed(
@@ -498,7 +498,7 @@ def run_simulation(config, num_simulations, num_shipments, output_f280_file, ver
         totals.num_boxes = 0
         totals.num_boxes_inspected = 0
 
-    for i in range(num_simulations):
+    for unused_i in range(num_simulations):
         result = simulation(config, num_shipments, output_f280_file, verbose)
         totals.missing += result.missing
         totals.num_inspections += result.num_inspections
