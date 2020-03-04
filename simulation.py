@@ -35,23 +35,51 @@ import weakref
 import csv
 from collections import namedtuple
 from datetime import datetime, timedelta
+import numpy as np
 
 
 if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error
 
 
+class Box:
+    """Box or inspection unit
+
+    Evaluates to bool when it contains pest.
+
+    Box is a view into array of stems, i.e. a slice of that array. The
+    assumption is that the original, and possibly modifed, stems can be not
+    only accessed but also modifed through the box.
+    """
+
+    def __init__(self, stems):
+        """Store reference to associated stems
+
+        :param stems: Array-like object of stems
+        """
+        self.stems = stems
+
+    def __bool__(self):
+        return bool(np.any(self.stems > 0))
+
+    # for Python 2 compatibility
+    __nonzero__ = __bool__
+
+
 class ParameterShipmentGenerator:
     """Generate a shipments based on configuration parameters"""
 
-    def __init__(self, parameters, ports, start_date):
+    def __init__(self, parameters, ports, stems_per_box, start_date):
         """Set parameters for shipement generation
 
         :param parameters: Shipment parameters
         :param ports: List of ports to choose from
+        :param stems_per_box: Configuration driving number of stems per box
+        :param start_date: Date to start shipment dates from
         """
         self.params = parameters
         self.ports = ports
+        self.stems_per_box = stems_per_box
         self.num_generated = 0
         if isinstance(start_date, str):
             start_date = datetime.strptime(start_date, "%Y-%m-%d")
@@ -65,10 +93,16 @@ class ParameterShipmentGenerator:
         origins = self.params["origins"]
         flower = random.choice(flowers)
         origin = random.choice(origins)
-        num_boxes_min = self.params["boxes"]["min"]
+        num_boxes_min = self.params["boxes"].get("min", 0)
         num_boxes_max = self.params["boxes"]["max"]
+        stems_per_box = self.stems_per_box["default"]
         num_boxes = random.randint(num_boxes_min, num_boxes_max)
-        boxes = [False] * num_boxes
+        stems = np.zeros(num_boxes * stems_per_box, dtype=np.int)
+        boxes = []
+        for i in range(num_boxes):
+            lower = i * stems_per_box
+            upper = (i + 1) * stems_per_box
+            boxes.append(Box(stems[lower:upper]))
         self.num_generated += 1
         # two shipments every nth day
         if self.num_generated % 3:
@@ -76,6 +110,7 @@ class ParameterShipmentGenerator:
 
         return dict(
             flower=flower,
+            stems=stems,
             num_boxes=num_boxes,
             arrival_time=self.date,
             boxes=boxes,
@@ -101,7 +136,9 @@ class F280ShipmentGenerator:
                 "More shipments requested than number of records in provided F280"
             )
 
-        stems = int(record["QUANTITY"])
+        num_stems = int(record["QUANTITY"])
+        stems = np.zeros(num_stems, dtype=np.int)
+
         if record["PATHWAY"] == "Airport":
             stems_per_box = self.stems_per_box["air"]["default"]
         elif record["PATHWAY"] == "Maritime":
@@ -109,14 +146,20 @@ class F280ShipmentGenerator:
         else:
             stems_per_box = self.stems_per_box["default"]
 
-        num_boxes = int(round(stems / float(stems_per_box)))
+        num_boxes = int(round(num_stems / float(stems_per_box)))
         if num_boxes < 1:
             num_boxes = 1
-        boxes = [False] * num_boxes
+        boxes = []
+        for i in range(num_boxes):
+            lower = i * stems_per_box
+            # slicing does not go over the size even if our last box is smaller
+            upper = (i + 1) * stems_per_box
+            boxes.append(Box(stems[lower:upper]))
 
         date = datetime.strptime(record["REPORT_DT"], "%Y-%m-%d")
         return dict(
             flower=record["COMMODITY"],
+            stems=stems,
             num_boxes=num_boxes,
             arrival_time=date,
             boxes=boxes,
@@ -139,7 +182,8 @@ def add_pest(config, shipment):
         return
     for i in range(len(shipment["boxes"])):
         if random.random() < pest_ratio:
-            shipment["boxes"][i] = True
+            # simply put one pest to first stem in the box
+            shipment["boxes"][i].stems[0] = 1
 
 
 def inspect_first(shipment):
@@ -452,6 +496,7 @@ def simulation(config, num_shipments, f280_file, verbose=False):
         shipment_generator = ParameterShipmentGenerator(
             parameters=config["shipment"],
             ports=config["ports"],
+            stems_per_box=config["stems_per_box"],
             start_date="2020-04-01",
         )
 
