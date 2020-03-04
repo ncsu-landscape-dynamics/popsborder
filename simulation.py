@@ -186,6 +186,21 @@ def add_pest_to_random_box(config, shipment):
             shipment["boxes"][i].stems[0] = 1
 
 
+def get_pest_function(config):
+    """Get function for adding pest to a shipment based on configuration"""
+    arrangement = config["pest"]["arrangement"]
+    if arrangement == "random_box":
+
+        def add_pest_function(shipment):
+            return add_pest_to_random_box(
+                config=config["pest"]["random_box"], shipment=shipment
+            )
+
+    else:
+        raise RuntimeError("Unknown pest arrangement: {arrangement}".format(**locals()))
+    return add_pest_function
+
+
 def inspect_first(shipment):
     """Inspect only the first box in the shipment"""
     if shipment["boxes"][0]:
@@ -500,6 +515,8 @@ def simulation(config, num_shipments, f280_file, verbose=False):
             start_date="2020-04-01",
         )
 
+    add_pest = get_pest_function(config)
+
     inspection_strategy = config["inspection"]["strategy"]
     if inspection_strategy == "percentage":
 
@@ -528,7 +545,7 @@ def simulation(config, num_shipments, f280_file, verbose=False):
 
     for unused_i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
-        add_pest_to_random_box(config["pest"]["random_box"], shipment)
+        add_pest(shipment)
         must_inspect, applied_program = is_inspection_needed(
             shipment, shipment["arrival_time"]
         )
