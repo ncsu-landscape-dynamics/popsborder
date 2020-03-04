@@ -135,7 +135,7 @@ def add_pest(config, shipment):
     """
     pest_probability = config["shipment"]["pest"]["probability"]
     pest_ratio = config["shipment"]["pest"]["ratio"]
-    if random.random() < pest_probability:
+    if random.random() >= pest_probability:
         return
     for i in range(len(shipment["boxes"])):
         if random.random() < pest_ratio:
