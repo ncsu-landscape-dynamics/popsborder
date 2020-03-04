@@ -168,7 +168,7 @@ class F280ShipmentGenerator:
         )
 
 
-def add_pest(config, shipment):
+def add_pest_to_random_box(config, shipment):
     """Add pest to shipment
 
     Assuming a list of boxes with the non-infested boxes set to False.
@@ -176,8 +176,8 @@ def add_pest(config, shipment):
     Each item (box) in boxes (list) is set to True if a pest/pathogen is
     there, False otherwise.
     """
-    pest_probability = config["shipment"]["pest"]["probability"]
-    pest_ratio = config["shipment"]["pest"]["ratio"]
+    pest_probability = config["probability"]
+    pest_ratio = config["ratio"]
     if random.random() >= pest_probability:
         return
     for i in range(len(shipment["boxes"])):
@@ -528,7 +528,7 @@ def simulation(config, num_shipments, f280_file, verbose=False):
 
     for unused_i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
-        add_pest(config, shipment)
+        add_pest_to_random_box(config["pest"]["random_box"], shipment)
         must_inspect, applied_program = is_inspection_needed(
             shipment, shipment["arrival_time"]
         )
