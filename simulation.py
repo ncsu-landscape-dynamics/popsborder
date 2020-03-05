@@ -536,8 +536,9 @@ def simulation(config, num_shipments, seed, output_f280_file, verbose=False, pre
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements
 
     # set seeds for all generators used
-    random.seed(seed)  # random package
-    np.random.seed(seed)  # NumPy and SciPy
+    if seed is not None:
+        random.seed(seed)  # random package
+        np.random.seed(seed)  # NumPy and SciPy
 
     # allow for an empty disposition code specification
     disposition_codes = config.get("disposition_codes", {})
@@ -680,7 +681,7 @@ def run_simulation(
         result = simulation(
             config=config,
             num_shipments=num_shipments,
-            seed=seed + i,
+            seed=seed + i if seed else None,
             output_f280_file=output_f280_file,
             verbose=verbose,
             pretty=pretty,
