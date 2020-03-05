@@ -110,6 +110,7 @@ class ParameterShipmentGenerator:
 
         return dict(
             flower=flower,
+            num_stems=stems_per_box * num_boxes,
             stems=stems,
             num_boxes=num_boxes,
             arrival_time=self.date,
@@ -159,6 +160,7 @@ class F280ShipmentGenerator:
         date = datetime.strptime(record["REPORT_DT"], "%Y-%m-%d")
         return dict(
             flower=record["COMMODITY"],
+            num_stems=num_stems,
             stems=stems,
             num_boxes=num_boxes,
             arrival_time=date,
