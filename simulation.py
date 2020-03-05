@@ -469,7 +469,7 @@ SimulationResult = namedtuple(
 )
 
 
-def simulation(config, num_shipments, f280_file, verbose=False):
+def simulation(config, num_shipments, seed, f280_file, verbose=False):
     """Simulate shipments, their infestation, and their inspection
 
     :param config: Simulation configuration as a dictionary
@@ -478,6 +478,11 @@ def simulation(config, num_shipments, f280_file, verbose=False):
     :param verbose: If True, prints messages about each shipment
     """
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+
+    # set seeds for all generators used
+    random.seed(seed)  # random package
+    np.random.seed(seed)  # NumPy and SciPy
+
     # allow for an empty disposition code specification
     disposition_codes = config.get("disposition_codes", {})
     form280 = Form280(f280_file, disposition_codes=disposition_codes)
@@ -585,7 +590,9 @@ def simulation(config, num_shipments, f280_file, verbose=False):
     )
 
 
-def run_simulation(config, num_simulations, num_shipments, output_f280_file, verbose):
+def run_simulation(
+    config, num_simulations, num_shipments, seed, output_f280_file, verbose
+):
     """Run the simulation function specified number of times
 
     See :func:`simulation` function for explanation of parameters.
@@ -605,8 +612,8 @@ def run_simulation(config, num_simulations, num_shipments, output_f280_file, ver
         totals.num_boxes = 0
         totals.num_boxes_inspected = 0
 
-    for unused_i in range(num_simulations):
-        result = simulation(config, num_shipments, output_f280_file, verbose)
+    for i in range(num_simulations):
+        result = simulation(config, num_shipments, seed + i, output_f280_file, verbose)
         totals.missing += result.missing
         totals.num_inspections += result.num_inspections
         totals.num_boxes += result.num_boxes
@@ -654,6 +661,9 @@ def main():
         "--config-file", type=str, required=True, help="Path to configuration file"
     )
     required.add_argument(
+        "--seed", type=int, required=False, help="Seed for random generator"
+    )
+    required.add_argument(
         "--output-file", type=str, required=False, help="Path to output F280 csv file"
     )
     required.add_argument(
@@ -665,6 +675,7 @@ def main():
         config=load_configuration(args.config_file),
         num_simulations=args.num_simulations,
         num_shipments=args.num_shipments,
+        seed=args.seed,
         output_f280_file=args.output_file,
         verbose=args.verbose,
     )
