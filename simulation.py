@@ -27,6 +27,7 @@ Simulation for evaluataion of pathways
 from __future__ import print_function, division
 
 import sys
+import shutil
 import math
 import types
 import random
@@ -168,6 +169,59 @@ class F280ShipmentGenerator:
             origin=record["ORIGIN_NM"],
             port=record["LOCATION"],
         )
+
+
+def pretty_content(array):
+    """Return string with array content nicelly visualized as unicode text
+
+    Values evaluating to False are replaced with a flower, others with a bug.
+    """
+    def replace(number):
+        if number:
+            return "\N{Bug}"
+        else:
+            return "\N{Black Florette}"
+
+    pretty = [replace(i) for i in array]
+    return " ".join(pretty)
+
+
+# Pylint does not see usage of a variables in a format string.
+def pretty_header(shipment):  # pylint: disable=unused-argument
+    """Return header for a shipment
+
+    Basic info about the shipment is included and the remainining space
+    in a terminal window is filled with horizonal box characters.
+    (The assumption is that this will be printed in the terminal.)
+    """
+    size = 80
+    if hasattr(shutil, "get_terminal_size"):
+        size = shutil.get_terminal_size().columns
+    horizonatal = "\N{Box Drawings Heavy Horizontal}"
+    header = (
+        "{horizonatal}{horizonatal} Shipment"
+        " {horizonatal}{horizonatal}"
+        " Boxes: {shipment[num_boxes]} {horizonatal}{horizonatal}"
+        " Stems: {shipment[num_stems]} "
+    ).format(**locals())
+    if size > len(header):
+        size = size - len(header)
+    else:
+        size = 0
+    rule = horizonatal * size  # pylint: disable=possibly-unused-variable
+    return "{header}{rule}".format(**locals())
+
+
+def pretty_print_shipment_stems(shipment):
+    """Pretty-print shipment focusing on individual stems"""
+    print(pretty_header(shipment))
+    print(pretty_content(shipment["stems"]))
+
+
+def pretty_print_shipment_boxes(shipment):
+    """Pretty-print shipment showing individual stems in boxes"""
+    print(pretty_header(shipment))
+    print(" | ".join([pretty_content(box.stems) for box in shipment["boxes"]]))
 
 
 def add_pest_to_random_box(config, shipment):
@@ -471,7 +525,7 @@ SimulationResult = namedtuple(
 )
 
 
-def simulation(config, num_shipments, seed, f280_file, verbose=False):
+def simulation(config, num_shipments, seed, output_f280_file, verbose=False, pretty=None):
     """Simulate shipments, their infestation, and their inspection
 
     :param config: Simulation configuration as a dictionary
@@ -487,7 +541,7 @@ def simulation(config, num_shipments, seed, f280_file, verbose=False):
 
     # allow for an empty disposition code specification
     disposition_codes = config.get("disposition_codes", {})
-    form280 = Form280(f280_file, disposition_codes=disposition_codes)
+    form280 = Form280(output_f280_file, disposition_codes=disposition_codes)
     if verbose:
         reporter = PrintReporter()
     else:
@@ -553,6 +607,14 @@ def simulation(config, num_shipments, seed, f280_file, verbose=False):
     for unused_i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
         add_pest(shipment)
+        if pretty is None:
+            pass
+        elif pretty == "boxes":
+            pretty_print_shipment_boxes(shipment)
+        elif pretty == "stems":
+            pretty_print_shipment_stems(shipment)
+        else:
+            raise ValueError("Unknown value for pretty: {pretty}".format(**locals()))
         must_inspect, applied_program = is_inspection_needed(
             shipment, shipment["arrival_time"]
         )
@@ -593,7 +655,7 @@ def simulation(config, num_shipments, seed, f280_file, verbose=False):
 
 
 def run_simulation(
-    config, num_simulations, num_shipments, seed, output_f280_file, verbose
+    config, num_simulations, num_shipments, seed, output_f280_file, verbose, pretty
 ):
     """Run the simulation function specified number of times
 
@@ -615,7 +677,14 @@ def run_simulation(
         totals.num_boxes_inspected = 0
 
     for i in range(num_simulations):
-        result = simulation(config, num_shipments, seed + i, output_f280_file, verbose)
+        result = simulation(
+            config=config,
+            num_shipments=num_shipments,
+            seed=seed + i,
+            output_f280_file=output_f280_file,
+            verbose=verbose,
+            pretty=pretty,
+        )
         totals.missing += result.missing
         totals.num_inspections += result.num_inspections
         totals.num_boxes += result.num_boxes
@@ -671,6 +740,11 @@ def main():
     required.add_argument(
         "--verbose", action="store_true", help="Print a lot of diagnostic messages",
     )
+    required.add_argument(
+        "--pretty",
+        action="store_true",
+        help="Show pretty unicode output for each shipment",
+    )
     args = parser.parse_args()
 
     totals = run_simulation(
@@ -680,6 +754,7 @@ def main():
         seed=args.seed,
         output_f280_file=args.output_file,
         verbose=args.verbose,
+        pretty="boxes" if args.pretty else None,
     )
 
     print("On average, missing {0:.0f}% of shipments with pest.".format(totals.missing))
