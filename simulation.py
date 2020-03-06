@@ -37,6 +37,7 @@ import csv
 from collections import namedtuple
 from datetime import datetime, timedelta
 import numpy as np
+import scipy.stats as stats
 
 
 if not hasattr(weakref, "finalize"):
@@ -243,6 +244,71 @@ def add_pest_to_random_box(config, shipment):
             shipment["boxes"][i].stems[0] = 1
 
 
+def num_stems_to_infest(config, shipment):
+    """Return number of stems to be infested"""
+    distribution = config["infestation_rate"]["distribution"]
+    if distribution == "beta":
+        param1, param2 = config["infestation_rate"]["parameters"]
+        infestation_rate = float(stats.beta.rvs(param1, param2, size=1))
+    else:
+        raise RuntimeError(
+            "Unknown infestation rate distribution: {distribution}".format(**locals())
+        )
+    num_stems = shipment["num_stems"]
+    infested_stems = int(num_stems * infestation_rate)
+    return infested_stems
+
+
+def add_pest_clusters(config, shipment):
+    """Add pest to shipment
+
+    Assuming a list of boxes with the non-infested boxes set to False.
+
+    Each item (box) in boxes (list) is set to True if a pest/pathogen is
+    there, False otherwise.
+    """
+    infested_stems = num_stems_to_infest(config, shipment)
+    if infested_stems == 0:
+        return
+    num_stems = shipment["num_stems"]
+    # num_clusters = 1
+    cluster_sizes = [infested_stems]
+    max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
+    if infested_stems > max_stems_per_cluster:
+        # num_clusters = round(infested_stems / config["clustered"]["max_stems_per_cluster"])
+        sum_stems = 0
+        cluster_sizes = []
+        while sum_stems < infested_stems - max_stems_per_cluster:
+            sum_stems += max_stems_per_cluster
+            cluster_sizes.append(max_stems_per_cluster)
+        cluster_sizes.append(infested_stems - sum_stems)
+        sum_stems += infested_stems - sum_stems
+        assert sum_stems == infested_stems
+
+    for cluster_size in cluster_sizes:
+        distribution = config["clustered"]["distribution"]
+        if distribution == "gamma":
+            param1, param2 = config["clustered"]["parameters"]
+            cluster = stats.gamma.rvs(param1, scale=param2, size=cluster_size)
+        else:
+            raise RuntimeError(
+                "Unknown cluster distribution: {distribution}".format(**locals())
+            )
+        cluster_max = max(cluster)
+        if cluster_max > num_stems - 1:
+            cluster = np.interp(
+                cluster, (cluster.min(), cluster.max()), (0, num_stems - 1)
+            )
+        else:
+            high = num_stems - cluster_max
+            cluster_start = np.random.randint(low=0, high=high)
+            cluster += cluster_start
+        cluster = cluster.astype(np.int)
+        # The resulting infestation rate (number of infested stems) might be
+        # lower because the clusters overlap.
+        np.put(shipment["stems"], cluster, 1)
+
+
 def get_pest_function(config):
     """Get function for adding pest to a shipment based on configuration"""
     arrangement = config["pest"]["arrangement"]
@@ -252,6 +318,11 @@ def get_pest_function(config):
             return add_pest_to_random_box(
                 config=config["pest"]["random_box"], shipment=shipment
             )
+
+    elif arrangement == "clustered":
+
+        def add_pest_function(shipment):
+            return add_pest_clusters(config=config["pest"], shipment=shipment)
 
     else:
         raise RuntimeError("Unknown pest arrangement: {arrangement}".format(**locals()))
