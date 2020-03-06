@@ -194,7 +194,7 @@ def pretty_content(array):
 
 
 # Pylint does not see usage of a variables in a format string.
-def pretty_header(shipment):  # pylint: disable=unused-argument
+def pretty_header(shipment, line="heavy"):  # pylint: disable=unused-argument
     """Return header for a shipment
 
     Basic info about the shipment is included and the remainining space
@@ -204,18 +204,25 @@ def pretty_header(shipment):  # pylint: disable=unused-argument
     size = 80
     if hasattr(shutil, "get_terminal_size"):
         size = shutil.get_terminal_size().columns
-    horizonatal = "\N{Box Drawings Heavy Horizontal}"
+    if line.lower() == "heavy":
+        horizontal = "\N{Box Drawings Heavy Horizontal}"
+    elif line.lower() == "light":
+        horizontal = "\N{Box Drawings Light Horizontal}"
+    elif line == "space":
+        horizontal = " "
+    else:
+        horizontal = line
     header = (
-        "{horizonatal}{horizonatal} Shipment"
-        " {horizonatal}{horizonatal}"
-        " Boxes: {shipment[num_boxes]} {horizonatal}{horizonatal}"
+        "{horizontal}{horizontal} Shipment"
+        " {horizontal}{horizontal}"
+        " Boxes: {shipment[num_boxes]} {horizontal}{horizontal}"
         " Stems: {shipment[num_stems]} "
     ).format(**locals())
     if size > len(header):
         size = size - len(header)
     else:
         size = 0
-    rule = horizonatal * size  # pylint: disable=possibly-unused-variable
+    rule = horizontal * size  # pylint: disable=possibly-unused-variable
     return "{header}{rule}".format(**locals())
 
 
@@ -229,6 +236,12 @@ def pretty_print_shipment_boxes(shipment):
     """Pretty-print shipment showing individual stems in boxes"""
     print(pretty_header(shipment))
     print(" | ".join([pretty_content(box.stems) for box in shipment["boxes"]]))
+
+
+def pretty_print_shipment_boxes_only(shipment):
+    """Pretty-print shipment showing individual boxes"""
+    print(pretty_header(shipment, line="light"))
+    print(pretty_content(shipment["boxes"]))
 
 
 def add_pest_to_random_box(config, shipment, infestation_rate=None):
@@ -738,6 +751,8 @@ def simulation(
             pass
         elif pretty == "boxes":
             pretty_print_shipment_boxes(shipment)
+        elif pretty == "boxes_only":
+            pretty_print_shipment_boxes_only(shipment)
         elif pretty == "stems":
             pretty_print_shipment_stems(shipment)
         else:
@@ -869,7 +884,10 @@ def main():
     )
     required.add_argument(
         "--pretty",
-        action="store_true",
+        type=str,
+        const="boxes",  # default behavior for pretty
+        choices=["boxes", "stems", "boxes_only"],
+        nargs="?",  # value is optional
         help="Show pretty unicode output for each shipment",
     )
     args = parser.parse_args()
@@ -881,7 +899,7 @@ def main():
         seed=args.seed,
         output_f280_file=args.output_file,
         verbose=args.verbose,
-        pretty="boxes" if args.pretty else None,
+        pretty=args.pretty,
     )
 
     print("On average, missing {0:.0f}% of shipments with pest.".format(totals.missing))
