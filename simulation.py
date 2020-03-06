@@ -176,6 +176,7 @@ def pretty_content(array):
 
     Values evaluating to False are replaced with a flower, others with a bug.
     """
+
     def replace(number):
         if number:
             return "\N{Bug}"
@@ -525,7 +526,9 @@ SimulationResult = namedtuple(
 )
 
 
-def simulation(config, num_shipments, seed, output_f280_file, verbose=False, pretty=None):
+def simulation(
+    config, num_shipments, seed, output_f280_file, verbose=False, pretty=None
+):
     """Simulate shipments, their infestation, and their inspection
 
     :param config: Simulation configuration as a dictionary
