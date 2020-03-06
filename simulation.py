@@ -248,6 +248,7 @@ def add_pest_to_random_box(config, shipment):
             # simply put one pest to first stem in the box
             shipment["boxes"][i].stems[0] = 1
 
+
 def num_stems_to_infest(config, num_stems):
     """Return number of stems to be infested
 
