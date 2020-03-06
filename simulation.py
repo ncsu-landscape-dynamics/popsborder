@@ -61,6 +61,11 @@ class Box:
         """
         self.stems = stems
 
+    @property
+    def num_stems(self):
+        """Number of stems in the box"""
+        return self.stems.shape[0]
+
     def __bool__(self):
         return bool(np.any(self.stems > 0))
 
