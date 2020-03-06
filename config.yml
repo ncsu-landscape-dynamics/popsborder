@@ -28,7 +28,6 @@ pest:
     - 4
     - 60
   arrangement: clustered
-  random:
   clustered:
     max_stems_per_cluster: 5000
     distribution: gamma

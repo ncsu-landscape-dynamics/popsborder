@@ -259,8 +259,21 @@ def num_stems_to_infest(config, shipment):
     return infested_stems
 
 
+def add_pest_uniform_random(config, shipment):
+    """Add pests to shipment using uniform random distribution
+
+    Infestation rate is determined using the ``infestation_rate`` config key.
+    """
+    infested_stems = num_stems_to_infest(config, shipment)
+    if infested_stems == 0:
+        return
+    num_stems = shipment["num_stems"]
+    indexes = np.random.choice(num_stems, infested_stems, replace=False)
+    np.put(shipment["stems"], indexes, 1)
+
+
 def add_pest_clusters(config, shipment):
-    """Add pest to shipment
+    """Add pest clusters to shipment
 
     Assuming a list of boxes with the non-infested boxes set to False.
 
@@ -318,6 +331,11 @@ def get_pest_function(config):
             return add_pest_to_random_box(
                 config=config["pest"]["random_box"], shipment=shipment
             )
+
+    elif arrangement == "random":
+
+        def add_pest_function(shipment):
+            return add_pest_uniform_random(config=config["pest"], shipment=shipment)
 
     elif arrangement == "clustered":
 

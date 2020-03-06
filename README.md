@@ -171,6 +171,34 @@ Get all command line options for the simulation by running:
 
 ### Configuration
 
+#### Pests
+
+The pest arrangement within the shipment can be determined by:
+
+```
+pest:
+  arrangement: random
+```
+
+The arrangement can be `random` for uniform random distribution,
+`clustered` for one or more pest clusters within stems of the shipment,
+and `random_box` for one or more random boxes having pest.
+
+For arrangement `random` and `clustered`, the infestation rate can be
+determined by:
+
+```
+pest:
+  infestation_rate:
+    distribution: beta
+    parameters:
+    - 4
+    - 60
+```
+
+The `random` arrangement does not have any further configuration.
+
+
 #### Disposition codes
 
 Here is an example with disposition codes close to what is used in F280:
