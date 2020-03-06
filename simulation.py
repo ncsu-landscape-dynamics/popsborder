@@ -231,22 +231,47 @@ def pretty_print_shipment_boxes(shipment):
     print(" | ".join([pretty_content(box.stems) for box in shipment["boxes"]]))
 
 
-def add_pest_to_random_box(config, shipment):
+def add_pest_to_random_box(config, shipment, infestation_rate=None):
     """Add pest to shipment
 
     Assuming a list of boxes with the non-infested boxes set to False.
 
     Each item (box) in boxes (list) is set to True if a pest/pathogen is
     there, False otherwise.
+
+    :param config: ``random_box`` config dictionary
+    :param shipment: Shipment to infest
+    :param infestation_rate: ``infestation_rate`` config dictionary
     """
     pest_probability = config["probability"]
     pest_ratio = config["ratio"]
     if random.random() >= pest_probability:
         return
-    for i in range(len(shipment["boxes"])):
+    for box in shipment["boxes"]:
         if random.random() < pest_ratio:
-            # simply put one pest to first stem in the box
-            shipment["boxes"][i].stems[0] = 1
+            in_box = config.get("in_box_arrangement", "all")
+            if in_box == "first":
+                # simply put one pest to first stem in the box
+                box.stems[0] = 1
+            elif in_box == "all":
+                box.stems.fill(1)
+            elif in_box == "one_random":
+                index = np.random.choice(box.num_stems - 1)
+                box.stems[index] = 1
+            elif in_box == "random":
+                if not infestation_rate:
+                    raise ValueError(
+                        "infestation_rate must be set if arrangement is random"
+                    )
+                num_infested_stems = num_stems_to_infest(
+                    infestation_rate, box.num_stems
+                )
+                if num_infested_stems == 0:
+                    continue
+                indexes = np.random.choice(
+                    box.num_stems, num_infested_stems, replace=False
+                )
+                np.put(box.stems, indexes, 1)
 
 
 def num_stems_to_infest(config, num_stems):
@@ -336,7 +361,9 @@ def get_pest_function(config):
 
         def add_pest_function(shipment):
             return add_pest_to_random_box(
-                config=config["pest"]["random_box"], shipment=shipment
+                config=config["pest"]["random_box"],
+                shipment=shipment,
+                infestation_rate=config["pest"]["infestation_rate"],
             )
 
     elif arrangement == "random":

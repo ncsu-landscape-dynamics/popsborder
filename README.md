@@ -196,8 +196,44 @@ pest:
     - 60
 ```
 
-The `random` arrangement does not have any further configuration.
+The `random` arrangement does not have any further configuration besides
+`infestation_rate`.
 
+The settings for `random_box` is:
+
+```
+pest:
+  random_box:
+    probability: 0.2
+    ratio: 0.5
+    in_box_arrangement: all
+```
+
+Probability of shipment being infested is driven by `probability`
+while the number of boxes infested within a shipment is driven by `ratio`.
+The infestation within one box is determined by `in_box_arrangement`
+which can have values `all`, `first`, `one_random`, and `random`.
+For `all`, all stems within a box are infested.
+With `first`, only the first stem in the box will get pest.
+`one_random` is similar to `first`, but a random stem is picked to get
+pest.
+The `random` in-box arrangement will place pests in a box using uniform
+random distribution. The number of pests to be placed is determined
+using the distribution configured using the `infestation_rate` key
+which takes meaning *infestation rate within a box* instead of its usual
+meaning *infestation rate within a shipment*.
+In that case, the configuration may look like this:
+
+```
+pest:
+  infestation_rate:
+    distribution: beta
+    parameters: [20, 30]
+  random_box:
+    probability: 0.2
+    ratio: 0.5
+    in_box_arrangement: all
+```
 
 #### Disposition codes
 
