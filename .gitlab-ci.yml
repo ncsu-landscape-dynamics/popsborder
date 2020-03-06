@@ -1,7 +1,7 @@
 default:
   image: python:3.8
   before_script:
-  - pip install numpy PyYAML
+  - pip install numpy scipy PyYAML
 
 test:
   script:
@@ -9,7 +9,7 @@ test:
 
 linting:
   before_script:
-  - pip install numpy PyYAML flake8 pylint black
+  - pip install numpy scipy PyYAML flake8 pylint black
   script:
   - flake8 .
   - pylint simulation.py
