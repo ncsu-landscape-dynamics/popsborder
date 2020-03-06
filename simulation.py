@@ -248,18 +248,19 @@ def add_pest_to_random_box(config, shipment):
             # simply put one pest to first stem in the box
             shipment["boxes"][i].stems[0] = 1
 
+def num_stems_to_infest(config, num_stems):
+    """Return number of stems to be infested
 
-def num_stems_to_infest(config, shipment):
-    """Return number of stems to be infested"""
-    distribution = config["infestation_rate"]["distribution"]
+    Config is the ``infestation_rate`` dictionary.
+    """
+    distribution = config["distribution"]
     if distribution == "beta":
-        param1, param2 = config["infestation_rate"]["parameters"]
+        param1, param2 = config["parameters"]
         infestation_rate = float(stats.beta.rvs(param1, param2, size=1))
     else:
         raise RuntimeError(
             "Unknown infestation rate distribution: {distribution}".format(**locals())
         )
-    num_stems = shipment["num_stems"]
     infested_stems = int(num_stems * infestation_rate)
     return infested_stems
 
@@ -269,10 +270,10 @@ def add_pest_uniform_random(config, shipment):
 
     Infestation rate is determined using the ``infestation_rate`` config key.
     """
-    infested_stems = num_stems_to_infest(config, shipment)
+    num_stems = shipment["num_stems"]
+    infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
     if infested_stems == 0:
         return
-    num_stems = shipment["num_stems"]
     indexes = np.random.choice(num_stems, infested_stems, replace=False)
     np.put(shipment["stems"], indexes, 1)
 
@@ -285,10 +286,10 @@ def add_pest_clusters(config, shipment):
     Each item (box) in boxes (list) is set to True if a pest/pathogen is
     there, False otherwise.
     """
-    infested_stems = num_stems_to_infest(config, shipment)
+    num_stems = shipment["num_stems"]
+    infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
     if infested_stems == 0:
         return
-    num_stems = shipment["num_stems"]
     # num_clusters = 1
     cluster_sizes = [infested_stems]
     max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
