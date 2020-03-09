@@ -860,35 +860,72 @@ def load_configuration(filename):
         sys.exit("Unknown file extension (file: {})".format(filename))
 
 
+class CustomHelpFormatter(argparse.RawTextHelpFormatter):
+    def add_usage(self, usage, actions, groups, prefix=None):
+        if prefix is None:
+            prefix = "Usage: "
+        return super(CustomHelpFormatter, self).add_usage(
+            usage, actions, groups, prefix
+        )
+
+
 def main():
     """Process command line parameters and run the simulation"""
-    parser = argparse.ArgumentParser(description="Pathway Simulation")
-    required = parser.add_argument_group("required arguments")
-    required.add_argument(
-        "--num-simulations", type=int, required=True, help="Number of simulations"
+    parser = argparse.ArgumentParser(
+        description="Pathway simulation of infested shipments",
+        formatter_class=CustomHelpFormatter,
+        add_help=False,
     )
-    required.add_argument(
+    basic = parser.add_argument_group("Simulation parameters (required)")
+    basic.add_argument(
         "--num-shipments", type=int, required=True, help="Number of shipments"
     )
-    required.add_argument(
+    basic.add_argument(
         "--config-file", type=str, required=True, help="Path to configuration file"
     )
-    required.add_argument(
+    optional = parser.add_argument_group("Running simulations (optional)")
+    optional.add_argument(
+        "--num-simulations",
+        type=int,
+        required=False,
+        default=1,
+        help="Number of simulations to run",
+    )
+    optional.add_argument(
         "--seed", type=int, required=False, help="Seed for random generator"
     )
-    required.add_argument(
+    output_group = parser.add_argument_group("Output (optional)")
+    output_group.add_argument(
         "--output-file", type=str, required=False, help="Path to output F280 csv file"
     )
-    required.add_argument(
-        "--verbose", action="store_true", help="Print a lot of diagnostic messages",
+    pretty_choices = (
+        ("boxes", "Show boxes with individual stems (default)"),
+        ("stems", "Show individual stems only"),
+        ("boxes_only", "Show only boxes as the items"),
     )
-    required.add_argument(
+    output_group.add_argument(
         "--pretty",
         type=str,
         const="boxes",  # default behavior for pretty
-        choices=["boxes", "stems", "boxes_only"],
         nargs="?",  # value is optional
-        help="Show pretty unicode output for each shipment",
+        choices=[i[0] for i in pretty_choices],
+        help=(
+            "Show pretty unicode output for each shipment\n"
+            + "\n".join(["\n    ".join(i) for i in pretty_choices])
+        ),
+    )
+    output_group.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Print messages about each shipment inspection process",
+    )
+    output_group.add_argument(
+        "-h",
+        "--help",
+        action="help",
+        default=argparse.SUPPRESS,
+        help="Show this help message and exit",
     )
     args = parser.parse_args()
 
