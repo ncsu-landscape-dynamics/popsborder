@@ -6,4 +6,4 @@ if [ -z "$1" ] || [ -z "$2" ]
     exit 1
 fi
 
-python simulation.py --num-simulations 1 --num-shipments $2 --config-file config.yml --output-file $1
+python -m pathways --num-simulations 1 --num-shipments $2 --config-file config.yml --output-file $1

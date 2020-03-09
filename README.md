@@ -160,13 +160,13 @@ Generating a sample dataset with F280 records only:
 Direct run of the simulation with 1000 shipments repeated 20 times:
 
 ```
-./simulation.py --num-simulations 20 --num-shipments 1000 --config-file config.yml
+python -m pathways --num-simulations 20 --num-shipments 1000 --config-file config.yml
 ```
 
 Get all command line options for the simulation by running:
 
 ```
-./simulation.py --help
+python -m pathways --help
 ```
 
 ### Configuration

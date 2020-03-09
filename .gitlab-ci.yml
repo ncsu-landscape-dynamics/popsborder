@@ -5,14 +5,14 @@ default:
 
 test:
   script:
-  - python simulation.py --num-simulations 5 --num-shipments 50 --config-file config.yml
+  - python -m pathways --num-simulations 5 --num-shipments 50 --config-file config.yml
 
 linting:
   before_script:
   - pip install numpy scipy PyYAML flake8 pylint black
   script:
   - flake8 .
-  - pylint simulation.py
+  - pylint pathways
   - black --check --diff .
 
 data:
