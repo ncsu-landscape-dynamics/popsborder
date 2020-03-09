@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see https://www.gnu.org/licenses/gpl-2.0.html
 
+"""The main file for executing using python -m"""
+
 from .app import main
 
 if __name__ == "__main__":

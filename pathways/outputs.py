@@ -19,7 +19,7 @@
 
 
 """
-Simulation for evaluataion of pathways
+Various outputs for pathways simulation
 
 .. codeauthor:: Vaclav Petras <wenzeslaus gmail com>
 """

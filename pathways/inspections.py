@@ -19,7 +19,7 @@
 
 
 """
-Simulation for evaluataion of pathways
+Inspections of shipments in pathways simulation
 
 .. codeauthor:: Vaclav Petras <wenzeslaus gmail com>
 """

@@ -19,7 +19,7 @@
 
 
 """
-Simulation for evaluataion of pathways
+Shipment and pest generation for pathways simulation
 
 .. codeauthor:: Vaclav Petras <wenzeslaus gmail com>
 """

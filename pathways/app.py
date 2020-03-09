@@ -19,7 +19,7 @@
 
 
 """
-Simulation for evaluataion of pathways
+CLI for the simulation of pathways
 
 .. codeauthor:: Vaclav Petras <wenzeslaus gmail com>
 """
