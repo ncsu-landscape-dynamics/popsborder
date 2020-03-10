@@ -29,7 +29,6 @@ from __future__ import print_function, division
 import math
 import random
 import weakref
-import csv
 
 
 if not hasattr(weakref, "finalize"):
