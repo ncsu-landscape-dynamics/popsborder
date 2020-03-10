@@ -47,12 +47,30 @@ class CustomHelpFormatter(argparse.RawTextHelpFormatter):
         )
 
 
+def get_executable_name():
+    """Get name of the executable
+
+    Returns "python -m module" if executed with python -m in command line
+    using Python 3 (it does not work in Python 2).
+    This does not account for execution with python3.
+
+    This is a workaround for:
+    argparse support for "python -m module" in help
+    https://bugs.python.org/issue22240
+    """
+    if globals().get("__spec__") is None:
+        return None
+    else:
+        return "python -m {}".format(__spec__.name.partition(".")[0])
+
+
 def main():
     """Process command line parameters and run the simulation"""
     parser = argparse.ArgumentParser(
         description="Pathway simulation of infested shipments",
         formatter_class=CustomHelpFormatter,
         add_help=False,
+        prog=get_executable_name(),
     )
     basic = parser.add_argument_group("Simulation parameters (required)")
     basic.add_argument(
