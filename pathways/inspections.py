@@ -98,6 +98,36 @@ def inspect_shipment_percentage(config, shipment):
         )
 
 
+def get_inspection_function(config):
+    """Based on config, return function to inspect a shipment."""
+    inspection_strategy = config["inspection"]["strategy"]
+    if inspection_strategy == "percentage":
+
+        def inspect(shipment):
+            return inspect_shipment_percentage(
+                config=config["inspection"]["percentage"], shipment=shipment
+            )
+
+    elif inspection_strategy == "first_n":
+
+        def inspect(shipment):
+            return inspect_first_n(
+                num_boxes=config["inspection"]["first_n_boxes"], shipment=shipment
+            )
+
+    elif inspection_strategy == "first":
+        inspect = inspect_first
+    elif inspection_strategy == "one_random":
+        inspect = inspect_one_random
+    elif inspection_strategy == "all":
+        inspect = inspect_all
+    else:
+        raise RuntimeError(
+            "Unknown inspection strategy: {inspection_strategy}".format(**locals())
+        )
+    return inspect
+
+
 def is_flower_of_the_day(cfrp, flower, date):
     """Return True if the flower is FoTD based on naive criteria"""
     i = date.day % len(cfrp)
@@ -124,6 +154,23 @@ def naive_cfrp(config, shipment, date):
 def inspect_always(shipment, date):  # pylint: disable=unused-argument
     """Inspect always"""
     return True, None
+
+
+def get_inspection_needed_function(config):
+    """Based on config, return function to determine is inspection is needed."""
+    if "release_programs" in config:
+        if "naive_cfrp" in config["release_programs"]:
+
+            def is_inspection_needed(shipment, date):
+                return naive_cfrp(
+                    config["release_programs"]["naive_cfrp"], shipment, date
+                )
+
+        else:
+            raise RuntimeError("Unknown release program: {program}".format(**locals()))
+    else:
+        is_inspection_needed = inspect_always
+    return is_inspection_needed
 
 
 def is_shipment_diseased(shipment):

@@ -166,6 +166,22 @@ class F280ShipmentGenerator:
         )
 
 
+def get_shipment_generator(config):
+    """Based on config, return shipment generator object."""
+    if "input_F280" in config:
+        shipment_generator = F280ShipmentGenerator(
+            stems_per_box=config["stems_per_box"], filename=config["input_F280"]
+        )
+    else:
+        shipment_generator = ParameterShipmentGenerator(
+            parameters=config["shipment"],
+            ports=config["ports"],
+            stems_per_box=config["stems_per_box"],
+            start_date="2020-04-01",
+        )
+    return shipment_generator
+
+
 def add_pest_to_random_box(config, shipment, infestation_rate=None):
     """Add pest to shipment
 

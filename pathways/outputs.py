@@ -103,6 +103,25 @@ def pretty_print_shipment_boxes_only(shipment):
     print(pretty_content(shipment["boxes"]))
 
 
+def pretty_print_shipment(shipment, style):
+    """Pretty-print shipment in a given style
+
+    :param style: Style of pretty-printing (boxes, boxes_only, stems)
+    """
+    if style == "boxes":
+        pretty_print_shipment_boxes(shipment)
+    elif style == "boxes_only":
+        pretty_print_shipment_boxes_only(shipment)
+    elif style == "stems":
+        pretty_print_shipment_stems(shipment)
+    else:
+        raise ValueError(
+            "Unknown style value for pretty printing of shipments: {pretty}".format(
+                **locals()
+            )
+        )
+
+
 class PrintReporter(object):
     """Reporter class which prints a message for each shipment"""
 

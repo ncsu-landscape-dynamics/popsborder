@@ -34,28 +34,20 @@ import numpy as np
 
 
 from .shipments import (
-    F280ShipmentGenerator,
-    ParameterShipmentGenerator,
+    get_shipment_generator,
     get_pest_function,
 )
 from .inspections import (
+    get_inspection_needed_function,
+    get_inspection_function,
     is_shipment_diseased,
-    inspect_always,
-    inspect_first,
-    inspect_first_n,
-    inspect_one_random,
-    inspect_all,
-    inspect_shipment_percentage,
-    naive_cfrp,
 )
 from .outputs import (
     Form280,
     PrintReporter,
     MuteReporter,
     SuccessRates,
-    pretty_print_shipment_boxes,
-    pretty_print_shipment_boxes_only,
-    pretty_print_shipment_stems,
+    pretty_print_shipment,
 )
 
 
@@ -94,72 +86,17 @@ def simulation(
     total_num_boxes_inspected = 0
     total_num_boxes = 0
 
-    if "release_programs" in config:
-        if "naive_cfrp" in config["release_programs"]:
-
-            def is_inspection_needed(shipment, date):
-                return naive_cfrp(
-                    config["release_programs"]["naive_cfrp"], shipment, date
-                )
-
-        else:
-            raise RuntimeError("Unknown release program: {program}".format(**locals()))
-    else:
-        is_inspection_needed = inspect_always
-
-    if "input_F280" in config:
-        shipment_generator = F280ShipmentGenerator(
-            stems_per_box=config["stems_per_box"], filename=config["input_F280"]
-        )
-    else:
-        shipment_generator = ParameterShipmentGenerator(
-            parameters=config["shipment"],
-            ports=config["ports"],
-            stems_per_box=config["stems_per_box"],
-            start_date="2020-04-01",
-        )
-
+    shipment_generator = get_shipment_generator(config)
     add_pest = get_pest_function(config)
-
-    inspection_strategy = config["inspection"]["strategy"]
-    if inspection_strategy == "percentage":
-
-        def inspect(shipment):
-            return inspect_shipment_percentage(
-                config=config["inspection"]["percentage"], shipment=shipment
-            )
-
-    elif inspection_strategy == "first_n":
-
-        def inspect(shipment):
-            return inspect_first_n(
-                num_boxes=config["inspection"]["first_n_boxes"], shipment=shipment
-            )
-
-    elif inspection_strategy == "first":
-        inspect = inspect_first
-    elif inspection_strategy == "one_random":
-        inspect = inspect_one_random
-    elif inspection_strategy == "all":
-        inspect = inspect_all
-    else:
-        raise RuntimeError(
-            "Unknown inspection strategy: {inspection_strategy}".format(**locals())
-        )
+    is_inspection_needed = get_inspection_needed_function(config)
+    inspect = get_inspection_function(config)
 
     for unused_i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
         add_pest(shipment)
-        if pretty is None:
-            pass
-        elif pretty == "boxes":
-            pretty_print_shipment_boxes(shipment)
-        elif pretty == "boxes_only":
-            pretty_print_shipment_boxes_only(shipment)
-        elif pretty == "stems":
-            pretty_print_shipment_stems(shipment)
-        else:
-            raise ValueError("Unknown value for pretty: {pretty}".format(**locals()))
+        if pretty:
+            pretty_print_shipment(shipment, style=pretty)
+
         must_inspect, applied_program = is_inspection_needed(
             shipment, shipment["arrival_time"]
         )
