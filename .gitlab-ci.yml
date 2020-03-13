@@ -9,7 +9,8 @@ basic-test:
 
 test:
   before_script:
-  - pip install numpy scipy PyYAML pytest
+  - pip install .
+  - pip install pytest
   script:
   - pytest tests/
 
