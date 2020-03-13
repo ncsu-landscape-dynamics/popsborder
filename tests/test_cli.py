@@ -1,7 +1,41 @@
-import os
 import sys
 import subprocess
-import yaml
+
+
+CONFIG = """\
+shipment:
+  origins:
+  - Netherlands
+  - Mexico
+  flowers:
+  - Hyacinthus
+  - Rosa
+  - Gerbera
+  boxes:
+    min: 1
+    max: 50
+pest:
+  infestation_rate:
+    distribution: beta
+    parameters:
+    - 4
+    - 60
+  arrangement: random_box
+  random_box:
+    probability: 0.2
+    ratio: 0.5
+inspection:
+  strategy: percentage
+  percentage:
+      proportion: 0.02
+      min_boxes: 1
+      end_strategy: to_completion
+ports:
+  - NY JFK CBP
+  - FL Miami Air CBP
+stems_per_box:
+  default: 10
+"""
 
 
 def key_to_option(key):
@@ -24,5 +58,7 @@ def run_pathways_cli(**kwargs):
     )
 
 
-def test_gives_result():
-    assert "slippage" in run_pathways_cli(num_shipments=10, config_file="config.yml")
+def test_gives_result(tmp_path):
+    config = tmp_path / "config.yml"
+    config.write_text(CONFIG)
+    assert "slippage" in run_pathways_cli(num_shipments=10, config_file=str(config))
