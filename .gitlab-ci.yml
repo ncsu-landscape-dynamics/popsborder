@@ -3,9 +3,15 @@ default:
   before_script:
   - pip install numpy scipy PyYAML
 
-test:
+basic-test:
   script:
   - python -m pathways --num-simulations 5 --num-shipments 50 --config-file config.yml
+
+test:
+  before_script:
+  - pip install numpy scipy PyYAML pytest
+  script:
+  - pytest tests/
 
 linting:
   before_script:
