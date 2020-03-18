@@ -84,12 +84,10 @@ class ParameterShipmentGenerator:
 
     def generate_shipment(self):
         """Generate a new shipment"""
-        # flowers or commodities
         port = random.choice(self.ports)
-        flowers = self.params["flowers"]
-        origins = self.params["origins"]
-        flower = random.choice(flowers)
-        origin = random.choice(origins)
+        # flowers or commodities
+        flower = random.choice(self.params["flowers"])
+        origin = random.choice(self.params["origins"])
         num_boxes_min = self.params["boxes"].get("min", 0)
         num_boxes_max = self.params["boxes"]["max"]
         stems_per_box = self.stems_per_box["default"]
