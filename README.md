@@ -199,6 +199,22 @@ pest:
 The `random` arrangement does not have any further configuration besides
 `infestation_rate`.
 
+The settings for `clustered` is:
+
+```
+  clustered:
+    max_stems_per_cluster: 10
+    distribution: gamma
+    parameters:
+    - 4
+    - 2
+```
+
+The cluster size in terms of number of stems is limited by
+`max_stems_per_cluster`. If `max_stems_per_cluster` is exceeded, more
+than one cluster is generated so that number of stems in each cluster
+conforms to this limit.
+
 The settings for `random_box` is:
 
 ```

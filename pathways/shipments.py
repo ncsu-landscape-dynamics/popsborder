@@ -274,16 +274,20 @@ def add_pest_clusters(config, shipment):
         # num_clusters = round(
         #    infested_stems / config["clustered"]["max_stems_per_cluster"]
         # )
+        # Split into n clusters so that n-1 clusters have the max size and
+        # the last one has the remaining stems.
         sum_stems = 0
         cluster_sizes = []
         while sum_stems < infested_stems - max_stems_per_cluster:
             sum_stems += max_stems_per_cluster
             cluster_sizes.append(max_stems_per_cluster)
+        # add remaining stems
         cluster_sizes.append(infested_stems - sum_stems)
         sum_stems += infested_stems - sum_stems
         assert sum_stems == infested_stems
 
     for cluster_size in cluster_sizes:
+        # Generate cluster as indices in the array of stems
         distribution = config["clustered"]["distribution"]
         if distribution == "gamma":
             param1, param2 = config["clustered"]["parameters"]
@@ -292,12 +296,17 @@ def add_pest_clusters(config, shipment):
             raise RuntimeError(
                 "Unknown cluster distribution: {distribution}".format(**locals())
             )
+        assert min(cluster) >= 0, "Cluster values need to be valid indices"
         cluster_max = max(cluster)
         if cluster_max > num_stems - 1:
+            # If the max index specified by the cluster is outside of stem
+            # array index range, fit the cluster values into that range.
             cluster = np.interp(
                 cluster, (cluster.min(), cluster.max()), (0, num_stems - 1)
             )
         else:
+            # If the cluster valus are within stem array index range,
+            # place the cluster randomly in the array of stems.
             high = num_stems - cluster_max
             cluster_start = np.random.randint(low=0, high=high)
             cluster += cluster_start
