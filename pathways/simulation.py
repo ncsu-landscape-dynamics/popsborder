@@ -41,6 +41,7 @@ from .inspections import (
     get_inspection_needed_function,
     get_inspection_function,
     is_shipment_diseased,
+    shipment_infestation_rate,
 )
 from .outputs import (
     Form280,
@@ -53,7 +54,13 @@ from .outputs import (
 
 SimulationResult = namedtuple(
     "SimulationResult",
-    ["missing", "num_inspections", "num_boxes_inspected", "num_boxes"],
+    [
+        "missing",
+        "num_inspections",
+        "num_boxes_inspected",
+        "num_boxes",
+        "true_infestation_rate",
+    ],
 )
 
 
@@ -85,6 +92,7 @@ def simulation(
     num_inspections = 0
     total_num_boxes_inspected = 0
     total_num_boxes = 0
+    true_infestation_rate = 0
 
     shipment_generator = get_shipment_generator(config)
     add_pest = get_pest_function(config)
@@ -118,6 +126,7 @@ def simulation(
         success_rates.record_success_rate(
             shipment_checked_ok, shipment_actually_ok, shipment
         )
+        true_infestation_rate += shipment_infestation_rate(shipment)
 
     num_diseased = num_shipments - success_rates.ok
     if num_diseased:
@@ -133,6 +142,7 @@ def simulation(
         num_inspections=num_inspections,
         num_boxes=total_num_boxes,
         num_boxes_inspected=total_num_boxes_inspected,
+        true_infestation_rate=true_infestation_rate / num_shipments,
     )
 
 
@@ -148,7 +158,11 @@ def run_simulation(
     try:
         # namedtuple is not applicable since we need modifications
         totals = types.SimpleNamespace(
-            missing=0, num_inspections=0, num_boxes=0, num_boxes_inspected=0,
+            missing=0,
+            num_inspections=0,
+            num_boxes=0,
+            num_boxes_inspected=0,
+            true_infestation_rate=0,
         )
     except AttributeError:
         # Python 2 fallback
@@ -157,6 +171,7 @@ def run_simulation(
         totals.num_inspections = 0
         totals.num_boxes = 0
         totals.num_boxes_inspected = 0
+        totals.true_infestation_rate = 0
 
     for i in range(num_simulations):
         result = simulation(
@@ -171,11 +186,13 @@ def run_simulation(
         totals.num_inspections += result.num_inspections
         totals.num_boxes += result.num_boxes
         totals.num_boxes_inspected += result.num_boxes_inspected
+        totals.true_infestation_rate += result.true_infestation_rate
     # make these relative (reusing the variables)
     totals.missing /= float(num_simulations)
     totals.num_inspections /= float(num_simulations)
     totals.num_boxes /= float(num_simulations)
     totals.num_boxes_inspected /= float(num_simulations)
+    totals.true_infestation_rate /= float(num_simulations)
     return totals
 
 
