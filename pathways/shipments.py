@@ -94,7 +94,8 @@ class ParameterShipmentGenerator:
         num_boxes_max = self.params["boxes"]["max"]
         stems_per_box = self.stems_per_box["default"]
         num_boxes = random.randint(num_boxes_min, num_boxes_max)
-        stems = np.zeros(num_boxes * stems_per_box, dtype=np.int)
+        num_stems = stems_per_box * num_boxes
+        stems = np.zeros(num_stems, dtype=np.int)
         boxes = []
         for i in range(num_boxes):
             lower = i * stems_per_box
@@ -107,7 +108,7 @@ class ParameterShipmentGenerator:
 
         return dict(
             flower=flower,
-            num_stems=stems_per_box * num_boxes,
+            num_stems=num_stems,
             stems=stems,
             num_boxes=num_boxes,
             arrival_time=self.date,
