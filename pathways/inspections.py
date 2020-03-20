@@ -132,7 +132,6 @@ def is_flower_of_the_day(cfrp, flower, date):
     """Return True if the flower is FoTD based on naive criteria"""
     i = date.day % len(cfrp)
     if flower == cfrp[i]:
-        print("{} is flower of the day".format(flower))
         return True
     return False
 
