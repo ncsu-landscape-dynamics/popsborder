@@ -255,6 +255,7 @@ def add_pest_uniform_random(config, shipment):
         return
     indexes = np.random.choice(num_stems, infested_stems, replace=False)
     np.put(shipment["stems"], indexes, 1)
+    assert np.count_nonzero(shipment["stems"]) == infested_stems
 
 
 def add_pest_clusters(config, shipment):
@@ -316,6 +317,7 @@ def add_pest_clusters(config, shipment):
         # The resulting infestation rate (number of infested stems) might be
         # lower because the clusters overlap.
         np.put(shipment["stems"], cluster, 1)
+    assert np.count_nonzero(shipment["stems"]) <= infested_stems
 
 
 def get_pest_function(config):
