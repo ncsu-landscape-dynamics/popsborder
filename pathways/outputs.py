@@ -182,6 +182,7 @@ class Form280(object):
                 self.file,
                 delimiter=separator,
                 quotechar='"',
+                lineterminator="\n",
                 quoting=csv.QUOTE_NONNUMERIC,
             )
             self.writer.writerow(columns)
