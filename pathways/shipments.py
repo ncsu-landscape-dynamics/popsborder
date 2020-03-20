@@ -29,6 +29,7 @@ from __future__ import print_function, division
 import random
 import csv
 from datetime import datetime, timedelta
+import math
 import numpy as np
 import scipy.stats as stats
 
@@ -83,17 +84,16 @@ class ParameterShipmentGenerator:
 
     def generate_shipment(self):
         """Generate a new shipment"""
-        # flowers or commodities
         port = random.choice(self.ports)
-        flowers = self.params["flowers"]
-        origins = self.params["origins"]
-        flower = random.choice(flowers)
-        origin = random.choice(origins)
+        # flowers or commodities
+        flower = random.choice(self.params["flowers"])
+        origin = random.choice(self.params["origins"])
         num_boxes_min = self.params["boxes"].get("min", 0)
         num_boxes_max = self.params["boxes"]["max"]
         stems_per_box = self.stems_per_box["default"]
         num_boxes = random.randint(num_boxes_min, num_boxes_max)
-        stems = np.zeros(num_boxes * stems_per_box, dtype=np.int)
+        num_stems = stems_per_box * num_boxes
+        stems = np.zeros(num_stems, dtype=np.int)
         boxes = []
         for i in range(num_boxes):
             lower = i * stems_per_box
@@ -106,7 +106,7 @@ class ParameterShipmentGenerator:
 
         return dict(
             flower=flower,
-            num_stems=stems_per_box * num_boxes,
+            num_stems=num_stems,
             stems=stems,
             num_boxes=num_boxes,
             arrival_time=self.date,
@@ -143,7 +143,8 @@ class F280ShipmentGenerator:
         else:
             stems_per_box = self.stems_per_box["default"]
 
-        num_boxes = int(round(num_stems / float(stems_per_box)))
+        # rounding up to keep the max per box and have enough boxes
+        num_boxes = int(math.ceil(num_stems / float(stems_per_box)))
         if num_boxes < 1:
             num_boxes = 1
         boxes = []
@@ -152,6 +153,7 @@ class F280ShipmentGenerator:
             # slicing does not go over the size even if our last box is smaller
             upper = (i + 1) * stems_per_box
             boxes.append(Box(stems[lower:upper]))
+        assert sum([box.num_stems for box in boxes]) == num_stems
 
         date = datetime.strptime(record["REPORT_DT"], "%Y-%m-%d")
         return dict(
