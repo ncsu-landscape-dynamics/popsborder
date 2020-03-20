@@ -199,6 +199,16 @@ pest:
     - 60
 ```
 
+The infestation rate can be also set using a fixed value (rather than
+random values based on the given distribution):
+
+```
+pest:
+  infestation_rate:
+    distribution: fixed_value
+    value: 0.05
+```
+
 The `random` arrangement does not have any further configuration besides
 `infestation_rate`.
 

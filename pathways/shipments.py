@@ -231,7 +231,9 @@ def num_stems_to_infest(config, num_stems):
     Config is the ``infestation_rate`` dictionary.
     """
     distribution = config["distribution"]
-    if distribution == "beta":
+    if distribution == "fixed_value":
+        infestation_rate = config["value"]
+    elif distribution == "beta":
         param1, param2 = config["parameters"]
         infestation_rate = float(stats.beta.rvs(param1, param2, size=1))
     else:
