@@ -1,5 +1,8 @@
 # Pathway Simulation
 
+![CI](https://github.com/ncsu-landscape-dynamics/pathways-simulation/workflows/CI/badge.svg)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 Simulation for evaluation of pathways which generates synthetic shipment
 data and performs inspection on them. It is using the following model
 to understand the system:
