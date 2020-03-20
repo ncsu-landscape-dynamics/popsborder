@@ -8,25 +8,25 @@ data and performs inspection on them. It is using the following model
 to understand the system:
 
 ```math
-f(x) \rightarrow y
+f(x) -> y
 ```
 
-where $`x`$ represents all shipments with all information about them
-such as the level of infestation, $`f`$ is a sampling function,
+where *x* represents all shipments with all information about them
+such as the level of infestation, *f* is a sampling function,
 i.e. import procedure used at the port,
-and $`y`$ represents the resulting record in the database.
+and *y* represents the resulting record in the database.
 
-Since the simulation is generating $`x`$, we can compute:
+Since the simulation is generating *x*, we can compute:
 
 ```math
-r = \frac{g(y)}{g(x)}
+r = g(y) / g(x)
 ```
 
-where $`x`$ and $`y`$ are defined in the same way as above,
-$`g`$ is a function giving level of infestation in each set
+where *x* and *y* are defined in the same way as above,
+*g* is a function giving level of infestation in each set
 (e.g. number of shipmets with a pest),
-and $`r`$ is the success rate in detecting infestation
-using the function $`f`$ from above.
+and *r* is the success rate in detecting infestation
+using the function *f* from above.
 
 ## Types of questions and results
 
