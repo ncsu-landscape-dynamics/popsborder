@@ -20,6 +20,6 @@ setuptools.setup(
         "Development Status :: 2 - Pre-Alpha",
         "Topic :: Scientific/Engineering",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.5",
     install_requires=["numpy", "scipy", "PyYAML"],
 )
