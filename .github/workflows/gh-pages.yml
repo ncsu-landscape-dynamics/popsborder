@@ -25,8 +25,8 @@ jobs:
         mkdir artifacts
         ./generate_synthetic_F280_dataset.sh artifacts/synthetic_records.csv 1000
     - name: Deploy
-      uses: peaceiris/actions-gh-pages@v2
-      env:
-        ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        PUBLISH_BRANCH: gh-pages
-        PUBLISH_DIR: ./artifacts
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        publish_branch: gh-pages
+        publish_dir: ./artifacts
