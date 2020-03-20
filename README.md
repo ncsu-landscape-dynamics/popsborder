@@ -290,20 +290,16 @@ inspection:
 
 #### Download using a web browser
 
-To download sample synthetic database records (F280),
-you can dowload the artifact data at the main project page
-(https://gitlab.com/vpetras/pathway-simulation)
-by clicking the download button and selecting Artifact called data
-or by clicking [this link](https://gitlab.com/vpetras/pathway-simulation/-/jobs/artifacts/master/download?job=data).
+To download sample synthetic database records (F280)
+by clicking [this link](https://ncsu-landscape-dynamics.github.io/pathways-simulation/synthetic_records.csv).
 
 #### Download using command line
 
 Alternatively, in a Linux command line (or in an equivalent environment),
-you can execute (assuming you have `wget` and `dtrx` installed):
+you can execute (assuming you have `wget` installed):
 
 ```
-wget https://gitlab.com/vpetras/pathway-simulation/-/jobs/artifacts/master/download?job=data -O data.zip
-dtrx -f data.zip
+wget https://ncsu-landscape-dynamics.github.io/pathways-simulation/synthetic_records.csv
 ls synthetic_records.csv
 ```
 
@@ -312,8 +308,6 @@ and uncompressed. If you need some troubleshooting,
 the following example might be helpful (relying of the program `file`).
 
 ```
-$ file data.zip
-data.zip: Zip archive data, at least v2.0 to extract
 $ file synthetic_records.csv
 synthetic_records.csv: ASCII text
 ```

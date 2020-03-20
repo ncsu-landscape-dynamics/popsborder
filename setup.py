@@ -11,7 +11,7 @@ setuptools.setup(
     description="Simulation for evaluation of pathways",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://gitlab.com/vpetras/pathway-simulation",
+    url="https://github.com/ncsu-landscape-dynamics/pathways-simulation",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
