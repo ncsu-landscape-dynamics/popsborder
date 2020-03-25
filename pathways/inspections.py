@@ -67,14 +67,46 @@ def inspect_first_n(num_boxes, shipment):
     return True, num_boxes
 
 
-def inspect_shipment_percentage(config, shipment):
-    """Inspect shipments based on the percetantage strategy
+def inspect_percentage_boxes(config, shipment):
+    """Inspect shipments based on the percetantage of boxes strategy
 
     :param config: Configuration to be used
     :param shipement: Shipment to be inspected
     """
     ratio = config["proportion"]
     min_boxes = config.get("min_boxes", 1)
+    # closest higher integer
+    boxes_to_inspect = int(math.ceil(ratio * len(shipment["boxes"])))
+    boxes_to_inspect = max(min_boxes, boxes_to_inspect)
+    boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
+    # in any case, first n boxes
+    strategy = config["end_strategy"]
+    if strategy == "to_completion":
+        pest = 0
+        for i in range(boxes_to_inspect):
+            if shipment["boxes"][i]:
+                pest += 1
+        return pest == 0, boxes_to_inspect
+    elif strategy == "to_detection":
+        for i in range(boxes_to_inspect):
+            if shipment["boxes"][i]:
+                return False, i + 1
+        return True, boxes_to_inspect
+    else:
+        raise RuntimeError(
+            "Unknown end inspection strategy: {strategy}".format(**locals())
+        )
+
+# TODO: revise pct stems function
+def inspect_percentage_stems(config, shipment):
+    """Inspect shipments based on the percetantage of stems strategy
+
+    :param config: Configuration to be used
+    :param shipement: Shipment to be inspected
+    """
+    ratio = config["proportion"]
+    min_boxes = config.get("min_boxes", 1)
+    stems_to_inspect = int(math.ceil(ratio * num_stems))
     # closest higher integer
     boxes_to_inspect = int(math.ceil(ratio * len(shipment["boxes"])))
     boxes_to_inspect = max(min_boxes, boxes_to_inspect)
