@@ -305,6 +305,18 @@ def add_pest_clusters(config, shipment):
         if distribution == "gamma":
             param1, param2 = config["clustered"]["parameters"]
             cluster = stats.gamma.rvs(param1, scale=param2, size=cluster_size)
+        elif distribution == "random":
+            max_width = config["clustered"]["parameters"][0]
+            if max_width < cluster_size:
+                raise ValueError(
+                    "First parameter of random distribution (maximum cluster width,"
+                    " currently {max_width})"
+                    " needs to be at least as large as max_stems_per_cluster"
+                    " (currently {max_stems_per_cluster})".format(**locals())
+                )
+            cluster = np.random.choice(max_width, cluster_size, replace=False)
+        elif distribution == "continuous":
+            cluster = np.arange(0, cluster_size)
         else:
             raise RuntimeError(
                 "Unknown cluster distribution: {distribution}".format(**locals())
@@ -327,6 +339,8 @@ def add_pest_clusters(config, shipment):
         # The resulting infestation rate (number of infested stems) might be
         # lower because the clusters overlap.
         np.put(shipment["stems"], cluster, 1)
+        if distribution in ("random", "solid"):
+            assert len(np.unique(cluster)) == cluster_size
     assert np.count_nonzero(shipment["stems"]) <= infested_stems
 
 
