@@ -30,7 +30,6 @@ import math
 import random
 import weakref
 
-
 if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error
 
@@ -68,10 +67,10 @@ def inspect_first_n(num_boxes, shipment):
 
 
 def inspect_percentage_boxes(config, shipment):
-    """Inspect shipments based on the percetantage of boxes strategy
+    """Inspect shipments based on the percentage of boxes strategy
 
     :param config: Configuration to be used
-    :param shipement: Shipment to be inspected
+    :param shipment: Shipment to be inspected
     """
     ratio = config["proportion"]
     min_boxes = config.get("min_boxes", 1)
@@ -79,67 +78,102 @@ def inspect_percentage_boxes(config, shipment):
     boxes_to_inspect = int(math.ceil(ratio * len(shipment["boxes"])))
     boxes_to_inspect = max(min_boxes, boxes_to_inspect)
     boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
-    # in any case, first n boxes
-    strategy = config["end_strategy"]
-    if strategy == "to_completion":
+
+    num_boxes = shipment["num_boxes"]
+    selection_strategy = config["selection_strategy"]
+    if selection_strategy == "tailgate":
+        box_index_to_inspect = range(boxes_to_inspect)
+    elif selection_strategy == "random":
+        box_index_to_inspect = random.choice(num_boxes, size=boxes_to_inspect, replace=False)
+    else:
+        raise RuntimeError(
+            "Unknown inspection selection strategy: {selection_strategy}".format(**locals())
+        )
+
+    end_strategy = config["end_strategy"]
+    if end_strategy == "to_completion":
         pest = 0
-        for i in range(boxes_to_inspect):
+        for i in box_index_to_inspect:
             if shipment["boxes"][i]:
                 pest += 1
         return pest == 0, boxes_to_inspect
-    elif strategy == "to_detection":
-        for i in range(boxes_to_inspect):
+    elif end_strategy == "to_detection":
+        for i in box_index_to_inspect:
             if shipment["boxes"][i]:
                 return False, i + 1
         return True, boxes_to_inspect
     else:
         raise RuntimeError(
-            "Unknown end inspection strategy: {strategy}".format(**locals())
+            "Unknown inspection end strategy: {end_strategy}".format(**locals())
         )
+
 
 # TODO: revise pct stems function
 def inspect_percentage_stems(config, shipment):
-    """Inspect shipments based on the percetantage of stems strategy
+    """Inspect shipments based on the percentage of stems strategy
 
     :param config: Configuration to be used
-    :param shipement: Shipment to be inspected
+    :param shipment: Shipment to be inspected
     """
     ratio = config["proportion"]
+    within_box_pct = config["within_box_pct"]
+    stems_per_box = shipment["stems_per_box"]
     min_boxes = config.get("min_boxes", 1)
     stems_to_inspect = int(math.ceil(ratio * num_stems))
-    # closest higher integer
-    boxes_to_inspect = int(math.ceil(ratio * len(shipment["boxes"])))
+    # Default inspect all stems per box, but allow partial box inspections
+    inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
+    boxes_to_inspect = math.ceil(stems_to_inspect / inspect_per_box)
     boxes_to_inspect = max(min_boxes, boxes_to_inspect)
     boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
-    # in any case, first n boxes
-    strategy = config["end_strategy"]
-    if strategy == "to_completion":
+
+    num_boxes = shipment["num_boxes"]
+    selection_strategy = config["selection_strategy"]
+    if selection_strategy == "tailgate":
+        box_index_to_inspect = range(boxes_to_inspect)
+    elif selection_strategy == "random":
+        box_index_to_inspect = random.choice(num_boxes, size=boxes_to_inspect, replace=False)
+    else:
+        raise RuntimeError(
+            "Unknown inspection selection strategy: {selection_strategy}".format(**locals())
+        )
+
+    end_strategy = config["end_strategy"]
+    if end_strategy == "to_completion":
         pest = 0
-        for i in range(boxes_to_inspect):
+        for i in box_index_to_inspect:
             if shipment["boxes"][i]:
                 pest += 1
         return pest == 0, boxes_to_inspect
-    elif strategy == "to_detection":
-        for i in range(boxes_to_inspect):
+    elif end_strategy == "to_detection":
+        for i in box_index_to_inspect:
             if shipment["boxes"][i]:
                 return False, i + 1
         return True, boxes_to_inspect
     else:
         raise RuntimeError(
-            "Unknown end inspection strategy: {strategy}".format(**locals())
+            "Unknown inspection end strategy: {end_strategy}".format(**locals())
         )
 
-
+# TODO: does this function need shipment parameter?
 def get_inspection_function(config):
     """Based on config, return function to inspect a shipment."""
     inspection_strategy = config["inspection"]["strategy"]
     if inspection_strategy == "percentage":
-
-        def inspect(shipment):
-            return inspect_shipment_percentage(
-                config=config["inspection"]["percentage"], shipment=shipment
+        unit = config["inspection"]["strategy"]["percentage"]["unit"]
+        if unit == "boxes":
+            def inspect(shipment):
+                return inspect_percentage_boxes(
+                    config=config["inspection"]["strategy"]["percentage"], shipment=shipment # TODO: Added "strategy" bc nested structure of config, right?
+                )
+        elif unit == "stems":
+            def inspect(shipment):
+                return inspect_percentage_stems(
+                    config=config["inspection"]["strategy"]["percentage"], shipment=shipment # TODO: Added "strategy" bc nested structure of config, right?
+                )
+        else:
+            raise RuntimeError(
+                "Unknown inspection percentage unit: {unit}".format(**locals())
             )
-
     elif inspection_strategy == "first_n":
 
         def inspect(shipment):
@@ -147,6 +181,7 @@ def get_inspection_function(config):
                 num_boxes=config["inspection"]["first_n_boxes"], shipment=shipment
             )
 
+    # TODO: does this need a function with shipment like "first_n" above?
     elif inspection_strategy == "first":
         inspect = inspect_first
     elif inspection_strategy == "one_random":
