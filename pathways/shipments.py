@@ -339,7 +339,7 @@ def add_pest_clusters(config, shipment):
         # The resulting infestation rate (number of infested stems) might be
         # lower because the clusters overlap.
         np.put(shipment["stems"], cluster, 1)
-        if distribution in ("random", "solid"):
+        if distribution in ("random", "continuous"):
             assert len(np.unique(cluster)) == cluster_size
     assert np.count_nonzero(shipment["stems"]) <= infested_stems
 
