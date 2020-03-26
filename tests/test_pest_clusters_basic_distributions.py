@@ -26,7 +26,7 @@ pest:
     max_stems_per_cluster: 1000
     distribution: random
     parameters:
-    - 10
+    - 1000
 """
 
 
