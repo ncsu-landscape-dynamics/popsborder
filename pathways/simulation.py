@@ -64,6 +64,12 @@ SimulationResult = namedtuple(
 )
 
 
+def random_seed(seed):
+    """Set seed for all generators used"""
+    random.seed(seed)  # random package
+    np.random.seed(seed)  # NumPy and SciPy
+
+
 def simulation(
     config, num_shipments, seed, output_f280_file, verbose=False, pretty=None
 ):
@@ -76,10 +82,8 @@ def simulation(
     """
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements
 
-    # set seeds for all generators used
     if seed is not None:
-        random.seed(seed)  # random package
-        np.random.seed(seed)  # NumPy and SciPy
+        random_seed(seed)
 
     # allow for an empty disposition code specification
     disposition_codes = config.get("disposition_codes", {})
