@@ -2,6 +2,7 @@ import numpy as np
 from datetime import date
 import yaml
 
+from pathways.simulation import random_seed
 from pathways.shipments import add_pest_clusters, Box
 
 CONTINUOUS_CONFIG = """\
@@ -54,6 +55,7 @@ def get_shipment(num_stems):
 
 def test_continuous_clusters():
     """Test infestation rate of clustered arrangement with continuous distribution"""
+    random_seed(42)
     config = load_yaml_text(CONTINUOUS_CONFIG)["pest"]
     num_stems = 100
     shipment = get_shipment(num_stems)
@@ -65,6 +67,7 @@ def test_continuous_clusters():
 
 def test_random_clusters():
     """Test infestation rate of clustered arrangement with random distribution"""
+    random_seed(42)
     config = load_yaml_text(RANDOM_CONFIG)["pest"]
     num_stems = 550
     shipment = get_shipment(num_stems)
