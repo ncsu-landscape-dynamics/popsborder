@@ -2,7 +2,6 @@ import numpy as np
 from datetime import date
 import yaml
 
-from pathways.simulation import load_configuration
 from pathways.shipments import add_pest_clusters, Box
 
 CONTINUOUS_CONFIG = """\
@@ -34,7 +33,7 @@ pest:
 def load_yaml_text(text):
     """Return configuration dictionary from YAML in a string"""
     if hasattr(yaml, "full_load"):
-            return yaml.full_load(text)
+        return yaml.full_load(text)
     return yaml.load(text)
 
 
@@ -42,15 +41,15 @@ def get_shipment(num_stems):
     """Get basic shipment with given number of stems all in one box"""
     stems = np.zeros(num_stems, dtype=np.int)
     return dict(
-            flower="Rosa",
-            arrival_time=date(2018, 2, 15),
-            origin="Mexico",
-            port="FL Miami Air CBP",
-            num_stems=num_stems,
-            stems=stems,
-            num_boxes=1,
-            boxes=[Box(stems)],
-        )
+        flower="Rosa",
+        arrival_time=date(2018, 2, 15),
+        origin="Mexico",
+        port="FL Miami Air CBP",
+        num_stems=num_stems,
+        stems=stems,
+        num_boxes=1,
+        boxes=[Box(stems)],
+    )
 
 
 def test_continuous_clusters():
