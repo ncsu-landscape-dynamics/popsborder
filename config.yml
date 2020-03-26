@@ -48,10 +48,23 @@ release_programs:
 
 inspection:
   strategy: percentage
-  percentage:
+    percentage:
       proportion: 0.02
       min_boxes: 1
-      end_strategy: to_completion
+      unit: # TODO: how do you deal with user defined parameters in config file?
+        - stems
+        - boxes
+    hypergeometric:
+      detection_level: 0.05 # TODO: default detect at 5% infestation, how to add default and allow user input?
+    first_n: # TODO: wrong syntax, these are the possible other strategies, no config info is needed for these.
+    first:
+    one_random:
+    all:
+  selection_strategy:
+    - random
+    - tailgate
+  end_strategy: to_completion # TODO: how to add to_detection?
+  within_box_pct: 100 # TODO: default to inspect all stems in box, how to add default and allow user input?
 ports:
   - NY JFK CBP
   - FL Miami Air CBP
