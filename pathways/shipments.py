@@ -314,6 +314,8 @@ def add_pest_clusters(config, shipment):
                     " needs to be at least as large as max_stems_per_cluster"
                     " (currently {max_stems_per_cluster})".format(**locals())
                 )
+            # cluster can't be wider/longer than the current list of stems
+            max_width = min(max_width, num_stems)
             cluster = np.random.choice(max_width, cluster_size, replace=False)
         elif distribution == "continuous":
             cluster = np.arange(0, cluster_size)
@@ -335,6 +337,7 @@ def add_pest_clusters(config, shipment):
             high = num_stems - cluster_max
             cluster_start = np.random.randint(low=0, high=high)
             cluster += cluster_start
+        assert max(cluster) < num_stems, "Cluster values need to be valid indices"
         cluster = cluster.astype(np.int)
         # The resulting infestation rate (number of infested stems) might be
         # lower because the clusters overlap.
