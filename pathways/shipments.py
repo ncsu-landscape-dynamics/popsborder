@@ -260,6 +260,29 @@ def add_pest_uniform_random(config, shipment):
     assert np.count_nonzero(shipment["stems"]) == infested_stems
 
 
+def _infested_stems_to_cluster_sizes(infested_stems, max_stems_per_cluster):
+    """Get list of cluster sizes for a given number of infested stems
+
+    The size of each cluster is limited by max_stems_per_cluster.
+    """
+    if infested_stems > max_stems_per_cluster:
+        # Split into n clusters so that n-1 clusters have the max size and
+        # the last one has the remaining stems.
+        # Alternative would be sth like round(infested_stems/max_stems_per_cluster)
+        sum_stems = 0
+        cluster_sizes = []
+        while sum_stems < infested_stems - max_stems_per_cluster:
+            sum_stems += max_stems_per_cluster
+            cluster_sizes.append(max_stems_per_cluster)
+        # add remaining stems
+        cluster_sizes.append(infested_stems - sum_stems)
+        sum_stems += infested_stems - sum_stems
+        assert sum_stems == infested_stems
+    else:
+        cluster_sizes = [infested_stems]
+    return cluster_sizes
+
+
 def add_pest_clusters(config, shipment):
     """Add pest clusters to shipment
 
@@ -272,25 +295,11 @@ def add_pest_clusters(config, shipment):
     infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
     if infested_stems == 0:
         return
-    # num_clusters = 1
-    cluster_sizes = [infested_stems]
     max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
-    if infested_stems > max_stems_per_cluster:
-        # num_clusters = round(
-        #    infested_stems / config["clustered"]["max_stems_per_cluster"]
-        # )
-        # Split into n clusters so that n-1 clusters have the max size and
-        # the last one has the remaining stems.
-        sum_stems = 0
-        cluster_sizes = []
-        while sum_stems < infested_stems - max_stems_per_cluster:
-            sum_stems += max_stems_per_cluster
-            cluster_sizes.append(max_stems_per_cluster)
-        # add remaining stems
-        cluster_sizes.append(infested_stems - sum_stems)
-        sum_stems += infested_stems - sum_stems
-        assert sum_stems == infested_stems
-
+    cluster_sizes = _infested_stems_to_cluster_sizes(
+        infested_stems, max_stems_per_cluster
+    )
+    # print(cluster_sizes)
     for cluster_size in cluster_sizes:
         # Generate cluster as indices in the array of stems
         distribution = config["clustered"]["distribution"]
