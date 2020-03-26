@@ -299,7 +299,6 @@ def add_pest_clusters(config, shipment):
     cluster_sizes = _infested_stems_to_cluster_sizes(
         infested_stems, max_stems_per_cluster
     )
-    # print(cluster_sizes)
     for cluster_size in cluster_sizes:
         # Generate cluster as indices in the array of stems
         distribution = config["clustered"]["distribution"]
