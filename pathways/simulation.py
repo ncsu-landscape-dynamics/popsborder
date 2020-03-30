@@ -39,7 +39,7 @@ from .shipments import (
 )
 from .inspections import (
     get_inspection_needed_function,
-    get_inspection_function,
+    get_sample_function,
     is_shipment_diseased,
 )
 from .outputs import (
@@ -89,7 +89,8 @@ def simulation(
     shipment_generator = get_shipment_generator(config)
     add_pest = get_pest_function(config)
     is_inspection_needed = get_inspection_needed_function(config)
-    inspect = get_inspection_function(config)
+    inspect = get_inspectiom_function(config)
+
 
     for unused_i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
