@@ -151,7 +151,19 @@ def sample_n(config, shipment):
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
     """
-    n_boxes_to_inspect = min(config["fixed_n"], shipment["num_boxes"]) # TODO: add message to alert user if fixed_n > num_boxes
+
+    fixed_n = config["fixed_n"]
+    unit = config["unit"]
+    within_box_pct = config["within_box_pct"]
+    stems_per_box = shipment["stems_per_box"]
+    num_boxes = shipment["num_boxes"]
+
+    if unit == "stems":
+        inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
+        n_boxes_to_inspect = math.ceil(fixed_n / inspect_per_box)
+        n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect) # TODO: add message to alert user if fixed_n >
+    elif unit == "boxes":
+        n_boxes_to_inspect = min(num_boxes, fixed_n) # TODO: add message to alert user if fixed_n > num_boxes
     return n_boxes_to_inspect
 
 
@@ -165,6 +177,7 @@ def inspect(config, shipment, n_boxes_to_inspect):
     :param n_boxes_to_inspect: Number of boxes to inspect defined by sample functions.
     """
     num_boxes = shipment["num_boxes"]
+    within_box_pct = config["within_box_pct"]
 
     selection_strategy = config["selection_strategy"]
     if selection_strategy == "tailgate":
@@ -175,7 +188,7 @@ def inspect(config, shipment, n_boxes_to_inspect):
         raise RuntimeError(
             "Unknown selection strategy: {selection_strategy}".format(**locals())
         )
-
+    # TODO: Change inspection to per stem vs per box to allow for partial box inspections.
     end_strategy = config["end_strategy"]
     if end_strategy == "to_completion":
         pest = 0
