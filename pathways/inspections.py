@@ -66,75 +66,114 @@ def inspect_first_n(num_boxes, shipment):
     return True, num_boxes
 
 
-def inspect_percentage_boxes(config, shipment):
-    """Inspect shipments based on the percentage of boxes strategy
+def sample_percentage(config, shipment):
+    """Set sample size to sample units from shipment using percentage strategy.
+    Return number of boxes to inspect.
 
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
     """
+    unit = config["unit"]
     ratio = config["proportion"]
     min_boxes = config.get("min_boxes", 1)
-    # closest higher integer
-    boxes_to_inspect = int(math.ceil(ratio * len(shipment["boxes"])))
-    boxes_to_inspect = max(min_boxes, boxes_to_inspect)
-    boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
-
-    num_boxes = shipment["num_boxes"]
-    selection_strategy = config["selection_strategy"]
-    if selection_strategy == "tailgate":
-        box_index_to_inspect = range(boxes_to_inspect)
-    elif selection_strategy == "random":
-        box_index_to_inspect = random.choice(num_boxes, size=boxes_to_inspect, replace=False)
-    else:
-        raise RuntimeError(
-            "Unknown inspection selection strategy: {selection_strategy}".format(**locals())
-        )
-
-    end_strategy = config["end_strategy"]
-    if end_strategy == "to_completion":
-        pest = 0
-        for i in box_index_to_inspect:
-            if shipment["boxes"][i]:
-                pest += 1
-        return pest == 0, boxes_to_inspect
-    elif end_strategy == "to_detection":
-        for i in box_index_to_inspect:
-            if shipment["boxes"][i]:
-                return False, i + 1
-        return True, boxes_to_inspect
-    else:
-        raise RuntimeError(
-            "Unknown inspection end strategy: {end_strategy}".format(**locals())
-        )
-
-
-# TODO: revise pct stems function
-def inspect_percentage_stems(config, shipment):
-    """Inspect shipments based on the percentage of stems strategy
-
-    :param config: Configuration to be used
-    :param shipment: Shipment to be inspected
-    """
-    ratio = config["proportion"]
     within_box_pct = config["within_box_pct"]
     stems_per_box = shipment["stems_per_box"]
-    min_boxes = config.get("min_boxes", 1)
-    stems_to_inspect = int(math.ceil(ratio * num_stems))
-    # Default inspect all stems per box, but allow partial box inspections
-    inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
-    boxes_to_inspect = math.ceil(stems_to_inspect / inspect_per_box)
-    boxes_to_inspect = max(min_boxes, boxes_to_inspect)
-    boxes_to_inspect = min(len(shipment["boxes"]), boxes_to_inspect)
-
+    num_stems = shipment["num_stems"]
     num_boxes = shipment["num_boxes"]
-    selection_strategy = config["selection_strategy"]
-    if selection_strategy == "tailgate":
-        box_index_to_inspect = range(boxes_to_inspect)
-    elif selection_strategy == "random":
-        box_index_to_inspect = random.choice(num_boxes, size=boxes_to_inspect, replace=False)
+
+    if unit == "stems":
+        n_stems_to_inspect = int(math.ceil(ratio * num_stems))
+        # Default inspect all stems per box, but allow partial box inspections
+        inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
+        n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
+        n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
+        n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
+    elif unit =="boxes":
+        n_boxes_to_inspect = int(math.ceil(ratio * len(shipment["boxes"])))
+        n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
+        n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
     else:
         raise RuntimeError(
-            "Unknown inspection selection strategy: {selection_strategy}".format(**locals())
+            "Unknown sampling unit: {unit}".format(**locals())
+        )
+    return n_boxes_to_inspect
+
+
+def sample_hypergeometric(config, shipment):
+    """Set sample size to sample units from shipment using hypergeometric/detection level strategy.
+    Return number of boxes to inspect.
+
+    :param config: Configuration to be used
+    :param shipment: Shipment to be inspected
+    """
+    unit = config["unit"]
+    detection_level = config["detection_level"]
+    confidence_level = config["confidence_level"]
+    min_boxes = config.get("min_boxes", 1)
+    within_box_pct = config["within_box_pct"]
+    stems_per_box = shipment["stems_per_box"]
+    num_stems = shipment["num_stems"]
+    num_boxes = shipment["num_boxes"]
+
+    if unit =="stems":
+        n_stems_to_inspect = math.ceil((1-((1-confidence_level)**(1/detection_level)))*(num_stems-((detection_level-1)/2)))
+        # Default inspect all stems per box, but allow partial box inspections
+        inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
+        n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
+        n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
+        n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
+    elif unit == "boxes":
+        n_boxes_to_inspect = math.ceil((1-((1-confidence_level)**(1/detection_level)))*(num_boxes-((detection_level-1)/2)))
+        n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
+        n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
+    else:
+        raise RuntimeError(
+            "Unknown sampling unit: {unit}".format(**locals())
+        )
+    return n_boxes_to_inspect
+
+
+def sample_all(shipment):
+    """Set sample size to sample all units from shipment.
+    Return number of boxes to inspect.
+
+    :param config: Configuration to be used
+    :param shipment: Shipment to be inspected
+    """
+    n_boxes_to_inspect = shipment["num_boxes"]
+    return n_boxes_to_inspect
+
+
+def sample_n(config, shipment):
+    """Set sample size to sample fixed number of units from shipment.
+    Return number of boxes to inspect.
+
+    :param config: Configuration to be used
+    :param shipment: Shipment to be inspected
+    """
+    n_boxes_to_inspect = min(config["fixed_n"], shipment["num_boxes"]) # TODO: add message to alert user if fixed_n > num_boxes
+    return n_boxes_to_inspect
+
+
+# TODO: if sample_strategy = all, selection_strategy may not be important, think this through. Might be important for detection vs completion stats. Or clustered vs uniform.
+def inspect(config, shipment, n_boxes_to_inspect):
+    """Select and inspect boxes from shipment based on specified selection and end strategies.
+    Return number of infested boxes.
+
+    :param config: Configuration to be used
+    :param shipment: Shipment to be inspected
+    :param n_boxes_to_inspect: Number of boxes to inspect defined by sample functions.
+    """
+    num_boxes = shipment["num_boxes"]
+
+    selection_strategy = config["selection_strategy"]
+    if selection_strategy == "tailgate":
+        box_index_to_inspect = range(n_boxes_to_inspect)
+    elif selection_strategy == "random":
+        box_index_to_inspect = random.choice(num_boxes, size=n_boxes_to_inspect, replace=False)
+    else:
+        raise RuntimeError(
+            "Unknown selection strategy: {selection_strategy}".format(**locals())
         )
 
     end_strategy = config["end_strategy"]
@@ -143,56 +182,46 @@ def inspect_percentage_stems(config, shipment):
         for i in box_index_to_inspect:
             if shipment["boxes"][i]:
                 pest += 1
-        return pest == 0, boxes_to_inspect
+        return pest == 0, n_boxes_to_inspect
     elif end_strategy == "to_detection":
         for i in box_index_to_inspect:
             if shipment["boxes"][i]:
                 return False, i + 1
-        return True, boxes_to_inspect
+        return True, n_boxes_to_inspect
     else:
         raise RuntimeError(
             "Unknown inspection end strategy: {end_strategy}".format(**locals())
         )
 
-# TODO: does this function need shipment parameter?
-def get_inspection_function(config):
-    """Based on config, return function to inspect a shipment."""
-    inspection_strategy = config["inspection"]["strategy"]
-    if inspection_strategy == "percentage":
-        unit = config["inspection"]["strategy"]["percentage"]["unit"]
-        if unit == "boxes":
-            def inspect(shipment):
-                return inspect_percentage_boxes(
-                    config=config["inspection"]["strategy"]["percentage"], shipment=shipment # TODO: Added "strategy" bc nested structure of config, right?
-                )
-        elif unit == "stems":
-            def inspect(shipment):
-                return inspect_percentage_stems(
-                    config=config["inspection"]["strategy"]["percentage"], shipment=shipment # TODO: Added "strategy" bc nested structure of config, right?
-                )
-        else:
-            raise RuntimeError(
-                "Unknown inspection percentage unit: {unit}".format(**locals())
-            )
-    elif inspection_strategy == "first_n":
 
-        def inspect(shipment):
-            return inspect_first_n(
-                num_boxes=config["inspection"]["first_n_boxes"], shipment=shipment
+def get_sample_function(config):
+    """Based on config, return function to sample a shipment."""
+    sample_strategy = config["inspection"]["sample_strategy"]
+    if sample_strategy == "percentage":
+        def sample(shipment):
+            return sample_percentage(
+                config=config["inspection"], shipment=shipment
             )
-
-    # TODO: does this need a function with shipment like "first_n" above?
-    elif inspection_strategy == "first":
-        inspect = inspect_first
-    elif inspection_strategy == "one_random":
-        inspect = inspect_one_random
-    elif inspection_strategy == "all":
-        inspect = inspect_all
+    elif sample_strategy == "hypergeometric":
+        def sample(shipment):
+            return sample_hypergeometric(
+                config=config["inspection"], shipment=shipment
+            )
+    elif sample_strategy == "fixed_n":
+        def sample(shipment):
+            return sample_n(
+                config=config["inspection"], shipment=shipment
+            )
+    elif sample_strategy == "all":
+        def sample(shipment):
+            return sample_all(
+                shipment=shipment
+            )
     else:
         raise RuntimeError(
-            "Unknown inspection strategy: {inspection_strategy}".format(**locals())
+            "Unknown sample strategy: {sample_strategy}".format(**locals())
         )
-    return inspect
+    return sample
 
 
 def is_flower_of_the_day(cfrp, flower, date):
