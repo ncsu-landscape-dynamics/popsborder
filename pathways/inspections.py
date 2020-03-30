@@ -29,6 +29,7 @@ from __future__ import print_function, division
 import math
 import random
 import weakref
+import numpy as np
 
 if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error
@@ -287,6 +288,16 @@ def is_shipment_diseased(shipment):
         if box:
             return True
     return False
+
+
+def shipment_infestation_rate(shipment):
+    """Get (true) infestation rate of a shipment
+
+    Infestation rate is here defined as number of
+    infested stems divided by the number stems.
+    """
+    count = np.count_nonzero(shipment["stems"])
+    return count / shipment["num_stems"]
 
 
 def count_diseased(shipment):

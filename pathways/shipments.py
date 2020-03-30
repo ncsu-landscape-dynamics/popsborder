@@ -29,6 +29,7 @@ from __future__ import print_function, division
 import random
 import csv
 from datetime import datetime, timedelta
+import math
 import numpy as np
 import scipy.stats as stats
 
@@ -83,17 +84,16 @@ class ParameterShipmentGenerator:
 
     def generate_shipment(self):
         """Generate a new shipment"""
-        # flowers or commodities
         port = random.choice(self.ports)
-        flowers = self.params["flowers"]
-        origins = self.params["origins"]
-        flower = random.choice(flowers)
-        origin = random.choice(origins)
+        # flowers or commodities
+        flower = random.choice(self.params["flowers"])
+        origin = random.choice(self.params["origins"])
         num_boxes_min = self.params["boxes"].get("min", 0)
         num_boxes_max = self.params["boxes"]["max"]
         stems_per_box = self.stems_per_box["default"]
         num_boxes = random.randint(num_boxes_min, num_boxes_max)
-        stems = np.zeros(num_boxes * stems_per_box, dtype=np.int)
+        num_stems = stems_per_box * num_boxes
+        stems = np.zeros(num_stems, dtype=np.int)
         boxes = []
         for i in range(num_boxes):
             lower = i * stems_per_box
@@ -106,7 +106,7 @@ class ParameterShipmentGenerator:
 
         return dict(
             flower=flower,
-            num_stems=stems_per_box * num_boxes,
+            num_stems=num_stems,
             stems=stems,
             num_boxes=num_boxes,
             arrival_time=self.date,
@@ -143,7 +143,8 @@ class F280ShipmentGenerator:
         else:
             stems_per_box = self.stems_per_box["default"]
 
-        num_boxes = int(round(num_stems / float(stems_per_box)))
+        # rounding up to keep the max per box and have enough boxes
+        num_boxes = int(math.ceil(num_stems / float(stems_per_box)))
         if num_boxes < 1:
             num_boxes = 1
         boxes = []
@@ -152,6 +153,7 @@ class F280ShipmentGenerator:
             # slicing does not go over the size even if our last box is smaller
             upper = (i + 1) * stems_per_box
             boxes.append(Box(stems[lower:upper]))
+        assert sum([box.num_stems for box in boxes]) == num_stems
 
         date = datetime.strptime(record["REPORT_DT"], "%Y-%m-%d")
         return dict(
@@ -258,6 +260,29 @@ def add_pest_uniform_random(config, shipment):
     assert np.count_nonzero(shipment["stems"]) == infested_stems
 
 
+def _infested_stems_to_cluster_sizes(infested_stems, max_stems_per_cluster):
+    """Get list of cluster sizes for a given number of infested stems
+
+    The size of each cluster is limited by max_stems_per_cluster.
+    """
+    if infested_stems > max_stems_per_cluster:
+        # Split into n clusters so that n-1 clusters have the max size and
+        # the last one has the remaining stems.
+        # Alternative would be sth like round(infested_stems/max_stems_per_cluster)
+        sum_stems = 0
+        cluster_sizes = []
+        while sum_stems < infested_stems - max_stems_per_cluster:
+            sum_stems += max_stems_per_cluster
+            cluster_sizes.append(max_stems_per_cluster)
+        # add remaining stems
+        cluster_sizes.append(infested_stems - sum_stems)
+        sum_stems += infested_stems - sum_stems
+        assert sum_stems == infested_stems
+    else:
+        cluster_sizes = [infested_stems]
+    return cluster_sizes
+
+
 def add_pest_clusters(config, shipment):
     """Add pest clusters to shipment
 
@@ -270,25 +295,10 @@ def add_pest_clusters(config, shipment):
     infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
     if infested_stems == 0:
         return
-    # num_clusters = 1
-    cluster_sizes = [infested_stems]
     max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
-    if infested_stems > max_stems_per_cluster:
-        # num_clusters = round(
-        #    infested_stems / config["clustered"]["max_stems_per_cluster"]
-        # )
-        # Split into n clusters so that n-1 clusters have the max size and
-        # the last one has the remaining stems.
-        sum_stems = 0
-        cluster_sizes = []
-        while sum_stems < infested_stems - max_stems_per_cluster:
-            sum_stems += max_stems_per_cluster
-            cluster_sizes.append(max_stems_per_cluster)
-        # add remaining stems
-        cluster_sizes.append(infested_stems - sum_stems)
-        sum_stems += infested_stems - sum_stems
-        assert sum_stems == infested_stems
-
+    cluster_sizes = _infested_stems_to_cluster_sizes(
+        infested_stems, max_stems_per_cluster
+    )
     for cluster_size in cluster_sizes:
         # Generate cluster as indices in the array of stems
         distribution = config["clustered"]["distribution"]

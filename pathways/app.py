@@ -150,6 +150,7 @@ def main():
     print("slippage: {0:.2f}".format(totals.missing))
     print("num_inspections: {0:.0f}".format(totals.num_inspections))
     print("total_num_boxes_inspected: {0:.0f}".format(totals.num_boxes_inspected))
+    print("true_infestation_rate: {0:.3f}".format(totals.true_infestation_rate))
 
 
 if __name__ == "__main__":
