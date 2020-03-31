@@ -45,10 +45,9 @@ release_programs:
     - Rosa
     - Actinidia
     max_boxes: 10  # do not apply to shipments larger than
-
 inspection:
   unit: stems
-  within_box_pct: 100
+  within_box_pct: 1.0
   sample_strategy: percentage
   percentage:
     proportion: 0.02
@@ -60,7 +59,6 @@ inspection:
   fixed_n: 10
   selection_strategy: random
   end_strategy: to_completion
-
 ports:
   - NY JFK CBP
   - FL Miami Air CBP
