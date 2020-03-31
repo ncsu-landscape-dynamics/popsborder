@@ -305,6 +305,23 @@ def add_pest_clusters(config, shipment):
         if distribution == "gamma":
             param1, param2 = config["clustered"]["parameters"]
             cluster = stats.gamma.rvs(param1, scale=param2, size=cluster_size)
+            # Fit the cluster values into specified range.
+            min_size = config["clustered"]["min_size"]
+            max_size = config["clustered"]["max_size"]  # TODO: must be at least max_items_per_cluster
+            if max_size < min_size:
+                raise ValueError(
+                    "Maximum cluster size (max_size, currently {max_size})"
+                    " needs to be at least as large as minimum size "
+                    " (min_size, currently {min_size})".format(**locals())
+                )
+            max_size = min(max_size, num_stems)  # TODO: +-1?
+            # Actual size/range picked randomly.
+            size = np.random.randint(low=min_size, high=max_size)
+            cluster = np.interp(
+                cluster, (cluster.min(), cluster.max()), (0, size - 1)
+            )
+            assert len(np.unique(cluster)) == cluster_size
+            cluster = cluster.astype(np.int)
         elif distribution == "random":
             max_width = config["clustered"]["parameters"][0]
             if max_width < cluster_size:
@@ -325,18 +342,11 @@ def add_pest_clusters(config, shipment):
             )
         assert min(cluster) >= 0, "Cluster values need to be valid indices"
         cluster_max = max(cluster)
-        if cluster_max > num_stems - 1:
-            # If the max index specified by the cluster is outside of stem
-            # array index range, fit the cluster values into that range.
-            cluster = np.interp(
-                cluster, (cluster.min(), cluster.max()), (0, num_stems - 1)
-            )
-        else:
-            # If the cluster valus are within stem array index range,
-            # place the cluster randomly in the array of stems.
-            high = num_stems - cluster_max
-            cluster_start = np.random.randint(low=0, high=high)
-            cluster += cluster_start
+        assert cluster_max <= num_stems - 1
+        # Place the cluster randomly in the array of stems.
+        high = num_stems - cluster_max
+        cluster_start = np.random.randint(low=0, high=high)
+        cluster += cluster_start
         assert max(cluster) < num_stems, "Cluster values need to be valid indices"
         cluster = cluster.astype(np.int)
         # The resulting infestation rate (number of infested stems) might be

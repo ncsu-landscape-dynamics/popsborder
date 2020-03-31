@@ -221,6 +221,8 @@ The settings for `clustered` is:
     parameters:
     - 4
     - 2
+    min_size: 2
+    max_size: 10
 ```
 
 The cluster size in terms of number of stems is limited by
@@ -236,6 +238,10 @@ width is defined by the first and only parameter of this distribution.
 The `continuous` distribution does not have any parameters and produces
 infested stems next to each other so the number of infested stems in the
 cluster is the same as the width of the cluster.
+
+The `gamma` distribution requires additional `min_size` and `max_size`
+which determine how stretched out is the cluster while the distribution
+itself influences how infested stems are distributed within this cluster.
 
 The settings for `random_box` is:
 
