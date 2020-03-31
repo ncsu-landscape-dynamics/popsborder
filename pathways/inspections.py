@@ -74,11 +74,11 @@ def sample_percentage(config, shipment):
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
     """
-    unit = config["unit"]
-    ratio = config["proportion"]
+    unit = config["inspection"]["unit"]
+    ratio = config["inspection"]["percentage"]["proportion"]
     min_boxes = config.get("min_boxes", 1)
-    within_box_pct = config["within_box_pct"]
-    stems_per_box = shipment["stems_per_box"]
+    within_box_pct = config["inspection"]["within_box_pct"]
+    stems_per_box = config["stems_per_box"]["default"]
     num_stems = shipment["num_stems"]
     num_boxes = shipment["num_boxes"]
 
@@ -107,24 +107,24 @@ def sample_hypergeometric(config, shipment):
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
     """
-    unit = config["unit"]
-    detection_level = config["detection_level"]
-    confidence_level = config["confidence_level"]
+    unit = config["inspection"]["unit"]
+    detection_level = config["inspection"]["hypergeometric"]["detection_level"]
+    confidence_level = config["inspection"]["hypergeometric"]["confidence_level"]
     min_boxes = config.get("min_boxes", 1)
-    within_box_pct = config["within_box_pct"]
-    stems_per_box = shipment["stems_per_box"]
+    within_box_pct = config["inspection"]["within_box_pct"]
+    stems_per_box = config["stems_per_box"]["default"]
     num_stems = shipment["num_stems"]
     num_boxes = shipment["num_boxes"]
 
     if unit =="stems":
-        n_stems_to_inspect = math.ceil((1-((1-confidence_level)**(1/detection_level)))*(num_stems-((detection_level-1)/2)))
+        n_stems_to_inspect = math.ceil((1-((1-confidence_level)**(1/(detection_level*num_stems))))*(num_stems-(((detection_level*num_stems)-1)/2)))
         # Default inspect all stems per box, but allow partial box inspections
         inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
         n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
         n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
         n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
     elif unit == "boxes":
-        n_boxes_to_inspect = math.ceil((1-((1-confidence_level)**(1/detection_level)))*(num_boxes-((detection_level-1)/2)))
+        n_boxes_to_inspect = math.ceil((1-((1-confidence_level)**(1/(detection_level*num_boxes))))*(num_boxes-(((detection_level*num_boxes)-1)/2)))
         n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
         n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
     else:
@@ -153,10 +153,10 @@ def sample_n(config, shipment):
     :param shipment: Shipment to be inspected
     """
 
-    fixed_n = config["fixed_n"]
-    unit = config["unit"]
-    within_box_pct = config["within_box_pct"]
-    stems_per_box = shipment["stems_per_box"]
+    fixed_n = config["inspection"]["fixed_n"]
+    unit = config["inspection"]["unit"]
+    within_box_pct = config["inspection"]["within_box_pct"]
+    stems_per_box = config["stems_per_box"]["default"]
     num_boxes = shipment["num_boxes"]
 
     if unit == "stems":
@@ -178,9 +178,9 @@ def inspect(config, shipment, n_boxes_to_inspect):
     :param n_boxes_to_inspect: Number of boxes to inspect defined by sample functions.
     """
     num_boxes = shipment["num_boxes"]
-    within_box_pct = config["within_box_pct"]
+    within_box_pct = config["inspection"]["within_box_pct"]
 
-    selection_strategy = config["selection_strategy"]
+    selection_strategy = config["inspection"]["selection_strategy"]
     if selection_strategy == "tailgate":
         box_index_to_inspect = range(n_boxes_to_inspect)
     elif selection_strategy == "random":
@@ -190,7 +190,7 @@ def inspect(config, shipment, n_boxes_to_inspect):
             "Unknown selection strategy: {selection_strategy}".format(**locals())
         )
     # TODO: Change inspection to per stem vs per box to allow for partial box inspections.
-    end_strategy = config["end_strategy"]
+    end_strategy = config["inspection"]["end_strategy"]
     if end_strategy == "to_completion":
         pest = 0
         for i in box_index_to_inspect:
@@ -214,17 +214,17 @@ def get_sample_function(config):
     if sample_strategy == "percentage":
         def sample(shipment):
             return sample_percentage(
-                config=config["inspection"], shipment=shipment
+                config=config, shipment=shipment
             )
     elif sample_strategy == "hypergeometric":
         def sample(shipment):
             return sample_hypergeometric(
-                config=config["inspection"], shipment=shipment
+                config=config, shipment=shipment
             )
     elif sample_strategy == "fixed_n":
         def sample(shipment):
             return sample_n(
-                config=config["inspection"], shipment=shipment
+                config=config, shipment=shipment
             )
     elif sample_strategy == "all":
         def sample(shipment):
