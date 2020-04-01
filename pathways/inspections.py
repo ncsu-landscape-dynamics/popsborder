@@ -190,28 +190,31 @@ def inspect(config, shipment, n_units_to_inspect):
     if selection_strategy == "tailgate":
         box_index_to_inspect = range(n_boxes_to_inspect)
     elif selection_strategy == "random":
-        box_index_to_inspect = random.choice(num_boxes, size=n_boxes_to_inspect, replace=False)
+        box_index_to_inspect = random.sample(range(num_boxes), n_boxes_to_inspect)
     else:
         raise RuntimeError(
             "Unknown selection strategy: {selection_strategy}".format(**locals())
         )
-    # TODO: Change inspection to per stem vs per box to allow for partial box inspections.
-    end_strategy = config["inspection"]["end_strategy"]
-    if end_strategy == "to_completion":
-        pest = 0
-        for i in box_index_to_inspect:
-            if shipment["boxes"][i]:
-                pest += 1
-        return pest == 0, n_boxes_to_inspect
-    elif end_strategy == "to_detection":
-        for i in box_index_to_inspect:
-            if shipment["boxes"][i]:
-                return False, i + 1
-        return True, n_boxes_to_inspect
-    else:
-        raise RuntimeError(
-            "Unknown inspection end strategy: {end_strategy}".format(**locals())
-        )
+
+
+    infested_boxes_completion = 0
+    infested_stems_completion = 0
+    for i in box_index_to_inspect:
+        if shipment["boxes"][i]:
+            infested_boxes_completion += 1
+        for stem in (shipment["boxes"][i]).stems:
+            if stem:
+                infested_stems_completion += 1
+
+    infested_stems_detection = 0
+    for i in box_index_to_inspect:
+        for stem in (shipment["boxes"][i]).stems:
+            if stem:
+                infested_stems_detection += 1
+        if shipment["boxes"][i]:
+            break
+
+    return infested_boxes_completion,infested_stems_completion,infested_stems_detection
 
 
 def get_sample_function(config):
