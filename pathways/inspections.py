@@ -104,9 +104,11 @@ def sample_hypergeometric(config, shipment):
     num_boxes = shipment["num_boxes"]
 
     if unit =="stems":
-        n_units_to_inspect = math.ceil((1-((1-confidence_level)**(1/(detection_level*num_stems))))*(num_stems-(((detection_level*num_stems)-1)/2)))
+        n_units_to_inspect = math.ceil((1-((1-confidence_level)**
+        (1/(detection_level*num_stems))))*(num_stems-(((detection_level*num_stems)-1)/2)))
     elif unit == "boxes":
-        n_units_to_inspect = math.ceil((1-((1-confidence_level)**(1/(detection_level*num_boxes))))*(num_boxes-(((detection_level*num_boxes)-1)/2)))
+        n_units_to_inspect = math.ceil((1-((1-confidence_level)**
+        (1/(detection_level*num_boxes))))*(num_boxes-(((detection_level*num_boxes)-1)/2)))
     else:
         raise RuntimeError(
             "Unknown sampling unit: {unit}".format(**locals())
@@ -154,7 +156,8 @@ def sample_n(config, shipment):
     return n_units_to_inspect
 
 
-# TODO: if sample_strategy = all, selection_strategy may not be important, think this through. Might be important for detection vs completion stats. Or clustered vs uniform.
+# TODO: if sample_strategy = all, selection_strategy may not be important,
+# think this through. Might be important for detection vs completion stats. Or clustered vs uniform.
 def inspect(config, shipment, n_units_to_inspect):
     """Select boxes from shipment based on specified selection strategy.
     Inspect selected boxes using both end strategies (to detection, to completion)
@@ -170,6 +173,7 @@ def inspect(config, shipment, n_units_to_inspect):
     within_box_pct = config["inspection"]["within_box_pct"]
     min_boxes = config.get("min_boxes", 1)
 
+    # Convert sample size to boxes
     if unit == "stems":
         # Default inspect all stems per box, but allow partial box inspections
         inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
@@ -186,6 +190,7 @@ def inspect(config, shipment, n_units_to_inspect):
             "Unknown sampling unit: {unit}".format(**locals())
         )
 
+    # Select boxes to inspect
     selection_strategy = config["inspection"]["selection_strategy"]
     if selection_strategy == "tailgate":
         box_index_to_inspect = range(n_boxes_to_inspect)
@@ -196,25 +201,21 @@ def inspect(config, shipment, n_units_to_inspect):
             "Unknown selection strategy: {selection_strategy}".format(**locals())
         )
 
-
+    # Inspect selected boxes, count infested boxes and stems to detection and completion
     infested_boxes_completion = 0
     infested_stems_completion = 0
+    infested_stems_detection = 0
     for i in box_index_to_inspect:
         if shipment["boxes"][i]:
             infested_boxes_completion += 1
         for stem in (shipment["boxes"][i]).stems:
             if stem:
                 infested_stems_completion += 1
+                if infested_boxes_completion > 2:
+                    infested_stems_detection += 1
 
-    infested_stems_detection = 0
-    for i in box_index_to_inspect:
-        for stem in (shipment["boxes"][i]).stems:
-            if stem:
-                infested_stems_detection += 1
-        if shipment["boxes"][i]:
-            break
-
-    return infested_boxes_completion,infested_stems_completion,infested_stems_detection
+    return infested_boxes_completion == 0,infested_boxes_completion,
+    infested_stems_completion, infested_stems_detection
 
 
 def get_sample_function(config):
