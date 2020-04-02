@@ -228,6 +228,15 @@ The cluster size in terms of number of stems is limited by
 than one cluster is generated so that number of stems in each cluster
 conforms to this limit.
 
+The distribution for clustered can be `gamma`, `random`, and `continuous`
+and it drives the placement of infested stems within a cluster.
+The `gamma` option uses the gamma distribution and takes two parameters.
+The `random` option uses the uniform random distribution. The cluster
+width is defined by the first and only parameter of this distribution.
+The `continuous` distribution does not have any parameters and produces
+infested stems next to each other so the number of infested stems in the
+cluster is the same as the width of the cluster.
+
 The settings for `random_box` is:
 
 ```
