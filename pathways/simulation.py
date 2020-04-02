@@ -40,6 +40,7 @@ from .shipments import (
 from .inspections import (
     get_inspection_needed_function,
     get_sample_function,
+    inspect,
     is_shipment_diseased,
     shipment_infestation_rate,
 )
@@ -101,7 +102,8 @@ def simulation(
     shipment_generator = get_shipment_generator(config)
     add_pest = get_pest_function(config)
     is_inspection_needed = get_inspection_needed_function(config)
-    inspect = get_inspectiom_function(config)
+    sample = get_sample_function(config)
+    inspect = inspect(config)
 
 
     for unused_i in range(num_shipments):
@@ -114,7 +116,9 @@ def simulation(
             shipment, shipment["arrival_time"]
         )
         if must_inspect:
-            shipment_checked_ok, num_boxes_inspected = inspect(shipment)
+            n_units_to_inspect = sample(shipment)
+            shipment_checked_ok, infested_boxes_completion,
+            infested_stems_completion, infested_stems_detection = inspect(shipment, n_units_to_inspect)
             num_inspections += 1
             total_num_boxes_inspected += num_boxes_inspected
             total_num_boxes += shipment["num_boxes"]
