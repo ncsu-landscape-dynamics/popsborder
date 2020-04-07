@@ -165,18 +165,18 @@ def inspect(config, shipment, n_units_to_inspect):
 
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
-    :param n_boxes_to_inspect: Number of boxes to inspect defined by sample functions.
+    :param n_units_to_inspect: Number of units to inspect defined by sample functions.
     """
     unit = config["inspection"]["unit"]
     stems_per_box = config["stems_per_box"]["default"]
     num_boxes = shipment["num_boxes"]
     within_box_pct = config["inspection"]["within_box_pct"]
     min_boxes = config.get("min_boxes", 1)
+    inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
 
     # Convert sample size to boxes
     if unit == "stems":
         # Default inspect all stems per box, but allow partial box inspections
-        inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
         n_boxes_to_inspect = math.ceil(n_units_to_inspect / inspect_per_box)
         n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
         n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
@@ -201,21 +201,30 @@ def inspect(config, shipment, n_units_to_inspect):
             "Unknown selection strategy: {selection_strategy}".format(**locals())
         )
 
-    # Inspect selected boxes, count infested boxes and stems to detection and completion
-    infested_boxes_completion = 0
+    # Inspect selected boxes, count opened boxes, inspected stems, and infested stems
+    # to detection and completion
+    # TODO: Partial box inspections
+    boxes_opened_completion = n_boxes_to_inspect
+    boxes_opened_detection = 0
+    stems_inspected_completion = n_boxes_to_inspect * inspect_per_box
+    stems_inspected_detection = 0
     infested_stems_completion = 0
     infested_stems_detection = 0
     for i in box_index_to_inspect:
-        if shipment["boxes"][i]:
-            infested_boxes_completion += 1
-        for stem in (shipment["boxes"][i]).stems:
+        boxes_opened_detection += 1
+        for stem in (shipment["boxes"][i]).stems[0:inspect_per_box]:
+            stems_inspected_detection += 1
+            if stem:
+                infested_stems_detection += 1
+        if infested_stems_detection > 0:
+            break
+    for i in box_index_to_inspect:
+        for stem in (shipment["boxes"][i]).stems[0:inspect_per_box]:
             if stem:
                 infested_stems_completion += 1
-                if infested_boxes_completion > 2:
-                    infested_stems_detection += 1
-
-    return infested_boxes_completion == 0,infested_boxes_completion,
-    infested_stems_completion, infested_stems_detection
+    return infested_stems_completion == 0,boxes_opened_completion, boxes_opened_detection,
+    stems_inspected_completion, stems_inspected_detection, infested_stems_completion,
+    infested_stems_detection
 
 
 def get_sample_function(config):
