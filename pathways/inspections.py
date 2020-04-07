@@ -161,7 +161,8 @@ def sample_n(config, shipment):
 def inspect(config, shipment, n_units_to_inspect):
     """Select boxes from shipment based on specified selection strategy.
     Inspect selected boxes using both end strategies (to detection, to completion)
-    Return number of infested stems for both end strategies.
+    Return number of boxes opened, stems inspected, and infested stems found for
+    each end strategy.
 
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
@@ -203,7 +204,6 @@ def inspect(config, shipment, n_units_to_inspect):
 
     # Inspect selected boxes, count opened boxes, inspected stems, and infested stems
     # to detection and completion
-    # TODO: Partial box inspections
     boxes_opened_completion = n_boxes_to_inspect
     boxes_opened_detection = 0
     stems_inspected_completion = n_boxes_to_inspect * inspect_per_box
@@ -222,6 +222,7 @@ def inspect(config, shipment, n_units_to_inspect):
         for stem in (shipment["boxes"][i]).stems[0:inspect_per_box]:
             if stem:
                 infested_stems_completion += 1
+
     return infested_stems_completion == 0,boxes_opened_completion, boxes_opened_detection,
     stems_inspected_completion, stems_inspected_detection, infested_stems_completion,
     infested_stems_detection
