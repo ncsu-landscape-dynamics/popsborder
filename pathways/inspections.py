@@ -69,9 +69,10 @@ def inspect_first_n(num_boxes, shipment):
 
 def sample_percentage(config, shipment):
     """Set sample size to sample units from shipment using percentage strategy.
-    Return number of units to inspect.
+    Convert to units to boxes if needed.
+    Return number of boxes to inspect.
 
-    :param config: Configuration to be used
+    :param config: Configuration to be used595
     :param shipment: Shipment to be inspected
     """
     unit = config["inspection"]["unit"]
@@ -80,19 +81,23 @@ def sample_percentage(config, shipment):
     num_boxes = shipment["num_boxes"]
 
     if unit == "stems":
-        n_units_to_inspect = int(math.ceil(ratio * num_stems))
+        n_stems_to_inspect = int(math.ceil(ratio * num_stems))
+        n_boxes_to_inspect = convert_stems_to_boxes(config, shipment, n_stems_to_inspect)
     elif unit =="boxes":
-        n_units_to_inspect = int(math.ceil(ratio * num_boxes))
+        n_boxes_to_inspect = int(math.ceil(ratio * num_boxes))
+        n_boxes_to_inspect = max(min_boxes, n_units_to_inspect)
+        n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
     else:
         raise RuntimeError(
             "Unknown sampling unit: {unit}".format(**locals())
         )
-    return n_units_to_inspect
+    return n_boxes_to_inspect
 
 
 def sample_hypergeometric(config, shipment):
-    """Set sample size to sample units from shipment using hypergeometric/detection level strategy.
-    Return number of units to inspect.
+    """Set sample size to sample units from shipment using hypergeometric/detection
+    level strategy. Convert to units to boxes if needed.
+    Return number of boxes to inspect.
 
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
@@ -104,60 +109,89 @@ def sample_hypergeometric(config, shipment):
     num_boxes = shipment["num_boxes"]
 
     if unit =="stems":
-        n_units_to_inspect = math.ceil((1-((1-confidence_level)**
+        n_stems_to_inspect = math.ceil((1-((1-confidence_level)**
         (1/(detection_level*num_stems))))*(num_stems-(((detection_level*num_stems)-1)/2)))
+        n_boxes_to_inspect = convert_stems_to_boxes(config, shipment, n_stems_to_inspect)
     elif unit == "boxes":
-        n_units_to_inspect = math.ceil((1-((1-confidence_level)**
+        n_boxes_to_inspect = math.ceil((1-((1-confidence_level)**
         (1/(detection_level*num_boxes))))*(num_boxes-(((detection_level*num_boxes)-1)/2)))
+        n_boxes_to_inspect = max(min_boxes, n_units_to_inspect)
+        n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
     else:
         raise RuntimeError(
             "Unknown sampling unit: {unit}".format(**locals())
         )
-    return n_units_to_inspect
+    return n_boxes_to_inspect
 
 
 def sample_all(shipment):
-    """Set sample size to sample all units from shipment.
-    Return number of units to inspect.
+    """Set sample size to sample all boxes from shipment.
+    Return number of boxes to inspect.
 
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
     """
-    n_units_to_inspect = shipment["num_boxes"]
-    return n_units_to_inspect
+    n_boxes_to_inspect = shipment["num_boxes"]
+    return n_boxes_to_inspect
 
 
 def sample_n(config, shipment):
     """Set sample size to sample fixed number of units from shipment.
-    Check if fixed number is <= max units for inspection.
-    Return number of units to inspect.
+    Check if fixed number is <= max units for inspection. Convert to units to
+    boxes if needed.
+    Return number of boxes to inspect.
 
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
     """
-
     fixed_n = config["inspection"]["fixed_n"]
     unit = config["inspection"]["unit"]
     within_box_pct = config["inspection"]["within_box_pct"]
+    # TODO: write function to determine stems_per_box from config, in shipment module
     stems_per_box = config["stems_per_box"]["default"]
     num_stems = shipment["num_stems"]
     num_boxes = shipment["num_boxes"]
 
     if unit == "stems":
         inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
-        # Compute maximum stems that can be inspected based on within box percent.
+        # Compute maximum num of stems that can be inspected in a ship based on
+        # within box percent.
         full_box_inspect_stems = math.floor(num_stems / stems_per_box)*inspect_per_box
         partial_box = num_stems % stems_per_box
         partial_box_inspect_stems = min(partial_box, inspect_per_box)
         max_stems = full_box_inspect_stems + partial_box_inspect_stems
-        n_units_to_inspect = min(max_stems, fixed_n) # TODO: add message to alert user if fixed_n > max_stems
+        n_stems_to_inspect = min(max_stems, fixed_n)
+        # Check if max number of stems that can be inspected is less than fixed number.
+        n_boxes_to_inspect = convert_stems_to_boxes(config, shipment, n_stems_to_inspect)
     elif unit == "boxes":
-        n_units_to_inspect = min(num_boxes, fixed_n) # TODO: add message to alert user if fixed_n > num_boxes
-    return n_units_to_inspect
+        n_boxes_to_inspect = fixed_n
+        n_boxes_to_inspect = max(min_boxes, n_units_to_inspect)
+        n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
+    return n_boxes_to_inspect
 
 
-# TODO: if sample_strategy = all, selection_strategy may not be important,
-# think this through. Might be important for detection vs completion stats. Or clustered vs uniform.
+def convert_stems_to_boxes(config, shipment, n_stems_to_inspect):
+    """Convert number of stems to inspect to number of boxes to inspect based on
+    the percentage of stems to inspect per box and number of stems per box.
+    Return number of boxes to inspect.
+
+    :param config: Configuration to be used
+    :param shipment: Shipment to be inspected
+    :param n_stems_to_inspect: Number of stems to inspect defined in sample functions.
+    """
+    stems_per_box = config["stems_per_box"]["default"]
+    within_box_pct = config["inspection"]["within_box_pct"]
+    min_boxes = config.get("min_boxes", 1)
+    num_boxes = shipment["num_boxes"]
+    inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
+
+    # Default inspect all stems per box, but allow partial box inspections
+    n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
+    n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
+    n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
+    return n_boxes_to_inspect
+
+
 def inspect(config, shipment, n_units_to_inspect):
     """Select boxes from shipment based on specified selection strategy.
     Inspect selected boxes using both end strategies (to detection, to completion)
@@ -166,30 +200,12 @@ def inspect(config, shipment, n_units_to_inspect):
 
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
-    :param n_units_to_inspect: Number of units to inspect defined by sample functions.
+    :param n_boxes_to_inspect: Number of boxes to inspect defined by sample functions.
     """
-    unit = config["inspection"]["unit"]
     stems_per_box = config["stems_per_box"]["default"]
     num_boxes = shipment["num_boxes"]
     within_box_pct = config["inspection"]["within_box_pct"]
-    min_boxes = config.get("min_boxes", 1)
     inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
-
-    # Convert sample size to boxes
-    if unit == "stems":
-        # Default inspect all stems per box, but allow partial box inspections
-        n_boxes_to_inspect = math.ceil(n_units_to_inspect / inspect_per_box)
-        n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
-        n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
-
-    elif unit == "boxes":
-        n_boxes_to_inspect = max(min_boxes, n_units_to_inspect)
-        n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
-
-    else:
-        raise RuntimeError(
-            "Unknown sampling unit: {unit}".format(**locals())
-        )
 
     # Select boxes to inspect
     selection_strategy = config["inspection"]["selection_strategy"]
@@ -210,18 +226,19 @@ def inspect(config, shipment, n_units_to_inspect):
     stems_inspected_detection = 0
     infested_stems_completion = 0
     infested_stems_detection = 0
+    detected = False
     for i in box_index_to_inspect:
-        boxes_opened_detection += 1
+        if not detected:
+            boxes_opened_detection += 1
         for stem in (shipment["boxes"][i]).stems[0:inspect_per_box]:
-            stems_inspected_detection += 1
-            if stem:
-                infested_stems_detection += 1
-        if infested_stems_detection > 0:
-            break
-    for i in box_index_to_inspect:
-        for stem in (shipment["boxes"][i]).stems[0:inspect_per_box]:
-            if stem:
+            if not detected:
+                stems_inspected_detection += 1
+            if stem: # Count every infested stem in box, to completion within a box
                 infested_stems_completion += 1
+                if not detected:
+                    infested_stems_detection += 1
+        if infested_stems_detection > 0:
+            detected = True
 
     return infested_stems_completion == 0,boxes_opened_completion, boxes_opened_detection,
     stems_inspected_completion, stems_inspected_detection, infested_stems_completion,
