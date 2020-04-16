@@ -123,6 +123,7 @@ def simulation(
     add_pest = get_pest_function(config)
     is_inspection_needed = get_inspection_needed_function(config)
     sample = get_sample_function(config)
+
     inspect = inspect(config)
 
     for unused_i in range(num_shipments):
@@ -194,8 +195,8 @@ def simulation(
         pct_stems_inspected_detection = (total_stems_inspected_detection / num_stems) * 100,
         pct_sample_if_to_detection = (total_stems_inspection_detection /
         total_stems_inspection_completion) * 100,
-        pct_pest_unreported_if_detection = (total_infested_stems_detection /
-        total_infested_stems_completion) * 100,
+        pct_pest_unreported_if_detection = (1 - (total_infested_stems_detection /
+        total_infested_stems_completion)) * 100,
         true_infestation_rate=true_infestation_rate / num_shipments,
         missed_infestation_rate=missed_infestation_rate / success_rates.false_negative,
         intercepted_infestation_rate=intercepted_infestation_rate / success_rates.true_positive
