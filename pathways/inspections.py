@@ -31,6 +31,10 @@ import random
 import weakref
 import numpy as np
 
+from .shipments import (
+    get_stems_per_box,
+)
+
 if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error
 
@@ -147,8 +151,9 @@ def sample_n(config, shipment):
     fixed_n = config["inspection"]["fixed_n"]
     unit = config["inspection"]["unit"]
     within_box_pct = config["inspection"]["within_box_pct"]
-    # TODO: write function to determine stems_per_box from config, in shipment module
-    stems_per_box = config["stems_per_box"]["default"]
+    pathway = shipment["pathway"]
+    stems_per_box = config["stems_per_box"]
+    stems_per_box = get_stems_per_box(stems_per_box, pathway)
     num_stems = shipment["num_stems"]
     num_boxes = shipment["num_boxes"]
 
@@ -179,7 +184,9 @@ def convert_stems_to_boxes(config, shipment, n_stems_to_inspect):
     :param shipment: Shipment to be inspected
     :param n_stems_to_inspect: Number of stems to inspect defined in sample functions.
     """
-    stems_per_box = config["stems_per_box"]["default"]
+    pathway = shipment["pathway"]
+    stems_per_box = config["stems_per_box"]
+    stems_per_box = get_stems_per_box(stems_per_box, pathway)
     within_box_pct = config["inspection"]["within_box_pct"]
     min_boxes = config.get("min_boxes", 1)
     num_boxes = shipment["num_boxes"]
@@ -202,7 +209,9 @@ def inspect(config, shipment, n_units_to_inspect):
     :param shipment: Shipment to be inspected
     :param n_boxes_to_inspect: Number of boxes to inspect defined by sample functions.
     """
-    stems_per_box = config["stems_per_box"]["default"]
+    pathway = shipment["pathway"]
+    stems_per_box = config["stems_per_box"]
+    stems_per_box = get_stems_per_box(stems_per_box, pathway)
     num_boxes = shipment["num_boxes"]
     within_box_pct = config["inspection"]["within_box_pct"]
     inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
