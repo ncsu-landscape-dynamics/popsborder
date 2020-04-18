@@ -236,23 +236,23 @@ def run_simulation(
     except AttributeError:
         # Python 2 fallback
         totals = lambda: None  # noqa: E731
-        totals.missing=0,
-        totals.num_inspections=0,
-        totals.num_boxes=0,
-        totals.num_stems=0,
-        totals.avg_boxes_opened_completion=0,
-        totals.avg_boxes_opened_detection=0,
-        totals.pct_boxes_opened_completion=0,
-        totals.pct_boxes_opened_detection=0,
-        totals.avg_stems_inspected_completion=0,
-        totals.avg_stems_inspected_detection=0,
-        totals.pct_stems_inspected_completion=0,
-        totals.pct_stems_inspected_detection=0,
-        totals.pct_sample_if_to_detection=0,
-        totals.pct_pest_unreported_if_detection=0,
-        totals.true_infestation_rate=0,
-        totals.missed_infestation_rate=0,
-        totals.intercepted_infestation_rate=0,
+        totals.missing=0
+        totals.num_inspections=0
+        totals.num_boxes=0
+        totals.num_stems=0
+        totals.avg_boxes_opened_completion=0
+        totals.avg_boxes_opened_detection=0
+        totals.pct_boxes_opened_completion=0
+        totals.pct_boxes_opened_detection=0
+        totals.avg_stems_inspected_completion=0
+        totals.avg_stems_inspected_detection=0
+        totals.pct_stems_inspected_completion=0
+        totals.pct_stems_inspected_detection=0
+        totals.pct_sample_if_to_detection=0
+        totals.pct_pest_unreported_if_detection=0
+        totals.true_infestation_rate=0
+        totals.missed_infestation_rate=0
+        totals.intercepted_infestation_rate=0
 
     for i in range(num_simulations):
         result = simulation(
@@ -266,19 +266,19 @@ def run_simulation(
         totals.missing += result.missing
         totals.num_inspections += result.num_inspections
         totals.num_boxes += result.num_boxes
-        totals.num_stems+=result.num_stems,
-        totals.avg_boxes_opened_completion+=result.avg_boxes_opened_completion,
-        totals.avg_boxes_opened_detection+=result.avg_boxes_opened_detection,
-        totals.pct_boxes_opened_completion+=result.pct_boxes_opened_completion,
-        totals.pct_boxes_opened_detection+=result.pct_boxes_opened_detection,
-        totals.avg_stems_inspected_completion+=result.avg_stems_inspected_completion,
-        totals.avg_stems_inspected_detection+=result.avg_stems_inspected_detection,
-        totals.pct_stems_inspected_completion+=result.pct_stems_inspected_completion,
-        totals.pct_stems_inspected_detection+=result.pct_stems_inspected_detection,
-        totals.pct_sample_if_to_detection+=result.pct_sample_if_to_detection,
-        totals.pct_pest_unreported_if_detection+=result.pct_pest_unreported_if_detection,
-        totals.true_infestation_rate+=result.true_infestation_rate,
-        totals.missed_infestation_rate+=result.missed_infestation_rate,
+        totals.num_stems+=result.num_stems
+        totals.avg_boxes_opened_completion+=result.avg_boxes_opened_completion
+        totals.avg_boxes_opened_detection+=result.avg_boxes_opened_detection
+        totals.pct_boxes_opened_completion+=result.pct_boxes_opened_completion
+        totals.pct_boxes_opened_detection+=result.pct_boxes_opened_detection
+        totals.avg_stems_inspected_completion+=result.avg_stems_inspected_completion
+        totals.avg_stems_inspected_detection+=result.avg_stems_inspected_detection
+        totals.pct_stems_inspected_completion+=result.pct_stems_inspected_completion
+        totals.pct_stems_inspected_detection+=result.pct_stems_inspected_detection
+        totals.pct_sample_if_to_detection+=result.pct_sample_if_to_detection
+        totals.pct_pest_unreported_if_detection+=result.pct_pest_unreported_if_detection
+        totals.true_infestation_rate+=result.true_infestation_rate
+        totals.missed_infestation_rate+=result.missed_infestation_rate
         totals.intercepted_infestation_rate+=result.intercepted_infestation_rate
     # make these relative (reusing the variables)
     totals.missing /= float(num_simulations)
