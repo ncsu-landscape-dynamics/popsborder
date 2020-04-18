@@ -124,8 +124,6 @@ def simulation(
     is_inspection_needed = get_inspection_needed_function(config)
     sample = get_sample_function(config)
 
-    inspect = inspect(config)
-
     for unused_i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
         add_pest(shipment)
@@ -136,10 +134,10 @@ def simulation(
             shipment, shipment["arrival_time"]
         )
         if must_inspect:
-            n_units_to_inspect = sample(shipment)
+            n_boxes_to_inspect = sample(shipment)
             shipment_checked_ok, boxes_opened_completion, boxes_opened_detection,
             stems_inspected_completion, stems_inspected_detection, infested_stems_completion,
-            infested_stems_detection = inspect(shipment, n_units_to_inspect)
+            infested_stems_detection = inspect(config, shipment, n_boxes_to_inspect)
             num_inspections += 1
             total_num_boxes += shipment["num_boxes"]
             total_num_stems += shipment["num_stems"]
@@ -171,7 +169,7 @@ def simulation(
             else:
                 intercepted_infestation_rate += shipment_infestation_rate(shipment)
 
-    num_diseased = num_shipments - success_rates.oks
+    num_diseased = num_shipments - success_rates.ok
     if num_diseased:
         # avoiding float division by zero
         missing = 100 * float(success_rates.false_negative) / (num_diseased)
@@ -183,16 +181,16 @@ def simulation(
     return SimulationResult(
         missing=missing,
         num_inspections=num_inspections,
-        num_boxes=total_num_boxes,
-        num_stems = total_num_stems,
+        total_num_boxes=total_num_boxes,
+        total_num_stems = total_num_stems,
         avg_boxes_opened_completion = total_boxes_opened_completion / num_shipments,
         avg_boxes_opened_detection = total_boxes_opened_detection / num_shipments,
-        pct_boxes_opened_completion = (total_boxes_opened_completion / num_boxes) * 100,
-        pct_boxes_opened_detection = (total_boxes_opened_detection / num_boxes) * 100,
+        pct_boxes_opened_completion = (total_boxes_opened_completion / total_num_boxes) * 100,
+        pct_boxes_opened_detection = (total_boxes_opened_detection / total_num_boxes) * 100,
         avg_stems_inspected_completion = total_stems_inspected_completion / num_shipments,
         avg_stems_inspected_detection = total_stems_inspected_detection / num_shipments,
-        pct_stems_inspected_completion = (total_stems_inspection_completion / num_stems) * 100,
-        pct_stems_inspected_detection = (total_stems_inspected_detection / num_stems) * 100,
+        pct_stems_inspected_completion = (total_stems_inspection_completion / total_num_stems) * 100,
+        pct_stems_inspected_detection = (total_stems_inspected_detection / total_num_stems) * 100,
         pct_sample_if_to_detection = (total_stems_inspection_detection /
         total_stems_inspection_completion) * 100,
         pct_pest_unreported_if_detection = (1 - (total_infested_stems_detection /

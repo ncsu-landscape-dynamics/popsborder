@@ -83,13 +83,14 @@ def sample_percentage(config, shipment):
     ratio = config["inspection"]["percentage"]["proportion"]
     num_stems = shipment["num_stems"]
     num_boxes = shipment["num_boxes"]
+    min_boxes = config.get("min_boxes", 1)
 
     if unit == "stems":
         n_stems_to_inspect = int(math.ceil(ratio * num_stems))
         n_boxes_to_inspect = convert_stems_to_boxes(config, shipment, n_stems_to_inspect)
     elif unit =="boxes":
         n_boxes_to_inspect = int(math.ceil(ratio * num_boxes))
-        n_boxes_to_inspect = max(min_boxes, n_units_to_inspect)
+        n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
         n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
     else:
         raise RuntimeError(
@@ -101,8 +102,7 @@ def sample_percentage(config, shipment):
 def compute_hypergeometric(population_size, detection_level, confidence_level):
     """Compute sample size using hypergeometric distribution based on population
     size (total number of stems or boxes in shipment), detection level, and confidence level."""
-    sample_size = math.ceil((1-((1-confidence_level)**
-    (1/(detection_level*population_size))))*
+    sample_size = math.ceil((1-((1-confidence_level)**(1/(detection_level*population_size))))*
     (population_size-(((detection_level*population_size)-1)/2)))
     return sample_size
 
@@ -120,13 +120,14 @@ def sample_hypergeometric(config, shipment):
     confidence_level = config["inspection"]["hypergeometric"]["confidence_level"]
     num_stems = shipment["num_stems"]
     num_boxes = shipment["num_boxes"]
+    min_boxes = config.get("min_boxes", 1)
 
     if unit =="stems":
         n_stems_to_inspect = compute_hypergeometric(num_stems, detection_level, confidence_level)
         n_boxes_to_inspect = convert_stems_to_boxes(config, shipment, n_stems_to_inspect)
     elif unit == "boxes":
         n_boxes_to_inspect = compute_hypergeometric(num_boxes, detection_level, confidence_level)
-        n_boxes_to_inspect = max(min_boxes, n_units_to_inspect)
+        n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
         n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
     else:
         raise RuntimeError(
@@ -163,6 +164,7 @@ def sample_n(config, shipment):
     stems_per_box = get_stems_per_box(stems_per_box, pathway)
     num_stems = shipment["num_stems"]
     num_boxes = shipment["num_boxes"]
+    min_boxes = config.get("min_boxes", 1)
 
     if unit == "stems":
         inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
@@ -177,7 +179,7 @@ def sample_n(config, shipment):
         n_boxes_to_inspect = convert_stems_to_boxes(config, shipment, n_stems_to_inspect)
     elif unit == "boxes":
         n_boxes_to_inspect = fixed_n
-        n_boxes_to_inspect = max(min_boxes, n_units_to_inspect)
+        n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
         n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
     return n_boxes_to_inspect
 
@@ -206,7 +208,7 @@ def convert_stems_to_boxes(config, shipment, n_stems_to_inspect):
     return n_boxes_to_inspect
 
 
-def inspect(config, shipment, n_units_to_inspect):
+def inspect(config, shipment, n_boxes_to_inspect):
     """Select boxes from shipment based on specified selection strategy.
     Inspect selected boxes using both end strategies (to detection, to completion)
     Return number of boxes opened, stems inspected, and infested stems found for
@@ -256,13 +258,13 @@ def inspect(config, shipment, n_units_to_inspect):
         if infested_stems_detection > 0:
             detected = True
 
-    return infested_stems_completion == 0,boxes_opened_completion, boxes_opened_detection,
-    stems_inspected_completion, stems_inspected_detection, infested_stems_completion,
-    infested_stems_detection
+    return infested_stems_completion == 0, boxes_opened_completion, boxes_opened_detection,
+    stems_inspected_completion, stems_inspected_detection, infested_stems_completion, infested_stems_detection
 
 
 def get_sample_function(config):
-    """Based on config, return function to sample a shipment."""
+    """Based on config, return function to sample a shipment.
+    """
     sample_strategy = config["inspection"]["sample_strategy"]
     if sample_strategy == "percentage":
         def sample(shipment):

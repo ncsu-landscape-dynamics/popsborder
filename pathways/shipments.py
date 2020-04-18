@@ -91,6 +91,7 @@ class ParameterShipmentGenerator:
         num_boxes_min = self.params["boxes"].get("min", 0)
         num_boxes_max = self.params["boxes"]["max"]
         pathway = "None"
+        stems_per_box = self.stems_per_box
         stems_per_box = get_stems_per_box(stems_per_box, pathway)
         num_boxes = random.randint(num_boxes_min, num_boxes_max)
         num_stems = stems_per_box * num_boxes
@@ -139,6 +140,7 @@ class F280ShipmentGenerator:
         stems = np.zeros(num_stems, dtype=np.int)
 
         pathway = record["PATHWAY"]
+        stems_per_box = self.stems_per_box
         stems_per_box = get_stems_per_box(stems_per_box, pathway)
 
         # rounding up to keep the max per box and have enough boxes
