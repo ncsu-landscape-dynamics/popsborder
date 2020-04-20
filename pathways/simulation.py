@@ -135,9 +135,9 @@ def simulation(
         )
         if must_inspect:
             n_boxes_to_inspect = sample(shipment)
-            shipment_checked_ok, boxes_opened_completion, boxes_opened_detection,
+            (shipment_checked_ok, boxes_opened_completion, boxes_opened_detection,
             stems_inspected_completion, stems_inspected_detection, infested_stems_completion,
-            infested_stems_detection = inspect(config, shipment, n_boxes_to_inspect)
+            infested_stems_detection) = inspect(config, shipment, n_boxes_to_inspect)
             num_inspections += 1
             total_num_boxes += shipment["num_boxes"]
             total_num_stems += shipment["num_stems"]
