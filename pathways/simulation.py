@@ -72,7 +72,7 @@ SimulationResult = namedtuple(
         "pct_pest_unreported_if_detection",
         "true_infestation_rate",
         "missed_infestation_rate",
-        "intercepted_infestation_rate"
+        "intercepted_infestation_rate",
     ],
 )
 
@@ -135,9 +135,15 @@ def simulation(
         )
         if must_inspect:
             n_boxes_to_inspect = sample(shipment)
-            (shipment_checked_ok, boxes_opened_completion, boxes_opened_detection,
-            stems_inspected_completion, stems_inspected_detection, infested_stems_completion,
-            infested_stems_detection) = inspect(config, shipment, n_boxes_to_inspect)
+            (
+                shipment_checked_ok,
+                boxes_opened_completion,
+                boxes_opened_detection,
+                stems_inspected_completion,
+                stems_inspected_detection,
+                infested_stems_completion,
+                infested_stems_detection,
+            ) = inspect(config, shipment, n_boxes_to_inspect)
             num_inspections += 1
             total_num_boxes += shipment["num_boxes"]
             total_num_stems += shipment["num_stems"]
@@ -182,23 +188,36 @@ def simulation(
         missing=missing,
         num_inspections=num_inspections,
         total_num_boxes=total_num_boxes,
-        total_num_stems = total_num_stems,
-        avg_boxes_opened_completion = total_boxes_opened_completion / num_shipments,
-        avg_boxes_opened_detection = total_boxes_opened_detection / num_shipments,
-        pct_boxes_opened_completion = (total_boxes_opened_completion / total_num_boxes) * 100,
-        pct_boxes_opened_detection = (total_boxes_opened_detection / total_num_boxes) * 100,
-        avg_stems_inspected_completion = total_stems_inspected_completion / num_shipments,
-        avg_stems_inspected_detection = total_stems_inspected_detection / num_shipments,
-        pct_stems_inspected_completion = (total_stems_inspection_completion / total_num_stems) * 100,
-        pct_stems_inspected_detection = (total_stems_inspected_detection / total_num_stems) * 100,
-        pct_sample_if_to_detection = (total_stems_inspection_detection /
-        total_stems_inspection_completion) * 100,
-        pct_pest_unreported_if_detection = (1 - (total_infested_stems_detection /
-        total_infested_stems_completion)) * 100,
+        total_num_stems=total_num_stems,
+        avg_boxes_opened_completion=total_boxes_opened_completion / num_shipments,
+        avg_boxes_opened_detection=total_boxes_opened_detection / num_shipments,
+        pct_boxes_opened_completion=(total_boxes_opened_completion / total_num_boxes)
+        * 100,
+        pct_boxes_opened_detection=(total_boxes_opened_detection / total_num_boxes)
+        * 100,
+        avg_stems_inspected_completion=total_stems_inspected_completion / num_shipments,
+        avg_stems_inspected_detection=total_stems_inspected_detection / num_shipments,
+        pct_stems_inspected_completion=(
+            total_stems_inspection_completion / total_num_stems
+        )
+        * 100,
+        pct_stems_inspected_detection=(
+            total_stems_inspected_detection / total_num_stems
+        )
+        * 100,
+        pct_sample_if_to_detection=(
+            total_stems_inspection_detection / total_stems_inspection_completion
+        )
+        * 100,
+        pct_pest_unreported_if_detection=(
+            1 - (total_infested_stems_detection / total_infested_stems_completion)
+        )
+        * 100,
         true_infestation_rate=true_infestation_rate / num_shipments,
         missed_infestation_rate=missed_infestation_rate / success_rates.false_negative,
-        intercepted_infestation_rate=intercepted_infestation_rate / success_rates.true_positive
-        )
+        intercepted_infestation_rate=intercepted_infestation_rate
+        / success_rates.true_positive,
+    )
 
 
 def run_simulation(
@@ -234,23 +253,23 @@ def run_simulation(
     except AttributeError:
         # Python 2 fallback
         totals = lambda: None  # noqa: E731
-        totals.missing=0
-        totals.num_inspections=0
-        totals.num_boxes=0
-        totals.num_stems=0
-        totals.avg_boxes_opened_completion=0
-        totals.avg_boxes_opened_detection=0
-        totals.pct_boxes_opened_completion=0
-        totals.pct_boxes_opened_detection=0
-        totals.avg_stems_inspected_completion=0
-        totals.avg_stems_inspected_detection=0
-        totals.pct_stems_inspected_completion=0
-        totals.pct_stems_inspected_detection=0
-        totals.pct_sample_if_to_detection=0
-        totals.pct_pest_unreported_if_detection=0
-        totals.true_infestation_rate=0
-        totals.missed_infestation_rate=0
-        totals.intercepted_infestation_rate=0
+        totals.missing = 0
+        totals.num_inspections = 0
+        totals.num_boxes = 0
+        totals.num_stems = 0
+        totals.avg_boxes_opened_completion = 0
+        totals.avg_boxes_opened_detection = 0
+        totals.pct_boxes_opened_completion = 0
+        totals.pct_boxes_opened_detection = 0
+        totals.avg_stems_inspected_completion = 0
+        totals.avg_stems_inspected_detection = 0
+        totals.pct_stems_inspected_completion = 0
+        totals.pct_stems_inspected_detection = 0
+        totals.pct_sample_if_to_detection = 0
+        totals.pct_pest_unreported_if_detection = 0
+        totals.true_infestation_rate = 0
+        totals.missed_infestation_rate = 0
+        totals.intercepted_infestation_rate = 0
 
     for i in range(num_simulations):
         result = simulation(
@@ -264,20 +283,22 @@ def run_simulation(
         totals.missing += result.missing
         totals.num_inspections += result.num_inspections
         totals.num_boxes += result.num_boxes
-        totals.num_stems+=result.num_stems
-        totals.avg_boxes_opened_completion+=result.avg_boxes_opened_completion
-        totals.avg_boxes_opened_detection+=result.avg_boxes_opened_detection
-        totals.pct_boxes_opened_completion+=result.pct_boxes_opened_completion
-        totals.pct_boxes_opened_detection+=result.pct_boxes_opened_detection
-        totals.avg_stems_inspected_completion+=result.avg_stems_inspected_completion
-        totals.avg_stems_inspected_detection+=result.avg_stems_inspected_detection
-        totals.pct_stems_inspected_completion+=result.pct_stems_inspected_completion
-        totals.pct_stems_inspected_detection+=result.pct_stems_inspected_detection
-        totals.pct_sample_if_to_detection+=result.pct_sample_if_to_detection
-        totals.pct_pest_unreported_if_detection+=result.pct_pest_unreported_if_detection
-        totals.true_infestation_rate+=result.true_infestation_rate
-        totals.missed_infestation_rate+=result.missed_infestation_rate
-        totals.intercepted_infestation_rate+=result.intercepted_infestation_rate
+        totals.num_stems += result.num_stems
+        totals.avg_boxes_opened_completion += result.avg_boxes_opened_completion
+        totals.avg_boxes_opened_detection += result.avg_boxes_opened_detection
+        totals.pct_boxes_opened_completion += result.pct_boxes_opened_completion
+        totals.pct_boxes_opened_detection += result.pct_boxes_opened_detection
+        totals.avg_stems_inspected_completion += result.avg_stems_inspected_completion
+        totals.avg_stems_inspected_detection += result.avg_stems_inspected_detection
+        totals.pct_stems_inspected_completion += result.pct_stems_inspected_completion
+        totals.pct_stems_inspected_detection += result.pct_stems_inspected_detection
+        totals.pct_sample_if_to_detection += result.pct_sample_if_to_detection
+        totals.pct_pest_unreported_if_detection += (
+            result.pct_pest_unreported_if_detection
+        )
+        totals.true_infestation_rate += result.true_infestation_rate
+        totals.missed_infestation_rate += result.missed_infestation_rate
+        totals.intercepted_infestation_rate += result.intercepted_infestation_rate
     # make these relative (reusing the variables)
     totals.missing /= float(num_simulations)
     totals.num_inspections /= float(num_simulations)

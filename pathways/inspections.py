@@ -31,9 +31,7 @@ import random
 import weakref
 import numpy as np
 
-from .shipments import (
-    get_stems_per_box,
-)
+from .shipments import get_stems_per_box
 
 if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error
@@ -87,23 +85,25 @@ def sample_percentage(config, shipment):
 
     if unit == "stems":
         n_stems_to_inspect = int(math.ceil(ratio * num_stems))
-        n_boxes_to_inspect = convert_stems_to_boxes(config, shipment, n_stems_to_inspect)
-    elif unit =="boxes":
+        n_boxes_to_inspect = convert_stems_to_boxes(
+            config, shipment, n_stems_to_inspect
+        )
+    elif unit == "boxes":
         n_boxes_to_inspect = int(math.ceil(ratio * num_boxes))
         n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
         n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
     else:
-        raise RuntimeError(
-            "Unknown sampling unit: {unit}".format(**locals())
-        )
+        raise RuntimeError("Unknown sampling unit: {unit}".format(**locals()))
     return n_boxes_to_inspect
 
 
 def compute_hypergeometric(population_size, detection_level, confidence_level):
     """Compute sample size using hypergeometric distribution based on population
     size (total number of stems or boxes in shipment), detection level, and confidence level."""
-    sample_size = math.ceil((1-((1-confidence_level)**(1/(detection_level*population_size))))*
-    (population_size-(((detection_level*population_size)-1)/2)))
+    sample_size = math.ceil(
+        (1 - ((1 - confidence_level) ** (1 / (detection_level * population_size))))
+        * (population_size - (((detection_level * population_size) - 1) / 2))
+    )
     return sample_size
 
 
@@ -122,17 +122,21 @@ def sample_hypergeometric(config, shipment):
     num_boxes = shipment["num_boxes"]
     min_boxes = config.get("min_boxes", 1)
 
-    if unit =="stems":
-        n_stems_to_inspect = compute_hypergeometric(num_stems, detection_level, confidence_level)
-        n_boxes_to_inspect = convert_stems_to_boxes(config, shipment, n_stems_to_inspect)
+    if unit == "stems":
+        n_stems_to_inspect = compute_hypergeometric(
+            num_stems, detection_level, confidence_level
+        )
+        n_boxes_to_inspect = convert_stems_to_boxes(
+            config, shipment, n_stems_to_inspect
+        )
     elif unit == "boxes":
-        n_boxes_to_inspect = compute_hypergeometric(num_boxes, detection_level, confidence_level)
+        n_boxes_to_inspect = compute_hypergeometric(
+            num_boxes, detection_level, confidence_level
+        )
         n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
         n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
     else:
-        raise RuntimeError(
-            "Unknown sampling unit: {unit}".format(**locals())
-        )
+        raise RuntimeError("Unknown sampling unit: {unit}".format(**locals()))
     return n_boxes_to_inspect
 
 
@@ -170,13 +174,15 @@ def sample_n(config, shipment):
         inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
         # Compute maximum num of stems that can be inspected in a ship based on
         # within box percent.
-        full_box_inspect_stems = math.floor(num_stems / stems_per_box)*inspect_per_box
+        full_box_inspect_stems = math.floor(num_stems / stems_per_box) * inspect_per_box
         partial_box = num_stems % stems_per_box
         partial_box_inspect_stems = min(partial_box, inspect_per_box)
         max_stems = full_box_inspect_stems + partial_box_inspect_stems
         n_stems_to_inspect = min(max_stems, fixed_n)
         # Check if max number of stems that can be inspected is less than fixed number.
-        n_boxes_to_inspect = convert_stems_to_boxes(config, shipment, n_stems_to_inspect)
+        n_boxes_to_inspect = convert_stems_to_boxes(
+            config, shipment, n_stems_to_inspect
+        )
     elif unit == "boxes":
         n_boxes_to_inspect = fixed_n
         n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
@@ -251,14 +257,18 @@ def inspect(config, shipment, n_boxes_to_inspect):
         for stem in (shipment["boxes"][i]).stems[0:inspect_per_box]:
             if not detected:
                 stems_inspected_detection += 1
-            if stem: # Count every infested stem in box, to completion within a box
+            if stem:  # Count every infested stem in box, to completion within a box
                 infested_stems_completion += 1
                 if not detected:
                     infested_stems_detection += 1
         if infested_stems_detection > 0:
             detected = True
 
-    return infested_stems_completion == 0, boxes_opened_completion, boxes_opened_detection,
+    return (
+        infested_stems_completion == 0,
+        boxes_opened_completion,
+        boxes_opened_detection,
+    )
     stems_inspected_completion, stems_inspected_detection, infested_stems_completion, infested_stems_detection
 
 
@@ -267,25 +277,25 @@ def get_sample_function(config):
     """
     sample_strategy = config["inspection"]["sample_strategy"]
     if sample_strategy == "percentage":
+
         def sample(shipment):
-            return sample_percentage(
-                config=config, shipment=shipment
-            )
+            return sample_percentage(config=config, shipment=shipment)
+
     elif sample_strategy == "hypergeometric":
+
         def sample(shipment):
-            return sample_hypergeometric(
-                config=config, shipment=shipment
-            )
+            return sample_hypergeometric(config=config, shipment=shipment)
+
     elif sample_strategy == "fixed_n":
+
         def sample(shipment):
-            return sample_n(
-                config=config, shipment=shipment
-            )
+            return sample_n(config=config, shipment=shipment)
+
     elif sample_strategy == "all":
+
         def sample(shipment):
-            return sample_all(
-                shipment=shipment
-            )
+            return sample_all(shipment=shipment)
+
     else:
         raise RuntimeError(
             "Unknown sample strategy: {sample_strategy}".format(**locals())
