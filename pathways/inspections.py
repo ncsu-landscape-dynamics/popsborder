@@ -272,8 +272,11 @@ def inspect(config, shipment, n_boxes_to_inspect):
         infested_stems_completion == 0,
         boxes_opened_completion,
         boxes_opened_detection,
+        stems_inspected_completion,
+        stems_inspected_detection,
+        infested_stems_completion,
+        infested_stems_detection,
     )
-    stems_inspected_completion, stems_inspected_detection, infested_stems_completion, infested_stems_detection
 
 
 def get_sample_function(config):
