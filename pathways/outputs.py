@@ -136,7 +136,7 @@ class PrintReporter(object):
     def false_negative(self, shipment):
         print(
             "Inspection failed, missed {} boxes with pest [FP]".format(
-                count_diseased(shipment)
+                count_diseased_boxes(shipment)
             )
         )
 
