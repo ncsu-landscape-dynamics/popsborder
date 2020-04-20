@@ -30,7 +30,7 @@ import shutil
 import weakref
 import csv
 
-from .inspections import count_diseased
+from .inspections import count_diseased_boxes
 
 if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error

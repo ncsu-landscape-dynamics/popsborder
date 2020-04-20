@@ -20,7 +20,7 @@ shipment:
   - Actinidia
   boxes:
     min: 1
-    max: 50
+    max: 3000
 pest:
   infestation_rate:
     distribution: beta
@@ -45,13 +45,20 @@ release_programs:
     - Rosa
     - Actinidia
     max_boxes: 10  # do not apply to shipments larger than
-
 inspection:
-  strategy: percentage
+  unit: stems
+  within_box_pct: 1.0
+  sample_strategy: percentage
   percentage:
-      proportion: 0.02
-      min_boxes: 1
-      end_strategy: to_completion
+    proportion: 0.02
+    min_boxes: 1
+  hypergeometric:
+    detection_level: 0.05
+    confidence_level: 0.95
+    min_boxes: 1
+  fixed_n: 10
+  selection_strategy: random
+  end_strategy: to_completion
 ports:
   - NY JFK CBP
   - FL Miami Air CBP

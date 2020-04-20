@@ -90,7 +90,9 @@ class ParameterShipmentGenerator:
         origin = random.choice(self.params["origins"])
         num_boxes_min = self.params["boxes"].get("min", 0)
         num_boxes_max = self.params["boxes"]["max"]
-        stems_per_box = self.stems_per_box["default"]
+        pathway = "None"
+        stems_per_box = self.stems_per_box
+        stems_per_box = get_stems_per_box(stems_per_box, pathway)
         num_boxes = random.randint(num_boxes_min, num_boxes_max)
         num_stems = stems_per_box * num_boxes
         stems = np.zeros(num_stems, dtype=np.int)
@@ -113,6 +115,7 @@ class ParameterShipmentGenerator:
             boxes=boxes,
             origin=origin,
             port=port,
+            pathway=pathway,
         )
 
 
@@ -136,12 +139,9 @@ class F280ShipmentGenerator:
         num_stems = int(record["QUANTITY"])
         stems = np.zeros(num_stems, dtype=np.int)
 
-        if record["PATHWAY"] == "Airport":
-            stems_per_box = self.stems_per_box["air"]["default"]
-        elif record["PATHWAY"] == "Maritime":
-            stems_per_box = self.stems_per_box["Maritime"]["default"]
-        else:
-            stems_per_box = self.stems_per_box["default"]
+        pathway = record["PATHWAY"]
+        stems_per_box = self.stems_per_box
+        stems_per_box = get_stems_per_box(stems_per_box, pathway)
 
         # rounding up to keep the max per box and have enough boxes
         num_boxes = int(math.ceil(num_stems / float(stems_per_box)))
@@ -165,7 +165,19 @@ class F280ShipmentGenerator:
             boxes=boxes,
             origin=record["ORIGIN_NM"],
             port=record["LOCATION"],
+            pathway=pathway
         )
+
+
+def get_stems_per_box(stems_per_box, pathway):
+    """Based on config and pathway, return number of stems per box."""
+    if pathway == "Airport":
+        stems_per_box = stems_per_box["air"]["default"]
+    elif pathway == "Maritime":
+        stems_per_box = stems_per_box["Maritime"]["default"]
+    else:
+        stems_per_box = stems_per_box["default"]
+    return stems_per_box
 
 
 def get_shipment_generator(config):
