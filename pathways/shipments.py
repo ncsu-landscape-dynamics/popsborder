@@ -165,7 +165,7 @@ class F280ShipmentGenerator:
             boxes=boxes,
             origin=record["ORIGIN_NM"],
             port=record["LOCATION"],
-            pathway=pathway
+            pathway=pathway,
         )
 
 
