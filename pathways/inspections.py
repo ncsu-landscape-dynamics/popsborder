@@ -98,8 +98,12 @@ def sample_percentage(config, shipment):
 
 
 def compute_hypergeometric(population_size, detection_level, confidence_level):
-    """Compute sample size using hypergeometric distribution based on population
-    size (total number of stems or boxes in shipment), detection level, and confidence level."""
+    """Get sample size using hypergeometric distribution
+
+    Compute sample size using hypergeometric distribution based on population
+    size (total number of stems or boxes in shipment), detection level,
+    and confidence level.
+    """
     sample_size = math.ceil(
         (1 - ((1 - confidence_level) ** (1 / (detection_level * population_size))))
         * (population_size - (((detection_level * population_size) - 1) / 2))
