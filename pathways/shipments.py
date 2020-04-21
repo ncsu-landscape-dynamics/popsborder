@@ -59,9 +59,6 @@ class Box:
     def __bool__(self):
         return bool(np.any(self.stems > 0))
 
-    # for Python 2 compatibility
-    __nonzero__ = __bool__
-
 
 class ParameterShipmentGenerator:
     """Generate a shipments based on configuration parameters"""

@@ -229,47 +229,26 @@ def run_simulation(
 
     Returns averages computed from the individual simulation runs.
     """
-    try:
-        # namedtuple is not applicable since we need modifications
-        totals = types.SimpleNamespace(
-            missing=0,
-            num_inspections=0,
-            num_boxes=0,
-            num_stems=0,
-            avg_boxes_opened_completion=0,
-            avg_boxes_opened_detection=0,
-            pct_boxes_opened_completion=0,
-            pct_boxes_opened_detection=0,
-            avg_stems_inspected_completion=0,
-            avg_stems_inspected_detection=0,
-            pct_stems_inspected_completion=0,
-            pct_stems_inspected_detection=0,
-            pct_sample_if_to_detection=0,
-            pct_pest_unreported_if_detection=0,
-            true_infestation_rate=0,
-            missed_infestation_rate=0,
-            intercepted_infestation_rate=0,
-        )
-    except AttributeError:
-        # Python 2 fallback
-        totals = lambda: None  # noqa: E731
-        totals.missing = 0
-        totals.num_inspections = 0
-        totals.num_boxes = 0
-        totals.num_stems = 0
-        totals.avg_boxes_opened_completion = 0
-        totals.avg_boxes_opened_detection = 0
-        totals.pct_boxes_opened_completion = 0
-        totals.pct_boxes_opened_detection = 0
-        totals.avg_stems_inspected_completion = 0
-        totals.avg_stems_inspected_detection = 0
-        totals.pct_stems_inspected_completion = 0
-        totals.pct_stems_inspected_detection = 0
-        totals.pct_sample_if_to_detection = 0
-        totals.pct_pest_unreported_if_detection = 0
-        totals.true_infestation_rate = 0
-        totals.missed_infestation_rate = 0
-        totals.intercepted_infestation_rate = 0
+    # namedtuple is not applicable since we need modifications
+    totals = types.SimpleNamespace(
+        missing=0,
+        num_inspections=0,
+        num_boxes=0,
+        num_stems=0,
+        avg_boxes_opened_completion=0,
+        avg_boxes_opened_detection=0,
+        pct_boxes_opened_completion=0,
+        pct_boxes_opened_detection=0,
+        avg_stems_inspected_completion=0,
+        avg_stems_inspected_detection=0,
+        pct_stems_inspected_completion=0,
+        pct_stems_inspected_detection=0,
+        pct_sample_if_to_detection=0,
+        pct_pest_unreported_if_detection=0,
+        true_infestation_rate=0,
+        missed_infestation_rate=0,
+        intercepted_infestation_rate=0,
+    )
 
     for i in range(num_simulations):
         result = simulation(
