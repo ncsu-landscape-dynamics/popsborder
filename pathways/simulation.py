@@ -111,8 +111,8 @@ def simulation(
     total_num_stems = 0
     total_boxes_opened_completion = 0
     total_boxes_opened_detection = 0
-    total_stems_inspection_completion = 0
-    total_stems_inspection_detection = 0
+    total_stems_inspected_completion = 0
+    total_stems_inspected_detection = 0
     total_infested_stems_completion = 0
     total_infested_stems_detection = 0
     true_infestation_rate = 0
@@ -198,7 +198,7 @@ def simulation(
         avg_stems_inspected_completion=total_stems_inspected_completion / num_shipments,
         avg_stems_inspected_detection=total_stems_inspected_detection / num_shipments,
         pct_stems_inspected_completion=(
-            total_stems_inspection_completion / total_num_stems
+            total_stems_inspected_completion / total_num_stems
         )
         * 100,
         pct_stems_inspected_detection=(
@@ -206,7 +206,7 @@ def simulation(
         )
         * 100,
         pct_sample_if_to_detection=(
-            total_stems_inspection_detection / total_stems_inspection_completion
+            total_stems_inspected_detection / total_stems_inspected_completion
         )
         * 100,
         pct_pest_unreported_if_detection=(
