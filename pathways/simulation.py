@@ -111,8 +111,8 @@ def simulation(
     total_num_stems = 0
     total_boxes_opened_completion = 0
     total_boxes_opened_detection = 0
-    total_stems_inspection_completion = 0
-    total_stems_inspection_detection = 0
+    total_stems_inspected_completion = 0
+    total_stems_inspected_detection = 0
     total_infested_stems_completion = 0
     total_infested_stems_detection = 0
     true_infestation_rate = 0
