@@ -120,7 +120,7 @@ def simulation(
     missed_infestation_rate = 0
 
     shipment_generator = get_shipment_generator(config)
-    add_pest = get_pest_function(config)
+    add_pest = get_pest_function(cofnfig)
     is_inspection_needed = get_inspection_needed_function(config)
     sample = get_sample_function(config)
 
@@ -198,7 +198,7 @@ def simulation(
         avg_stems_inspected_completion=total_stems_inspected_completion / num_shipments,
         avg_stems_inspected_detection=total_stems_inspected_detection / num_shipments,
         pct_stems_inspected_completion=(
-            total_stems_inspection_completion / total_num_stems
+            total_stems_inspected_completion / total_num_stems
         )
         * 100,
         pct_stems_inspected_detection=(
@@ -206,7 +206,7 @@ def simulation(
         )
         * 100,
         pct_sample_if_to_detection=(
-            total_stems_inspection_detection / total_stems_inspection_completion
+            total_stems_inspected_detection / total_stems_inspected_completion
         )
         * 100,
         pct_pest_unreported_if_detection=(
