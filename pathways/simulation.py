@@ -120,7 +120,7 @@ def simulation(
     missed_infestation_rate = 0
 
     shipment_generator = get_shipment_generator(config)
-    add_pest = get_pest_function(cofnfig)
+    add_pest = get_pest_function(config)
     is_inspection_needed = get_inspection_needed_function(config)
     sample = get_sample_function(config)
 
