@@ -168,9 +168,9 @@ def sample_n(config, shipment):
     fixed_n = config["inspection"]["fixed_n"]
     unit = config["inspection"]["unit"]
     within_box_pct = config["inspection"]["within_box_pct"]
-    stems_per_box = get_stems_per_box(
-        config=config["stems_per_box"], pathway=shipment["pathway"]
-    )
+    pathway = shipment["pathway"]
+    stems_per_box = config["stems_per_box"]
+    stems_per_box = get_stems_per_box(stems_per_box, pathway)
     num_stems = shipment["num_stems"]
     num_boxes = shipment["num_boxes"]
     min_boxes = config.get("min_boxes", 1)
