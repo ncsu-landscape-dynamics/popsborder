@@ -175,7 +175,9 @@ def sample_n(config, shipment):
     min_boxes = config.get("min_boxes", 1)
 
     if unit == "stems":
-        max_stems = compute_max_inspectable_stems(num_stems, stems_per_box, within_box_pct)
+        max_stems = compute_max_inspectable_stems(
+            num_stems, stems_per_box, within_box_pct
+        )
         # Check if max number of stems that can be inspected is less than fixed number.
         n_stems_to_inspect = min(max_stems, fixed_n)
         n_boxes_to_inspect = convert_stems_to_boxes(
@@ -213,22 +215,22 @@ def convert_stems_to_boxes(config, shipment, n_stems_to_inspect):
 
 
 def compute_max_inspectable_stems(num_stems, stems_per_box, within_box_pct):
-        """Compute maximum number of stems that can be inspected in a shipment based
-        on within box percent. If within box percent is less than 1 (partial box
-        inspections), then maximum number of stems that can be inspected will be
-        less than the total number of stems in the shipment.
+    """Compute maximum number of stems that can be inspected in a shipment based
+    on within box percent. If within box percent is less than 1 (partial box
+    inspections), then maximum number of stems that can be inspected will be
+    less than the total number of stems in the shipment.
 
-        :param num_stems: total number of stems in shipment
-        :param stems_per_box: number of stems in each box
-        :param within_box_pct: percentage of stems to be inspected per box
-        """
-        inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
-        num_full_boxes = math.floor(num_stems / stems_per_box)
-        full_box_inspectable_stems = num_full_boxes * inspect_per_box
-        remainder_box = num_stems % stems_per_box
-        remainder_box_inspectable_stems= min(remainder_box, inspect_per_box)
-        max_stems = full_box_inspectable_stems + remainder_box_inspectable_stems
-        return max_stems
+    :param num_stems: total number of stems in shipment
+    :param stems_per_box: number of stems in each box
+    :param within_box_pct: percentage of stems to be inspected per box
+    """
+    inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
+    num_full_boxes = math.floor(num_stems / stems_per_box)
+    full_box_inspectable_stems = num_full_boxes * inspect_per_box
+    remainder_box = num_stems % stems_per_box
+    remainder_box_inspectable_stems = min(remainder_box, inspect_per_box)
+    max_stems = full_box_inspectable_stems + remainder_box_inspectable_stems
+    return max_stems
 
 
 def inspect(config, shipment, n_boxes_to_inspect):
