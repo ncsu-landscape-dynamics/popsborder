@@ -28,6 +28,7 @@ from __future__ import print_function, division
 
 import math
 import random
+import types
 import weakref
 import numpy as np
 
@@ -263,35 +264,30 @@ def inspect(config, shipment, n_boxes_to_inspect):
 
     # Inspect selected boxes, count opened boxes, inspected stems, and infested stems
     # to detection and completion
-    boxes_opened_completion = n_boxes_to_inspect
-    boxes_opened_detection = 0
-    stems_inspected_completion = n_boxes_to_inspect * inspect_per_box
-    stems_inspected_detection = 0
-    infested_stems_completion = 0
-    infested_stems_detection = 0
+    ret = types.SimpleNamespace(
+        boxes_opened_completion=n_boxes_to_inspect,
+        boxes_opened_detection=0,
+        stems_inspected_completion=n_boxes_to_inspect * inspect_per_box,
+        stems_inspected_detection=0,
+        infested_stems_completion=0,
+        infested_stems_detection=0,
+    )
     detected = False
     for i in box_index_to_inspect:
         if not detected:
-            boxes_opened_detection += 1
+            ret.boxes_opened_detection += 1
         for stem in (shipment["boxes"][i]).stems[0:inspect_per_box]:
             if not detected:
-                stems_inspected_detection += 1
+                ret.stems_inspected_detection += 1
             if stem:  # Count every infested stem in box, to completion within a box
-                infested_stems_completion += 1
+                ret.infested_stems_completion += 1
                 if not detected:
-                    infested_stems_detection += 1
-        if infested_stems_detection > 0:
+                    ret.infested_stems_detection += 1
+        if ret.infested_stems_detection > 0:
             detected = True
 
-    return (
-        infested_stems_completion == 0,
-        boxes_opened_completion,
-        boxes_opened_detection,
-        stems_inspected_completion,
-        stems_inspected_detection,
-        infested_stems_completion,
-        infested_stems_detection,
-    )
+    ret.shipment_checked_ok = ret.infested_stems_completion == 0
+    return ret
 
 
 def get_sample_function(config):

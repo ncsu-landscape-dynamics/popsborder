@@ -135,24 +135,17 @@ def simulation(
         )
         if must_inspect:
             n_boxes_to_inspect = sample(shipment)
-            (
-                shipment_checked_ok,
-                boxes_opened_completion,
-                boxes_opened_detection,
-                stems_inspected_completion,
-                stems_inspected_detection,
-                infested_stems_completion,
-                infested_stems_detection,
-            ) = inspect(config, shipment, n_boxes_to_inspect)
+            ret = inspect(config, shipment, n_boxes_to_inspect)
+            shipment_checked_ok = ret.shipment_checked_ok
             num_inspections += 1
             total_num_boxes += shipment["num_boxes"]
             total_num_stems += shipment["num_stems"]
-            total_boxes_opened_completion += boxes_opened_completion
-            total_boxes_opened_detection += boxes_opened_detection
-            total_stems_inspected_completion += stems_inspected_completion
-            total_stems_inspected_detection += stems_inspected_detection
-            total_infested_stems_completion += infested_stems_completion
-            total_infested_stems_detection += infested_stems_detection
+            total_boxes_opened_completion += ret.boxes_opened_completion
+            total_boxes_opened_detection += ret.boxes_opened_detection
+            total_stems_inspected_completion += ret.stems_inspected_completion
+            total_stems_inspected_detection += ret.stems_inspected_detection
+            total_infested_stems_completion += ret.infested_stems_completion
+            total_infested_stems_detection += ret.infested_stems_detection
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
             total_num_boxes += shipment["num_boxes"]
