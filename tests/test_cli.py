@@ -25,11 +25,19 @@ pest:
     probability: 0.2
     ratio: 0.5
 inspection:
-  strategy: percentage
+  unit: stems
+  within_box_pct: 1.0
+  sample_strategy: percentage
   percentage:
-      proportion: 0.02
-      min_boxes: 1
-      end_strategy: to_completion
+    proportion: 0.02
+    min_boxes: 1
+  hypergeometric:
+    detection_level: 0.05
+    confidence_level: 0.95
+    min_boxes: 1
+  fixed_n: 10
+  selection_strategy: random
+  end_strategy: to_completion
 ports:
   - NY JFK CBP
   - FL Miami Air CBP
