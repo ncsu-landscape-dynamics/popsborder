@@ -184,32 +184,34 @@ def simulation(
         total_num_stems=total_num_stems,
         avg_boxes_opened_completion=total_boxes_opened_completion / num_shipments,
         avg_boxes_opened_detection=total_boxes_opened_detection / num_shipments,
-        pct_boxes_opened_completion=(total_boxes_opened_completion / total_num_boxes)
-        * 100,
-        pct_boxes_opened_detection=(total_boxes_opened_detection / total_num_boxes)
-        * 100,
+        pct_boxes_opened_completion=(
+            (total_boxes_opened_completion / total_num_boxes) * 100
+        ),
+        pct_boxes_opened_detection=(
+            (total_boxes_opened_detection / total_num_boxes) * 100
+        ),
         avg_stems_inspected_completion=total_stems_inspected_completion / num_shipments,
         avg_stems_inspected_detection=total_stems_inspected_detection / num_shipments,
         pct_stems_inspected_completion=(
-            total_stems_inspected_completion / total_num_stems
-        )
-        * 100,
+            (total_stems_inspected_completion / total_num_stems) * 100
+        ),
         pct_stems_inspected_detection=(
-            total_stems_inspected_detection / total_num_stems
-        )
-        * 100,
+            (total_stems_inspected_detection / total_num_stems) * 100
+        ),
         pct_sample_if_to_detection=(
-            total_stems_inspected_detection / total_stems_inspected_completion
-        )
-        * 100,
+            (total_stems_inspected_detection / total_stems_inspected_completion) * 100
+        ),
         pct_pest_unreported_if_detection=(
-            1 - (total_infested_stems_detection / total_infested_stems_completion)
-        )
-        * 100,
+            (1 - (total_infested_stems_detection / total_infested_stems_completion))
+            * 100
+        ),
         true_infestation_rate=true_infestation_rate / num_shipments,
-        missed_infestation_rate=missed_infestation_rate / success_rates.false_negative,
-        intercepted_infestation_rate=intercepted_infestation_rate
-        / success_rates.true_positive,
+        missed_infestation_rate=(
+            missed_infestation_rate / success_rates.false_negative
+        ),
+        intercepted_infestation_rate=(
+            intercepted_infestation_rate / success_rates.true_positive
+        ),
     )
 
 
