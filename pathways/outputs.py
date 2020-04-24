@@ -128,14 +128,14 @@ class PrintReporter(object):
     # Reporter objects carry functions, but many not use any attributes.
     # pylint: disable=no-self-use,missing-function-docstring
     def true_negative(self):
-        print("Inspection worked, didn't miss anything (no pest) [TP]")
+        print("Inspection worked, didn't miss anything (no pest) [TN]")
 
     def true_positive(self):
-        print("Inspection worked, found pest [TN]")
+        print("Inspection worked, found pest [TP]")
 
     def false_negative(self, shipment):
         print(
-            "Inspection failed, missed {} boxes with pest [FP]".format(
+            "Inspection failed, missed {} boxes with pest [FN]".format(
                 count_diseased_boxes(shipment)
             )
         )
@@ -265,8 +265,8 @@ class SuccessRates(object):
             self.ok += 1
             self.reporter.true_negative()
         elif not checked_ok and not actually_ok:
-            self.true_negative += 1
-            self.reporter.true_negative()
+            self.true_positive += 1
+            self.reporter.true_positive()
         elif checked_ok and not actually_ok:
             self.false_negative += 1
             self.reporter.false_negative(shipment)
