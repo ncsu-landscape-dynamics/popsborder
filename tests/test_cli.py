@@ -69,4 +69,7 @@ def run_pathways_cli(**kwargs):
 def test_gives_result(tmp_path):
     config = tmp_path / "config.yml"
     config.write_text(CONFIG)
-    assert "slippage" in run_pathways_cli(num_shipments=10, config_file=str(config))
+    for seed in range(10):
+        assert "slippage" in run_pathways_cli(
+            num_shipments=10, config_file=str(config), seed=seed
+        )
