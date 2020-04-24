@@ -53,30 +53,6 @@ from .outputs import (
 )
 
 
-SimulationResult = namedtuple(
-    "SimulationResult",
-    [
-        "missing",
-        "num_inspections",
-        "num_boxes",
-        "num_stems",
-        "avg_boxes_opened_completion",
-        "avg_boxes_opened_detection",
-        "pct_boxes_opened_completion",
-        "pct_boxes_opened_detection",
-        "avg_stems_inspected_completion",
-        "avg_stems_inspected_detection",
-        "pct_stems_inspected_completion",
-        "pct_stems_inspected_detection",
-        "pct_sample_if_to_detection",
-        "pct_pest_unreported_if_detection",
-        "true_infestation_rate",
-        "missed_infestation_rate",
-        "intercepted_infestation_rate",
-    ],
-)
-
-
 def random_seed(seed):
     """Set seed for all generators used"""
     random.seed(seed)  # random package
@@ -177,7 +153,7 @@ def simulation(
     else:
         # we didn't miss anything
         missing = 0
-    return SimulationResult(
+    return types.SimpleNamespace(
         missing=missing,
         num_inspections=num_inspections,
         total_num_boxes=total_num_boxes,
@@ -254,8 +230,8 @@ def run_simulation(
         )
         totals.missing += result.missing
         totals.num_inspections += result.num_inspections
-        totals.num_boxes += result.num_boxes
-        totals.num_stems += result.num_stems
+        totals.num_boxes += result.total_num_boxes
+        totals.num_stems += result.total_num_stems
         totals.avg_boxes_opened_completion += result.avg_boxes_opened_completion
         totals.avg_boxes_opened_detection += result.avg_boxes_opened_detection
         totals.pct_boxes_opened_completion += result.pct_boxes_opened_completion

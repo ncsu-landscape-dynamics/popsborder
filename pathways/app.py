@@ -143,13 +143,15 @@ def main():
     )
     print(
         "On average, inspected {0:.0f}% of boxes.".format(
-            100 * totals.num_boxes_inspected / totals.num_boxes
+            totals.pct_boxes_opened_completion
         )
     )
     print("---")
     print("slippage: {0:.2f}".format(totals.missing))
     print("num_inspections: {0:.0f}".format(totals.num_inspections))
-    print("total_num_boxes_inspected: {0:.0f}".format(totals.num_boxes_inspected))
+    print(
+        "total_num_boxes_inspected: {0:.0f}".format(totals.avg_boxes_opened_completion)
+    )
     print("true_infestation_rate: {0:.3f}".format(totals.true_infestation_rate))
 
 
