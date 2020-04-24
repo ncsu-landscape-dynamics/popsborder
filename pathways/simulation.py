@@ -29,7 +29,6 @@ from __future__ import print_function, division
 import sys
 import types
 import random
-from collections import namedtuple
 import numpy as np
 
 
