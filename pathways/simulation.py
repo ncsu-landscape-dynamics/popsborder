@@ -197,9 +197,9 @@ def run_simulation(
 
     See :func:`simulation` function for explanation of parameters.
 
-    Returns averages computed from the individual simulation runs.
+    Returns averages computed from the individual simulation runs otherwise
+    it relies on :func:`simulation` function to do the hard work.
     """
-    # namedtuple is not applicable since we need modifications
     totals = types.SimpleNamespace(
         missing=0,
         num_inspections=0,
