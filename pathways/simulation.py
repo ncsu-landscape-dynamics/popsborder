@@ -137,7 +137,7 @@ def simulation(
             shipment_checked_ok, shipment_actually_ok, shipment
         )
         true_infestation_rate += shipment_infestation_rate(shipment)
-        if not shipment_checked_ok:
+        if not shipment_actually_ok:
             if shipment_checked_ok:
                 missed_infestation_rate += shipment_infestation_rate(shipment)
             else:
