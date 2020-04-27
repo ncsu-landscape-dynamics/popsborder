@@ -36,24 +36,26 @@ if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error
 
 
-def pretty_content(array):
+def pretty_content(array, config={}):
     """Return string with array content nicelly visualized as unicode text
 
     Values evaluating to False are replaced with a flower, others with a bug.
     """
+    flower_sign = config.get("flower", "\N{Black Florette}")
+    bug_sign = config.get("bug", "\N{Bug}")
 
     def replace(number):
         if number:
-            return "\N{Bug}"
+            return bug_sign
         else:
-            return "\N{Black Florette}"
+            return flower_sign
 
     pretty = [replace(i) for i in array]
     return " ".join(pretty)
 
 
 # Pylint does not see usage of a variables in a format string.
-def pretty_header(shipment, line="heavy"):  # pylint: disable=unused-argument
+def pretty_header(shipment, line=None, config={}):  # pylint: disable=unused-argument
     """Return header for a shipment
 
     Basic info about the shipment is included and the remainining space
@@ -63,6 +65,9 @@ def pretty_header(shipment, line="heavy"):  # pylint: disable=unused-argument
     size = 80
     if hasattr(shutil, "get_terminal_size"):
         size = shutil.get_terminal_size().columns
+    if line is None:
+        # We test None but not for "" to allow use of an empty string.
+        line = config.get("horizontal_line", "heavy")
     if line.lower() == "heavy":
         horizontal = "\N{Box Drawings Heavy Horizontal}"
     elif line.lower() == "light":
@@ -85,35 +90,39 @@ def pretty_header(shipment, line="heavy"):  # pylint: disable=unused-argument
     return "{header}{rule}".format(**locals())
 
 
-def pretty_print_shipment_stems(shipment):
+def pretty_print_shipment_stems(shipment, config={}):
     """Pretty-print shipment focusing on individual stems"""
-    print(pretty_header(shipment))
-    print(pretty_content(shipment["stems"]))
+    print(pretty_header(shipment, config=config))
+    print(pretty_content(shipment["stems"], config=config))
 
 
-def pretty_print_shipment_boxes(shipment):
+def pretty_print_shipment_boxes(shipment, config={}):
     """Pretty-print shipment showing individual stems in boxes"""
-    print(pretty_header(shipment))
-    print(" | ".join([pretty_content(box.stems) for box in shipment["boxes"]]))
+    print(pretty_header(shipment, config=config))
+    print(
+        " | ".join(
+            [pretty_content(box.stems, config=config) for box in shipment["boxes"]]
+        )
+    )
 
 
-def pretty_print_shipment_boxes_only(shipment):
+def pretty_print_shipment_boxes_only(shipment, config={}):
     """Pretty-print shipment showing individual boxes"""
-    print(pretty_header(shipment, line="light"))
-    print(pretty_content(shipment["boxes"]))
+    print(pretty_header(shipment, line="light", config=config))
+    print(pretty_content(shipment["boxes"], config=config))
 
 
-def pretty_print_shipment(shipment, style):
+def pretty_print_shipment(shipment, style, config={}):
     """Pretty-print shipment in a given style
 
     :param style: Style of pretty-printing (boxes, boxes_only, stems)
     """
     if style == "boxes":
-        pretty_print_shipment_boxes(shipment)
+        pretty_print_shipment_boxes(shipment, config=config)
     elif style == "boxes_only":
-        pretty_print_shipment_boxes_only(shipment)
+        pretty_print_shipment_boxes_only(shipment, config=config)
     elif style == "stems":
-        pretty_print_shipment_stems(shipment)
+        pretty_print_shipment_stems(shipment, config=config)
     else:
         raise ValueError(
             "Unknown style value for pretty printing of shipments: {pretty}".format(

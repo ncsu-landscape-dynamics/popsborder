@@ -103,7 +103,8 @@ def simulation(
         shipment = shipment_generator.generate_shipment()
         add_pest(shipment)
         if pretty:
-            pretty_print_shipment(shipment, style=pretty)
+            pretty_config = config.get("pretty", {})
+            pretty_print_shipment(shipment, style=pretty, config=pretty_config)
 
         must_inspect, applied_program = is_inspection_needed(
             shipment, shipment["arrival_time"]

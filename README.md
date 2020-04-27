@@ -412,6 +412,23 @@ inspection:
   first_n_boxes: 2
 ```
 
+### Outputs
+
+Pretty printing enabled by `--pretty` in the command line can be further
+configured using `pretty` key in the configuration file:
+
+```
+pretty:
+  flower: o
+  bug: x
+  horizontal_line: "-"
+```
+
+Setting like the above can allow you to use `--pretty` even when unicode
+is not properly displayed in your terminal. Note that some characters,
+such as the dash (`-`) above, need to be in quotes because they have
+a special meaning in YAML.
+
 ### Obtaining pre-computed sample database records
 
 #### Download using a web browser
