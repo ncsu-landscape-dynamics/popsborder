@@ -76,7 +76,3 @@ stems_per_box:
     default: 20
   maritime:
     default: 30
-pretty:
-  flower: o
-  bug: x
-  horizontal_line: "-"
