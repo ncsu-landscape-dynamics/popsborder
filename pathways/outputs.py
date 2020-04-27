@@ -135,18 +135,18 @@ def pretty_shipment_boxes_only(shipment, config=None):
     return "{header}\n{body}".format(**locals())
 
 
-def pretty_print_shipment(shipment, style, config=None, file=None):
+def pretty_print_shipment(shipment, style, config=None):
     """Pretty-print shipment in a given style
 
     :param style: Style of pretty-printing (boxes, boxes_only, stems)
     """
     config = config if config else {}
     if style == "boxes":
-        print(pretty_shipment_boxes(shipment, config=config))
+        return pretty_shipment_boxes(shipment, config=config)
     elif style == "boxes_only":
-        print(pretty_shipment_boxes_only(shipment, config=config))
+        return pretty_shipment_boxes_only(shipment, config=config)
     elif style == "stems":
-        print(pretty_shipment_stems(shipment, config=config))
+        return pretty_shipment_stems(shipment, config=config)
     else:
         raise ValueError(
             "Unknown style value for pretty printing of shipments: {pretty}".format(
