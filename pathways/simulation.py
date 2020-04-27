@@ -275,8 +275,21 @@ def run_simulation(
     return totals
 
 
+def load_configuration_yaml_from_text(text):
+    """Return configuration dictionary from YAML in a string"""
+    import yaml  # pylint: disable=import-outside-toplevel
+
+    if hasattr(yaml, "full_load"):
+        return yaml.full_load(text)
+    return yaml.load(text)
+
+
 def load_configuration(filename):
-    """Get the configuration from a JSON or YAML file"""
+    """Get the configuration from a JSON or YAML file
+
+    The format is decided based on the file extension.
+    It uses full_load() (FullLoader) to read YAML.
+    """
     if filename.endswith(".json"):
         import json  # pylint: disable=import-outside-toplevel
 

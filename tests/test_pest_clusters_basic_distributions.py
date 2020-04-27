@@ -1,8 +1,7 @@
 import numpy as np
 from datetime import date
-import yaml
 
-from pathways.simulation import random_seed
+from pathways.simulation import random_seed, load_configuration_yaml_from_text
 from pathways.shipments import add_pest_clusters, Box
 
 CONTINUOUS_CONFIG = """\
@@ -31,13 +30,6 @@ pest:
 """
 
 
-def load_yaml_text(text):
-    """Return configuration dictionary from YAML in a string"""
-    if hasattr(yaml, "full_load"):
-        return yaml.full_load(text)
-    return yaml.load(text)
-
-
 def get_shipment(num_stems):
     """Get basic shipment with given number of stems all in one box"""
     stems = np.zeros(num_stems, dtype=np.int)
@@ -56,7 +48,7 @@ def get_shipment(num_stems):
 def test_continuous_clusters():
     """Test infestation rate of clustered arrangement with continuous distribution"""
     random_seed(42)
-    config = load_yaml_text(CONTINUOUS_CONFIG)["pest"]
+    config = load_configuration_yaml_from_text(CONTINUOUS_CONFIG)["pest"]
     num_stems = 100
     shipment = get_shipment(num_stems)
     add_pest_clusters(config, shipment)
@@ -68,7 +60,7 @@ def test_continuous_clusters():
 def test_random_clusters():
     """Test infestation rate of clustered arrangement with random distribution"""
     random_seed(42)
-    config = load_yaml_text(RANDOM_CONFIG)["pest"]
+    config = load_configuration_yaml_from_text(RANDOM_CONFIG)["pest"]
     num_stems = 550
     shipment = get_shipment(num_stems)
     add_pest_clusters(config, shipment)

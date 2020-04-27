@@ -1,6 +1,5 @@
 import pytest
-import yaml
-from pathways.simulation import run_simulation
+from pathways.simulation import run_simulation, load_configuration_yaml_from_text
 
 
 CONFIG = """\
@@ -47,13 +46,6 @@ stems_per_box:
 """
 
 
-def load_yaml_text(text):
-    """Return configuration dictionary from YAML in a string"""
-    if hasattr(yaml, "full_load"):
-        return yaml.full_load(text)
-    return yaml.load(text)
-
-
 def test_simulation_runs():
     """Check that the simulation runs
 
@@ -61,7 +53,7 @@ def test_simulation_runs():
     """
     for seed in range(10):
         run_simulation(
-            config=load_yaml_text(CONFIG),
+            config=load_configuration_yaml_from_text(CONFIG),
             num_simulations=1,
             num_shipments=10,
             seed=seed,
@@ -76,7 +68,7 @@ def test_gives_reasonable_result(num_simulations):
     # new one as a separate YAML.
     min_boxes = 30
     max_boxes = 150
-    config = load_yaml_text(CONFIG)
+    config = load_configuration_yaml_from_text(CONFIG)
     config["shipment"]["boxes"]["min"] = min_boxes
     config["shipment"]["boxes"]["max"] = max_boxes
     for seed in range(10):
