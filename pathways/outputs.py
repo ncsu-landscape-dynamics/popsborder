@@ -90,43 +90,45 @@ def pretty_header(shipment, line=None, config={}):  # pylint: disable=unused-arg
     return "{header}{rule}".format(**locals())
 
 
-def pretty_print_shipment_stems(shipment, config={}):
+def pretty_shipment_stems(shipment, config={}):
     """Pretty-print shipment focusing on individual stems"""
-    print(pretty_header(shipment, config=config))
-    print(pretty_content(shipment["stems"], config=config))
+    header = pretty_header(shipment, config=config)
+    body = pretty_content(shipment["stems"], config=config)
+    return "{header}\n{body}".format(**locals())
 
 
-def pretty_print_shipment_boxes(shipment, config={}):
+def pretty_shipment_boxes(shipment, config={}):
     """Pretty-print shipment showing individual stems in boxes"""
-    print(pretty_header(shipment, config=config))
+    header = pretty_header(shipment, config=config)
     line = config.get("box_line", "|")
     if line == "pipe":
         line = "|"
     separator = " {} ".format(line)
-    print(
-        separator.join(
-            [pretty_content(box.stems, config=config) for box in shipment["boxes"]]
-        )
+    body = separator.join(
+        [pretty_content(box.stems, config=config) for box in shipment["boxes"]]
     )
+    return "{header}\n{body}".format(**locals())
 
 
-def pretty_print_shipment_boxes_only(shipment, config={}):
+def pretty_shipment_boxes_only(shipment, config={}):
     """Pretty-print shipment showing individual boxes"""
-    print(pretty_header(shipment, line="light", config=config))
-    print(pretty_content(shipment["boxes"], config=config))
+    line = config.get("horizontal_line", "light")
+    header = pretty_header(shipment, line=line, config=config)
+    body = pretty_content(shipment["boxes"], config=config)
+    return "{header}\n{body}".format(**locals())
 
 
-def pretty_print_shipment(shipment, style, config={}):
+def pretty_print_shipment(shipment, style, config={}, file=None):
     """Pretty-print shipment in a given style
 
     :param style: Style of pretty-printing (boxes, boxes_only, stems)
     """
     if style == "boxes":
-        pretty_print_shipment_boxes(shipment, config=config)
+        print(pretty_shipment_boxes(shipment, config=config))
     elif style == "boxes_only":
-        pretty_print_shipment_boxes_only(shipment, config=config)
+        print(pretty_shipment_boxes_only(shipment, config=config))
     elif style == "stems":
-        pretty_print_shipment_stems(shipment, config=config)
+        print(pretty_shipment_stems(shipment, config=config))
     else:
         raise ValueError(
             "Unknown style value for pretty printing of shipments: {pretty}".format(
