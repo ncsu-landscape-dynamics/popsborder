@@ -423,6 +423,7 @@ pretty:
   bug: x
   horizontal_line: "-"
   box_line: "|"
+  spaces: false
 ```
 
 Setting like the above can allow you to use `--pretty` even when unicode

@@ -43,6 +43,11 @@ def pretty_content(array, config={}):
     """
     flower_sign = config.get("flower", "\N{Black Florette}")
     bug_sign = config.get("bug", "\N{Bug}")
+    spaces = config.get("spaces", True)
+    if spaces:
+        separator = " "
+    else:
+        separator = ""
 
     def replace(number):
         if number:
@@ -51,7 +56,7 @@ def pretty_content(array, config={}):
             return flower_sign
 
     pretty = [replace(i) for i in array]
-    return " ".join(pretty)
+    return separator.join(pretty)
 
 
 # Pylint does not see usage of a variables in a format string.
@@ -101,9 +106,13 @@ def pretty_shipment_boxes(shipment, config={}):
     """Pretty-print shipment showing individual stems in boxes"""
     header = pretty_header(shipment, config=config)
     line = config.get("box_line", "|")
+    spaces = config.get("spaces", True)
     if line == "pipe":
         line = "|"
-    separator = " {} ".format(line)
+    if spaces:
+        separator = " {} ".format(line)
+    else:
+        separator = line
     body = separator.join(
         [pretty_content(box.stems, config=config) for box in shipment["boxes"]]
     )
