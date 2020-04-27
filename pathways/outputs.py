@@ -99,8 +99,12 @@ def pretty_print_shipment_stems(shipment, config={}):
 def pretty_print_shipment_boxes(shipment, config={}):
     """Pretty-print shipment showing individual stems in boxes"""
     print(pretty_header(shipment, config=config))
+    line = config.get("box_line", "|")
+    if line == "pipe":
+        line = "|"
+    separator = " {} ".format(line)
     print(
-        " | ".join(
+        separator.join(
             [pretty_content(box.stems, config=config) for box in shipment["boxes"]]
         )
     )

@@ -422,6 +422,7 @@ pretty:
   flower: o
   bug: x
   horizontal_line: "-"
+  box_line: "|"
 ```
 
 Setting like the above can allow you to use `--pretty` even when unicode
