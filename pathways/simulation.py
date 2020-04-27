@@ -155,9 +155,7 @@ def simulation(
 
     if success_rates.false_negative:
         false_negative_present = True
-        missed_infestation_rate = (
-            missed_infestation_rate / success_rates.false_negative
-        )
+        missed_infestation_rate = missed_infestation_rate / success_rates.false_negative
     else:
         false_negative_present = False
         missed_infestation_rate = 0
@@ -168,9 +166,8 @@ def simulation(
             intercepted_infestation_rate / success_rates.true_positive
         )
         pct_pest_unreported_if_detection = (
-            (1 - (total_infested_stems_detection / total_infested_stems_completion))
-            * 100
-        )
+            1 - (total_infested_stems_detection / total_infested_stems_completion)
+        ) * 100
     else:
         true_positive_present = False
         intercepted_infestation_rate = 0
