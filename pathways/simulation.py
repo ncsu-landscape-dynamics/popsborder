@@ -59,7 +59,7 @@ def random_seed(seed):
 
 
 def simulation(
-    config, num_shipments, seed, output_f280_file, verbose=False, pretty=None
+    config, num_shipments, seed, output_f280_file=None, verbose=False, pretty=None
 ):
     """Simulate shipments, their infestation, and their inspection
 
@@ -191,7 +191,13 @@ def simulation(
 
 
 def run_simulation(
-    config, num_simulations, num_shipments, seed, output_f280_file, verbose, pretty
+    config,
+    num_simulations,
+    num_shipments,
+    seed=None,
+    output_f280_file=None,
+    verbose=False,
+    pretty=None,
 ):
     """Run the simulation function specified number of times
 
