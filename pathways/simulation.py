@@ -276,7 +276,11 @@ def run_simulation(
 
 
 def load_configuration(filename):
-    """Get the configuration from a JSON or YAML file"""
+    """Get the configuration from a JSON or YAML file
+
+    The format is decided based on the file extension.
+    It uses full_load() (FullLoader) to read YAML.
+    """
     if filename.endswith(".json"):
         import json  # pylint: disable=import-outside-toplevel
 
