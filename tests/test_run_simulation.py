@@ -1,3 +1,4 @@
+import pytest
 import yaml
 from pathways.simulation import run_simulation
 
@@ -67,7 +68,8 @@ def test_simulation_runs():
         )
 
 
-def test_gives_reasonable_result():
+@pytest.mark.parametrize("num_simulations", [1, 2, 3, 15])
+def test_gives_reasonable_result(num_simulations):
     """Check that the result from the simualtion is in the expected range"""
     num_shipments = 100
     # We modify the existing configuration rather than defining a completely
@@ -79,10 +81,7 @@ def test_gives_reasonable_result():
     config["shipment"]["boxes"]["max"] = max_boxes
     for seed in range(10):
         result = run_simulation(
-            config=config,
-            num_simulations=1,
-            num_shipments=100,
-            seed=seed,
+            config=config, num_simulations=1, num_shipments=100, seed=seed,
         )
         test_min_boxes = min_boxes * num_shipments
         test_max_boxes = max_boxes * num_shipments
