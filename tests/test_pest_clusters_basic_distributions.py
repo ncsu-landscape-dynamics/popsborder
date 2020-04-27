@@ -1,6 +1,5 @@
 import numpy as np
 from datetime import date
-import yaml
 
 from pathways.simulation import random_seed, load_configuration_yaml_from_text
 from pathways.shipments import add_pest_clusters, Box

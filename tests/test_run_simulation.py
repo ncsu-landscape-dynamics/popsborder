@@ -1,5 +1,4 @@
 import pytest
-import yaml
 from pathways.simulation import run_simulation, load_configuration_yaml_from_text
 
 
