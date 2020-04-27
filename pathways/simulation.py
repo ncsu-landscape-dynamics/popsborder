@@ -48,7 +48,7 @@ from .outputs import (
     PrintReporter,
     MuteReporter,
     SuccessRates,
-    pretty_print_shipment,
+    pretty_shipment,
 )
 
 
