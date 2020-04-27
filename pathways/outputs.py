@@ -135,7 +135,7 @@ def pretty_shipment_boxes_only(shipment, config=None):
     return "{header}\n{body}".format(**locals())
 
 
-def pretty_print_shipment(shipment, style, config=None):
+def pretty_shipment(shipment, style, config=None):
     """Pretty-print shipment in a given style
 
     :param style: Style of pretty-printing (boxes, boxes_only, stems)
