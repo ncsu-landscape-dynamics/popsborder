@@ -36,11 +36,12 @@ if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error
 
 
-def pretty_content(array, config={}):
+def pretty_content(array, config=None):
     """Return string with array content nicelly visualized as unicode text
 
     Values evaluating to False are replaced with a flower, others with a bug.
     """
+    config = config if config else {}
     flower_sign = config.get("flower", "\N{Black Florette}")
     bug_sign = config.get("bug", "\N{Bug}")
     spaces = config.get("spaces", True)
@@ -59,14 +60,15 @@ def pretty_content(array, config={}):
     return separator.join(pretty)
 
 
-# Pylint does not see usage of a variables in a format string.
-def pretty_header(shipment, line=None, config={}):  # pylint: disable=unused-argument
+# Pylint 2.4.4 does not see usage of a variables in a format string.
+def pretty_header(shipment, line=None, config=None):  # pylint: disable=unused-argument
     """Return header for a shipment
 
     Basic info about the shipment is included and the remainining space
     in a terminal window is filled with horizonal box characters.
     (The assumption is that this will be printed in the terminal.)
     """
+    config = config if config else {}
     size = 80
     if hasattr(shutil, "get_terminal_size"):
         size = shutil.get_terminal_size().columns
@@ -95,16 +97,18 @@ def pretty_header(shipment, line=None, config={}):  # pylint: disable=unused-arg
     return "{header}{rule}".format(**locals())
 
 
-def pretty_shipment_stems(shipment, config={}):
+def pretty_shipment_stems(shipment, config=None):
     """Pretty-print shipment focusing on individual stems"""
+    config = config if config else {}
+    # pylint: disable=possibly-unused-variable
     header = pretty_header(shipment, config=config)
     body = pretty_content(shipment["stems"], config=config)
     return "{header}\n{body}".format(**locals())
 
 
-def pretty_shipment_boxes(shipment, config={}):
+def pretty_shipment_boxes(shipment, config=None):
     """Pretty-print shipment showing individual stems in boxes"""
-    header = pretty_header(shipment, config=config)
+    config = config if config else {}
     line = config.get("box_line", "|")
     spaces = config.get("spaces", True)
     if line == "pipe":
@@ -113,25 +117,30 @@ def pretty_shipment_boxes(shipment, config={}):
         separator = " {} ".format(line)
     else:
         separator = line
+    # pylint: disable=possibly-unused-variable
+    header = pretty_header(shipment, config=config)
     body = separator.join(
         [pretty_content(box.stems, config=config) for box in shipment["boxes"]]
     )
     return "{header}\n{body}".format(**locals())
 
 
-def pretty_shipment_boxes_only(shipment, config={}):
+def pretty_shipment_boxes_only(shipment, config=None):
     """Pretty-print shipment showing individual boxes"""
+    config = config if config else {}
+    # pylint: disable=possibly-unused-variable
     line = config.get("horizontal_line", "light")
     header = pretty_header(shipment, line=line, config=config)
     body = pretty_content(shipment["boxes"], config=config)
     return "{header}\n{body}".format(**locals())
 
 
-def pretty_print_shipment(shipment, style, config={}, file=None):
+def pretty_print_shipment(shipment, style, config=None, file=None):
     """Pretty-print shipment in a given style
 
     :param style: Style of pretty-printing (boxes, boxes_only, stems)
     """
+    config = config if config else {}
     if style == "boxes":
         print(pretty_shipment_boxes(shipment, config=config))
     elif style == "boxes_only":
