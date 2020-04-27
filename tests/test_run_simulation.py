@@ -1,5 +1,5 @@
 import yaml
-from pathways.simulation import run_simulation, load_configuration
+from pathways.simulation import run_simulation
 
 
 CONFIG = """\
@@ -54,6 +54,10 @@ def load_yaml_text(text):
 
 
 def test_simulation_runs():
+    """Check that the simulation runs
+
+    This should contain parameters which at one point failed the simulation.
+    """
     for seed in range(10):
         run_simulation(
             config=load_yaml_text(CONFIG),
@@ -63,15 +67,26 @@ def test_simulation_runs():
         )
 
 
-def test_gives_result():
+def test_gives_reasonable_result():
+    """Check that the result from the simualtion is in the expected range"""
+    num_shipments = 100
+    # We modify the existing configuration rather than defining a completely
+    # new one as a separate YAML.
+    min_boxes = 30
+    max_boxes = 150
+    config = load_yaml_text(CONFIG)
+    config["shipment"]["boxes"]["min"] = min_boxes
+    config["shipment"]["boxes"]["max"] = max_boxes
     for seed in range(10):
         result = run_simulation(
-            config=load_yaml_text(CONFIG),
+            config=config,
             num_simulations=1,
             num_shipments=100,
             seed=seed,
         )
-        assert 1 * 100 <= result.num_boxes <= 50 * 100
+        test_min_boxes = min_boxes * num_shipments
+        test_max_boxes = max_boxes * num_shipments
+        assert test_min_boxes <= result.num_boxes <= test_max_boxes
         assert 0 <= result.pct_boxes_opened_completion <= 100
         assert 0 <= result.pct_boxes_opened_detection <= 100
         assert 0 <= result.pct_stems_inspected_completion <= 100
