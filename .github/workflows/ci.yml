@@ -57,7 +57,7 @@ jobs:
         pip install .
     - name: Lint with Pylint
       run: |
-        pip install pylint
+        pip install pylint==2.4.4
         pylint pathways
 
   black-code-style:
