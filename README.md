@@ -425,6 +425,28 @@ Pretty printing of individual shipments and stems can be enabled by
 🐛 ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ | ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ 🐛
 ```
 
+Th above is the default output (equivalent with `--pretty=boxes`).
+Separation of individual boxes can be disabled using `--pretty=stems`
+where the only unit shown graphically are the stems. Possible output
+looks like this:
+
+```
+━━ Shipment ━━ Boxes: 3 ━━ Stems: 30 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🐛 ✿ ✿ 🐛 ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ 🐛
+━━ Shipment ━━ Boxes: 2 ━━ Stems: 20 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ 🐛
+```
+
+Finally, option `--pretty=boxes_only` focuses just on the boxes and does
+not show individual stems:
+
+```
+── Shipment ── Boxes: 6 ── Stems: 60 ───────────────────────────────────
+🐛 🐛 ✿ ✿ ✿ 🐛
+── Shipment ── Boxes: 4 ── Stems: 40 ───────────────────────────────────
+✿ ✿ ✿ 🐛
+```
+
 This can be further configured using `pretty` key in the configuration
 file:
 
