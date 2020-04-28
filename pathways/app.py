@@ -125,7 +125,7 @@ def main():
     )
     args = parser.parse_args()
 
-    totals = run_simulation(
+    totals, sim_params = run_simulation(
         config=load_configuration(args.config_file),
         num_simulations=args.num_simulations,
         num_shipments=args.num_shipments,
@@ -140,8 +140,34 @@ def main():
 ##            100 * totals.num_inspections / float(args.num_shipments)
 ##        )
 ##    )
+    print("\n")
+    print("Simulation parameters:")
+    print("-----------------------")
+    print("infestation:\n\t type: {0}".format(sim_params.infestation_type))
+    if sim_params.infestation_type == "fixed_value":
+        print("\t infestation rate: {0}". format(sim_params.infestation_param))
+    elif sim_params.infestation_type == "beta":
+        print("\t infestation distribution parameters: {0}". format(sim_params.infestation_param))
+    print("\t pest arrangement: {0}".format(sim_params.pest_arrangement))
+    if sim_params.pest_arrangement == "clustered":
+        print("\t cluster width: {0} stems\n\t maximum infested stems per cluster: {1} stems"
+            .format(sim_params.cluster_width, sim_params.max_stems_per_cluster)
+        )
+    print("inspection:\n\t unit: {0}\n\t proportion of box inspected: {1}\n\t sample strategy: {2}"
+        .format(sim_params.inspection_unit, sim_params.within_box_pct, sim_params.sample_strategy)
+    )
+    if sim_params.sample_strategy == "percentage":
+        print("\t proportion: {0}".format(sim_params.sample_params))
+    elif sim_params.sample_strategy == "hypergeometric":
+        print("\t detection level: {0}".format(sim_params.sample_params))
+    elif sim_params.sample_strategy == "fixed_n":
+        print("\t sample size: {0}".format(sim_params.sample_params))
+    print("\t selection strategy: {0}".format(sim_params.selection_strategy))
+    print("\n")
 
-    print("Avg. % shipments with pest missed: {0:.2f}%".format(totals.missing))
+    print("Simulation results")
+    print("-----------------------")
+    print("Avg. % shipments slipped: {0:.2f}%".format(totals.missing))
     print("Avg. infestation rate: {0:.3f}".format(totals.true_infestation_rate))
     if not totals.missed_infestation_rate == None:
             print("Avg. infestation rate of slipped shipments: {0:.3f}".format(totals.missed_infestation_rate))
@@ -159,7 +185,6 @@ def main():
     print("Avg. % infested stems unreported if sample ends at detection: {0:.2f}%".format(
             totals.pct_pest_unreported_if_detection
         ))
-    print("---")
 
 
 if __name__ == "__main__":
