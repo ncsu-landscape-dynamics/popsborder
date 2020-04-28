@@ -415,8 +415,18 @@ inspection:
 
 ### Outputs
 
-Pretty printing enabled by `--pretty` in the command line can be further
-configured using `pretty` key in the configuration file:
+Pretty printing of individual shipments and stems can be enabled by
+`--pretty` in the command line with output like this:
+
+```
+━━ Shipment ━━ Boxes: 3 ━━ Stems: 30 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🐛 ✿ ✿ ✿ ✿ ✿ ✿ 🐛 ✿ ✿ | ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ 🐛 | ✿ ✿ 🐛 ✿ ✿ ✿ ✿ ✿ ✿ 🐛
+━━ Shipment ━━ Boxes: 2 ━━ Stems: 20 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🐛 ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ | ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ 🐛
+```
+
+This can be further configured using `pretty` key in the configuration
+file:
 
 ```
 pretty:
@@ -427,10 +437,19 @@ pretty:
   spaces: false
 ```
 
-Setting like the above can allow you to use `--pretty` even when unicode
-is not properly displayed in your terminal. Note that some characters,
-such as the dash (`-`) above, need to be in quotes because they have
-a special meaning in YAML.
+Configuration like the above can allow you to use `--pretty` even when
+Unicode characters are properly displayed in your terminal. Note that
+some characters, such as the dash (`-`) above, need to be in quotes
+because they have a special meaning in YAML.
+
+The output with the settings above will look like:
+
+```
+-- Shipment -- Boxes: 4 -- Stems: 40 -----------------------------------
+xooooooooo|ooooooxooo|oooooooooo|xoooooooox
+-- Shipment -- Boxes: 6 -- Stems: 60 -----------------------------------
+xxooooooxx|oooooooooo|oooxooooxx|ooooooooxo|ooooxooooo|ooooxoooox
+```
 
 ### Obtaining pre-computed sample database records
 
