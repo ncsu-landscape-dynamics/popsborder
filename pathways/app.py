@@ -165,26 +165,30 @@ def main():
     print("\t selection strategy: {0}".format(sim_params.selection_strategy))
     print("\n")
 
-    print("Simulation results")
+    print("Simulation results:")
     print("-----------------------")
     print("Avg. % shipments slipped: {0:.2f}%".format(totals.missing))
     print("Avg. infestation rate: {0:.3f}".format(totals.true_infestation_rate))
-    if not totals.missed_infestation_rate == None:
-            print("Avg. infestation rate of slipped shipments: {0:.3f}".format(totals.missed_infestation_rate))
-    if not totals.intercepted_infestation_rate == None:
-        print("Avg. infestation rate of intercepted shipments: {0:.3f}".format(totals.intercepted_infestation_rate))
-    print("Avg. number of boxes opened per shipment:\n\t to completion: {0:.0f}\n\t to detection: {1:.0f}".format(
-            totals.avg_boxes_opened_completion, totals.avg_boxes_opened_detection
-        ))
-    print("Avg. number of stems inspected per shipment:\n\t to completion: {0:.0f}\n\t to detection: {1:.0f}".format(
-            totals.avg_stems_inspected_completion, totals.avg_stems_inspected_detection
-        ))
-    print("Avg. % sample completed if sample ends at detection: {0:.2f}%".format(
-            totals.pct_sample_if_to_detection
-        ))
-    print("Avg. % infested stems unreported if sample ends at detection: {0:.2f}%".format(
-            totals.pct_pest_unreported_if_detection
-        ))
+    if not totals.missed_infestation_rate is None:
+            print("Avg. infestation rate of slipped shipments: {0:.3f}"
+                .format(totals.missed_infestation_rate)
+            )
+    if not totals.intercepted_infestation_rate is None:
+        print("Avg. infestation rate of intercepted shipments: {0:.3f}"
+            .format(totals.intercepted_infestation_rate)
+        )
+    print("Avg. number of boxes opened per shipment:\n\t to completion: {0:.0f}\n\t to detection: {1:.0f}"
+        .format(totals.avg_boxes_opened_completion, totals.avg_boxes_opened_detection)
+    )
+    print("Avg. number of stems inspected per shipment:\n\t to completion: {0:.0f}\n\t to detection: {1:.0f}"
+        .format(totals.avg_stems_inspected_completion, totals.avg_stems_inspected_detection)
+    )
+    print("Avg. % sample completed if sample ends at detection: {0:.2f}%"
+        .format(totals.pct_sample_if_to_detection)
+    )
+    print("Avg. % infested stems unreported if sample ends at detection: {0:.2f}%"
+        .format(totals.pct_pest_unreported_if_detection)
+    )
 
 
 if __name__ == "__main__":

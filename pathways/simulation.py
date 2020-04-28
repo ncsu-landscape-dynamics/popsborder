@@ -301,16 +301,16 @@ def run_simulation(
         totals.intercepted_infestation_rate = None
 
     sim_params = types.SimpleNamespace(
-        infestation_type = "",
-        infestation_param = "",
-        pest_arrangement = "",
-        max_stems_per_cluster = "",
-        cluster_width = "",
-        inspection_unit = "",
-        within_box_pct = "",
-        sample_strategy = "",
-        sample_params = "",
-        selection_strategy = "",
+        infestation_type="",
+        infestation_param="",
+        pest_arrangement="",
+        max_stems_per_cluster="",
+        cluster_width="",
+        inspection_unit="",
+        within_box_pct="",
+        sample_strategy="",
+        sample_params="",
+        selection_strategy="",
     )
 
     sim_params.infestation_type = config["pest"]["infestation_rate"]["distribution"]
