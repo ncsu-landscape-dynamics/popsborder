@@ -153,6 +153,27 @@ Is our detection rate higher when we pick a random (randomly sampled)
 box in fewer amount of shipments or when we just look at a box on
 top (an easily accessible one) in more (or all) shipments?
 
+## Contributing
+
+To contribute to this repository it will be handy to install the
+following packages:
+
+```
+flake8 pylint black pytest
+```
+
+Install these using *pip* or *conda* possibly into a (virtual)
+environment.
+
+To run these from command line use:
+
+```
+flake8 .
+pylint pathways
+black .
+pytest tests/
+```
+
 ## Authors
 
 * Vaclav Petras, NCSU Center for Geospatial Analytics
