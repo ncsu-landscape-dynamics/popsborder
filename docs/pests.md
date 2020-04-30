@@ -96,3 +96,7 @@ pest:
     ratio: 0.5
     in_box_arrangement: all
 ```
+
+---
+
+Next: [Inspections](inspections.md)

@@ -124,3 +124,7 @@ Tailgate with *n* boxes:
 inspection:
   first_n_boxes: 2
 ```
+
+---
+
+Next: [Outputs](outputs.md)
