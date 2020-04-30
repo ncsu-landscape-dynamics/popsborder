@@ -60,7 +60,6 @@ inspection:
     min_boxes: 1
   fixed_n: 10
   selection_strategy: random
-  end_strategy: to_completion
 ports:
   - NY JFK CBP
   - FL Miami Air CBP
