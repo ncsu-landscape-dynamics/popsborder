@@ -143,6 +143,9 @@ def main():
     print("\n")
     print("Simulation parameters:")
     print("-----------------------")
+    print("shipments:\n\t Number shipments simulated: {0}".format(args.num_shipments))
+    print("\t Avg. number of boxes per shipment: {0}".format(totals.num_boxes / args.num_shipments))
+    print("\t Avg. number of stems per shipment: {0}".format(totals.num_stems / args.num_shipments))
     print("infestation:\n\t type: {0}".format(sim_params.infestation_type))
     if sim_params.infestation_type == "fixed_value":
         print("\t infestation rate: {0}". format(sim_params.infestation_param))
