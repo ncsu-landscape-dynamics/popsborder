@@ -92,18 +92,14 @@ selection strategies include `random` for selecting units to inspect
 using a uniform random distribution or `tailgate` for selecting the first `n` 
 units to inspect. The number of units to select is set by the sampling strategy functions.
 
-The inspection end strategy can be determined by:
-
-```
-inspection:
-    end_strategy: to_detection
-```
-
-This setting is used to determine when to end an inspection. The possible end strategies 
-include `to_detection` for ending an inspection as soon as a pest is detected and `to_completion`
-for inspecting all units in the sample regardless of pest detection. The number of infested
-units detected is compared to the actual number of pests in sample to quantify number of 
-reported pests for each strategy.
+Each simulation runs automatically two options in regard to determining
+the end of an inspection. The two possible end strategies are
+to first detection of pest
+when an inspection ends as soon as a pest is detected and
+to completion strategy when the inspection continues until the whole
+sample was completed regardless of pest detection.
+The number of infested units detected is compared to the actual number
+of pests in sample to quantify number of reported pests for each strategy.
 
 Cut Flower Release Program (CFRP):
 
