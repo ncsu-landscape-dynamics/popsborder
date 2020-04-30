@@ -1,5 +1,6 @@
 # Pathway Simulation
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/pathways-simulation/master?urlpath=lab/tree/example.ipynb)
 ![CI](https://github.com/ncsu-landscape-dynamics/pathways-simulation/workflows/CI/badge.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
@@ -27,6 +28,24 @@ where *x* and *y* are defined in the same way as above,
 (e.g. number of shipmets with a pest),
 and *r* is the success rate in detecting infestation
 using the function *f* from above.
+
+## Documentation
+
+An example of how the simulation interface works is in
+[this Jupyter notebook](example.ipynb).
+
+To run the code without installing anything use Binder:
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/pathways-simulation/master?urlpath=lab/tree/example.ipynb)
+
+If you are not familiar with Binder, see
+[our short intro](docs/binder.md).
+
+Documentation is included in the [docs](docs/) directory.
+[command line interface](docs/cli.md)
+and [pest configuration](docs/pests.md)
+pages are good ones to start with.
+
 
 ## Types of questions and results
 
@@ -134,327 +153,25 @@ Is our detection rate higher when we pick a random (randomly sampled)
 box in fewer amount of shipments or when we just look at a box on
 top (an easily accessible one) in more (or all) shipments?
 
-## Documentation
+## Contributing
 
-### Running the code
-
-The Python code runs with both Python 2.7 and Python 3.
-
-The configuration is provided in a file which is specified as a command line
-parameter. The configuration format is JSON (extension `.json`) or YAML
-(extensions `.yml` or `.yaml`). The Python `json` package is part of
-the Python standard library while the `yaml` package needs to be
-installed (as of Python 3.8).
-
-A simple run (runs) of the simulation with predefined values
-covering both success rate in detection of pests and generation of F280
-records:
+To contribute to this repository it will be handy to install the
+following packages:
 
 ```
-./run.sh
+flake8 pylint black pytest
 ```
 
-Generating a sample dataset with F280 records only:
+Install these using *pip* or *conda* possibly into a (virtual)
+environment.
+
+To run these from command line use:
 
 ```
-./generate_synthetic_F280_dataset.sh synthetic_records.csv 1000
-```
-
-Direct run of the simulation with 1000 shipments repeated 20 times:
-
-```
-python -m pathways --num-simulations 20 --num-shipments 1000 --config-file config.yml
-```
-
-Get all command line options for the simulation by running:
-
-```
-python -m pathways --help
-```
-
-### Configuration
-
-#### Pests
-
-The pest arrangement within the shipment can be determined by:
-
-```
-pest:
-  arrangement: random
-```
-
-The arrangement can be `random` for uniform random distribution,
-`clustered` for one or more pest clusters within stems of the shipment,
-and `random_box` for one or more random boxes having pest.
-
-For arrangement `random` and `clustered`, the infestation rate can be
-determined by:
-
-```
-pest:
-  infestation_rate:
-    distribution: beta
-    parameters:
-    - 4
-    - 60
-```
-
-The infestation rate can be also set using a fixed value (rather than
-random values based on the given distribution):
-
-```
-pest:
-  infestation_rate:
-    distribution: fixed_value
-    value: 0.05
-```
-
-The `random` arrangement does not have any further configuration besides
-`infestation_rate`.
-
-The settings for `clustered` is:
-
-```
-  clustered:
-    max_stems_per_cluster: 10
-    distribution: gamma
-    parameters:
-    - 4
-    - 2
-```
-
-The cluster size in terms of number of stems is limited by
-`max_stems_per_cluster`. If `max_stems_per_cluster` is exceeded, more
-than one cluster is generated so that number of stems in each cluster
-conforms to this limit.
-
-The distribution for clustered can be `gamma`, `random`, and `continuous`
-and it drives the placement of infested stems within a cluster.
-The `gamma` option uses the gamma distribution and takes two parameters.
-The `random` option uses the uniform random distribution. The cluster
-width is defined by the first and only parameter of this distribution.
-The `continuous` distribution does not have any parameters and produces
-infested stems next to each other so the number of infested stems in the
-cluster is the same as the width of the cluster.
-
-The settings for `random_box` is:
-
-```
-pest:
-  random_box:
-    probability: 0.2
-    ratio: 0.5
-    in_box_arrangement: all
-```
-
-Probability of shipment being infested is driven by `probability`
-while the number of boxes infested within a shipment is driven by `ratio`.
-The infestation within one box is determined by `in_box_arrangement`
-which can have values `all`, `first`, `one_random`, and `random`.
-For `all`, all stems within a box are infested.
-With `first`, only the first stem in the box will get pest.
-`one_random` is similar to `first`, but a random stem is picked to get
-pest.
-The `random` in-box arrangement will place pests in a box using uniform
-random distribution. The number of pests to be placed is determined
-using the distribution configured using the `infestation_rate` key
-which takes meaning *infestation rate within a box* instead of its usual
-meaning *infestation rate within a shipment*.
-In that case, the configuration may look like this:
-
-```
-pest:
-  infestation_rate:
-    distribution: beta
-    parameters: [20, 30]
-  random_box:
-    probability: 0.2
-    ratio: 0.5
-    in_box_arrangement: all
-```
-
-#### Disposition codes
-
-Here is an example with disposition codes close to what is used in F280:
-
-```
-disposition_codes:
-  inspected_ok: IRMR
-  inspected_pest: FUAP
-  cfrp_inspected_ok: IRAR
-  cfrp_inspected_pest: FUAR
-  cfrp_not_inspected: REAR
-```
-
-#### Inspection
-The inspection unit can be determined by:
-
-```
-inspection:
-  unit: stems
-```
-
-The inspection unit can be `stems` for computing sample size based on 
-number of stems in the shipment or `boxes` for computing sample size 
-based on number of boxes in the shipment.
-
-The proportion of stems within a box to be inspected can be determined by:
-
-```
-inspection:
-  within_box_pct: 100
-```
-
-The value of `within_box_pct` can be set to any integer. By default, 100 
-percent of stems within a box will be inspected. If `within_box_pct < 100`, the
- first `n = within_box_pct * stems_per_box` stems in each box will be inspected.
-
-The sample strategy can be determined by:
-
-```
-inspection:
-    sample_strategy: percentage
-```
-
-The possible sample strategies include `percentage` for sampling a specified
- percent of units, `hypergeometric` for sampling to detect a specified infestation
-  level, `fixed_n` for sampling a specified number of units, and `all` for
-   sampling all units.
-
-The settings for `percentage` are:
-
-```
-inspection:
-    percentage:
-        proportion: 0.02
-        min_boxes: 1
-```
-
-The percentage of units is set by `proportion` and the minimum number of boxes to
- be inspected is set by `min_boxes`. If `unit = "stems"`, the number of stems to inspect
- is computed by `proportion * num_stems` and converted to number of boxes to inspect
-  based on `stems_per_box * within_box_pct`.
-  
-The settings for `hypergeometric` are:
-
-```
-inspection:
-    hypergeometric:
-        detection_level: 0.05
-        confidence_level: 0.95
-        min_boxes: 1
-``` 
-
-The minimum infestation level to be detected with sample is set by `detection_level` 
-at the confidence level set by `confidence_level`. The minimum number of boxes to be 
-inspected is set by `min_boxes`. The sample size is calculated using a hypergeometric
-distribution (sampling without replacement) as described in (Fosgate, 2009).
-The equation used to compute the sample size is:
-  
-```math
-n=(1-(alpha)^1/D)(N-(D-1/2))
-```
-
-The settings for `fixed_n` are:
-
-```
-inspection:
-    fixed_n: 10
-```
-
-The number of units to be inspected can be any integer set by `fixed_n`. If the inspection 
-`unit = "stems"`, `fixed_n` will be converted to number of boxes to inspect based on the
-number of stems to be inspected per box. If the number of boxes to inspect exceed
-the number of boxes in the shipment, number of boxes to inspect will be set to `num_boxes`.
-
-The inspection unit selection strategy can be determined by:
-
-```
-inspection:
-    selection_strategy: random
-```
-
-This setting is used to determine which units in the shipment to inspect. The possible 
-selection strategies include `random` for selecting units to inspect
-using a uniform random distribution or `tailgate` for selecting the first `n` 
-units to inspect. The number of units to select is set by the sampling strategy functions.
-
-The inspection end strategy can be determined by:
-
-```
-inspection:
-    end_strategy: to_detection
-```
-
-This setting is used to determine when to end an inspection. The possible end strategies 
-include `to_detection` for ending an inspection as soon as a pest is detected and `to_completion`
-for inspecting all units in the sample regardless of pest detection. The number of infested
-units detected is compared to the actual number of pests in sample to quantify number of 
-reported pests for each strategy.
-
-Cut Flower Release Program (CFRP):
-
-```
-release_programs:
-  naive_cfrp:
-    flowers:
-    - Hyacinthus
-    - Gerbera
-    - Rosa
-    - Actinidia
-    max_boxes: 10  # do not apply to shipments larger than
-```
-
-Tailgate with *n* boxes:
-
-```
-inspection:
-  first_n_boxes: 2
-```
-
-### Outputs
-
-Pretty printing enabled by `--pretty` in the command line can be further
-configured using `pretty` key in the configuration file:
-
-```
-pretty:
-  flower: o
-  bug: x
-  horizontal_line: "-"
-  box_line: "|"
-  spaces: false
-```
-
-Setting like the above can allow you to use `--pretty` even when unicode
-is not properly displayed in your terminal. Note that some characters,
-such as the dash (`-`) above, need to be in quotes because they have
-a special meaning in YAML.
-
-### Obtaining pre-computed sample database records
-
-#### Download using a web browser
-
-To download sample synthetic database records (F280)
-by clicking [this link](https://ncsu-landscape-dynamics.github.io/pathways-simulation/synthetic_records.csv).
-
-#### Download using command line
-
-Alternatively, in a Linux command line (or in an equivalent environment),
-you can execute (assuming you have `wget` installed):
-
-```
-wget https://ncsu-landscape-dynamics.github.io/pathways-simulation/synthetic_records.csv
-ls synthetic_records.csv
-```
-
-The last command (`ls`) just confirms that you have the data downloaded
-and uncompressed. If you need some troubleshooting,
-the following example might be helpful (relying of the program `file`).
-
-```
-$ file synthetic_records.csv
-synthetic_records.csv: ASCII text
+flake8 .
+pylint pathways
+black .
+pytest tests/
 ```
 
 ## Authors
