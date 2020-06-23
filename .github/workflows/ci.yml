@@ -79,6 +79,15 @@ jobs:
         pip install black
         black --check --diff .
 
+  super-linter:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    -  name: Lint code base
+       uses: docker://github/super-linter:v2.2.0
+
   test:
 
     runs-on: ubuntu-18.04
