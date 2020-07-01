@@ -223,6 +223,8 @@ def run_simulation(
     Returns averages computed from the individual simulation runs otherwise
     it relies on :func:`simulation` function to do the hard work.
     """
+    # pylint: disable=too-many-branches,too-many-statements
+
     totals = types.SimpleNamespace(
         missing=0,
         num_inspections=0,
@@ -322,7 +324,9 @@ def run_simulation(
         sim_params.infestation_param = None
     sim_params.pest_arrangement = config["pest"]["arrangement"]
     if sim_params.pest_arrangement == "clustered":
-        sim_params.max_stems_per_cluster = config["pest"]["clustered"]["max_stems_per_cluster"]
+        sim_params.max_stems_per_cluster = config["pest"]["clustered"][
+            "max_stems_per_cluster"
+        ]
         sim_params.cluster_width = config["pest"]["clustered"]["parameters"][0]
     else:
         sim_params.max_stems_per_cluster = None
@@ -333,7 +337,9 @@ def run_simulation(
     if sim_params.sample_strategy == "percentage":
         sim_params.sample_params = config["inspection"]["percentage"]["proportion"]
     elif sim_params.sample_strategy == "hypergeometric":
-        sim_params.sample_params = config["inspection"]["hypergeometric"]["detection_level"]
+        sim_params.sample_params = config["inspection"]["hypergeometric"][
+            "detection_level"
+        ]
     elif sim_params.sample_strategy == "fixed_n":
         sim_params.sample_params = config["inspection"]["fixed_n"]
     else:

@@ -308,3 +308,95 @@ class SuccessRates(object):
                 "Inspection result is infested,"
                 " but actually the shipment is not infested (programmer error)"
             )
+
+
+def print_totals_as_text(num_shipments, sim_params, totals):
+    """Prints simulation result as text"""
+    # "On average, inspecting {0:.0f}% of shipments.".format(
+    #    100 * totals.num_inspections / float(args.num_shipments))
+    print("\n")
+    print("Simulation parameters:")
+    print("-----------------------")
+    print("shipments:\n\t Number shipments simulated: {0}".format(num_shipments))
+    print(
+        "\t Avg. number of boxes per shipment: {0}".format(
+            totals.num_boxes / num_shipments
+        )
+    )
+    print(
+        "\t Avg. number of stems per shipment: {0}".format(
+            totals.num_stems / num_shipments
+        )
+    )
+    print("infestation:\n\t type: {0}".format(sim_params.infestation_type))
+    if sim_params.infestation_type == "fixed_value":
+        print("\t infestation rate: {0}".format(sim_params.infestation_param))
+    elif sim_params.infestation_type == "beta":
+        print(
+            "\t infestation distribution parameters: {0}".format(
+                sim_params.infestation_param
+            )
+        )
+    print("\t pest arrangement: {0}".format(sim_params.pest_arrangement))
+    if sim_params.pest_arrangement == "clustered":
+        print(
+            "\t cluster width: {0} stems\n"
+            "\t maximum infested stems per cluster: {1} stems".format(
+                sim_params.cluster_width, sim_params.max_stems_per_cluster
+            )
+        )
+    print(
+        "inspection:\n\t unit: {0}\n\t proportion of box inspected: {1}\n"
+        "\t sample strategy: {2}".format(
+            sim_params.inspection_unit,
+            sim_params.within_box_pct,
+            sim_params.sample_strategy,
+        )
+    )
+    if sim_params.sample_strategy == "percentage":
+        print("\t proportion: {0}".format(sim_params.sample_params))
+    elif sim_params.sample_strategy == "hypergeometric":
+        print("\t detection level: {0}".format(sim_params.sample_params))
+    elif sim_params.sample_strategy == "fixed_n":
+        print("\t sample size: {0}".format(sim_params.sample_params))
+    print("\t selection strategy: {0}".format(sim_params.selection_strategy))
+    print("\n")
+
+    print("Simulation results:")
+    print("-----------------------")
+    print("Avg. % shipments slipped: {0:.2f}%".format(totals.missing))
+    print("Avg. infestation rate: {0:.3f}".format(totals.true_infestation_rate))
+    if totals.missed_infestation_rate is not None:
+        print(
+            "Avg. infestation rate of slipped shipments: {0:.3f}".format(
+                totals.missed_infestation_rate
+            )
+        )
+    if totals.intercepted_infestation_rate is not None:
+        print(
+            "Avg. infestation rate of intercepted shipments: {0:.3f}".format(
+                totals.intercepted_infestation_rate
+            )
+        )
+    print(
+        "Avg. number of boxes opened per shipment:\n\t to completion: {0:.0f}\n"
+        "\t to detection: {1:.0f}".format(
+            totals.avg_boxes_opened_completion, totals.avg_boxes_opened_detection
+        )
+    )
+    print(
+        "Avg. number of stems inspected per shipment:\n\t to completion: {0:.0f}\n"
+        "\t to detection: {1:.0f}".format(
+            totals.avg_stems_inspected_completion, totals.avg_stems_inspected_detection
+        )
+    )
+    print(
+        "Avg. % sample completed if sample ends at detection: {0:.2f}%".format(
+            totals.pct_sample_if_to_detection
+        )
+    )
+    print(
+        "Avg. % infested stems unreported if sample ends at detection: {0:.2f}%".format(
+            totals.pct_pest_unreported_if_detection
+        )
+    )
