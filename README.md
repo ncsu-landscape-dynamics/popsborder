@@ -155,8 +155,20 @@ top (an easily accessible one) in more (or all) shipments?
 
 ## Contributing
 
-To contribute to this repository it will be handy to install the
-following packages:
+To contribute to this repository it is handy to have a several packages
+installed and then run certain tools before each commit or pull request,
+however you will have a chance to see and correct the errors also after
+you open a pull request.
+
+## Install everything using pipenv
+
+```
+pipenv install
+```
+
+## Install development dependencies manually
+
+Install the following packages:
 
 ```
 flake8 pylint black pytest
@@ -164,6 +176,8 @@ flake8 pylint black pytest
 
 Install these using *pip* or *conda* possibly into a (virtual)
 environment.
+
+## Run testing
 
 To run these from command line use:
 
