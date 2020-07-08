@@ -171,7 +171,7 @@ pipenv install
 Install the following packages:
 
 ```
-flake8 pylint black pytest
+flake8 pylint black pytest pytest-datadir
 ```
 
 Install these using *pip* or *conda* possibly into a (virtual)
