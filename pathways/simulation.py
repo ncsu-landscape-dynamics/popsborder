@@ -363,7 +363,7 @@ def load_configuration(filename):
 
     The format is decided based on the file extension.
     It uses full_load() (FullLoader) to read YAML.
-    
+
     The parameter can be a string or a path object (path-like object).
     """
     if str(filename).endswith(".json"):

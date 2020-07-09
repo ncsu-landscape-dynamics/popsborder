@@ -30,17 +30,31 @@ from .simulation import run_simulation, load_configuration
 def update_nested_dict_by_dict(dictionary, update):
     for key, value in update.items():
         if isinstance(value, collections.abc.Mapping):
-            dictionary[key] = update_nested_dict_by_dict(dictionary.get(key, {}), value)
+            update_nested_dict_by_dict(dictionary.get(key, {}), value)
         else:
             dictionary[key] = value
 
+
 def update_nested_dict_by_item(dictionary, keys, value):
     if len(keys) == 1:
-        dictionary[keys[0]] = value
+        key = keys[0]
+        try:
+            key = int(key)
+        except ValueError:
+            pass
+        dictionary[key] = value
+        print(f"Updating {key} = {value}")
     else:
         if keys[0] not in dictionary:
-            dictionary[keys[0]] = {}
+            try:
+                # In case it is a list, we require keys are items are filled in order.
+                unused = int(keys[1])
+                dictionary[keys[0]] = [None]
+            except ValueError:
+                dictionary[keys[0]] = {}
+        print(f"Nesting: {keys}")
         update_nested_dict_by_item(dictionary[keys[0]], keys[1:], value)
+
 
 def record_to_nested_dictionary(record):
     out = {}
@@ -57,10 +71,10 @@ def updated_config(config, record):
     return config
 
 
-def run_scenarios(basic_config, scenario_table, seed, num_simulations, num_shipments):
+def run_scenarios(config, scenario_table, seed, num_simulations, num_shipments):
     results = []
     for record in scenario_table:
-        scenario_config = updated_config(basic_config, record)
+        scenario_config = updated_config(config, record)
         totals, sim_params = run_simulation(
             config=scenario_config,
             num_simulations=num_simulations,
@@ -73,8 +87,22 @@ def run_scenarios(basic_config, scenario_table, seed, num_simulations, num_shipm
 
 def load_scenario_table(filename):
     import csv  # pylint: disable=import-outside-toplevel
-    
-    return csv.DictReader(filename)
+
+    table = []
+    with open(filename) as file:
+        for row in csv.DictReader(file):
+            for key, value in row.items():
+                try:
+                    value = int(value)
+                    row[key] = value
+                except ValueError:
+                    try:
+                        value = float(value)
+                        row[key] = value
+                    except ValueError:
+                        pass
+            table.append(row)
+    return table
+
 
 # def run_scenarios_from_files(basic_config_file, scenarios_file):
-    

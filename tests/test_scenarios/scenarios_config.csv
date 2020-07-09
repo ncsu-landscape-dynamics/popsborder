@@ -1,0 +1,3 @@
+name,shipment/boxes/min,shipment/boxes/max,pest/arrangement,inspection/unit
+Scenario 1,1,100,random_box,stems
+Scenario 2,200,2000,random_box,stems
