@@ -84,12 +84,12 @@ def sample_percentage(config, shipment):
     num_boxes = shipment["num_boxes"]
     min_boxes = config.get("min_boxes", 1)
 
-    if unit == "stems":
+    if unit in ["stem", "stems"]:
         n_stems_to_inspect = int(math.ceil(ratio * num_stems))
         n_boxes_to_inspect = convert_stems_to_boxes(
             config, shipment, n_stems_to_inspect
         )
-    elif unit == "boxes":
+    elif unit in ["box", "boxes"]:
         n_boxes_to_inspect = int(math.ceil(ratio * num_boxes))
         n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
         n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
@@ -127,14 +127,14 @@ def sample_hypergeometric(config, shipment):
     num_boxes = shipment["num_boxes"]
     min_boxes = config.get("min_boxes", 1)
 
-    if unit == "stems":
+    if unit in ["stem", "stems"]:
         n_stems_to_inspect = compute_hypergeometric(
             num_stems, detection_level, confidence_level
         )
         n_boxes_to_inspect = convert_stems_to_boxes(
             config, shipment, n_stems_to_inspect
         )
-    elif unit == "boxes":
+    elif unit in ["box", "boxes"]:
         n_boxes_to_inspect = compute_hypergeometric(
             num_boxes, detection_level, confidence_level
         )

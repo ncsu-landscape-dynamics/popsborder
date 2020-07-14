@@ -102,5 +102,5 @@ jobs:
         python -m pathways --num-simulations 5 --num-shipments 50 --config-file config.yml
     - name: Test with pytest
       run: |
-        pip install pytest
+        pip install pytest pytest-datadir
         pytest tests/

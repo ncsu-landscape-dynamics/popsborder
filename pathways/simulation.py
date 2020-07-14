@@ -363,12 +363,14 @@ def load_configuration(filename):
 
     The format is decided based on the file extension.
     It uses full_load() (FullLoader) to read YAML.
+
+    The parameter can be a string or a path object (path-like object).
     """
-    if filename.endswith(".json"):
+    if str(filename).endswith(".json"):
         import json  # pylint: disable=import-outside-toplevel
 
         return json.load(open(filename))
-    elif filename.endswith(".yaml") or filename.endswith(".yml"):
+    elif str(filename).endswith(".yaml") or str(filename).endswith(".yml"):
         import yaml  # pylint: disable=import-outside-toplevel
 
         if hasattr(yaml, "full_load"):

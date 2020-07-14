@@ -8,6 +8,7 @@ pytest = "*"
 pylint = "*"
 flake8 = "*"
 black = "==18.6b4"
+pytest-datadir = "*"
 
 [packages]
 pathways = {editable = true, path = "."}
