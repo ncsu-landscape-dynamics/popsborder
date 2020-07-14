@@ -137,7 +137,7 @@ def sample_hypergeometric(config, shipment):
     return n_units_to_inspect
 
 
-def sample_all(shipment):
+def sample_all(config, shipment):
     """Set sample size to sample all units from shipment.
     Return number of units to inspect.
 
