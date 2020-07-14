@@ -335,7 +335,7 @@ def get_sample_function(config):
     elif sample_strategy == "all":
 
         def sample(shipment):
-            return sample_all(shipment=shipment)
+            return sample_all(config=config, shipment=shipment)
 
     else:
         raise RuntimeError(
