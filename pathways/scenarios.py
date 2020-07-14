@@ -28,6 +28,7 @@ from .simulation import run_simulation
 
 
 def update_nested_dict_by_dict(dictionary, update):
+    """Recursively update nested dictionary by anther nested dictionary"""
     for key, value in update.items():
         if isinstance(value, collections.abc.Mapping):
             update_nested_dict_by_dict(dictionary.get(key, {}), value)
@@ -36,6 +37,16 @@ def update_nested_dict_by_dict(dictionary, update):
 
 
 def update_nested_dict_by_item(dictionary, keys, value):
+    """Update nested dictionary by a nested keys-value pair
+
+    An item is a list of keys to navigate the nested dictionary and a value to place
+    in the given position.
+
+    When a key can be represented as an int, it is used as a list index.
+    List must already exists in the given size or the only index used must be 0.
+
+    Floating point keys are not supported.
+    """
     if len(keys) == 1:
         key = keys[0]
         try:
@@ -56,6 +67,7 @@ def update_nested_dict_by_item(dictionary, keys, value):
 
 
 def record_to_nested_dictionary(record):
+    """Convert dictionary with key/subkey/subsubkey keys into a nested dictionary"""
     out = {}
     for path, value in record.items():
         keys = path.split("/")
@@ -63,7 +75,8 @@ def record_to_nested_dictionary(record):
     return out
 
 
-def updated_config(config, record):
+def update_config(config, record):
+    """Update config dictionary by a dictionary with key/subkey/subsubkey keys"""
     config = copy.deepcopy(config)
     update = record_to_nested_dictionary(record)
     update_nested_dict_by_dict(config, update)
@@ -71,20 +84,49 @@ def updated_config(config, record):
 
 
 def run_scenarios(config, scenario_table, seed, num_simulations, num_shipments):
+    """Run scenarios based on the configuration and list of scenarios
+
+    Parameters
+    ----------
+    config : nested dict
+        Basic configuration for each simulation.
+    scenario_table : list of dicts
+        Configurations specific for each scenario as a list of dictionaries with
+        key/subkey/subsubkey keys.
+    seed : int
+        Seed for a random generator. All scenarios get the same seed, but each
+        simulation within a scenario runs with a different seed based on this one.
+    num_simulations : int
+        Num of simulations for each scenario.
+    num_shipments : int
+        Number of shipements in each simulation.
+
+    Returns
+    -------
+    results : list
+        List of results with one item for each scenario.
+    """
     results = []
     for record in scenario_table:
-        scenario_config = updated_config(config, record)
-        totals, sim_params = run_simulation(
+        scenario_config = update_config(config, record)
+        result = run_simulation(
             config=scenario_config,
             num_simulations=num_simulations,
             num_shipments=num_shipments,
             seed=seed,
         )
-        results.append(totals)
+        results.append(result)
     return results
 
 
 def load_scenario_table(filename):
+    """Load a CSV file into a list of dictionaries
+
+    Values which can be converted into int or float are converted.
+
+    A whole file is read and loaded into memory unlike with the ``csv.reader()``
+    function.
+    """
     import csv  # pylint: disable=import-outside-toplevel
 
     table = []
@@ -102,6 +144,3 @@ def load_scenario_table(filename):
                         pass
             table.append(row)
     return table
-
-
-# def run_scenarios_from_files(basic_config_file, scenarios_file):
