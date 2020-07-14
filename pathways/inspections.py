@@ -236,6 +236,9 @@ def inspect(config, shipment, n_units_to_inspect):
     :param shipment: Shipment to be inspected
     :param n_units_to_inspect: Number of units to inspect defined by sample functions.
     """
+    # Disabling warnings, possible future TODO is splitting this function.
+    # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+
     unit = config["inspection"]["unit"]
     pathway = shipment["pathway"]
     stems_per_box = config["stems_per_box"]
