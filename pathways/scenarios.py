@@ -24,7 +24,7 @@ Functionality for running multiple scenarios
 import copy
 import collections.abc
 
-from .simulation import run_simulation, load_configuration
+from .simulation import run_simulation
 
 
 def update_nested_dict_by_dict(dictionary, update):
@@ -43,16 +43,15 @@ def update_nested_dict_by_item(dictionary, keys, value):
         except ValueError:
             pass
         dictionary[key] = value
-        print(f"Updating {key} = {value}")
     else:
         if keys[0] not in dictionary:
             try:
+                # Test if the next key is an integer and thus index in a list.
+                int(keys[1])
                 # In case it is a list, we require keys are items are filled in order.
-                unused = int(keys[1])
                 dictionary[keys[0]] = [None]
             except ValueError:
                 dictionary[keys[0]] = {}
-        print(f"Nesting: {keys}")
         update_nested_dict_by_item(dictionary[keys[0]], keys[1:], value)
 
 
