@@ -10,6 +10,6 @@ def test_scenarios(datadir):
         scenario_table=scenario_table,
         seed=42,
         num_simulations=2,
-        num_shipments=100,
+        num_shipments=50,
     )
     assert len(scenario_table) == len(results)
