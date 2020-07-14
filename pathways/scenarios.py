@@ -122,12 +122,15 @@ def run_scenarios(config, scenario_table, seed, num_simulations, num_shipments):
 def load_scenario_table(filename):
     """Load a CSV file into a list of dictionaries
 
-    Values which can be converted into int or float are converted.
+    Values which can be converted into int or float are converted. Cells which can be
+    parsed as JSON, will be loaded into Python data structures (dicts, lists, etc.).
 
     A whole file is read and loaded into memory unlike with the ``csv.reader()``
     function.
     """
-    import csv  # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel
+    import csv
+    import json
 
     table = []
     with open(filename) as file:
@@ -141,6 +144,10 @@ def load_scenario_table(filename):
                         value = float(value)
                         row[key] = value
                     except ValueError:
-                        pass
+                        try:
+                            value = json.loads(value)
+                            row[key] = value
+                        except json.JSONDecodeError:
+                            pass
             table.append(row)
     return table
