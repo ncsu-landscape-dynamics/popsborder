@@ -1,0 +1,45 @@
+shipment:
+  origins:
+  - Netherlands
+  - Mexico
+  flowers:
+  - Hyacinthus
+  - Rosa
+  - Gerbera
+  boxes:
+    min: 1
+    max: 50
+pest:
+  infestation_rate:
+    distribution: beta
+    parameters:
+    - 4
+    - 60
+  arrangement: random_box
+  random_box:
+    probability: 0.2
+    ratio: 0.5
+  clustered:
+    max_stems_per_cluster: 10
+    distribution: gamma
+    parameters:
+    - 4
+    - 2
+inspection:
+  unit: stems
+  within_box_pct: 1.0
+  sample_strategy: percentage
+  percentage:
+    proportion: 0.02
+    min_boxes: 1
+  hypergeometric:
+    detection_level: 0.05
+    confidence_level: 0.95
+    min_boxes: 1
+  fixed_n: 10
+  selection_strategy: random
+ports:
+  - NY JFK CBP
+  - FL Miami Air CBP
+stems_per_box:
+  default: 10
