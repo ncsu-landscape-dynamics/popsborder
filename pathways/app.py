@@ -126,8 +126,9 @@ def main():
     )
     args = parser.parse_args()
 
-    totals, sim_params = run_simulation(
-        config=load_configuration(args.config_file),
+    config = load_configuration(args.config_file)
+    totals = run_simulation(
+        config=config,
         num_simulations=args.num_simulations,
         num_shipments=args.num_shipments,
         seed=args.seed,
@@ -135,7 +136,7 @@ def main():
         verbose=args.verbose,
         pretty=args.pretty,
     )
-    print_totals_as_text(args.num_shipments, sim_params, totals)
+    print_totals_as_text(args.num_shipments, config, totals)
 
 
 if __name__ == "__main__":

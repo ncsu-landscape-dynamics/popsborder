@@ -103,8 +103,9 @@ def run_scenarios(config, scenario_table, seed, num_simulations, num_shipments):
 
     Returns
     -------
-    results : list
-        List of results with one item for each scenario.
+    results : list of tuples
+        List of results with one tuple for each scenario. One tuple contains simulation
+        result and configuration for that scenario.
     """
     results = []
     for record in scenario_table:
@@ -115,7 +116,7 @@ def run_scenarios(config, scenario_table, seed, num_simulations, num_shipments):
             num_shipments=num_shipments,
             seed=seed,
         )
-        results.append(result)
+        results.append((result, scenario_config))
     return results
 
 
