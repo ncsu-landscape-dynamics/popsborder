@@ -29,6 +29,7 @@ from __future__ import print_function, division
 import shutil
 import weakref
 import csv
+import types
 
 from .inspections import count_diseased_boxes
 
@@ -310,8 +311,59 @@ class SuccessRates(object):
             )
 
 
-def print_totals_as_text(num_shipments, sim_params, totals):
+def config_to_simplified_simulation_params(config):
+    """Convert configuration into a simplified set of selected parameters"""
+    sim_params = types.SimpleNamespace(
+        infestation_type="",
+        infestation_param="",
+        pest_arrangement="",
+        max_stems_per_cluster="",
+        cluster_width="",
+        inspection_unit="",
+        within_box_pct="",
+        sample_strategy="",
+        sample_params="",
+        selection_strategy="",
+    )
+
+    sim_params.infestation_type = config["pest"]["infestation_rate"]["distribution"]
+    if sim_params.infestation_type == "fixed_value":
+        sim_params.infestation_param = config["pest"]["infestation_rate"]["value"]
+    elif sim_params.infestation_type == "beta":
+        sim_params.infestation_param = config["pest"]["infestation_rate"]["parameters"]
+    else:
+        sim_params.infestation_param = None
+    sim_params.pest_arrangement = config["pest"]["arrangement"]
+    if sim_params.pest_arrangement == "clustered":
+        sim_params.max_stems_per_cluster = config["pest"]["clustered"][
+            "max_stems_per_cluster"
+        ]
+        sim_params.cluster_width = config["pest"]["clustered"]["parameters"][0]
+    else:
+        sim_params.max_stems_per_cluster = None
+        sim_params.cluster_width = None
+    sim_params.inspection_unit = config["inspection"]["unit"]
+    sim_params.within_box_pct = config["inspection"]["within_box_pct"]
+    sim_params.sample_strategy = config["inspection"]["sample_strategy"]
+    if sim_params.sample_strategy == "percentage":
+        sim_params.sample_params = config["inspection"]["percentage"]["proportion"]
+    elif sim_params.sample_strategy == "hypergeometric":
+        sim_params.sample_params = config["inspection"]["hypergeometric"][
+            "detection_level"
+        ]
+    elif sim_params.sample_strategy == "fixed_n":
+        sim_params.sample_params = config["inspection"]["fixed_n"]
+    else:
+        sim_params.sample_params = None
+    sim_params.selection_strategy = config["inspection"]["selection_strategy"]
+
+    return sim_params
+
+
+def print_totals_as_text(num_shipments, config, totals):
     """Prints simulation result as text"""
+    sim_params = config_to_simplified_simulation_params(config)
+
     # "On average, inspecting {0:.0f}% of shipments.".format(
     #    100 * totals.num_inspections / float(args.num_shipments))
     print("\n")

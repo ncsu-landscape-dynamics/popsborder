@@ -69,6 +69,6 @@ def test_gives_result(tmp_path):
     config = tmp_path / "config.yml"
     config.write_text(CONFIG)
     for seed in range(10):
-        assert "slippage" in run_pathways_cli(
+        assert "slipped" in run_pathways_cli(
             num_shipments=10, config_file=str(config), seed=seed
         )
