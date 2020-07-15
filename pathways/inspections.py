@@ -226,6 +226,7 @@ def compute_max_inspectable_stems(num_stems, stems_per_box, within_box_pct):
     return max_stems
 
 
+# TODO: add check to balance within_box_pct and interval, give error message
 def inspect(config, shipment, n_units_to_inspect):
     """Select units from shipment based on specified selection strategy.
     Inspect selected units using both end strategies (to detection, to completion)
@@ -259,6 +260,29 @@ def inspect(config, shipment, n_units_to_inspect):
             index_to_inspect = random.sample(range(num_boxes), n_units_to_inspect)
         else:
             raise RuntimeError("Unknown unit: {unit}".format(**locals()))
+    elif selection_strategy == "hierarchical":
+        outer = config["inspection"]["hierarchical"]["outer"]
+        if unit == "stems":
+            n_boxes_to_inspect = convert_stems_to_boxes(
+                config, shipment, n_units_to_inspect
+            )
+            if outer == "random":
+                index_to_inspect = random.sample(range(num_boxes), n_boxes_to_inspect)
+            elif outer == "interval":
+                interval = config["inspection"]["hierarchical"]["interval"]
+                index_to_inspect = []
+                index = 0
+                for n in range(n_boxes_to_inspect):
+                    index_to_inspect.append(index)
+                    index += interval
+            else:
+                raise RuntimeError("Unknown outer unit: {outer}".format(**locals()))
+        elif unit == "boxes":
+            raise RuntimeError(
+                "Cannot use hierarchical selection strategy with box sampling unit"
+            )
+        else:
+            raise RuntimeError("Unknown unit: {unit}".format(**locals()))
     else:
         raise RuntimeError(
             "Unknown selection strategy: {selection_strategy}".format(**locals())
@@ -278,20 +302,35 @@ def inspect(config, shipment, n_units_to_inspect):
     if unit == "stems":
         detected = False
         ret.stems_inspected_completion = n_units_to_inspect
-        boxes_opened_completion = []
-        boxes_opened_detection = []
-        for stem in index_to_inspect:
-            boxes_opened_completion.append(math.ceil(stem / stems_per_box))
-            if not detected:
-                ret.stems_inspected_detection += 1
-                boxes_opened_detection.append(math.ceil(stem / stems_per_box))
-            if shipment["stems"][stem]:  # Count every infested stem
-                ret.infested_stems_completion += 1
+        if selection_strategy == "hierarchical":
+            ret.boxes_opened_completion = n_boxes_to_inspect
+            for box in index_to_inspect:
                 if not detected:
-                    ret.infested_stems_detection += 1
+                    ret.boxes_opened_detection += 1
+                for stem in (shipment["boxes"][box]).stems[0:inspect_per_box]:
+                    if not detected:
+                        ret.stems_inspected_detection += 1
+                    if stem:  # Count infested stems in partial box sample to completion
+                        ret.infested_stems_completion += 1
+                        if not detected:
+                            ret.infested_stems_detection += 1
+                if ret.infested_stems_detection > 0:
                     detected = True
-        ret.boxes_opened_completion = len(set(boxes_opened_completion))
-        ret.boxes_opened_detection = len(set(boxes_opened_detection))
+        else:
+            boxes_opened_completion = []
+            boxes_opened_detection = []
+            for stem in index_to_inspect:
+                boxes_opened_completion.append(math.ceil(stem / stems_per_box))
+                if not detected:
+                    ret.stems_inspected_detection += 1
+                    boxes_opened_detection.append(math.ceil(stem / stems_per_box))
+                if shipment["stems"][stem]:  # Count every infested stem in sample
+                    ret.infested_stems_completion += 1
+                    if not detected:
+                        ret.infested_stems_detection += 1
+                        detected = True
+            ret.boxes_opened_completion = len(set(boxes_opened_completion))
+            ret.boxes_opened_detection = len(set(boxes_opened_detection))
     elif unit == "boxes":
         detected = False
         ret.boxes_opened_completion = n_units_to_inspect
