@@ -253,12 +253,12 @@ def inspect(config, shipment, n_units_to_inspect):
     if selection_strategy == "tailgate":
         index_to_inspect = range(n_units_to_inspect)
     elif selection_strategy == "random":
-        if unit == "stems":
+        if unit in ["stem", "stems"]:
             index_to_inspect = random.sample(range(num_stems), n_units_to_inspect)
-        elif unit == "boxes":
+        elif unit in ["box", "boxes"]:
             index_to_inspect = random.sample(range(num_boxes), n_units_to_inspect)
         else:
-            raise RuntimeError("Unknown unit: {unit}".format(**locals()))
+            raise RuntimeError("Unknown inspection unit: {unit}".format(**locals()))
     else:
         raise RuntimeError(
             "Unknown selection strategy: {selection_strategy}".format(**locals())
@@ -275,7 +275,7 @@ def inspect(config, shipment, n_units_to_inspect):
         infested_stems_detection=0,
     )
 
-    if unit == "stems":
+    if unit in ["stem", "stems"]:
         detected = False
         ret.stems_inspected_completion = n_units_to_inspect
         boxes_opened_completion = []
@@ -292,7 +292,7 @@ def inspect(config, shipment, n_units_to_inspect):
                     detected = True
         ret.boxes_opened_completion = len(set(boxes_opened_completion))
         ret.boxes_opened_detection = len(set(boxes_opened_detection))
-    elif unit == "boxes":
+    elif unit in ["box", "boxes"]:
         detected = False
         ret.boxes_opened_completion = n_units_to_inspect
         ret.stems_inspected_completion = n_units_to_inspect * inspect_per_box
@@ -308,6 +308,8 @@ def inspect(config, shipment, n_units_to_inspect):
                         ret.infested_stems_detection += 1
             if ret.infested_stems_detection > 0:
                 detected = True
+    else:
+        raise RuntimeError("Unknown inspection unit: {unit}".format(**locals()))
 
     ret.shipment_checked_ok = ret.infested_stems_completion == 0
     return ret
