@@ -275,9 +275,9 @@ def inspect(config, shipment, n_units_to_inspect):
                     )
                 else:
                     raise RuntimeError(
-                        "Num stems to inspect ({n_units_to_inspect}) is greater than max inspectable stems ({max_stems}). Increase within_box_pct.".format(
-                            **locals()
-                        )
+                        "Num stems to inspect ({n_units_to_inspect}) is greater "
+                        "than max inspectable stems ({max_stems}). Increase "
+                        "within_box_pct.".format(**locals())
                     )
             elif outer == "interval":
                 interval = config["inspection"]["hierarchical"]["interval"]
@@ -285,14 +285,14 @@ def inspect(config, shipment, n_units_to_inspect):
                 if max_stems >= n_units_to_inspect:
                     index_to_inspect = []
                     index = 0
-                    for n in range(n_boxes_to_inspect):
+                    for i in range(n_boxes_to_inspect):
                         index_to_inspect.append(index)
                         index += interval
                 else:
                     raise RuntimeError(
-                        "Num stems to inspect ({n_units_to_inspect}) is greater than max inspectable stems ({max_stems}). Increase within_box_pct or decrease interval.".format(
-                            **locals()
-                        )
+                        "Num stems to inspect ({n_units_to_inspect}) is greater "
+                        "than max inspectable stems ({max_stems}). Increase "
+                        "within_box_pct or decrease interval.".format(**locals())
                     )
             else:
                 raise RuntimeError("Unknown outer unit: {outer}".format(**locals()))
