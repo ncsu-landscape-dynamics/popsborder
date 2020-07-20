@@ -324,6 +324,8 @@ def config_to_simplified_simulation_params(config):
         sample_strategy="",
         sample_params="",
         selection_strategy="",
+        selection_param_1="",
+        selection_param_2="",
     )
 
     sim_params.infestation_type = config["pest"]["infestation_rate"]["distribution"]
@@ -356,7 +358,15 @@ def config_to_simplified_simulation_params(config):
     else:
         sim_params.sample_params = None
     sim_params.selection_strategy = config["inspection"]["selection_strategy"]
-
+    if sim_params.selection_strategy == "hierarchical":
+        sim_params.selection_param_1 = config["inspection"]["hierarchical"]["outer"]
+        if sim_params.selection_param_1 == "interval":
+            sim_params.selection_param_2 = config["inspection"]["hierarchical"][
+                "interval"
+            ]
+    else:
+        sim_params.selection_param_1 = None
+        sim_params.selection_param_2 = None
     return sim_params
 
 
@@ -382,36 +392,48 @@ def print_totals_as_text(num_shipments, config, totals):
     )
     print("infestation:\n\t type: {0}".format(sim_params.infestation_type))
     if sim_params.infestation_type == "fixed_value":
-        print("\t infestation rate: {0}".format(sim_params.infestation_param))
+        print("\t\t infestation rate: {0}".format(sim_params.infestation_param))
     elif sim_params.infestation_type == "beta":
         print(
-            "\t infestation distribution parameters: {0}".format(
+            "\t\t infestation distribution parameters: {0}".format(
                 sim_params.infestation_param
             )
         )
     print("\t pest arrangement: {0}".format(sim_params.pest_arrangement))
     if sim_params.pest_arrangement == "clustered":
         print(
-            "\t cluster width: {0} stems\n"
-            "\t maximum infested stems per cluster: {1} stems".format(
+            "\t\t cluster width: {0} stems\n"
+            "\t\t maximum infested stems per cluster: {1} stems".format(
                 sim_params.cluster_width, sim_params.max_stems_per_cluster
             )
         )
     print(
-        "inspection:\n\t unit: {0}\n\t proportion of box inspected: {1}\n"
-        "\t sample strategy: {2}".format(
-            sim_params.inspection_unit,
-            sim_params.within_box_pct,
-            sim_params.sample_strategy,
+        "inspection:\n\t unit: {0}\n\t sample strategy: {1}".format(
+            sim_params.inspection_unit, sim_params.sample_strategy,
         )
     )
     if sim_params.sample_strategy == "percentage":
-        print("\t proportion: {0}".format(sim_params.sample_params))
+        print("\t\t proportion: {0}".format(sim_params.sample_params))
     elif sim_params.sample_strategy == "hypergeometric":
-        print("\t detection level: {0}".format(sim_params.sample_params))
+        print("\t\t detection level: {0}".format(sim_params.sample_params))
     elif sim_params.sample_strategy == "fixed_n":
-        print("\t sample size: {0}".format(sim_params.sample_params))
+        print("\t\t sample size: {0}".format(sim_params.sample_params))
     print("\t selection strategy: {0}".format(sim_params.selection_strategy))
+    if sim_params.selection_strategy == "hierarchical":
+        print("\t\t box selection strategy: {0}".format(sim_params.selection_param_1))
+        if sim_params.selection_param_1 == "interval":
+            print(
+                "\t\t box selection interval: {0}".format(sim_params.selection_param_2)
+            )
+    if (
+        sim_params.inspection_unit in ["box", "boxes"]
+        or sim_params.selection_strategy == "hierarchical"
+    ):
+        print(
+            "\t proportion of stems inspected within box: {0}".format(
+                sim_params.within_box_pct
+            )
+        )
     print("\n")
 
     print("Simulation results:")
