@@ -145,9 +145,9 @@ def sample_all(config, shipment):
     :param shipment: Shipment to be inspected
     """
     unit = config["inspection"]["unit"]
-    if unit == "stems":
+    if unit in ["stem", "stems"]:
         n_units_to_inspect = shipment["num_stems"]
-    elif unit == "boxes":
+    elif unit in ["box", "boxes"]:
         n_units_to_inspect = shipment["num_boxes"]
     return n_units_to_inspect
 
@@ -170,13 +170,13 @@ def sample_n(config, shipment):
     num_boxes = shipment["num_boxes"]
     min_boxes = config.get("min_boxes", 1)
 
-    if unit == "stems":
+    if unit in ["stem", "stems"]:
         max_stems = compute_max_inspectable_stems(
             num_stems, stems_per_box, within_box_pct
         )
         # Check if max number of stems that can be inspected is less than fixed number.
         n_units_to_inspect = min(max_stems, fixed_n)
-    elif unit == "boxes":
+    elif unit in ["box", "boxes"]:
         n_units_to_inspect = fixed_n
         n_units_to_inspect = max(min_boxes, n_units_to_inspect)
         n_units_to_inspect = min(num_boxes, n_units_to_inspect)
@@ -226,7 +226,6 @@ def compute_max_inspectable_stems(num_stems, stems_per_box, within_box_pct):
     return max_stems
 
 
-# TODO: add check to balance within_box_pct and interval, give error message
 def inspect(config, shipment, n_units_to_inspect):
     """Select units from shipment based on specified selection strategy.
     Inspect selected units using both end strategies (to detection, to completion)
@@ -254,30 +253,50 @@ def inspect(config, shipment, n_units_to_inspect):
     if selection_strategy == "tailgate":
         index_to_inspect = range(n_units_to_inspect)
     elif selection_strategy == "random":
-        if unit == "stems":
+        if unit in ["stem", "stems"]:
             index_to_inspect = random.sample(range(num_stems), n_units_to_inspect)
-        elif unit == "boxes":
+        elif unit in ["box", "boxes"]:
             index_to_inspect = random.sample(range(num_boxes), n_units_to_inspect)
         else:
             raise RuntimeError("Unknown unit: {unit}".format(**locals()))
     elif selection_strategy == "hierarchical":
         outer = config["inspection"]["hierarchical"]["outer"]
-        if unit == "stems":
+        if unit in ["stem", "stems"]:
             n_boxes_to_inspect = convert_stems_to_boxes(
                 config, shipment, n_units_to_inspect
             )
+            max_stems = compute_max_inspectable_stems(
+                num_stems, stems_per_box, within_box_pct
+            )
             if outer == "random":
-                index_to_inspect = random.sample(range(num_boxes), n_boxes_to_inspect)
+                if max_stems >= n_units_to_inspect:
+                    index_to_inspect = random.sample(
+                        range(num_boxes), n_boxes_to_inspect
+                    )
+                else:
+                    raise RuntimeError(
+                        "Num stems to inspect ({n_units_to_inspect}) is greater than max inspectable stems ({max_stems}). Increase within_box_pct.".format(
+                            **locals()
+                        )
+                    )
             elif outer == "interval":
                 interval = config["inspection"]["hierarchical"]["interval"]
-                index_to_inspect = []
-                index = 0
-                for n in range(n_boxes_to_inspect):
-                    index_to_inspect.append(index)
-                    index += interval
+                max_stems = math.floor(max_stems / interval)
+                if max_stems >= n_units_to_inspect:
+                    index_to_inspect = []
+                    index = 0
+                    for n in range(n_boxes_to_inspect):
+                        index_to_inspect.append(index)
+                        index += interval
+                else:
+                    raise RuntimeError(
+                        "Num stems to inspect ({n_units_to_inspect}) is greater than max inspectable stems ({max_stems}). Increase within_box_pct or decrease interval.".format(
+                            **locals()
+                        )
+                    )
             else:
                 raise RuntimeError("Unknown outer unit: {outer}".format(**locals()))
-        elif unit == "boxes":
+        elif unit in ["box", "boxes"]:
             raise RuntimeError(
                 "Cannot use hierarchical selection strategy with box sampling unit"
             )
@@ -299,7 +318,7 @@ def inspect(config, shipment, n_units_to_inspect):
         infested_stems_detection=0,
     )
 
-    if unit == "stems":
+    if unit in ["stem", "stems"]:
         detected = False
         ret.stems_inspected_completion = n_units_to_inspect
         if selection_strategy == "hierarchical":
@@ -331,7 +350,7 @@ def inspect(config, shipment, n_units_to_inspect):
                         detected = True
             ret.boxes_opened_completion = len(set(boxes_opened_completion))
             ret.boxes_opened_detection = len(set(boxes_opened_detection))
-    elif unit == "boxes":
+    elif unit in ["box", "boxes"]:
         detected = False
         ret.boxes_opened_completion = n_units_to_inspect
         ret.stems_inspected_completion = n_units_to_inspect * inspect_per_box
