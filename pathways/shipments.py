@@ -61,12 +61,14 @@ class Box:
         return bool(np.any(self.stems > 0))
 
 
-class Shipment(collections.UserDict):  # pylint: disable=too-many-ancestors
+class Shipment(collections.UserDict):
     """A shipement with all its properties and what it contains.
 
     Access is through attributes (new style) or using a dictionary-like item access
     (old style).
     """
+    # Inheriting from this library class is its intended use, so disable ancestors msg.
+    # pylint: disable=too-many-ancestors
 
     def __getattr__(self, name):
         return self[name]
