@@ -30,6 +30,7 @@ import random
 import csv
 from datetime import datetime, timedelta
 import math
+import collections
 import numpy as np
 import scipy.stats as stats
 
@@ -58,6 +59,11 @@ class Box:
 
     def __bool__(self):
         return bool(np.any(self.stems > 0))
+
+
+class Shipment(collections.UserDict):
+    def __getattr__(self, name):
+       return self[name]
 
 
 class ParameterShipmentGenerator:
@@ -103,7 +109,7 @@ class ParameterShipmentGenerator:
         if self.num_generated % 3:
             self.date += timedelta(days=1)
 
-        return dict(
+        return Shipment(
             flower=flower,
             num_stems=num_stems,
             stems=stems,
@@ -153,7 +159,7 @@ class F280ShipmentGenerator:
         assert sum([box.num_stems for box in boxes]) == num_stems
 
         date = datetime.strptime(record["REPORT_DT"], "%Y-%m-%d")
-        return dict(
+        return Shipment(
             flower=record["COMMODITY"],
             num_stems=num_stems,
             stems=stems,
@@ -260,11 +266,10 @@ def add_pest_uniform_random(config, shipment):
 
     Infestation rate is determined using the ``infestation_rate`` config key.
     """
-    num_stems = shipment["num_stems"]
-    infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
+    infested_stems = num_stems_to_infest(config["infestation_rate"], shipment.num_stems)
     if infested_stems == 0:
         return
-    indexes = np.random.choice(num_stems, infested_stems, replace=False)
+    indexes = np.random.choice(shipment.num_stems, infested_stems, replace=False)
     np.put(shipment["stems"], indexes, 1)
     assert np.count_nonzero(shipment["stems"]) == infested_stems
 
@@ -300,8 +305,7 @@ def add_pest_clusters(config, shipment):
     Each item (box) in boxes (list) is set to True if a pest/pathogen is
     there, False otherwise.
     """
-    num_stems = shipment["num_stems"]
-    infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
+    infested_stems = num_stems_to_infest(config["infestation_rate"], shipment.num_stems)
     if infested_stems == 0:
         return
     max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
