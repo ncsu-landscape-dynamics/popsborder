@@ -67,6 +67,7 @@ class Shipment(collections.UserDict):
     Access is through attributes (new style) or using a dictionary-like item access
     (old style).
     """
+
     # Inheriting from this library class is its intended use, so disable ancestors msg.
     # pylint: disable=too-many-ancestors
 
