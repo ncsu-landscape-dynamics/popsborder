@@ -372,12 +372,12 @@ def print_totals_as_text(num_shipments, config, totals):
     print("shipments:\n\t Number shipments simulated: {0}".format(num_shipments))
     print(
         "\t Avg. number of boxes per shipment: {0}".format(
-            totals.num_boxes / num_shipments
+            round(totals.num_boxes / num_shipments)
         )
     )
     print(
         "\t Avg. number of stems per shipment: {0}".format(
-            totals.num_stems / num_shipments
+            round(totals.num_stems / num_shipments)
         )
     )
     print("infestation:\n\t type: {0}".format(sim_params.infestation_type))
