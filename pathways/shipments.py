@@ -61,9 +61,15 @@ class Box:
         return bool(np.any(self.stems > 0))
 
 
-class Shipment(collections.UserDict):
+class Shipment(collections.UserDict):  # pylint: disable=too-many-ancestors
+    """A shipement with all its properties and what it contains.
+
+    Access is through attributes (new style) or using a dictionary-like item access
+    (old style).
+    """
+
     def __getattr__(self, name):
-       return self[name]
+        return self[name]
 
 
 class ParameterShipmentGenerator:
@@ -305,7 +311,8 @@ def add_pest_clusters(config, shipment):
     Each item (box) in boxes (list) is set to True if a pest/pathogen is
     there, False otherwise.
     """
-    infested_stems = num_stems_to_infest(config["infestation_rate"], shipment.num_stems)
+    num_stems = shipment["num_stems"]
+    infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
     if infested_stems == 0:
         return
     max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
