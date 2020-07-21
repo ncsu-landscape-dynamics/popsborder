@@ -226,37 +226,31 @@ def compute_max_inspectable_stems(num_stems, stems_per_box, within_box_pct):
     return max_stems
 
 
-def inspect(config, shipment, n_units_to_inspect):
-    """Select units from shipment based on specified selection strategy.
-    Inspect selected units using both end strategies (to detection, to completion)
-    Return number of boxes opened, stems inspected, and infested stems found for
-    each end strategy.
+def select_units_to_inspect(config, shipment, n_units_to_inspect):
+    """Select units (indexes) from shipment based on sample size and
+    specified selection strategy.
 
     :param config: Configuration to be used
     :param shipment: Shipment to be inspected
-    :param n_units_to_inspect: Number of units to inspect defined by sample functions.
+    :param n_units_to_inspect: Number of units to inspect defined in sample functions.
     """
-    # Disabling warnings, possible future TODO is splitting this function.
-    # pylint: disable=too-many-locals,too-many-branches,too-many-statements
-
     unit = config["inspection"]["unit"]
-    pathway = shipment["pathway"]
-    stems_per_box = config["stems_per_box"]
-    stems_per_box = get_stems_per_box(stems_per_box, pathway)
-    num_stems = shipment["num_stems"]
-    num_boxes = shipment["num_boxes"]
-    within_box_pct = config["inspection"]["within_box_pct"]
-    inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
-
-    # Select units to inspect
     selection_strategy = config["inspection"]["selection_strategy"]
+    stems_per_box = config["stems_per_box"]
+    stems_per_box = get_stems_per_box(stems_per_box, shipment.pathway)
+    within_box_pct = config["inspection"]["within_box_pct"]
+
     if selection_strategy == "tailgate":
         index_to_inspect = range(n_units_to_inspect)
     elif selection_strategy == "random":
         if unit in ["stem", "stems"]:
-            index_to_inspect = random.sample(range(num_stems), n_units_to_inspect)
+            index_to_inspect = random.sample(
+                range(shipment.num_stems), n_units_to_inspect
+            )
         elif unit in ["box", "boxes"]:
-            index_to_inspect = random.sample(range(num_boxes), n_units_to_inspect)
+            index_to_inspect = random.sample(
+                range(shipment.num_boxes), n_units_to_inspect
+            )
         else:
             raise RuntimeError("Unknown unit: {unit}".format(**locals()))
     elif selection_strategy == "hierarchical":
@@ -266,12 +260,12 @@ def inspect(config, shipment, n_units_to_inspect):
                 config, shipment, n_units_to_inspect
             )
             max_stems = compute_max_inspectable_stems(
-                num_stems, stems_per_box, within_box_pct
+                shipment.num_stems, stems_per_box, within_box_pct
             )
             if outer == "random":
                 if max_stems >= n_units_to_inspect:
                     index_to_inspect = random.sample(
-                        range(num_boxes), n_boxes_to_inspect
+                        range(shipment.num_boxes), n_boxes_to_inspect
                     )
                 else:
                     raise RuntimeError(
@@ -306,6 +300,27 @@ def inspect(config, shipment, n_units_to_inspect):
         raise RuntimeError(
             "Unknown selection strategy: {selection_strategy}".format(**locals())
         )
+    return index_to_inspect
+
+
+def inspect(config, shipment, n_units_to_inspect):
+    """Inspect selected units using both end strategies (to detection, to completion)
+    Return number of boxes opened, stems inspected, and infested stems found for
+    each end strategy.
+
+    :param config: Configuration to be used
+    :param shipment: Shipment to be inspected
+    :param n_units_to_inspect: Number of units to inspect defined by sample functions.
+    """
+    unit = config["inspection"]["unit"]
+    selection_strategy = config["inspection"]["selection_strategy"]
+    pathway = shipment["pathway"]
+    stems_per_box = config["stems_per_box"]
+    stems_per_box = get_stems_per_box(stems_per_box, pathway)
+    within_box_pct = config["inspection"]["within_box_pct"]
+    inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
+
+    index_to_inspect = select_units_to_inspect(config, shipment, n_units_to_inspect)
 
     # Inspect selected boxes, count opened boxes, inspected stems, and infested stems
     # to detection and completion
@@ -322,11 +337,13 @@ def inspect(config, shipment, n_units_to_inspect):
         detected = False
         ret.stems_inspected_completion = n_units_to_inspect
         if selection_strategy == "hierarchical":
-            ret.boxes_opened_completion = n_boxes_to_inspect
+            ret.boxes_opened_completion = convert_stems_to_boxes(
+                config, shipment, n_units_to_inspect
+            )
             for box in index_to_inspect:
                 if not detected:
                     ret.boxes_opened_detection += 1
-                for stem in (shipment["boxes"][box]).stems[0:inspect_per_box]:
+                for stem in (shipment.boxes[box]).stems[0:inspect_per_box]:
                     if not detected:
                         ret.stems_inspected_detection += 1
                     if stem:  # Count infested stems in partial box sample to completion
@@ -343,7 +360,7 @@ def inspect(config, shipment, n_units_to_inspect):
                 if not detected:
                     ret.stems_inspected_detection += 1
                     boxes_opened_detection.append(math.ceil(stem / stems_per_box))
-                if shipment["stems"][stem]:  # Count every infested stem in sample
+                if shipment.stems[stem]:  # Count every infested stem in sample
                     ret.infested_stems_completion += 1
                     if not detected:
                         ret.infested_stems_detection += 1
@@ -357,7 +374,7 @@ def inspect(config, shipment, n_units_to_inspect):
         for box in index_to_inspect:
             if not detected:
                 ret.boxes_opened_detection += 1
-            for stem in (shipment["boxes"][box]).stems[0:inspect_per_box]:
+            for stem in (shipment.boxes[box]).stems[0:inspect_per_box]:
                 if not detected:
                     ret.stems_inspected_detection += 1
                 if stem:  # Count every infested stem in box, to completion within a box
