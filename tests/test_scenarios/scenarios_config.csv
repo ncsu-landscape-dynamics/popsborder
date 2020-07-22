@@ -7,8 +7,8 @@ large_5,25,500,200,"[1,80]",random,box,hypergeometric,,0.05,tailgate,1,
 large_6,25,500,200,"[1,80]",random,box,hypergeometric,,0.05,random,1,
 large_7,25,500,200,"[1,80]",random,stem,percentage,0.02,,tailgate,1,
 large_8,25,500,200,"[1,80]",random,stem,percentage,0.02,,random,1,
-large_9,25,500,200,"[1,80]",random,stem,percentage,0.02,,hierarchical,0.5,random
-large_10,25,500,200,"[1,80]",random,stem,percentage,0.02,,hierarchical,0.5,interval
+large_9,25,500,200,"[1,80]",random,stem,percentage,0.02,,hierarchical,0.25,random
+large_10,25,500,200,"[1,80]",random,stem,percentage,0.02,,hierarchical,0.25,interval
 large_11,25,500,200,"[1,80]",random,stem,hypergeometric,,0.01,tailgate,1,
 large_12,25,500,200,"[1,80]",random,stem,hypergeometric,,0.01,random,1,
 large_13,25,500,200,"[1,80]",random,stem,hypergeometric,,0.01,hierarchical,0.5,random
