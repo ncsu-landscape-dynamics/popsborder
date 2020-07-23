@@ -30,6 +30,8 @@ import shutil
 import weakref
 import csv
 import types
+from functools import reduce
+import operator
 
 from .inspections import count_diseased_boxes
 
@@ -474,3 +476,31 @@ def print_totals_as_text(num_shipments, config, totals):
             totals.pct_pest_unreported_if_detection
         )
     )
+
+
+def get_item_from_nested_dict(dictionary, keys):
+    """Get value from a nested dictionary by a nested keys-value pair"""
+    return reduce(operator.getitem, keys, dictionary)
+
+
+def save_scenario_result_to_table(filename, results, config_columns, result_columns):
+    """Save selected values for a scenario results to CSV including configuration
+
+    The results parameter is list of tuples which is output from the run_scenarios()
+    function.
+
+    Values from configuration or results are selected by columns parameters which are
+    in format key/subkey/subsubkey.
+    """
+    with open(filename, "w") as file:
+        writer = csv.DictWriter(file, config_columns + result_columns)
+        writer.writeheader()
+        for result, config in results:
+            row = {}
+            for column in config_columns:
+                keys = column.split("/")
+                row[column] = get_item_from_nested_dict(config, keys)
+            for column in result_columns:
+                keys = column.split("/")
+                row[column] = get_item_from_nested_dict(result.__dict__, keys)
+            writer.writerow(row)
