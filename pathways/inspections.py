@@ -321,7 +321,7 @@ def select_units_to_inspect(config, shipment, n_units_to_inspect):
                 )[0]
                 indexes_to_inspect = []
                 index = 0
-                for i in range(n_boxes_to_inspect):
+                for unused_i in range(n_boxes_to_inspect):
                     indexes_to_inspect.append(index)
                     index += interval
             else:
