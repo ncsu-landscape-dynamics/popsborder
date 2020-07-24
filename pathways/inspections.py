@@ -94,16 +94,19 @@ def sample_percentage(config, shipment):
     return n_units_to_inspect
 
 
-def compute_hypergeometric(population_size, detection_level, confidence_level):
+def compute_hypergeometric(detection_level, confidence_level):
     """Get sample size using hypergeometric distribution
 
     Compute sample size using hypergeometric distribution based on population
     size (total number of stems or boxes in shipment), detection level,
     and confidence level.
     """
+    # sample_size = math.ceil(
+    #     (1 - ((1 - confidence_level) ** (1 / (detection_level * population_size))))
+    #     * (population_size - (((detection_level * population_size) - 1) / 2))
+    # )
     sample_size = math.ceil(
-        (1 - ((1 - confidence_level) ** (1 / (detection_level * population_size))))
-        * (population_size - (((detection_level * population_size) - 1) / 2))
+        math.log(1 - confidence_level) / math.log(1 - detection_level)
     )
     return sample_size
 
@@ -123,13 +126,10 @@ def sample_hypergeometric(config, shipment):
     min_boxes = config.get("min_boxes", 1)
 
     if unit in ["stem", "stems"]:
-        n_units_to_inspect = compute_hypergeometric(
-            num_stems, detection_level, confidence_level
-        )
+        n_units_to_inspect = compute_hypergeometric(detection_level, confidence_level)
+        n_units_to_inspect = min(num_stems, n_units_to_inspect)
     elif unit in ["box", "boxes"]:
-        n_units_to_inspect = compute_hypergeometric(
-            num_boxes, detection_level, confidence_level
-        )
+        n_units_to_inspect = compute_hypergeometric(detection_level, confidence_level)
         n_units_to_inspect = max(min_boxes, n_units_to_inspect)
         n_units_to_inspect = min(num_boxes, n_units_to_inspect)
     else:
