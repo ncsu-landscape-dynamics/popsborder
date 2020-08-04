@@ -493,7 +493,14 @@ def save_scenario_result_to_table(filename, results, config_columns, result_colu
     in format key/subkey/subsubkey.
     """
     with open(filename, "w") as file:
-        writer = csv.DictWriter(file, config_columns + result_columns)
+        writer = csv.DictWriter(
+            file,
+            config_columns + result_columns,
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            quoting=csv.QUOTE_MINIMAL,
+        )
         writer.writeheader()
         for result, config in results:
             row = {}
