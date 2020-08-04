@@ -432,7 +432,7 @@ def print_totals_as_text(num_shipments, config, totals):
         or sim_params.selection_strategy == "hierarchical"
     ):
         print(
-            "\t proportion of stems inspected within box: {0}".format(
+            "\t minimum proportion of stems inspected within box: {0}".format(
                 sim_params.within_box_pct
             )
         )
