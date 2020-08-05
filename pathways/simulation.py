@@ -110,8 +110,8 @@ def simulation(
             shipment, shipment["arrival_time"]
         )
         if must_inspect:
-            n_boxes_to_inspect = sample(shipment)
-            ret = inspect(config, shipment, n_boxes_to_inspect)
+            n_units_to_inspect = sample(shipment)
+            ret = inspect(config, shipment, n_units_to_inspect)
             shipment_checked_ok = ret.shipment_checked_ok
             num_inspections += 1
             total_num_boxes += shipment["num_boxes"]
