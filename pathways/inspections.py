@@ -94,20 +94,24 @@ def sample_percentage(config, shipment):
     return n_units_to_inspect
 
 
-def compute_hypergeometric(detection_level, confidence_level):
+def compute_hypergeometric(detection_level, confidence_level, population_size):
     """Get sample size using hypergeometric distribution
 
     Compute sample size using hypergeometric distribution based on population
     size (total number of stems or boxes in shipment), detection level,
     and confidence level.
     """
-    # sample_size = math.ceil(
-    #     (1 - ((1 - confidence_level) ** (1 / (detection_level * population_size))))
-    #     * (population_size - (((detection_level * population_size) - 1) / 2))
-    # )
     sample_size = math.ceil(
-        math.log(1 - confidence_level) / math.log(1 - detection_level)
+        (1 - ((1 - confidence_level) ** (1 / (detection_level * population_size))))
+        * (population_size - (((detection_level * population_size) - 1) / 2))
     )
+    # Binomial approximation - appropriate for very large shipments with well mixed infestations (no clustering)
+    # works wehen sample size is < 5% of shipment size
+    # sample_size = math.ceil(
+    #     math.log(1 - confidence_level) / math.log(1 - detection_level)
+    # )
+
+    sample_size = min(sample_size, population_size)
     return sample_size
 
 
@@ -126,12 +130,16 @@ def sample_hypergeometric(config, shipment):
     min_boxes = config.get("min_boxes", 1)
 
     if unit in ["stem", "stems"]:
-        n_units_to_inspect = compute_hypergeometric(detection_level, confidence_level)
+        n_units_to_inspect = compute_hypergeometric(
+            detection_level, confidence_level, num_stems
+        )
         n_units_to_inspect = min(num_stems, n_units_to_inspect)
     elif unit in ["box", "boxes"]:
-        n_units_to_inspect = compute_hypergeometric(detection_level, confidence_level)
-        n_units_to_inspect = max(min_boxes, n_units_to_inspect)
-        n_units_to_inspect = min(num_boxes, n_units_to_inspect)
+        n_units_to_inspect = compute_hypergeometric(
+            detection_level, confidence_level, num_boxes
+        )
+        # n_units_to_inspect = max(min_boxes, n_units_to_inspect) # Don't think we need these two lines, taken care of in sample size computation
+        # n_units_to_inspect = min(num_boxes, n_units_to_inspect)
     else:
         raise RuntimeError("Unknown sampling unit: {unit}".format(**locals()))
     return n_units_to_inspect
