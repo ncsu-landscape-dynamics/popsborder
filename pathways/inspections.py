@@ -94,20 +94,28 @@ def sample_percentage(config, shipment):
     return n_units_to_inspect
 
 
-def compute_hypergeometric(detection_level, confidence_level):
+def compute_hypergeometric(detection_level, confidence_level, population_size):
     """Get sample size using hypergeometric distribution
 
     Compute sample size using hypergeometric distribution based on population
     size (total number of stems or boxes in shipment), detection level,
     and confidence level.
     """
-    # sample_size = math.ceil(
-    #     (1 - ((1 - confidence_level) ** (1 / (detection_level * population_size))))
-    #     * (population_size - (((detection_level * population_size) - 1) / 2))
-    # )
+    # Equation comes from RBS spreadsheet for calculating hypergeometric sample sizes
     sample_size = math.ceil(
-        math.log(1 - confidence_level) / math.log(1 - detection_level)
+        (1 - ((1 - confidence_level) ** (1 / (detection_level * population_size))))
+        * (population_size - (((detection_level * population_size) - 1) / 2))
     )
+
+    # Binomial approximation - appropriate for very large shipments with well mixed infestations (no clustering)
+    # works wehen sample size is < 5% of shipment size
+    # sample_size = math.ceil(
+    #     math.log(1 - confidence_level) / math.log(1 - detection_level)
+    # )
+
+    # The computation gives sample size > num boxes when using 1% detection
+    # Make max sample size = population size
+    sample_size = min(sample_size, population_size)
     return sample_size
 
 
@@ -126,12 +134,13 @@ def sample_hypergeometric(config, shipment):
     min_boxes = config.get("min_boxes", 1)
 
     if unit in ["stem", "stems"]:
-        n_units_to_inspect = compute_hypergeometric(detection_level, confidence_level)
-        n_units_to_inspect = min(num_stems, n_units_to_inspect)
+        n_units_to_inspect = compute_hypergeometric(
+            detection_level, confidence_level, num_stems
+        )
     elif unit in ["box", "boxes"]:
-        n_units_to_inspect = compute_hypergeometric(detection_level, confidence_level)
-        n_units_to_inspect = max(min_boxes, n_units_to_inspect)
-        n_units_to_inspect = min(num_boxes, n_units_to_inspect)
+        n_units_to_inspect = compute_hypergeometric(
+            detection_level, confidence_level, num_boxes
+        )
     else:
         raise RuntimeError("Unknown sampling unit: {unit}".format(**locals()))
     return n_units_to_inspect
@@ -187,7 +196,8 @@ def convert_stems_to_boxes_fixed_pct(config, shipment, n_stems_to_inspect):
     """Convert number of stems to inspect to number of boxes to inspect based on
     the number of stems per box and the percentage of stems to inspect per box
     specified in the config. Adjust number of boxes to inspect to be at least
-    the minimum number specified in the config and total number of boxes in shipment.
+    the minimum number of boxes to inspect specified in the config and at most the
+    total number of boxes in the shipment.
     Return number of boxes to inspect.
 
     :param config: Configuration to be used
@@ -202,7 +212,6 @@ def convert_stems_to_boxes_fixed_pct(config, shipment, n_stems_to_inspect):
     num_boxes = shipment["num_boxes"]
     inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
 
-    # Default inspect all stems per box, but allow partial box inspections
     n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
     n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
     n_boxes_to_inspect = min(num_boxes, n_boxes_to_inspect)
@@ -230,30 +239,39 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
     num_stems = shipment.num_stems
 
     if outer == "random":
+        # Check if within box pct is high enough to achieve sample size.
         max_stems = compute_max_inspectable_stems(
             num_stems, stems_per_box, within_box_pct
         )
         if max_stems >= n_stems_to_inspect:
             inspect_per_box = math.ceil(within_box_pct * stems_per_box)
             n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
-        else:
+        else:  # If not, divide sample size across number of boxes to get number of stems to inspect per box.
             inspect_per_box = math.ceil(n_stems_to_inspect / num_boxes)
             n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
 
-    elif outer == "interval":
+    elif outer == "interval":  # Every nth box, where n = interval
         interval = config["inspection"]["hierarchical"]["interval"]
-        max_boxes = max(1, round(num_boxes / interval))
-        max_stems = max_boxes * (math.ceil(within_box_pct * stems_per_box))
-        if max_stems >= n_stems_to_inspect:
+        max_boxes = max(
+            1, round(num_boxes / interval)
+        )  # Maximum num boxes that can be inspected based on interval. Should be at least 1.
+        max_stems = max_boxes * (
+            math.ceil(within_box_pct * stems_per_box)
+        )  # Assumes full boxes, no remainder partial box.
+        if (
+            max_stems >= n_stems_to_inspect
+        ):  # Check if within box percent is high enough and/or interval is low enough to acheive sample size
             inspect_per_box = math.ceil(within_box_pct * stems_per_box)
             n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
-        else:
+        else:  # If not, divide sample size across max boxes to get number of stems to inspect per box.
             inspect_per_box = math.ceil(n_stems_to_inspect / max_boxes)
             n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
     else:
         raise RuntimeError("Unknown outer unit: {outer}".format(**locals()))
 
-    n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
+    n_boxes_to_inspect = max(
+        min_boxes, n_boxes_to_inspect
+    )  # Allow user specified box minimum override calculations
     assert num_boxes >= n_boxes_to_inspect
 
     return n_boxes_to_inspect, inspect_per_box
@@ -273,6 +291,7 @@ def compute_max_inspectable_stems(num_stems, stems_per_box, within_box_pct):
     num_full_boxes = math.floor(num_stems / stems_per_box)
     full_box_inspectable_stems = num_full_boxes * inspect_per_box
     remainder_box = num_stems % stems_per_box
+    # Assume that num of stems to inspect is based on num of stems in full box. Same inspect_per_box will be applied to full and partial boxes.
     remainder_box_inspectable_stems = min(remainder_box, inspect_per_box)
     max_stems = full_box_inspectable_stems + remainder_box_inspectable_stems
     return max_stems
