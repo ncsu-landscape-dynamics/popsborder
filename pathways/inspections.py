@@ -323,13 +323,14 @@ def select_units_to_inspect(config, shipment, n_units_to_inspect):
             )
         else:
             raise RuntimeError("Unknown unit: {unit}".format(**locals()))
-    elif selection_strategy == "hierarchical":
+    elif selection_strategy == "hierarchical": # Compute number of boxes needed to achieve sample size and select box indexes.
         outer = config["inspection"]["hierarchical"]["outer"]
         if unit in ["stem", "stems"]:
             if outer == "random":
                 n_boxes_to_inspect = (
                     compute_n_outer_to_inspect(config, shipment, n_units_to_inspect)
                 )[0]
+                # Choose box indexes randomly
                 indexes_to_inspect = random.sample(
                     range(shipment.num_boxes), n_boxes_to_inspect
                 )
@@ -338,6 +339,7 @@ def select_units_to_inspect(config, shipment, n_units_to_inspect):
                 n_boxes_to_inspect = (
                     compute_n_outer_to_inspect(config, shipment, n_units_to_inspect)
                 )[0]
+                # Create list of indexes incremented by interval size
                 indexes_to_inspect = []
                 index = 0
                 for unused_i in range(n_boxes_to_inspect):
@@ -393,64 +395,63 @@ def inspect(config, shipment, n_units_to_inspect):
         detected = False
         ret.stems_inspected_completion = n_units_to_inspect
         if selection_strategy == "hierarchical":
+            # Compute num stems to inspect per box to achieve sample size based on within box pct.
             inspect_per_box = (
                 compute_n_outer_to_inspect(config, shipment, n_units_to_inspect)
             )[1]
             ret.boxes_opened_completion = len(indexes_to_inspect)
-            for box in indexes_to_inspect:
+            for box in indexes_to_inspect: # Loop through selected box indexes (random or interval selection)
                 if not detected:
                     ret.boxes_opened_detection += 1
-                for stem in (shipment.boxes[box]).stems[0:inspect_per_box]:
+                for stem in (shipment.boxes[box]).stems[0:inspect_per_box]: # In each box, loop through first n stems (n = inspect_per_box)
                     if not detected:
                         ret.stems_inspected_detection += 1
-                    if stem:  # Count infested stems in partial box sample to completion
-                        ret.infested_stems_completion += 1
+                    if stem:
+                        ret.infested_stems_completion += 1 # Count all infested stems in sample, regardless of detected variable
                         if not detected:
-                            ret.infested_stems_detection += 1
+                            ret.infested_stems_detection += 1 # Count infested stems in box if not yet detected
                 if ret.infested_stems_detection > 0:
-                    detected = True
-        else:
+                    detected = True # Update detected variable if infested stems found in box
+        else: # All other stem selection strategies inspected the same way
+            # Empty lists to hold opened boxes indexes, will be duplicates bc box index computed per inspected stem
             boxes_opened_completion = []
             boxes_opened_detection = []
-            for stem in indexes_to_inspect:
+            for stem in sort(indexes_to_inspect): # Loop through stems in sorted index list, sort list so inspection progresses through indexes in ascending order
                 boxes_opened_completion.append(
-                    math.ceil(stem / stems_per_box)
+                    math.floor(stem / stems_per_box)
                 )  # Compute box index number
                 if not detected:
                     ret.stems_inspected_detection += 1
                     boxes_opened_detection.append(
-                        math.ceil(stem / stems_per_box)
+                        math.floor(stem / stems_per_box)
                     )  # Compute box index number
-                if shipment.stems[stem]:  # Count every infested stem in sample
-                    ret.infested_stems_completion += 1
+                if shipment.stems[stem]:
+                    ret.infested_stems_completion += 1 # Count every infested stem in sample
                     if not detected:
-                        ret.infested_stems_detection += 1
+                        ret.infested_stems_detection += 1 # Should be only 1 infested stem if to detection
                         detected = True
+            # Number of boxes opened is number of unique boxes indexes in boxes opened lists
             ret.boxes_opened_completion = len(set(boxes_opened_completion))
             ret.boxes_opened_detection = len(set(boxes_opened_detection))
     elif unit in ["box", "boxes"]:
-        within_box_pct = config["inspection"][
-            "within_box_pct"
-        ]  # If less than 1.0, portion of stems in each box will be inspected tailgate
-        inspect_per_box = int(
-            math.ceil(within_box_pct * stems_per_box)
-        )  # This may be very similar to hierarchical - if so, partial box
-        # inspections functionality for box sample unit could be removed.
+        # Partial box inspections allowed to reduce number of stems inspected if desired
+        within_box_pct = config["inspection"]["within_box_pct"]
+        inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
         detected = False
         ret.boxes_opened_completion = n_units_to_inspect
         ret.stems_inspected_completion = n_units_to_inspect * inspect_per_box
         for box in indexes_to_inspect:
             if not detected:
                 ret.boxes_opened_detection += 1
-            for stem in (shipment.boxes[box]).stems[0:inspect_per_box]:
+            for stem in (shipment.boxes[box]).stems[0:inspect_per_box]: # In each box, loop through first n stems (n = inspect_per_box)
                 if not detected:
                     ret.stems_inspected_detection += 1
-                if stem:  # Count every infested stem in box, to completion within a box
-                    ret.infested_stems_completion += 1
+                if stem:
+                    ret.infested_stems_completion += 1 # Count every infested stem in sample
                     if not detected:
-                        ret.infested_stems_detection += 1
+                        ret.infested_stems_detection += 1 # If first infested box inspected, count all infested stems in box
             if ret.infested_stems_detection > 0:
-                detected = True
+                detected = True # If box contained infested stems, changed detected variable
 
     ret.shipment_checked_ok = ret.infested_stems_completion == 0
     return ret
