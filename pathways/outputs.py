@@ -451,7 +451,8 @@ def print_totals_as_text(num_shipments, config, totals):
     if totals.max_intercepted_infestation_rate is not None:
         print(
             "Max. infestation rate of intercepted shipments: {0:.3f}\nAvg. infestation rate of intercepted shipments: {1:.3f}".format(
-                totals.avg_intercepted_infestation_rate, totals.max_intercepted_infestation_rate
+                totals.avg_intercepted_infestation_rate,
+                totals.max_intercepted_infestation_rate,
             )
         )
     print(
