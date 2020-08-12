@@ -173,7 +173,7 @@ def sample_n(config, shipment):
     unit = config["inspection"]["unit"]
     within_box_pct = config["inspection"]["within_box_pct"]
     pathway = shipment["pathway"]
-    stems_per_box = config["stems_per_box"]
+    stems_per_box = config["shipment"]["stems_per_box"]
     stems_per_box = get_stems_per_box(stems_per_box, pathway)
     num_stems = shipment["num_stems"]
     num_boxes = shipment["num_boxes"]
@@ -205,7 +205,7 @@ def convert_stems_to_boxes_fixed_pct(config, shipment, n_stems_to_inspect):
     :param n_stems_to_inspect: Number of stems to inspect defined in sample functions.
     """
     pathway = shipment["pathway"]
-    stems_per_box = config["stems_per_box"]
+    stems_per_box = config["shipment"]["stems_per_box"]
     stems_per_box = get_stems_per_box(stems_per_box, pathway)
     within_box_pct = config["inspection"]["within_box_pct"]
     min_boxes = config.get("min_boxes", 1)
@@ -231,7 +231,7 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
     """
     outer = config["inspection"]["hierarchical"]["outer"]
     pathway = shipment.pathway
-    stems_per_box = config["stems_per_box"]
+    stems_per_box = config["shipment"]["stems_per_box"]
     stems_per_box = get_stems_per_box(stems_per_box, pathway)
     within_box_pct = config["inspection"]["within_box_pct"]
     min_boxes = config.get("min_boxes", 1)
@@ -385,7 +385,7 @@ def select_units_to_inspect(config, shipment, n_units_to_inspect):
     """
     unit = config["inspection"]["unit"]
     selection_strategy = config["inspection"]["selection_strategy"]
-    stems_per_box = config["stems_per_box"]
+    stems_per_box = config["shipment"]["stems_per_box"]
     stems_per_box = get_stems_per_box(stems_per_box, shipment.pathway)
 
     if selection_strategy == "tailgate":
@@ -421,7 +421,7 @@ def inspect(config, shipment, n_units_to_inspect):
     unit = config["inspection"]["unit"]
     selection_strategy = config["inspection"]["selection_strategy"]
     pathway = shipment["pathway"]
-    stems_per_box = config["stems_per_box"]
+    stems_per_box = config["shipment"]["stems_per_box"]
     stems_per_box = get_stems_per_box(stems_per_box, pathway)
 
     indexes_to_inspect = select_units_to_inspect(config, shipment, n_units_to_inspect)

@@ -21,7 +21,7 @@ def test_scenarios(datadir, tmp_path):
             "name",
             "shipment/boxes/min",
             "shipment/boxes/max",
-            "stems_per_box/default",
+            "shipment/stems_per_box/default",
             "pest/infestation_rate/parameters",
         ],
         result_columns=[

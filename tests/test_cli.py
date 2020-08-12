@@ -4,6 +4,11 @@ import subprocess
 
 CONFIG = """\
 shipment:
+  boxes:
+    min: 1
+    max: 50
+  stems_per_box:
+    default: 10
   origins:
   - Netherlands
   - Mexico
@@ -14,11 +19,6 @@ shipment:
   ports:
   - NY JFK CBP
   - FL Miami Air CBP
-  boxes:
-    min: 1
-    max: 50
-  stems_per_box:
-    default: 10
 pest:
   infestation_rate:
     distribution: beta
