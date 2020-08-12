@@ -27,9 +27,9 @@ pest:
     distribution: beta
     value: 0.05
     parameters:
-    - 4
-    - 60
-  arrangement: clustered
+    - 1
+    - 80
+  arrangement: random
   clustered:
     max_stems_per_cluster: 400
     distribution: random
@@ -48,8 +48,8 @@ release_programs:
     - Actinidia
     max_boxes: 10  # do not apply to shipments larger than
 inspection:
-  unit: stems
-  within_box_pct: 0.005
+  unit: boxes
+  within_box_pct: 0.05
   sample_strategy: hypergeometric
   percentage:
     proportion: 0.02
@@ -60,6 +60,9 @@ inspection:
     min_boxes: 1
   fixed_n: 10
   selection_strategy: random
+  hierarchical:
+    outer: random
+    interval: 3
 ports:
   - NY JFK CBP
   - FL Miami Air CBP

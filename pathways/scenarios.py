@@ -109,6 +109,7 @@ def run_scenarios(config, scenario_table, seed, num_simulations, num_shipments):
     """
     results = []
     for record in scenario_table:
+        print(record["name"])
         scenario_config = update_config(config, record)
         result = run_simulation(
             config=scenario_config,
