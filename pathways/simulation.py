@@ -91,8 +91,8 @@ def simulation(
     total_infested_stems_completion = 0
     total_infested_stems_detection = 0
     true_infestation_rate = 0
-    intercepted_infestation_rate = 0
-    missed_infestation_rate = 0
+    intercepted_infestation_rate = []
+    missed_infestation_rate = []
 
     shipment_generator = get_shipment_generator(config)
     add_pest = get_pest_function(config)
@@ -140,9 +140,9 @@ def simulation(
         true_infestation_rate += shipment_infestation_rate(shipment)
         if not shipment_actually_ok:
             if shipment_checked_ok:
-                missed_infestation_rate += shipment_infestation_rate(shipment)
+                missed_infestation_rate.append(shipment_infestation_rate(shipment))
             else:
-                intercepted_infestation_rate += shipment_infestation_rate(shipment)
+                intercepted_infestation_rate.append(shipment_infestation_rate(shipment))
 
     num_diseased = num_shipments - success_rates.ok
     if num_diseased:
@@ -156,22 +156,28 @@ def simulation(
 
     if success_rates.false_negative:
         false_negative_present = True
-        missed_infestation_rate = missed_infestation_rate / success_rates.false_negative
+        max_missed_infestation_rate = max(missed_infestation_rate)
+        avg_missed_infestation_rate = sum(missed_infestation_rate) / len(
+            missed_infestation_rate
+        )
     else:
         false_negative_present = False
-        missed_infestation_rate = 0
+        max_missed_infestation_rate = 0
+        avg_missed_infestation_rate = 0
 
     if success_rates.true_positive:
         true_positive_present = True
-        intercepted_infestation_rate = (
-            intercepted_infestation_rate / success_rates.true_positive
+        max_intercepted_infestation_rate = max(intercepted_infestation_rate)
+        avg_intercepted_infestation_rate = sum(intercepted_infestation_rate) / len(
+            intercepted_infestation_rate
         )
         pct_pest_unreported_if_detection = (
             1 - (total_infested_stems_detection / total_infested_stems_completion)
         ) * 100
     else:
         true_positive_present = False
-        intercepted_infestation_rate = 0
+        max_intercepted_infestation_rate = 0
+        avg_intercepted_infestation_rate = 0
         pct_pest_unreported_if_detection = 0
 
     return types.SimpleNamespace(
@@ -200,8 +206,10 @@ def simulation(
         ),
         pct_pest_unreported_if_detection=pct_pest_unreported_if_detection,
         true_infestation_rate=true_infestation_rate / num_shipments,
-        missed_infestation_rate=missed_infestation_rate,
-        intercepted_infestation_rate=intercepted_infestation_rate,
+        max_missed_infestation_rate=max_missed_infestation_rate,
+        avg_missed_infestation_rate=avg_missed_infestation_rate,
+        max_intercepted_infestation_rate=max_intercepted_infestation_rate,
+        avg_intercepted_infestation_rate=avg_intercepted_infestation_rate,
         false_negative_present=false_negative_present,
         true_positive_present=true_positive_present,
     )
@@ -241,8 +249,10 @@ def run_simulation(
         pct_sample_if_to_detection=0,
         pct_pest_unreported_if_detection=0,
         true_infestation_rate=0,
-        missed_infestation_rate=0,
-        intercepted_infestation_rate=0,
+        max_missed_infestation_rate=0,
+        avg_missed_infestation_rate=0,
+        max_intercepted_infestation_rate=0,
+        avg_intercepted_infestation_rate=0,
         false_negative_present=0,
         true_positive_present=0,
     )
@@ -273,8 +283,14 @@ def run_simulation(
             result.pct_pest_unreported_if_detection
         )
         totals.true_infestation_rate += result.true_infestation_rate
-        totals.missed_infestation_rate += result.missed_infestation_rate
-        totals.intercepted_infestation_rate += result.intercepted_infestation_rate
+        totals.max_missed_infestation_rate += result.max_missed_infestation_rate
+        totals.avg_missed_infestation_rate += result.avg_missed_infestation_rate
+        totals.max_intercepted_infestation_rate += (
+            result.max_intercepted_infestation_rate
+        )
+        totals.avg_intercepted_infestation_rate += (
+            result.avg_intercepted_infestation_rate
+        )
         totals.false_negative_present += result.false_negative_present
         totals.true_positive_present += result.true_positive_present
     # make these relative (reusing the variables)
@@ -294,13 +310,17 @@ def run_simulation(
     totals.pct_pest_unreported_if_detection /= float(num_simulations)
     totals.true_infestation_rate /= float(num_simulations)
     if totals.false_negative_present:
-        totals.missed_infestation_rate /= float(totals.false_negative_present)
+        totals.max_missed_infestation_rate /= float(totals.false_negative_present)
+        totals.avg_missed_infestation_rate /= float(totals.false_negative_present)
     else:
-        totals.missed_infestation_rate = None
+        totals.max_missed_infestation_rate = None
+        totals.avg_missed_infestation_rate = None
     if totals.true_positive_present:
-        totals.intercepted_infestation_rate /= float(totals.true_positive_present)
+        totals.max_intercepted_infestation_rate /= float(totals.true_positive_present)
+        totals.avg_intercepted_infestation_rate /= float(totals.true_positive_present)
     else:
-        totals.intercepted_infestation_rate = None
+        totals.max_intercepted_infestation_rate = None
+        totals.avg_intercepted_infestation_rate = None
 
     return totals
 
