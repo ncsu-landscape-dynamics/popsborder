@@ -429,7 +429,6 @@ def inspect(config, shipment, n_units_to_inspect):
 
     if unit in ["stem", "stems"]:
         detected = False
-        ret.stems_inspected_completion = n_units_to_inspect
         if selection_strategy == "hierarchical":
             # Compute num stems to inspect per box to achieve sample size
             # based on within box pct.
@@ -443,6 +442,7 @@ def inspect(config, shipment, n_units_to_inspect):
                     ret.boxes_opened_detection += 1
                 # In each box, loop through first n stems (n = inspect_per_box)
                 for stem in (shipment.boxes[box]).stems[0:inspect_per_box]:
+                    ret.stems_inspected_completion += 1
                     if not detected:
                         ret.stems_inspected_detection += 1
                     if stem:
@@ -463,6 +463,7 @@ def inspect(config, shipment, n_units_to_inspect):
             # Loop through stems in sorted index list (sorted in index functions)
             # Inspection progresses through indexes in ascending order
             for stem in indexes_to_inspect:
+                ret.stems_inspected_completion += 1
                 # Compute box index number
                 boxes_opened_completion.append(math.floor(stem / stems_per_box))
                 if not detected:
