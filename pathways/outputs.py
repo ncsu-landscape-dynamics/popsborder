@@ -444,13 +444,15 @@ def print_totals_as_text(num_shipments, config, totals):
     print("Avg. infestation rate: {0:.3f}".format(totals.true_infestation_rate))
     if totals.max_missed_infestation_rate is not None:
         print(
-            "Max. infestation rate of slipped shipments: {0:.3f}\nAvg. infestation rate of slipped shipments: {1:.3f}".format(
+            "Max. infestation rate of slipped shipments: {0:.3f}\n"
+            "Avg. infestation rate of slipped shipments: {1:.3f}".format(
                 totals.avg_missed_infestation_rate, totals.max_missed_infestation_rate
             )
         )
     if totals.max_intercepted_infestation_rate is not None:
         print(
-            "Max. infestation rate of intercepted shipments: {0:.3f}\nAvg. infestation rate of intercepted shipments: {1:.3f}".format(
+            "Max. infestation rate of intercepted shipments: {0:.3f}\n"
+            "Avg. infestation rate of intercepted shipments: {1:.3f}".format(
                 totals.avg_intercepted_infestation_rate,
                 totals.max_intercepted_infestation_rate,
             )
