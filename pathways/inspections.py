@@ -268,6 +268,10 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
         # stems to inspect per box.
         else:
             inspect_per_box = math.ceil(n_stems_to_inspect / max_boxes)
+            # If not enough boxes to achieve sample size, inspect all stems
+            # and increase n_boxes_to_inspect as needed.
+            if inspect_per_box > stems_per_box:
+                inspect_per_box = stems_per_box
             n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
     else:
         raise RuntimeError("Unknown outer unit: {outer}".format(**locals()))
@@ -348,6 +352,11 @@ def select_hierarchical_indexes(config, shipment, n_units_to_inspect):
             n_boxes_to_inspect = (
                 compute_n_outer_to_inspect(config, shipment, n_units_to_inspect)
             )[0]
+            max_boxes = max(1, round(shipment.num_boxes / interval))
+            # Check to see if interval is small enough to achieve n_boxes_to_inspect
+            # If not, decrease interval.
+            if n_boxes_to_inspect > max_boxes:
+                interval = round(shipment.num_boxes / n_boxes_to_inspect)
             # Create list of indexes incremented by interval size
             indexes_to_inspect = []
             index = 0
@@ -406,7 +415,8 @@ def inspect(config, shipment, n_units_to_inspect):
     :param n_units_to_inspect: Number of units to inspect defined by sample functions.
     """
     # Disabling warnings, possible future TODO is splitting this function.
-    # pylint: disable=too-many-locals,too-many-statements,too-many-branches,too-many-nested-blocks
+    # pylint: disable=too-many-locals,too-many-statements
+    # pylint: disable=too-many-branches,too-many-nested-blocks
 
     unit = config["inspection"]["unit"]
     selection_strategy = config["inspection"]["selection_strategy"]
@@ -429,7 +439,6 @@ def inspect(config, shipment, n_units_to_inspect):
 
     if unit in ["stem", "stems"]:
         detected = False
-        ret.stems_inspected_completion = n_units_to_inspect
         if selection_strategy == "hierarchical":
             # Compute num stems to inspect per box to achieve sample size
             # based on within box pct.
@@ -437,12 +446,20 @@ def inspect(config, shipment, n_units_to_inspect):
                 compute_n_outer_to_inspect(config, shipment, n_units_to_inspect)
             )[1]
             ret.boxes_opened_completion = len(indexes_to_inspect)
+            stems_inspected = 0
             # Loop through selected box indexes (random or interval selection)
             for box in indexes_to_inspect:
                 if not detected:
                     ret.boxes_opened_detection += 1
+                sample_remainder = n_units_to_inspect - stems_inspected
+                # If sample_remainder is less than inspect_per_box, set inspect_per_box
+                # to sample_remainder to avoid inspecting more stems than computed
+                # sample size.
+                if sample_remainder < inspect_per_box:
+                    inspect_per_box = sample_remainder
                 # In each box, loop through first n stems (n = inspect_per_box)
                 for stem in (shipment.boxes[box]).stems[0:inspect_per_box]:
+                    ret.stems_inspected_completion += 1
                     if not detected:
                         ret.stems_inspected_detection += 1
                     if stem:
@@ -455,6 +472,8 @@ def inspect(config, shipment, n_units_to_inspect):
                 if ret.infested_stems_detection > 0:
                     # Update detected variable if infested stems found in box
                     detected = True
+                stems_inspected += inspect_per_box
+            assert ret.stems_inspected_completion == n_units_to_inspect
         else:  # All other stem selection strategies inspected the same way
             # Empty lists to hold opened boxes indexes, will be duplicates bc box index
             # computed per inspected stem
@@ -463,6 +482,7 @@ def inspect(config, shipment, n_units_to_inspect):
             # Loop through stems in sorted index list (sorted in index functions)
             # Inspection progresses through indexes in ascending order
             for stem in indexes_to_inspect:
+                ret.stems_inspected_completion += 1
                 # Compute box index number
                 boxes_opened_completion.append(math.floor(stem / stems_per_box))
                 if not detected:
