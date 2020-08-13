@@ -415,8 +415,8 @@ def inspect(config, shipment, n_units_to_inspect):
     :param n_units_to_inspect: Number of units to inspect defined by sample functions.
     """
     # Disabling warnings, possible future TODO is splitting this function.
-    # pylint: disable=too-many-locals,too-many-statements,too-many-branches,
-    # too-many-nested-blocks
+    # pylint: disable=too-many-locals,too-many-statements
+    # pylint: disable=too-many-branches,too-many-nested-blocks
 
     unit = config["inspection"]["unit"]
     selection_strategy = config["inspection"]["selection_strategy"]
