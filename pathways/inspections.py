@@ -446,14 +446,14 @@ def inspect(config, shipment, n_units_to_inspect):
             )[1]
             ret.boxes_opened_completion = len(indexes_to_inspect)
             stems_inspected = 0
-            sample_remainder = n_units_to_inspect
             # Loop through selected box indexes (random or interval selection)
             for box in indexes_to_inspect:
                 if not detected:
                     ret.boxes_opened_detection += 1
                 sample_remainder = n_units_to_inspect - stems_inspected
-                # If sample_remainder is less than inspect_per_box, set inspect_per_box to
-                # sample_remainder to avoid inspecting more stems than computed sample size.
+                # If sample_remainder is less than inspect_per_box, set inspect_per_box
+                # to sample_remainder to avoid inspecting more stems than computed
+                # sample size.
                 if sample_remainder < inspect_per_box:
                     inspect_per_box = sample_remainder
                 # In each box, loop through first n stems (n = inspect_per_box)
