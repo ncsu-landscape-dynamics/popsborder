@@ -9,24 +9,24 @@ shipment:
     maritime:
       default: 200
   origins:
-    - Netherlands
-    - Mexico
-    - Israel
-    - Japan
-    - New Zealand
-    - India
-    - Tanzania
+  - Netherlands
+  - Mexico
+  - Israel
+  - Japan
+  - New Zealand
+  - India
+  - Tanzania
   flowers:
-    - Hyacinthus
-    - Rosa
-    - Gerbera
-    - Agapanthus
-    - Aegilops
-    - Protea
-    - Liatris
-    - Mokara
-    - Anemone
-    - Actinidia
+  - Hyacinthus
+  - Rosa
+  - Gerbera
+  - Agapanthus
+  - Aegilops
+  - Protea
+  - Liatris
+  - Mokara
+  - Anemone
+  - Actinidia
   ports:
   - NY JFK CBP
   - FL Miami Air CBP
@@ -42,15 +42,15 @@ pest:
     distribution: beta
     value: 0.05
     parameters:
-      - 1
-      - 80
+    - 1
+    - 80
   arrangement: random
   clustered:
     max_stems_per_cluster: 400
     distribution: random
     parameters:
-      - 800
-      - 20
+    - 800
+    - 20
   random_box:
     probability: 0.2
     ratio: 0.5
