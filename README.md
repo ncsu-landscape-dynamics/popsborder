@@ -43,7 +43,7 @@ If you are not familiar with Binder, see
 
 Documentation is included in the [docs](docs/) directory.
 [command line interface](docs/cli.md)
-and [pest configuration](docs/pests.md)
+and [shipment configuration](docs/shipments.md)
 pages are good ones to start with.
 
 
