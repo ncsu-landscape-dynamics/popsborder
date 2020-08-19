@@ -4,6 +4,11 @@ import subprocess
 
 CONFIG = """\
 shipment:
+  boxes:
+    min: 1
+    max: 50
+  stems_per_box:
+    default: 10
   origins:
   - Netherlands
   - Mexico
@@ -11,9 +16,9 @@ shipment:
   - Hyacinthus
   - Rosa
   - Gerbera
-  boxes:
-    min: 1
-    max: 50
+  ports:
+  - NY JFK CBP
+  - FL Miami Air CBP
 pest:
   infestation_rate:
     distribution: beta
@@ -37,11 +42,6 @@ inspection:
     min_boxes: 1
   fixed_n: 10
   selection_strategy: random
-ports:
-  - NY JFK CBP
-  - FL Miami Air CBP
-stems_per_box:
-  default: 10
 """
 
 

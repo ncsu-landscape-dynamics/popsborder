@@ -78,7 +78,7 @@ class Shipment(collections.UserDict):
 class ParameterShipmentGenerator:
     """Generate a shipments based on configuration parameters"""
 
-    def __init__(self, parameters, ports, stems_per_box, start_date):
+    def __init__(self, parameters, stems_per_box, start_date):
         """Set parameters for shipement generation
 
         :param parameters: Shipment parameters
@@ -87,7 +87,6 @@ class ParameterShipmentGenerator:
         :param start_date: Date to start shipment dates from
         """
         self.params = parameters
-        self.ports = ports
         self.stems_per_box = stems_per_box
         self.num_generated = 0
         if isinstance(start_date, str):
@@ -96,7 +95,7 @@ class ParameterShipmentGenerator:
 
     def generate_shipment(self):
         """Generate a new shipment"""
-        port = random.choice(self.ports)
+        port = random.choice(self.params["ports"])
         # flowers or commodities
         flower = random.choice(self.params["flowers"])
         origin = random.choice(self.params["origins"])
@@ -183,10 +182,10 @@ class F280ShipmentGenerator:
 
 def get_stems_per_box(stems_per_box, pathway):
     """Based on config and pathway, return number of stems per box."""
-    if pathway == "Airport":
+    if pathway.lower() == "airport" and "air" in stems_per_box:
         stems_per_box = stems_per_box["air"]["default"]
-    elif pathway == "Maritime":
-        stems_per_box = stems_per_box["Maritime"]["default"]
+    elif pathway.lower() == "maritime" and "maritime" in stems_per_box:
+        stems_per_box = stems_per_box["maritime"]["default"]
     else:
         stems_per_box = stems_per_box["default"]
     return stems_per_box
@@ -194,16 +193,17 @@ def get_stems_per_box(stems_per_box, pathway):
 
 def get_shipment_generator(config):
     """Based on config, return shipment generator object."""
-    if "input_F280" in config:
+    if "f280_file" in config:
         shipment_generator = F280ShipmentGenerator(
-            stems_per_box=config["stems_per_box"], filename=config["input_F280"]
+            stems_per_box=config["shipment"]["stems_per_box"],
+            filename=config["f280_file"],
         )
     else:
+        start_date = config["shipment"].get("start_date", "2020-01-01")
         shipment_generator = ParameterShipmentGenerator(
             parameters=config["shipment"],
-            ports=config["ports"],
-            stems_per_box=config["stems_per_box"],
-            start_date="2020-04-01",
+            stems_per_box=config["shipment"]["stems_per_box"],
+            start_date=start_date,
         )
     return shipment_generator
 

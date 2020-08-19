@@ -61,3 +61,5 @@ To fix that, restart the kernel from menu using:
 After even more time of inactivity the whole environment shuts down.
 There is no way to restore it. To avoid any surprises, it is good to
 save your work often.
+
+Next: [Command line interface](cli.md)

@@ -1,4 +1,4 @@
-name,shipment/boxes/min,shipment/boxes/max,stems_per_box/default,pest/infestation_rate/parameters,pest/arrangement,inspection/unit,inspection/sample_strategy,inspection/percentage/proportion,inspection/hypergeometric/detection_level,inspection/selection_strategy,inspection/within_box_pct,inspection/hierarchical/outer
+name,shipment/boxes/min,shipment/boxes/max,shipment/stems_per_box/default,pest/infestation_rate/parameters,pest/arrangement,inspection/unit,inspection/sample_strategy,inspection/percentage/proportion,inspection/hypergeometric/detection_level,inspection/selection_strategy,inspection/within_box_pct,inspection/hierarchical/outer
 large_1,25,500,200,"[1,80]",random,box,percentage,0.02,,tailgate,1,
 large_2,25,500,200,"[1,80]",random,box,percentage,0.02,,random,1,
 large_3,25,500,200,"[1,80]",random,box,percentage,0.05,,tailgate,1,
