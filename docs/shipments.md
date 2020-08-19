@@ -94,7 +94,7 @@ shipment:
     air:
       default: 50
     maritime:
-      default: 500
+      default: 700
 ```
 
 Notice that the values for `stems_per_box` are under additional key
