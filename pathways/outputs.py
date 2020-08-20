@@ -515,6 +515,7 @@ def save_scenario_result_to_table(filename, results, config_columns, result_colu
                 row[column] = get_item_from_nested_dict(result.__dict__, keys)
             writer.writerow(row)
 
+
 def save_scenario_result_to_pandas(results, config_columns, result_columns):
     """Save selected values for a scenario to a pandas DataFrame.
 
