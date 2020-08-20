@@ -12,6 +12,7 @@ pytest-datadir = "*"
 
 [packages]
 pathways = {editable = true, path = "."}
+pandas = "*"
 
 [requires]
 python_version = "3.8"

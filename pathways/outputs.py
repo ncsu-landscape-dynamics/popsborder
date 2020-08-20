@@ -514,3 +514,29 @@ def save_scenario_result_to_table(filename, results, config_columns, result_colu
                 keys = column.split("/")
                 row[column] = get_item_from_nested_dict(result.__dict__, keys)
             writer.writerow(row)
+
+
+def save_scenario_result_to_pandas(results, config_columns, result_columns):
+    """Save selected values for a scenario to a pandas DataFrame.
+
+    The results parameter is list of tuples which is output from the run_scenarios()
+    function.
+
+    Values from configuration or results are selected by columns parameters which are
+    in format key/subkey/subsubkey.
+    """
+    # We don't want a special dependency to fail import of this file
+    # in case this function is not used.
+    import pandas as pd  # pylint: disable=import-outside-toplevel
+
+    rows = []
+    for result, config in results:
+        row = {}
+        for column in config_columns:
+            keys = column.split("/")
+            row[column] = get_item_from_nested_dict(config, keys)
+        for column in result_columns:
+            keys = column.split("/")
+            row[column] = get_item_from_nested_dict(result.__dict__, keys)
+        rows.append(row)
+    return pd.DataFrame.from_records(rows)
