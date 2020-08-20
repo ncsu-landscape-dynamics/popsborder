@@ -525,7 +525,9 @@ def save_scenario_result_to_pandas(results, config_columns, result_columns):
     Values from configuration or results are selected by columns parameters which are
     in format key/subkey/subsubkey.
     """
-    import pandas as pd
+    # We don't want a special dependency to fail import of this file
+    # in case this function is not used.
+    import pandas as pd  # pylint: disable=import-outside-toplevel
 
     rows = []
     for result, config in results:
