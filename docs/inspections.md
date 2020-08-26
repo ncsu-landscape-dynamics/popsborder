@@ -11,17 +11,15 @@ inspection:
 The inspection unit can be either `stems` for computing sample size based on 
 number of stems in the shipment or `boxes` for computing sample size based on number of boxes in the shipment.
 
-## Proportion of box to inspect
+## Partial box inspections
 The proportion of stems within a box to be inspected can be determined by:
 
 ```
 inspection:
-  within_box_pct: 100
+  within_box_pct: 1
 ```
 
-The value of `within_box_pct` can be set to any integer. By default, 100 
-percent of stems within a box will be inspected. If `within_box_pct < 100`, the
- first `n = within_box_pct * stems_per_box` stems in each box will be inspected.
+The value of `within_box_pct` can be set to any value greater than 0 and less than or equal to 1. By default, `within_box_pct = 1` meaning all stems within a box can be inspected. If `within_box_pct < 1`, only the first `n = within_box_pct * stems_per_box` stems in each box will be inspected.
 
 ## Sample strategy
 The sample strategy can be determined by:
@@ -70,7 +68,7 @@ The equation used to compute the sample size is:
 n=(1-(alpha)^1/D)(N-(D-1/2))
 ```
 
-### Fixed n strategy
+### Fixed *n* strategy
 The settings for `fixed_n` are:
 
 ```
@@ -88,18 +86,48 @@ inspection:
     selection_strategy: random
 ```
 
-While the sample strategy determines *how many* units to inspect, the selection strategy is used to determine *which* units to select for inspection. The possible selection strategies include `random` for selecting units to inspect
-using a uniform random distribution, `tailgate` for selecting the first `n` 
-units to inspect, or `hierarchical` for selecting boxes for partial inspection. The `hierarchical` selection strategy is only valid for the `stem` inspection unit.
+While the sample strategy determines *how many* units to inspect, the selection strategy is used to determine *which* units to select for inspection. The possible selection strategies include `random` for selecting units to inspect using a uniform random distribution, `tailgate` for selecting the first `n` units to inspect, or `hierarchical` for selecting boxes for partial inspection. The `hierarchical` selection strategy is valid only for the `stem` inspection unit.
 
-Each simulation runs automatically two options in regard to determining
-the end of an inspection. The two possible end strategies are
-to first detection of pest
-when an inspection ends as soon as a pest is detected and
-to completion strategy when the inspection continues until the whole
-sample was completed regardless of pest detection.
-The number of infested units detected is compared to the actual number
-of pests in sample to quantify number of reported pests for each strategy.
+### Hierarchical stratgey
+The term hierarchical is meant to describe that the sample size is computed based on a lower unit (stems), but the sample selection uses the higher unit (boxes). This selection strategy cannot be used with the highest inspection unit (e.g., `unit = "boxes"`).
+
+The settings for `hierarchical` are:
+
+```
+inspection:
+    hierarchical:
+      outer: random
+      interval: 3
+```
+
+The method for selecting the outer units (boxes in this case) is set by `outer`. The possible values for `outer` are `random` for selecting the outer units using a random uniform distribution and `interval` for selecting every *nth* outer unit. If `outer = "interval"`, the interval size is set by `interval`.
+
+A simple example using the following configuration:
+```
+shipment:
+  stems_per_box:
+    default: 200
+inspection:
+  unit: stem
+  within_box_pct: 0.25
+  sample_strategy: hypergeometric
+  selection_strategy: hierarchical
+    hierarchical:
+      outer: random
+```
+
+In this case, the sample size is calculated using the hypergeometric approach based on the total number of stems in the shipment and the stems to be inspected are selected using the hierarchical approach.
+
+Let's say the computed sample size (`n_units_to_inspect`) is 200 stems. The following steps are used to determine which stems to inspect. First, the `within_box_pct` value is used to determine how many boxes need to be opened to get to the sample size. The number of stems inspected per box is `within_box_pct` * `stems_per_box` (200 * 0.25 = 50), so only 50 stems would be inspected per box. The number of boxes that need to be opened to get to the sample size is `n_units_to_inspect` / `inspect_per_box` (200 / 50 = 4), so 4 boxes need to be opened. Once the number of boxes needed is determined, those boxes are then selected from the shipment randomly since `outer = "random"` and the first 25% of stems are inspected tailgate style, i.e., first *n*. 
+
+The hierarchical selection strategy was designed for use with hypergeometric sample size computation using stems as the inspection unit. An important assumption for the hypergeometric sample size to work effectively is that every unit has an equal chance of being selected. This is feasible when using boxes as the inspection unit, since boxes could be numbered and the inspector could be directed to select boxes based on randomly generated box numbers. When using stems as the sample unit, however, ensuring every stem has an equal chance of being selected is more difficult, as there are likely too many stems to individually number and the stems may be packaged in bunches and stacked within a box. The hierarchical selection method does not ensure each stem has an equal chance of being selected, but it provides a sort of compromise to spread the sample out across the shipment while still limiting the number of boxes opened and stems inspected.
+
+## End strategy
+Each simulation automatically runs two options for determining when to end an inspection (end strategies). The two possible end strategies are `to detection` and `to completion`.
+
+For the `to detection` end strategy, the inspection ends as soon as a pest is detected. For the `to completion` strategy, the inspection continues until the full sample has been inspected, regardless of pest detection.
+
+The number of infested units detected for each end strategy is compared to quantify the proportion of pests reported when the inspection is ended at detection. 
 
 ## Cut Flower Release Program (CFRP)
 
@@ -112,13 +140,6 @@ release_programs:
     - Rosa
     - Actinidia
     max_boxes: 10  # do not apply to shipments larger than
-```
-
-Tailgate with *n* boxes:
-
-```
-inspection:
-  first_n_boxes: 2
 ```
 
 ---
