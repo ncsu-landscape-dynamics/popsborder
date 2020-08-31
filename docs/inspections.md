@@ -30,7 +30,7 @@ The sample strategy can be determined by:
 
 ```
 inspection:
-    sample_strategy: percentage
+  sample_strategy: percentage
 ```
 
 The sample strategy defines the method used to compute the number of units to
@@ -46,9 +46,9 @@ The settings for `percentage` are:
 
 ```
 inspection:
-    percentage:
-        proportion: 0.02
-        min_boxes: 1
+  percentage:
+      proportion: 0.02
+      min_boxes: 1
 ```
 
 The percentage value is set by `proportion` and the minimum number of boxes to
@@ -63,10 +63,10 @@ The settings for `hypergeometric` are:
 
 ```
 inspection:
-    hypergeometric:
-        detection_level: 0.05
-        confidence_level: 0.95
-        min_boxes: 1
+  hypergeometric:
+      detection_level: 0.05
+      confidence_level: 0.95
+      min_boxes: 1
 ``` 
 
 The minimum infestation level to be detected with sample is set by
@@ -84,7 +84,7 @@ The settings for `fixed_n` are:
 
 ```
 inspection:
-    fixed_n: 10
+  fixed_n: 10
 ```
 
 The number of units to be inspected can be any integer set by `fixed_n`. If
@@ -101,7 +101,7 @@ The unit selection strategy can be determined by:
 
 ```
 inspection:
-    selection_strategy: random
+  selection_strategy: random
 ```
 
 While the sample strategy determines *how many* units to inspect, the selection
@@ -120,7 +120,12 @@ based on a lower unit (stems), but the sample selection uses the higher unit
 
 The settings for `hierarchical` are:
 
-``` inspection: hierarchical: outer: random interval: 3 ```
+``` 
+inspection:
+  hierarchical: 
+    outer: random
+    interval: 3 
+```
 
 The method for selecting the outer units (boxes in this case) is set by `outer`.
 The possible values for `outer` are `random` for selecting the outer units using
