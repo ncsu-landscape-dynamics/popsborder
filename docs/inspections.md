@@ -44,7 +44,7 @@ inspection:
 
 The percentage value is set by `proportion` and the minimum number of boxes to
  be inspected is set by `min_boxes`. If `unit = "stems"`, the number of stems to inspect
- is computed by `proportion * num_stems`. Similarly, If `unit = "boxes"`, the number of boxes to inspect is computed by `proportion * num_boxes`.
+ is computed by `proportion * num_stems`. Similarly, if `unit = "boxes"`, the number of boxes to inspect is computed by `proportion * num_boxes`.
 
 ### Hypergeometric strategy
 
@@ -76,7 +76,7 @@ inspection:
     fixed_n: 10
 ```
 
-The number of units to be inspected can be any integer set by `fixed_n`. If `unit = "stems"`, the sample size will be set to the minimum of two values: `fixed_n` and the maximum number of inspectable stems based on within_box_pct (`max_stems = within_box_pct * stems_per_box * num_boxes`). If `unit = "boxes"`, the sample size will be set to `fixed_n` if `min_boxes <= fixed_n <= num_boxes`. If `fixed_n` is less than the minimum number of boxes to inspect, number of boxes to inspect will be set to `min_boxes`. If `fixed_n` exceeds the number of boxes in the shipment, number of boxes to inspect will be set to `num_boxes`.
+The number of units to be inspected can be any integer set by `fixed_n`. If `unit = "stems"`, the sample size will be set to the minimum of two values: `fixed_n` and the maximum number of inspectable stems based on `within_box_pct` (`max_stems = within_box_pct * stems_per_box * num_boxes`). If `unit = "boxes"`, the sample size will be set to `fixed_n` if `min_boxes <= fixed_n <= num_boxes`. If `fixed_n` is less than the minimum number of boxes to inspect, number of boxes to inspect will be set to `min_boxes`. If `fixed_n` exceeds the number of boxes in the shipment, number of boxes to inspect will be set to `num_boxes`.
 
 ## Selection strategy
 The unit selection strategy can be determined by:
@@ -112,8 +112,8 @@ inspection:
   within_box_pct: 0.25
   sample_strategy: hypergeometric
   selection_strategy: hierarchical
-    hierarchical:
-      outer: random
+  hierarchical:
+    outer: random
 ```
 
 In this case, the sample size is calculated using the hypergeometric approach based on the total number of stems in the shipment and the stems to be inspected are selected using the hierarchical approach.
