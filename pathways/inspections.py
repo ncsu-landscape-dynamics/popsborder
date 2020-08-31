@@ -260,7 +260,7 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
         # Assumes full boxes, no remainder partial box.
         max_stems = max_boxes * (math.ceil(within_box_pct * stems_per_box))
         # Check if within box percent is high enough and/or interval is
-        # low enough to acheive sample size
+        # low enough to achieve sample size
         if max_stems >= n_stems_to_inspect:
             inspect_per_box = math.ceil(within_box_pct * stems_per_box)
             n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
