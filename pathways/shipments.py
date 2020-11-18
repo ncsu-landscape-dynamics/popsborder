@@ -75,7 +75,7 @@ class Shipment(collections.UserDict):
         return self[name]
 
     def count_infested(self):
-        return np.count_nonzero(self["stems"])
+        return np.count_nonzero(self.stems)
 
 
 class ParameterShipmentGenerator:
