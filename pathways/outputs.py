@@ -411,7 +411,8 @@ def print_totals_as_text(num_shipments, config, totals):
         )
     print(
         "inspection:\n\t unit: {0}\n\t sample strategy: {1}".format(
-            sim_params.inspection_unit, sim_params.sample_strategy,
+            sim_params.inspection_unit,
+            sim_params.sample_strategy,
         )
     )
     if sim_params.sample_strategy == "percentage":
@@ -441,42 +442,39 @@ def print_totals_as_text(num_shipments, config, totals):
     print("Simulation results:")
     print("-----------------------")
     print("Avg. % shipments slipped: {0:.2f}%".format(totals.missing))
+    print("Total number of missed pests: {0:,.0f}".format(totals.total_missed_pests))
+    print(
+        "Total number of intercepted pests: {0:,.0f}".format(
+            totals.total_intercepted_pests
+        )
+    )
     print("Avg. infestation rate: {0:.3f}".format(totals.true_infestation_rate))
     if totals.max_missed_infestation_rate is not None:
         print(
-            "Max. infestation rate of slipped shipments: {0:.3f}\n"
-            "Avg. infestation rate of slipped shipments: {1:.3f}".format(
-                totals.avg_missed_infestation_rate, totals.max_missed_infestation_rate
+            "Avg. infestation rate of slipped shipments: {totals.avg_missed_infestation_rate:.3f}\n"
+            "Max. infestation rate of slipped shipments: {totals.max_missed_infestation_rate:.3f}".format(
+                **locals()
             )
         )
     if totals.max_intercepted_infestation_rate is not None:
         print(
-            "Max. infestation rate of intercepted shipments: {0:.3f}\n"
-            "Avg. infestation rate of intercepted shipments: {1:.3f}".format(
-                totals.avg_intercepted_infestation_rate,
-                totals.max_intercepted_infestation_rate,
+            "Avg. infestation rate of intercepted shipments: {totals.avg_intercepted_infestation_rate:.3f}\n"
+            "Max. infestation rate of intercepted shipments: {totals.max_intercepted_infestation_rate:.3f}".format(
+                **locals()
             )
         )
     print(
-        "Avg. number of boxes opened per shipment:\n\t to completion: {0:.0f}\n"
-        "\t to detection: {1:.0f}".format(
-            totals.avg_boxes_opened_completion, totals.avg_boxes_opened_detection
-        )
+        "Avg. number of boxes opened per shipment:\n\t to completion: {totals.avg_boxes_opened_completion:.0f}\n"
+        "\t to detection: {totals.avg_boxes_opened_detection:.0f}".format(**locals())
     )
     print(
-        "Avg. number of stems inspected per shipment:\n\t to completion: {0:.0f}\n"
-        "\t to detection: {1:.0f}".format(
-            totals.avg_stems_inspected_completion, totals.avg_stems_inspected_detection
-        )
+        "Avg. number of stems inspected per shipment:\n\t to completion: {totals.avg_stems_inspected_completion:.0f}\n"
+        "\t to detection: {totals.avg_stems_inspected_detection:.0f}".format(**locals())
     )
     print(
-        "Avg. % sample completed if sample ends at detection: {0:.2f}%".format(
-            totals.pct_sample_if_to_detection
-        )
-    )
-    print(
-        "Avg. % infested stems unreported if sample ends at detection: {0:.2f}%".format(
-            totals.pct_pest_unreported_if_detection
+        "Avg. % sample completed if sample ends at detection: {totals.pct_sample_if_to_detection:.2f}%\n"
+        "Avg. % infested stems unreported if sample ends at detection: {totals.pct_pest_unreported_if_detection:.2f}%".format(
+            **locals()
         )
     )
 
