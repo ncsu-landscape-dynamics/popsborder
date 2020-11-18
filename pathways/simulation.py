@@ -182,6 +182,7 @@ def simulation(
 
     return types.SimpleNamespace(
         missing=missing,
+        intercepted=success_rates.true_positive,
         num_inspections=num_inspections,
         total_num_boxes=total_num_boxes,
         total_num_stems=total_num_stems,
@@ -235,6 +236,7 @@ def run_simulation(
 
     totals = types.SimpleNamespace(
         missing=0,
+        intercepted=0,
         num_inspections=0,
         num_boxes=0,
         num_stems=0,
@@ -267,6 +269,7 @@ def run_simulation(
             pretty=pretty,
         )
         totals.missing += result.missing
+        totals.intercepted += result.intercepted
         totals.num_inspections += result.num_inspections
         totals.num_boxes += result.total_num_boxes
         totals.num_stems += result.total_num_stems
@@ -295,6 +298,7 @@ def run_simulation(
         totals.true_positive_present += result.true_positive_present
     # make these relative (reusing the variables)
     totals.missing /= float(num_simulations)
+    totals.intercepted /= float(num_simulations)
     totals.num_inspections /= float(num_simulations)
     totals.num_boxes /= float(num_simulations)
     totals.num_stems /= float(num_simulations)

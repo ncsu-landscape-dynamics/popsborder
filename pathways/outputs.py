@@ -293,7 +293,7 @@ class SuccessRates(object):
         """Record testing result for one shipment
 
         :param checked_ok: True if the shipment tested negative on presence of pest
-        :param checked_ok: True if the shipment actually does not have pest
+        :param actually_ok: True if the shipment actually does not have pest
         :param shipmemt: The shipement itself (for reporting purposes)
         """
         if checked_ok and actually_ok:
@@ -441,6 +441,7 @@ def print_totals_as_text(num_shipments, config, totals):
     print("Simulation results:")
     print("-----------------------")
     print("Avg. % shipments slipped: {0:.2f}%".format(totals.missing))
+    print("Avg. num. shipments intercepted: {0:,.0f}".format(totals.intercepted))
     print("Avg. infestation rate: {0:.3f}".format(totals.true_infestation_rate))
     if totals.max_missed_infestation_rate is not None:
         print(
