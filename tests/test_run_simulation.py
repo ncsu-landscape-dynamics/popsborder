@@ -72,7 +72,10 @@ def test_gives_reasonable_result(num_simulations):
     config["shipment"]["boxes"]["max"] = max_boxes
     for seed in range(10):
         result = run_simulation(
-            config=config, num_simulations=1, num_shipments=100, seed=seed,
+            config=config,
+            num_simulations=1,
+            num_shipments=100,
+            seed=seed,
         )
         test_min_boxes = min_boxes * num_shipments
         test_max_boxes = max_boxes * num_shipments
