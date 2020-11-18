@@ -411,7 +411,8 @@ def print_totals_as_text(num_shipments, config, totals):
         )
     print(
         "inspection:\n\t unit: {0}\n\t sample strategy: {1}".format(
-            sim_params.inspection_unit, sim_params.sample_strategy,
+            sim_params.inspection_unit,
+            sim_params.sample_strategy,
         )
     )
     if sim_params.sample_strategy == "percentage":

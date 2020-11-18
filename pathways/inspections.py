@@ -531,8 +531,7 @@ def inspect(config, shipment, n_units_to_inspect):
 
 
 def get_sample_function(config):
-    """Based on config, return function to sample a shipment.
-    """
+    """Based on config, return function to sample a shipment."""
     sample_strategy = config["inspection"]["sample_strategy"]
     if sample_strategy == "percentage":
 
