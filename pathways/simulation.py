@@ -32,10 +32,7 @@ import random
 import numpy as np
 
 
-from .shipments import (
-    get_shipment_generator,
-    get_pest_function,
-)
+from .shipments import get_shipment_generator, get_pest_function, Shipment
 from .inspections import (
     get_inspection_needed_function,
     get_sample_function,
@@ -93,6 +90,8 @@ def simulation(
     true_infestation_rate = 0
     intercepted_infestation_rate = []
     missed_infestation_rate = []
+    total_intercepted_pests = 0
+    total_missed_pests = 0
 
     shipment_generator = get_shipment_generator(config)
     add_pest = get_pest_function(config)
@@ -141,8 +140,10 @@ def simulation(
         if not shipment_actually_ok:
             if shipment_checked_ok:
                 missed_infestation_rate.append(shipment_infestation_rate(shipment))
+                total_missed_pests += shipment.count_infested()
             else:
                 intercepted_infestation_rate.append(shipment_infestation_rate(shipment))
+                total_intercepted_pests += shipment.count_infested()
 
     num_diseased = num_shipments - success_rates.ok
     if num_diseased:
@@ -213,6 +214,8 @@ def simulation(
         avg_intercepted_infestation_rate=avg_intercepted_infestation_rate,
         false_negative_present=false_negative_present,
         true_positive_present=true_positive_present,
+        total_intercepted_pests=total_intercepted_pests,
+        total_missed_pests=total_missed_pests,
     )
 
 
@@ -257,6 +260,8 @@ def run_simulation(
         avg_intercepted_infestation_rate=0,
         false_negative_present=0,
         true_positive_present=0,
+        total_intercepted_pests=0,
+        total_missed_pests=0,
     )
 
     for i in range(num_simulations):
@@ -296,6 +301,8 @@ def run_simulation(
         )
         totals.false_negative_present += result.false_negative_present
         totals.true_positive_present += result.true_positive_present
+        totals.total_intercepted_pests += result.total_intercepted_pests
+        totals.total_missed_pests += result.total_missed_pests
     # make these relative (reusing the variables)
     totals.missing /= float(num_simulations)
     totals.intercepted /= float(num_simulations)
@@ -325,6 +332,8 @@ def run_simulation(
     else:
         totals.max_intercepted_infestation_rate = None
         totals.avg_intercepted_infestation_rate = None
+    totals.total_intercepted_pests /= float(num_simulations)
+    totals.total_missed_pests /= float(num_simulations)
 
     return totals
 

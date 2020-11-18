@@ -5,23 +5,25 @@ from pathways.outputs import save_scenario_result_to_table
 
 def main():
     basic_config = load_configuration("tests/test_scenarios/config.yml")
-    scenario_table = load_scenario_table("tests/test_scenarios/scenarios_config_5.csv")
+    scenario_table = load_scenario_table(
+        "tests/test_scenarios/scenarios_config_subset.csv"
+    )
     results = run_scenarios(
         config=basic_config,
         scenario_table=scenario_table,
         seed=42,
-        num_simulations=10,
+        num_simulations=1,
         num_shipments=1000,
     )
     assert len(scenario_table) == len(results)
     save_scenario_result_to_table(
-        "results_5.csv",
+        "results.csv",
         results,
         config_columns=[
             "name",
             "shipment/boxes/min",
             "shipment/boxes/max",
-            "stems_per_box/default",
+            "shipment/stems_per_box/default",
             "pest/infestation_rate/parameters",
             "pest/arrangement",
             "inspection/unit",
@@ -45,6 +47,8 @@ def main():
             "avg_stems_inspected_detection",
             "pct_sample_if_to_detection",
             "pct_pest_unreported_if_detection",
+            "total_missed_pests",
+            "total_intercepted_pests",
         ],
     )
 
