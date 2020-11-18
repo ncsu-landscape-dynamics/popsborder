@@ -45,14 +45,21 @@ pest:
     distribution: beta
     value: 0.1
     parameters:
-      - 0.942631386983
-      - 273.264725126
+      # stems
+      - 0.9998207923
+      - 5578.1175514
+      # boxes
+      #- 0.942631386983
+      #- 273.264725126
+      # both
+      #- 0.243875716307
+      #- 223.427186223
   arrangement: clustered
   clustered:
-    max_stems_per_cluster: 150
+    max_stems_per_cluster: 400
     distribution: random
     parameters:
-      - 200
+      - 800
       - 20
   random_box:
     probability: 0.2
@@ -66,7 +73,7 @@ release_programs:
       - Actinidia
     max_boxes: 10 # do not apply to shipments larger than
 inspection:
-  unit: box
+  unit: boxes
   within_box_pct: 1
   sample_strategy: hypergeometric
   percentage:
