@@ -140,10 +140,10 @@ def simulation(
         if not shipment_actually_ok:
             if shipment_checked_ok:
                 missed_infestation_rate.append(shipment_infestation_rate(shipment))
-                total_missed_pests += Shipment.count_infested(shipment)
+                total_missed_pests += shipment.count_infested()
             else:
                 intercepted_infestation_rate.append(shipment_infestation_rate(shipment))
-                total_intercepted_pests += Shipment.count_infested(shipment)
+                total_intercepted_pests += shipment.count_infested()
 
     num_diseased = num_shipments - success_rates.ok
     if num_diseased:
