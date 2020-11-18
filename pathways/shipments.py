@@ -41,8 +41,8 @@ class Box:
     Evaluates to bool when it contains pest.
 
     Box is a view into array of stems, i.e. a slice of that array. The
-    assumption is that the original, and possibly modifed, stems can be not
-    only accessed but also modifed through the box.
+    assumption is that the original, and possibly modifed, stems can not
+    only be accessed but also modifed through the box.
     """
 
     def __init__(self, stems):
