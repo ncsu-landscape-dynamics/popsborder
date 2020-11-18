@@ -109,7 +109,7 @@ def compute_hypergeometric(detection_level, confidence_level, population_size):
 
     # Binomial approximation - appropriate for very large shipments with
     # well mixed infestations (no clustering).
-    # Works wehen sample size is < 5% of shipment size
+    # Works when sample size is < 5% of shipment size
     # sample_size = math.ceil(
     #     math.log(1 - confidence_level) / math.log(1 - detection_level)
     # )
