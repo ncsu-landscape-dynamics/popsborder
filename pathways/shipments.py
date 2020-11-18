@@ -180,6 +180,63 @@ class F280ShipmentGenerator:
         )
 
 
+class AQIMShipmentGenerator:
+    """Generate a shipments based on existing AQIM records"""
+
+    def __init__(self, quant_unit, stems_per_box, filename, separator=","):
+        self.infile = open(filename)
+        self.reader = csv.DictReader(self.infile, delimiter=separator)
+        self.stems_per_box = stems_per_box
+        self.quant_unit = quant_unit
+
+    def generate_shipment(self):
+        """Generate a new shipment"""
+        try:
+            record = next(self.reader)
+        except StopIteration:
+            raise RuntimeError(
+                "More shipments requested than number of records in provided AQIM data"
+            )
+        pathway = record["CARGO_FORM"]
+        stems_per_box = self.stems_per_box
+        stems_per_box = get_stems_per_box(stems_per_box, pathway)
+        quant_unit = self.quant_unit
+
+        if quant_unit in ["box", "boxes"]:
+            num_stems = int(record["QUANTITY"]) * stems_per_box
+        elif quant_unit in ["stem", "stems"]:
+            num_stems = int(record["QUANTITY"])
+        else:
+            raise RuntimeError("Unknown quantity unit: {quant_unit}".format(**locals()))
+
+        stems = np.zeros(num_stems, dtype=np.int)
+
+        # rounding up to keep the max per box and have enough boxes
+        num_boxes = int(math.ceil(num_stems / float(stems_per_box)))
+        if num_boxes < 1:
+            num_boxes = 1
+        boxes = []
+        for i in range(num_boxes):
+            lower = i * stems_per_box
+            # slicing does not go over the size even if our last box is smaller
+            upper = (i + 1) * stems_per_box
+            boxes.append(Box(stems[lower:upper]))
+        assert sum([box.num_stems for box in boxes]) == num_stems
+
+        date = record["CALENDAR_YR"]
+        return Shipment(
+            flower=record["COMMODITY_LIST"],
+            num_stems=num_stems,
+            stems=stems,
+            num_boxes=num_boxes,
+            arrival_time=date,
+            boxes=boxes,
+            origin=record["ORIGIN"],
+            port=record["LOCATION"],
+            pathway=pathway,
+        )
+
+
 def get_stems_per_box(stems_per_box, pathway):
     """Based on config and pathway, return number of stems per box."""
     if pathway.lower() == "airport" and "air" in stems_per_box:
@@ -197,6 +254,12 @@ def get_shipment_generator(config):
         shipment_generator = F280ShipmentGenerator(
             stems_per_box=config["shipment"]["stems_per_box"],
             filename=config["f280_file"],
+        )
+    elif "aqim_file" in config:
+        shipment_generator = AQIMShipmentGenerator(
+            quant_unit=config["quant_unit"],
+            stems_per_box=config["shipment"]["stems_per_box"],
+            filename=config["aqim_file"],
         )
     else:
         start_date = config["shipment"].get("start_date", "2020-01-01")
