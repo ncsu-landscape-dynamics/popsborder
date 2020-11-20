@@ -44,6 +44,15 @@ pest:
     distribution: beta
     value: 0.05
     parameters:
+      # stems
+      #- 0.9998207923
+      #- 5578.1175514
+      # boxes
+      #- 0.942631386983
+      #- 273.264725126
+      # both
+      #- 0.243875716307
+      #- 223.427186223
       - 1
       - 80
   arrangement: random
