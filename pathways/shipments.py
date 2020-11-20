@@ -62,7 +62,7 @@ class Box:
 
 
 class Shipment(collections.UserDict):
-    """A shipement with all its properties and what it contains.
+    """A shipment with all its properties and what it contains.
 
     Access is through attributes (new style) or using a dictionary-like item access
     (old style).
@@ -75,6 +75,7 @@ class Shipment(collections.UserDict):
         return self[name]
 
     def count_infested(self):
+        """Count infested stems in box."""
         return np.count_nonzero(self.stems)
 
 
