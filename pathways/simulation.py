@@ -149,11 +149,13 @@ def simulation(
     if num_diseased:
         # avoiding float division by zero
         missing = 100 * float(success_rates.false_negative) / (num_diseased)
+        false_neg = success_rates.false_negative
         if verbose:
             print("Missing {0:.0f}% of shipments with pest.".format(missing))
     else:
         # we didn't miss anything
         missing = 0
+        false_neg = 0
 
     if success_rates.false_negative:
         false_negative_present = True
@@ -183,6 +185,7 @@ def simulation(
 
     return types.SimpleNamespace(
         missing=missing,
+        false_neg=false_neg,
         intercepted=success_rates.true_positive,
         num_inspections=num_inspections,
         total_num_boxes=total_num_boxes,
@@ -239,6 +242,7 @@ def run_simulation(
 
     totals = types.SimpleNamespace(
         missing=0,
+        false_neg=0,
         intercepted=0,
         num_inspections=0,
         num_boxes=0,
@@ -274,6 +278,7 @@ def run_simulation(
             pretty=pretty,
         )
         totals.missing += result.missing
+        totals.false_neg += result.false_neg
         totals.intercepted += result.intercepted
         totals.num_inspections += result.num_inspections
         totals.num_boxes += result.total_num_boxes
@@ -305,6 +310,7 @@ def run_simulation(
         totals.total_missed_pests += result.total_missed_pests
     # make these relative (reusing the variables)
     totals.missing /= float(num_simulations)
+    totals.false_neg /= float(num_simulations)
     totals.intercepted /= float(num_simulations)
     totals.num_inspections /= float(num_simulations)
     totals.num_boxes /= float(num_simulations)

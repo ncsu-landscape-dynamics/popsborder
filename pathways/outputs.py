@@ -441,7 +441,8 @@ def print_totals_as_text(num_shipments, config, totals):
 
     print("Simulation results:")
     print("-----------------------")
-    print("Avg. % shipments slipped: {0:.2f}%".format(totals.missing))
+    print("Avg. % contaminated shipments missed: {0:.2f}%".format(totals.missing))
+    print("Avg. num. shipments missed: {0:,.0f}".format(totals.false_neg))
     print("Avg. num. shipments intercepted: {0:,.0f}".format(totals.intercepted))
     print("Total number of missed pests: {0:,.0f}".format(totals.total_missed_pests))
     print(
