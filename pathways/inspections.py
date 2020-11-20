@@ -532,7 +532,7 @@ def inspect(config, shipment, n_units_to_inspect):
                     if stem:
                         # Count every infested stem in sample
                         ret.infested_stems_completion += 1
-                        # If first infested box inspected, count all infested stems in box
+                        # If first infested box inspected, count infested stems in box
                         if not detected:
                             ret.infested_stems_detection += 1
             # If box contained infested stems, changed detected variable

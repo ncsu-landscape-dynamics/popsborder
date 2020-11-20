@@ -32,7 +32,7 @@ import random
 import numpy as np
 
 
-from .shipments import get_shipment_generator, get_pest_function, Shipment
+from .shipments import get_shipment_generator, get_pest_function
 from .inspections import (
     get_inspection_needed_function,
     get_sample_function,
