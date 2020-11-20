@@ -481,15 +481,15 @@ def inspect(config, shipment, n_units_to_inspect):
             boxes_opened_detection = []
             # Loop through stems in sorted index list (sorted in index functions)
             # Inspection progresses through indexes in ascending order
-            for stem in indexes_to_inspect:
+            for index in indexes_to_inspect:
                 ret.stems_inspected_completion += 1
                 # Compute box index number
-                boxes_opened_completion.append(math.floor(stem / stems_per_box))
+                boxes_opened_completion.append(math.floor(index / stems_per_box))
                 if not detected:
                     ret.stems_inspected_detection += 1
                     # Compute box index number
-                    boxes_opened_detection.append(math.floor(stem / stems_per_box))
-                if shipment.stems[stem]:
+                    boxes_opened_detection.append(math.floor(index / stems_per_box))
+                if shipment.stems[index]:
                     # Count every infested stem in sample
                     ret.infested_stems_completion += 1
                     if not detected:
@@ -509,19 +509,32 @@ def inspect(config, shipment, n_units_to_inspect):
         detected = False
         ret.boxes_opened_completion = n_units_to_inspect
         ret.stems_inspected_completion = n_units_to_inspect * inspect_per_box
-        for box in indexes_to_inspect:
+        for index in indexes_to_inspect:
             if not detected:
                 ret.boxes_opened_detection += 1
-            # In each box, loop through first n stems (n = inspect_per_box)
-            for stem in (shipment.boxes[box]).stems[0:inspect_per_box]:
+            # If inspecting full box, use box object for inspection
+            if within_box_pct in [1, 1.0]:
                 if not detected:
-                    ret.stems_inspected_detection += 1
-                if stem:
-                    # Count every infested stem in sample
-                    ret.infested_stems_completion += 1
-                    # If first infested box inspected, count all infested stems in box
+                    ret.stems_inspected_detection += stems_per_box
+                if shipment.boxes[index]:
+                    ret.infested_stems_completion += np.count_nonzero(
+                        (shipment.boxes[index]).stems
+                    )
                     if not detected:
-                        ret.infested_stems_detection += 1
+                        ret.infested_stems_detection += np.count_nonzero(
+                            (shipment.boxes[index]).stems
+                        )
+            # In each box, loop through first n stems (n = inspect_per_box)
+            else:
+                for stem in (shipment.boxes[index]).stems[0:inspect_per_box]:
+                    if not detected:
+                        ret.stems_inspected_detection += 1
+                    if stem:
+                        # Count every infested stem in sample
+                        ret.infested_stems_completion += 1
+                        # If first infested box inspected, count all infested stems in box
+                        if not detected:
+                            ret.infested_stems_detection += 1
             # If box contained infested stems, changed detected variable
             if ret.infested_stems_detection > 0:
                 detected = True
