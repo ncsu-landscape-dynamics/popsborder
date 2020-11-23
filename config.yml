@@ -38,9 +38,8 @@ shipment:
     - TX Brownsville CBP
     - WA Blaine CBP
   # f280_file: F280_sample.csv
-#aqim_file: aqim_2011_2020_joined_boxes.csv
-aqim_file: blank_aqim_for_testing.csv
-quantity_unit: boxes
+aqim_file: aqim_2011_2020_joined_stems_boxes.csv
+#aqim_file: blank_aqim_for_testing.csv
 pest:
   infestation_rate:
     distribution: beta
