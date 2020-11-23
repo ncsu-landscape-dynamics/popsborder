@@ -518,7 +518,7 @@ def inspect(config, shipment, n_units_to_inspect):
                     ret.stems_inspected_detection += stems_per_box
                 if shipment.boxes[index]:
                     ret.infested_stems_completion += np.count_nonzero(
-                        (shipment.boxes[index]).stems
+                        shipment.boxes[index].stems
                     )
                     if not detected:
                         ret.infested_stems_detection += np.count_nonzero(
