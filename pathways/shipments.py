@@ -346,18 +346,18 @@ def add_pest_uniform_random(config, shipment):
 
     Infestation rate is determined using the ``infestation_rate`` config key.
     """
-    infest_unit = config["infest_unit"]
+    infestation_unit = config["infestation_unit"]
     infested_stems = num_stems_to_infest(config["infestation_rate"], shipment.num_stems)
     if infested_stems == 0:
         return
-    if infest_unit in ["box", "boxes"]:
+    if infestation_unit in ["box", "boxes"]:
         stems_per_box = shipment.stems_per_box
         infested_boxes = round(infested_stems / stems_per_box)
         indexes = np.random.choice(shipment.num_boxes, infested_boxes, replace=False)
         for index in indexes:
             shipment.boxes[index].stems.fill(1)
         assert np.count_nonzero(shipment["boxes"]) == infested_boxes
-    if infest_unit in ["stem", "stems"]:
+    if infestation_unit in ["stem", "stems"]:
         indexes = np.random.choice(shipment.num_stems, infested_stems, replace=False)
         np.put(shipment["stems"], indexes, 1)
         assert np.count_nonzero(shipment["stems"]) == infested_stems
@@ -394,13 +394,12 @@ def _infested_boxes_to_cluster_sizes(infested_boxes, max_boxes_per_cluster):
     if infested_boxes > max_boxes_per_cluster:
         # Split into n clusters so that n-1 clusters have the max size and
         # the last one has the remaining stems.
-        # Alternative would be sth like round(infested_stems/max_stems_per_cluster)
         sum_boxes = 0
         cluster_sizes = []
         while sum_boxes < infested_boxes - max_boxes_per_cluster:
             sum_boxes += max_boxes_per_cluster
             cluster_sizes.append(max_boxes_per_cluster)
-        # add remaining stems
+        # add remaining boxes
         cluster_sizes.append(infested_boxes - sum_boxes)
         sum_boxes += infested_boxes - sum_boxes
         assert sum_boxes == infested_boxes
@@ -417,14 +416,14 @@ def add_pest_clusters(config, shipment):
     Each item (box) in boxes (list) is set to True if a pest/pathogen is
     there, False otherwise.
     """
-    infest_unit = config["infest_unit"]
+    infestation_unit = config["infestation_unit"]
     num_stems = shipment["num_stems"]
     infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
     if infested_stems == 0:
         return
     max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
 
-    if infest_unit in ["box", "boxes"]:
+    if infestation_unit in ["box", "boxes"]:
         stems_per_box = shipment.stems_per_box
         infested_boxes = round(infested_stems / stems_per_box)
         max_boxes_per_cluster = math.ceil(max_stems_per_cluster / stems_per_box)
@@ -444,7 +443,7 @@ def add_pest_clusters(config, shipment):
                 shipment.boxes[cluster_index].stems.fill(1)
         assert np.count_nonzero(shipment["boxes"]) <= infested_boxes
 
-    elif infest_unit in ["stem", "stems"]:
+    elif infestation_unit in ["stem", "stems"]:
         cluster_sizes = _infested_stems_to_cluster_sizes(
             infested_stems, max_stems_per_cluster
         )
@@ -496,7 +495,9 @@ def add_pest_clusters(config, shipment):
         assert np.count_nonzero(shipment["stems"]) <= infested_stems
 
     else:
-        raise RuntimeError("Unknown infestation unit: {infest_unit}".format(**locals()))
+        raise RuntimeError(
+            "Unknown infestation unit: {infestation_unit}".format(**locals())
+        )
 
 
 def get_pest_function(config):
