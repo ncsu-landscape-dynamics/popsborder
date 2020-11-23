@@ -1,8 +1,8 @@
 # Shipment configuration
 
-The shipments can be either purely synthetic or based on existing F280
-records. Configuration for the shipments is under the `shipment` key
-in the configuration file.
+The shipments can be either purely synthetic or based on AQAS inspection
+ records (Form 280 or AQIM). Configuration for the shipments is under
+ the `shipment` key in the configuration file.
 
 ## Synthetic shipments
 
@@ -64,12 +64,12 @@ specified in the configuration like so:
 ## F280-based shipments
 
 Shipments in the simulation can be based on real F280 records. In that
-case, a CSV file needs to be specified.
+case, a CSV file needs to be specified using the `f280_file` key.
 
 The CSV is expected to have the following columns:
  * QUANTITY which will be used as number of stems,
  * PATHWAY which is used to determine the `stems_per_box` value
-   (comparison is case insensitive),
+   (case insensitive),
  * REPORT_DT is used for date,
  * COMMODITY as the flower (commodity type),
  * ORIGIN_NM as origin, and
@@ -79,16 +79,43 @@ The CSV file should be comma-separated (`,`) using double quote for text
 fields (`"`). The path is absolute or relative to the place where the
 Python program is running.
 
-The F280 records contain only the number of stems. To create the boxes
-(of stems) for the simulation, `stems_per_box` need to be specified.
-Optionally, specific values for `air` and `maritime` can be added.
-The following is a configuration with file called `F280_sample.csv`.
-If the pathway is `air`, one box has 50 stems, 500 for `maritime`,
-and 100 for other pathways.
+
+## AQIM-based shipments
+
+Shipments in the simulation can also be based on AQIM inspection records. In that
+case, a CSV file needs to be specified using the `aqim_file` key.
+
+The CSV is expected to have the following columns:
+ * UNIT which is used to specify the unit (must be stems or boxes) used
+   in QUANTITY.
+ * QUANTITY which is used as number of stems or number of boxes
+   depending on UNIT specified,
+ * CARGO_FORM which is used to determine the `stems_per_box` value
+   similar to PATHWAY in F280 (case insensitive),
+ * CALENDAR_YR is used for date (YYYY only),
+ * COMMODITY_LIST is used as the flower (commodity type),
+ * ORIGIN as origin, and
+ * LOCATION as port of entry (where shipment was received).
+
+The CSV file should be comma-separated (`,`) using double quote for text
+fields (`"`). The path is absolute or relative to the place where the
+Python program is running.
+
+## Stems per box
+To create the boxes (of stems) for the simulation, a value for
+`stems_per_box` needs to be specified. F280 and AQIM inspections records
+include information about the consignment pathway, which can be used to
+vary the value of `stems_per_box`. For example, the following is a
+configuration for generating shipments using a file called
+`AQIM_sample.csv` with `stems_per_box` values that vary by `air` and
+`maritime` pathways. If the shipment arrives via an air
+pathway, one box will contain 50 stems. If the shipment arrives via a maritime
+pathway, one box will contain 500 stems. If the pathway is not `air` or
+`maritime`, a default value of 100 stems per box is used.
 
 ```yaml
 shipment:
-  f280_file: F280_sample.csv
+  aqim_file: aqim_sample.csv
   stems_per_box:
     default: 100
     air:
@@ -100,6 +127,7 @@ shipment:
 Notice that the values for `stems_per_box` are under additional key
 `default`. In the future, the simulation may support other keys for
 specific commodities, origins, or ports.
+
 
 ---
 
