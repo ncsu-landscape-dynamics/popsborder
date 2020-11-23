@@ -125,6 +125,7 @@ class ParameterShipmentGenerator:
             flower=flower,
             num_stems=num_stems,
             stems=stems,
+            stems_per_box=stems_per_box,
             num_boxes=num_boxes,
             arrival_time=self.date,
             boxes=boxes,
@@ -175,6 +176,7 @@ class F280ShipmentGenerator:
             flower=record["COMMODITY"],
             num_stems=num_stems,
             stems=stems,
+            stems_per_box=stems_per_box,
             num_boxes=num_boxes,
             arrival_time=date,
             boxes=boxes,
@@ -232,6 +234,7 @@ class AQIMShipmentGenerator:
             flower=record["COMMODITY_LIST"],
             num_stems=num_stems,
             stems=stems,
+            stems_per_box=stems_per_box,
             num_boxes=num_boxes,
             arrival_time=date,
             boxes=boxes,
@@ -275,6 +278,7 @@ def get_shipment_generator(config):
     return shipment_generator
 
 
+# This function is not used or working, consider updating or removing.
 def add_pest_to_random_box(config, shipment, infestation_rate=None):
     """Add pest to shipment
 
@@ -342,12 +346,21 @@ def add_pest_uniform_random(config, shipment):
 
     Infestation rate is determined using the ``infestation_rate`` config key.
     """
+    infest_unit = config["infest_unit"]
     infested_stems = num_stems_to_infest(config["infestation_rate"], shipment.num_stems)
     if infested_stems == 0:
         return
-    indexes = np.random.choice(shipment.num_stems, infested_stems, replace=False)
-    np.put(shipment["stems"], indexes, 1)
-    assert np.count_nonzero(shipment["stems"]) == infested_stems
+    if infest_unit in ["box", "boxes"]:
+        stems_per_box = shipment.stems_per_box
+        infested_boxes = round(infested_stems / stems_per_box)
+        indexes = np.random.choice(shipment.num_boxes, infested_boxes, replace=False)
+        for index in indexes:
+            shipment.boxes[index].stems.fill(1)
+        assert np.count_nonzero(shipment["boxes"]) == infested_boxes
+    if infest_unit in ["stem", "stems"]:
+        indexes = np.random.choice(shipment.num_stems, infested_stems, replace=False)
+        np.put(shipment["stems"], indexes, 1)
+        assert np.count_nonzero(shipment["stems"]) == infested_stems
 
 
 def _infested_stems_to_cluster_sizes(infested_stems, max_stems_per_cluster):
@@ -373,6 +386,29 @@ def _infested_stems_to_cluster_sizes(infested_stems, max_stems_per_cluster):
     return cluster_sizes
 
 
+def _infested_boxes_to_cluster_sizes(infested_boxes, max_boxes_per_cluster):
+    """Get list of cluster sizes for a given number of infested stems
+
+    The size of each cluster is limited by max_stems_per_cluster.
+    """
+    if infested_boxes > max_boxes_per_cluster:
+        # Split into n clusters so that n-1 clusters have the max size and
+        # the last one has the remaining stems.
+        # Alternative would be sth like round(infested_stems/max_stems_per_cluster)
+        sum_boxes = 0
+        cluster_sizes = []
+        while sum_boxes < infested_boxes - max_boxes_per_cluster:
+            sum_boxes += max_boxes_per_cluster
+            cluster_sizes.append(max_boxes_per_cluster)
+        # add remaining stems
+        cluster_sizes.append(infested_boxes - sum_boxes)
+        sum_boxes += infested_boxes - sum_boxes
+        assert sum_boxes == infested_boxes
+    else:
+        cluster_sizes = [infested_boxes]
+    return cluster_sizes
+
+
 def add_pest_clusters(config, shipment):
     """Add pest clusters to shipment
 
@@ -381,60 +417,86 @@ def add_pest_clusters(config, shipment):
     Each item (box) in boxes (list) is set to True if a pest/pathogen is
     there, False otherwise.
     """
+    infest_unit = config["infest_unit"]
     num_stems = shipment["num_stems"]
     infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
     if infested_stems == 0:
         return
     max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
-    cluster_sizes = _infested_stems_to_cluster_sizes(
-        infested_stems, max_stems_per_cluster
-    )
-    for cluster_size in cluster_sizes:
-        # Generate cluster as indices in the array of stems
-        distribution = config["clustered"]["distribution"]
-        if distribution == "gamma":
-            param1, param2 = config["clustered"]["parameters"]
-            cluster = stats.gamma.rvs(param1, scale=param2, size=cluster_size)
-        elif distribution == "random":
-            max_width = config["clustered"]["parameters"][0]
-            if max_width < cluster_size:
-                raise ValueError(
-                    "First parameter of random distribution (maximum cluster width,"
-                    " currently {max_width})"
-                    " needs to be at least as large as max_stems_per_cluster"
-                    " (currently {max_stems_per_cluster})".format(**locals())
+
+    if infest_unit in ["box", "boxes"]:
+        stems_per_box = shipment.stems_per_box
+        infested_boxes = round(infested_stems / stems_per_box)
+        max_boxes_per_cluster = math.ceil(max_stems_per_cluster / stems_per_box)
+        cluster_sizes = _infested_boxes_to_cluster_sizes(
+            infested_boxes, max_boxes_per_cluster
+        )
+        strata = max(1, math.floor(shipment.num_boxes / max_boxes_per_cluster))
+        cluster_strata = np.random.choice(strata, len(cluster_sizes), replace=False)
+        for index, cluster_size in enumerate(cluster_sizes):
+            cluster_start = (
+                math.floor(shipment.num_boxes / strata) * cluster_strata[index]
+            )
+            cluster_indexes = np.arange(
+                start=cluster_start, stop=cluster_start + cluster_size
+            )
+            for cluster_index in cluster_indexes:
+                shipment.boxes[cluster_index].stems.fill(1)
+        assert np.count_nonzero(shipment["boxes"]) <= infested_boxes
+
+    elif infest_unit in ["stem", "stems"]:
+        cluster_sizes = _infested_stems_to_cluster_sizes(
+            infested_stems, max_stems_per_cluster
+        )
+        for cluster_size in cluster_sizes:
+            # Generate cluster as indices in the array of stems
+            distribution = config["clustered"]["distribution"]
+            if distribution == "gamma":
+                param1, param2 = config["clustered"]["parameters"]
+                cluster = stats.gamma.rvs(param1, scale=param2, size=cluster_size)
+            elif distribution == "random":
+                max_width = config["clustered"]["parameters"][0]
+                if max_width < cluster_size:
+                    raise ValueError(
+                        "First parameter of random distribution (maximum cluster width,"
+                        " currently {max_width})"
+                        " needs to be at least as large as max_stems_per_cluster"
+                        " (currently {max_stems_per_cluster})".format(**locals())
+                    )
+                # cluster can't be wider/longer than the current list of stems
+                max_width = min(max_width, num_stems)
+                cluster = np.random.choice(max_width, cluster_size, replace=False)
+            elif distribution == "continuous":
+                cluster = np.arange(0, cluster_size)
+            else:
+                raise RuntimeError(
+                    "Unknown cluster distribution: {distribution}".format(**locals())
                 )
-            # cluster can't be wider/longer than the current list of stems
-            max_width = min(max_width, num_stems)
-            cluster = np.random.choice(max_width, cluster_size, replace=False)
-        elif distribution == "continuous":
-            cluster = np.arange(0, cluster_size)
-        else:
-            raise RuntimeError(
-                "Unknown cluster distribution: {distribution}".format(**locals())
-            )
-        assert min(cluster) >= 0, "Cluster values need to be valid indices"
-        cluster_max = max(cluster)
-        if cluster_max > num_stems - 1:
-            # If the max index specified by the cluster is outside of stem
-            # array index range, fit the cluster values into that range.
-            cluster = np.interp(
-                cluster, (cluster.min(), cluster.max()), (0, num_stems - 1)
-            )
-        else:
-            # If the cluster valus are within stem array index range,
-            # place the cluster randomly in the array of stems.
-            high = num_stems - cluster_max
-            cluster_start = np.random.randint(low=0, high=high)
-            cluster += cluster_start
-        assert max(cluster) < num_stems, "Cluster values need to be valid indices"
-        cluster = cluster.astype(np.int)
-        # The resulting infestation rate (number of infested stems) might be
-        # lower because the clusters overlap.
-        np.put(shipment["stems"], cluster, 1)
-        if distribution in ("random", "continuous"):
-            assert len(np.unique(cluster)) == cluster_size
-    assert np.count_nonzero(shipment["stems"]) <= infested_stems
+            assert min(cluster) >= 0, "Cluster values need to be valid indices"
+            cluster_max = max(cluster)
+            if cluster_max > num_stems - 1:
+                # If the max index specified by the cluster is outside of stem
+                # array index range, fit the cluster values into that range.
+                cluster = np.interp(
+                    cluster, (cluster.min(), cluster.max()), (0, num_stems - 1)
+                )
+            else:
+                # If the cluster valus are within stem array index range,
+                # place the cluster randomly in the array of stems.
+                high = num_stems - cluster_max
+                cluster_start = np.random.randint(low=0, high=high)
+                cluster += cluster_start
+            assert max(cluster) < num_stems, "Cluster values need to be valid indices"
+            cluster = cluster.astype(np.int)
+            # The resulting infestation rate (number of infested stems) might be
+            # lower because the clusters overlap.
+            np.put(shipment["stems"], cluster, 1)
+            if distribution in ("random", "continuous"):
+                assert len(np.unique(cluster)) == cluster_size
+        assert np.count_nonzero(shipment["stems"]) <= infested_stems
+
+    else:
+        raise RuntimeError("Unknown infestation unit: {infest_unit}".format(**locals()))
 
 
 def get_pest_function(config):
