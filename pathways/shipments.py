@@ -187,11 +187,11 @@ class F280ShipmentGenerator:
 class AQIMShipmentGenerator:
     """Generate a shipments based on existing AQIM records"""
 
-    def __init__(self, quant_unit, stems_per_box, filename, separator=","):
+    def __init__(self, quantity_unit, stems_per_box, filename, separator=","):
         self.infile = open(filename)
         self.reader = csv.DictReader(self.infile, delimiter=separator)
         self.stems_per_box = stems_per_box
-        self.quant_unit = quant_unit
+        self.quantity_unit = quantity_unit
 
     def generate_shipment(self):
         """Generate a new shipment"""
@@ -204,14 +204,18 @@ class AQIMShipmentGenerator:
         pathway = record["CARGO_FORM"]
         stems_per_box = self.stems_per_box
         stems_per_box = get_stems_per_box(stems_per_box, pathway)
-        quant_unit = self.quant_unit
+        quantity_unit = self.quantity_unit
 
-        if quant_unit in ["box", "boxes"]:
+        # Generate stems based on quantity in AQIM records.
+        # If quantify is given in boxes, use stem_per_box to convert to stems.
+        if quantity_unit in ["box", "boxes"]:
             num_stems = int(record["QUANTITY"]) * stems_per_box
-        elif quant_unit in ["stem", "stems"]:
+        elif quantity_unit in ["stem", "stems"]:
             num_stems = int(record["QUANTITY"])
         else:
-            raise RuntimeError("Unknown quantity unit: {quant_unit}".format(**locals()))
+            raise RuntimeError(
+                "Unknown quantity unit: {quantity_unit}".format(**locals())
+            )
 
         stems = np.zeros(num_stems, dtype=np.int)
 
@@ -261,7 +265,7 @@ def get_shipment_generator(config):
         )
     elif "aqim_file" in config:
         shipment_generator = AQIMShipmentGenerator(
-            quant_unit=config["quant_unit"],
+            quantity_unit=config["quantity_unit"],
             stems_per_box=config["shipment"]["stems_per_box"],
             filename=config["aqim_file"],
         )
