@@ -41,8 +41,8 @@ class Box:
     Evaluates to bool when it contains pest.
 
     Box is a view into array of stems, i.e. a slice of that array. The
-    assumption is that the original, and possibly modifed, stems can be not
-    only accessed but also modifed through the box.
+    assumption is that the original, and possibly modifed, stems can not
+    only be accessed but also modifed through the box.
     """
 
     def __init__(self, stems):
@@ -62,7 +62,7 @@ class Box:
 
 
 class Shipment(collections.UserDict):
-    """A shipement with all its properties and what it contains.
+    """A shipment with all its properties and what it contains.
 
     Access is through attributes (new style) or using a dictionary-like item access
     (old style).
@@ -75,6 +75,7 @@ class Shipment(collections.UserDict):
         return self[name]
 
     def count_infested(self):
+        """Count infested stems in box."""
         return np.count_nonzero(self.stems)
 
 
@@ -183,6 +184,64 @@ class F280ShipmentGenerator:
         )
 
 
+class AQIMShipmentGenerator:
+    """Generate a shipments based on existing AQIM records"""
+
+    def __init__(self, stems_per_box, filename, separator=","):
+        self.infile = open(filename)
+        self.reader = csv.DictReader(self.infile, delimiter=separator)
+        self.stems_per_box = stems_per_box
+
+    def generate_shipment(self):
+        """Generate a new shipment"""
+        try:
+            record = next(self.reader)
+        except StopIteration:
+            raise RuntimeError(
+                "More shipments requested than number of records in provided AQIM data"
+            )
+        pathway = record["CARGO_FORM"]
+        stems_per_box = self.stems_per_box
+        stems_per_box = get_stems_per_box(stems_per_box, pathway)
+        unit = record["UNIT"]
+
+        # Generate stems based on quantity in AQIM records.
+        # If quantity is given in boxes, use stem_per_box to convert to stems.
+        if unit in ["Box/Carton"]:
+            num_stems = int(record["QUANTITY"]) * stems_per_box
+        elif unit in ["Stems"]:
+            num_stems = int(record["QUANTITY"])
+        else:
+            raise RuntimeError("Unsupported quantity unit: {unit}".format(**locals()))
+
+        stems = np.zeros(num_stems, dtype=np.int)
+
+        # rounding up to keep the max per box and have enough boxes
+        num_boxes = int(math.ceil(num_stems / float(stems_per_box)))
+        if num_boxes < 1:
+            num_boxes = 1
+        boxes = []
+        for i in range(num_boxes):
+            lower = i * stems_per_box
+            # slicing does not go over the size even if our last box is smaller
+            upper = (i + 1) * stems_per_box
+            boxes.append(Box(stems[lower:upper]))
+        assert sum([box.num_stems for box in boxes]) == num_stems
+
+        date = record["CALENDAR_YR"]
+        return Shipment(
+            flower=record["COMMODITY_LIST"],
+            num_stems=num_stems,
+            stems=stems,
+            num_boxes=num_boxes,
+            arrival_time=date,
+            boxes=boxes,
+            origin=record["ORIGIN"],
+            port=record["LOCATION"],
+            pathway=pathway,
+        )
+
+
 def get_stems_per_box(stems_per_box, pathway):
     """Based on config and pathway, return number of stems per box."""
     if pathway.lower() == "airport" and "air" in stems_per_box:
@@ -200,6 +259,11 @@ def get_shipment_generator(config):
         shipment_generator = F280ShipmentGenerator(
             stems_per_box=config["shipment"]["stems_per_box"],
             filename=config["f280_file"],
+        )
+    elif "aqim_file" in config:
+        shipment_generator = AQIMShipmentGenerator(
+            stems_per_box=config["shipment"]["stems_per_box"],
+            filename=config["aqim_file"],
         )
     else:
         start_date = config["shipment"].get("start_date", "2020-01-01")
