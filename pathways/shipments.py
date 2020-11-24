@@ -189,11 +189,10 @@ class F280ShipmentGenerator:
 class AQIMShipmentGenerator:
     """Generate a shipments based on existing AQIM records"""
 
-    def __init__(self, quant_unit, stems_per_box, filename, separator=","):
+    def __init__(self, stems_per_box, filename, separator=","):
         self.infile = open(filename)
         self.reader = csv.DictReader(self.infile, delimiter=separator)
         self.stems_per_box = stems_per_box
-        self.quant_unit = quant_unit
 
     def generate_shipment(self):
         """Generate a new shipment"""
@@ -206,14 +205,16 @@ class AQIMShipmentGenerator:
         pathway = record["CARGO_FORM"]
         stems_per_box = self.stems_per_box
         stems_per_box = get_stems_per_box(stems_per_box, pathway)
-        quant_unit = self.quant_unit
+        unit = record["UNIT"]
 
-        if quant_unit in ["box", "boxes"]:
+        # Generate stems based on quantity in AQIM records.
+        # If quantity is given in boxes, use stem_per_box to convert to stems.
+        if unit in ["Box/Carton"]:
             num_stems = int(record["QUANTITY"]) * stems_per_box
-        elif quant_unit in ["stem", "stems"]:
+        elif unit in ["Stems"]:
             num_stems = int(record["QUANTITY"])
         else:
-            raise RuntimeError("Unknown quantity unit: {quant_unit}".format(**locals()))
+            raise RuntimeError("Unsupported quantity unit: {unit}".format(**locals()))
 
         stems = np.zeros(num_stems, dtype=np.int)
 
@@ -234,7 +235,6 @@ class AQIMShipmentGenerator:
             flower=record["COMMODITY_LIST"],
             num_stems=num_stems,
             stems=stems,
-            stems_per_box=stems_per_box,
             num_boxes=num_boxes,
             arrival_time=date,
             boxes=boxes,
@@ -264,7 +264,6 @@ def get_shipment_generator(config):
         )
     elif "aqim_file" in config:
         shipment_generator = AQIMShipmentGenerator(
-            quant_unit=config["quant_unit"],
             stems_per_box=config["shipment"]["stems_per_box"],
             filename=config["aqim_file"],
         )

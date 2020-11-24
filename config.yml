@@ -37,10 +37,9 @@ shipment:
     - WA Seattle Air CBP
     - TX Brownsville CBP
     - WA Blaine CBP
-  # f280_file: F280_sample.csv
-aqim_file: aqim_2011_2020_joined_stems.csv
-#aqim_file: blank_aqim_for_testing.csv
-quant_unit: stems
+# f280_file: F280_sample.csv
+# aqim_file: aqim_2011_2020_joined_stems_boxes.csv
+aqim_file: blank_aqim_for_testing.csv
 pest:
   infestation_unit: stems
   infestation_rate:
@@ -61,11 +60,11 @@ pest:
       - 1417.4944328
   arrangement: clustered
   clustered:
-    max_stems_per_cluster: 400
+    max_stems_per_cluster: 200
     distribution: random
     parameters:
       # random
-      - 800
+      - 200
       # gamma
       #- 6
       #- 20
@@ -81,7 +80,7 @@ release_programs:
       - Actinidia
     max_boxes: 10 # do not apply to shipments larger than
 inspection:
-  unit: stems
+  unit: box
   within_box_pct: 1
   sample_strategy: hypergeometric
   percentage:
