@@ -8,10 +8,10 @@ The shipments can be either purely synthetic or based on AQAS inspection
 
 The two main keys for configuration of the synthetic shipment generator
 are `boxes` and `stems_per_box`. The `min` and `max` values of `boxes`
-determine the range of sizes of shipments within the simulation.
-The `default` value of `stems_per_box` determines how many stems are in
-one box. An example configuration with shipments with 10 to 100 boxes
-and 200 stems per box, i.e., 2000 to 20,000 stems per shipments follows.
+determine the range of sizes of shipments within the simulation. The
+`default` value of `stems_per_box` determines how many stems are in one
+box. An example configuration with shipments with 10 to 100 boxes and
+200 stems per box, i.e., 2000 to 20,000 stems per shipments follows.
 
 ```yaml
 shipment:
@@ -68,8 +68,8 @@ case, a CSV file needs to be specified using the `f280_file` key.
 
 The CSV is expected to have the following columns:
  * QUANTITY which will be used as number of stems,
- * PATHWAY which is used to determine the `stems_per_box` value
-   (case insensitive),
+ * PATHWAY which is used to determine the `stems_per_box` value (case
+   insensitive),
  * REPORT_DT is used for date,
  * COMMODITY as the flower (commodity type),
  * ORIGIN_NM as origin, and
@@ -82,8 +82,9 @@ Python program is running.
 
 ## AQIM-based shipments
 
-Shipments in the simulation can also be based on AQIM inspection records. In that
-case, a CSV file needs to be specified using the `aqim_file` key.
+Shipments in the simulation can also be based on AQIM inspection
+records. In that case, a CSV file needs to be specified using the
+`aqim_file` key.
 
 The CSV is expected to have the following columns:
  * UNIT which is used to specify the unit (must be stems or boxes) used
@@ -108,9 +109,9 @@ include information about the consignment pathway, which can be used to
 vary the value of `stems_per_box`. For example, the following is a
 configuration for generating shipments using a file called
 `AQIM_sample.csv` with `stems_per_box` values that vary by `air` and
-`maritime` pathways. If the shipment arrives via an air
-pathway, one box will contain 50 stems. If the shipment arrives via a maritime
-pathway, one box will contain 500 stems. If the pathway is not `air` or
+`maritime` pathways. If the shipment arrives via an air pathway, one box
+will contain 50 stems. If the shipment arrives via a maritime pathway,
+one box will contain 500 stems. If the pathway is not `air` or
 `maritime`, a default value of 100 stems per box is used.
 
 ```yaml
