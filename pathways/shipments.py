@@ -235,6 +235,7 @@ class AQIMShipmentGenerator:
             flower=record["COMMODITY_LIST"],
             num_stems=num_stems,
             stems=stems,
+            stems_per_box=stems_per_box,
             num_boxes=num_boxes,
             arrival_time=date,
             boxes=boxes,
@@ -340,23 +341,45 @@ def num_stems_to_infest(config, num_stems):
     return infested_stems
 
 
+def num_boxes_to_infest(config, num_boxes):
+    """Return number of boxes to be infested
+
+    Config is the ``infestation_rate`` dictionary.
+    """
+    distribution = config["distribution"]
+    if distribution == "fixed_value":
+        infestation_rate = config["value"]
+    elif distribution == "beta":
+        param1, param2 = config["parameters"]
+        infestation_rate = float(stats.beta.rvs(param1, param2, size=1))
+    else:
+        raise RuntimeError(
+            "Unknown infestation rate distribution: {distribution}".format(**locals())
+        )
+    infested_boxes = round(num_boxes * infestation_rate)
+    return infested_boxes
+
+
 def add_pest_uniform_random(config, shipment):
     """Add pests to shipment using uniform random distribution
 
     Infestation rate is determined using the ``infestation_rate`` config key.
     """
     infestation_unit = config["infestation_unit"]
-    infested_stems = num_stems_to_infest(config["infestation_rate"], shipment.num_stems)
     if infested_stems == 0:
         return
     if infestation_unit in ["box", "boxes"]:
-        stems_per_box = shipment.stems_per_box
-        infested_boxes = round(infested_stems / stems_per_box)
+        infested_boxes = num_boxes_to_infest(
+            config["infestation_rate"], shipment.num_boxes
+        )
         indexes = np.random.choice(shipment.num_boxes, infested_boxes, replace=False)
         for index in indexes:
             shipment.boxes[index].stems.fill(1)
         assert np.count_nonzero(shipment["boxes"]) == infested_boxes
     if infestation_unit in ["stem", "stems"]:
+        infested_stems = num_stems_to_infest(
+            config["infestation_rate"], shipment.num_stems
+        )
         indexes = np.random.choice(shipment.num_stems, infested_stems, replace=False)
         np.put(shipment["stems"], indexes, 1)
         assert np.count_nonzero(shipment["stems"]) == infested_stems
@@ -416,16 +439,16 @@ def add_pest_clusters(config, shipment):
     there, False otherwise.
     """
     infestation_unit = config["infestation_unit"]
-    num_stems = shipment["num_stems"]
-    infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
-    if infested_stems == 0:
-        return
     max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
 
     if infestation_unit in ["box", "boxes"]:
-        stems_per_box = shipment.stems_per_box
-        infested_boxes = round(infested_stems / stems_per_box)
-        max_boxes_per_cluster = math.ceil(max_stems_per_cluster / stems_per_box)
+        num_boxes = shipment.num_boxes
+        infested_boxes = num_boxes_to_infest(config["infestation_rate"], num_boxes)
+        if infested_boxes == 0:
+            return
+        max_boxes_per_cluster = math.ceil(
+            max_stems_per_cluster / shipment["stems_per_box"]
+        )
         cluster_sizes = _infested_boxes_to_cluster_sizes(
             infested_boxes, max_boxes_per_cluster
         )
@@ -443,6 +466,10 @@ def add_pest_clusters(config, shipment):
         assert np.count_nonzero(shipment["boxes"]) <= infested_boxes
 
     elif infestation_unit in ["stem", "stems"]:
+        num_stems = shipment.num_stems
+        infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
+        if infested_stems == 0:
+            return
         cluster_sizes = _infested_stems_to_cluster_sizes(
             infested_stems, max_stems_per_cluster
         )
