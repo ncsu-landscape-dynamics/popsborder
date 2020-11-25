@@ -324,6 +324,7 @@ def add_pest_to_random_box(config, shipment, infestation_rate=None):
 
 def num_stems_to_infest(config, num_stems):
     """Return number of stems to be infested
+    Rounds up or down to nearest integer.
 
     Config is the ``infestation_rate`` dictionary.
     """
@@ -337,12 +338,13 @@ def num_stems_to_infest(config, num_stems):
         raise RuntimeError(
             "Unknown infestation rate distribution: {distribution}".format(**locals())
         )
-    infested_stems = int(num_stems * infestation_rate)
+    infested_stems = round(num_stems * infestation_rate)
     return infested_stems
 
 
 def num_boxes_to_infest(config, num_boxes):
-    """Return number of boxes to be infested
+    """Return number of boxes to be infested.
+    Rounds up or down to nearest integer.
 
     Config is the ``infestation_rate`` dictionary.
     """
@@ -366,12 +368,12 @@ def add_pest_uniform_random(config, shipment):
     Infestation rate is determined using the ``infestation_rate`` config key.
     """
     infestation_unit = config["infestation_unit"]
-    if infested_stems == 0:
-        return
     if infestation_unit in ["box", "boxes"]:
         infested_boxes = num_boxes_to_infest(
             config["infestation_rate"], shipment.num_boxes
         )
+        if infested_boxes == 0:
+            return
         indexes = np.random.choice(shipment.num_boxes, infested_boxes, replace=False)
         for index in indexes:
             shipment.boxes[index].stems.fill(1)
@@ -380,6 +382,8 @@ def add_pest_uniform_random(config, shipment):
         infested_stems = num_stems_to_infest(
             config["infestation_rate"], shipment.num_stems
         )
+        if infested_stems == 0:
+            return
         indexes = np.random.choice(shipment.num_stems, infested_stems, replace=False)
         np.put(shipment["stems"], indexes, 1)
         assert np.count_nonzero(shipment["stems"]) == infested_stems
