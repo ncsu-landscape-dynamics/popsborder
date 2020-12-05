@@ -60,7 +60,7 @@ pest:
       - 1417.4944328
   arrangement: clustered
   clustered:
-    max_stems_per_cluster: 200
+    max_infested_stems_per_cluster: 200
     distribution: random
     parameters:
       # random

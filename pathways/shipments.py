@@ -389,20 +389,20 @@ def add_pest_uniform_random(config, shipment):
         assert np.count_nonzero(shipment["stems"]) == infested_stems
 
 
-def _infested_stems_to_cluster_sizes(infested_stems, max_stems_per_cluster):
+def _infested_stems_to_cluster_sizes(infested_stems, max_infested_stems_per_cluster):
     """Get list of cluster sizes for a given number of infested stems
 
-    The size of each cluster is limited by max_stems_per_cluster.
+    The size of each cluster is limited by max_infested_stems_per_cluster.
     """
-    if infested_stems > max_stems_per_cluster:
+    if infested_stems > max_infested_stems_per_cluster:
         # Split into n clusters so that n-1 clusters have the max size and
         # the last one has the remaining stems.
-        # Alternative would be sth like round(infested_stems/max_stems_per_cluster)
+        # Alternative would be sth like round(infested_stems/max_infested_stems_per_cluster)
         sum_stems = 0
         cluster_sizes = []
-        while sum_stems < infested_stems - max_stems_per_cluster:
-            sum_stems += max_stems_per_cluster
-            cluster_sizes.append(max_stems_per_cluster)
+        while sum_stems < infested_stems - max_infested_stems_per_cluster:
+            sum_stems += max_infested_stems_per_cluster
+            cluster_sizes.append(max_infested_stems_per_cluster)
         # add remaining stems
         cluster_sizes.append(infested_stems - sum_stems)
         sum_stems += infested_stems - sum_stems
@@ -415,7 +415,7 @@ def _infested_stems_to_cluster_sizes(infested_stems, max_stems_per_cluster):
 def _infested_boxes_to_cluster_sizes(infested_boxes, max_boxes_per_cluster):
     """Get list of cluster sizes for a given number of infested stems
 
-    The size of each cluster is limited by max_stems_per_cluster.
+    The size of each cluster is limited by max_infested_stems_per_cluster.
     """
     if infested_boxes > max_boxes_per_cluster:
         # Split into n clusters so that n-1 clusters have the max size and
@@ -443,7 +443,9 @@ def add_pest_clusters(config, shipment):
     there, False otherwise.
     """
     infestation_unit = config["infestation_unit"]
-    max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
+    max_infested_stems_per_cluster = config["clustered"][
+        "max_infested_stems_per_cluster"
+    ]
 
     if infestation_unit in ["box", "boxes"]:
         num_boxes = shipment.num_boxes
@@ -451,7 +453,7 @@ def add_pest_clusters(config, shipment):
         if infested_boxes == 0:
             return
         max_boxes_per_cluster = math.ceil(
-            max_stems_per_cluster / shipment["stems_per_box"]
+            max_infested_stems_per_cluster / shipment["stems_per_box"]
         )
         cluster_sizes = _infested_boxes_to_cluster_sizes(
             infested_boxes, max_boxes_per_cluster
@@ -475,7 +477,7 @@ def add_pest_clusters(config, shipment):
         if infested_stems == 0:
             return
         cluster_sizes = _infested_stems_to_cluster_sizes(
-            infested_stems, max_stems_per_cluster
+            infested_stems, max_infested_stems_per_cluster
         )
         for cluster_size in cluster_sizes:
             # Generate cluster as indices in the array of stems
@@ -489,8 +491,10 @@ def add_pest_clusters(config, shipment):
                     raise ValueError(
                         "First parameter of random distribution (maximum cluster width,"
                         " currently {max_width})"
-                        " needs to be at least as large as max_stems_per_cluster"
-                        " (currently {max_stems_per_cluster})".format(**locals())
+                        " needs to be at least as large as max_infested_stems_per_cluster"
+                        " (currently {max_infested_stems_per_cluster})".format(
+                            **locals()
+                        )
                     )
                 # cluster can't be wider/longer than the current list of stems
                 max_width = min(max_width, num_stems)

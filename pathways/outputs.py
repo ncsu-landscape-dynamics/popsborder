@@ -319,7 +319,7 @@ def config_to_simplified_simulation_params(config):
         infestation_type="",
         infestation_param="",
         pest_arrangement="",
-        max_stems_per_cluster="",
+        max_infested_stems_per_cluster="",
         cluster_width="",
         inspection_unit="",
         within_box_pct="",
@@ -339,12 +339,12 @@ def config_to_simplified_simulation_params(config):
         sim_params.infestation_param = None
     sim_params.pest_arrangement = config["pest"]["arrangement"]
     if sim_params.pest_arrangement == "clustered":
-        sim_params.max_stems_per_cluster = config["pest"]["clustered"][
-            "max_stems_per_cluster"
+        sim_params.max_infested_stems_per_cluster = config["pest"]["clustered"][
+            "max_infested_stems_per_cluster"
         ]
         sim_params.cluster_width = config["pest"]["clustered"]["parameters"][0]
     else:
-        sim_params.max_stems_per_cluster = None
+        sim_params.max_infested_stems_per_cluster = None
         sim_params.cluster_width = None
     sim_params.inspection_unit = config["inspection"]["unit"]
     sim_params.within_box_pct = config["inspection"]["within_box_pct"]
@@ -406,7 +406,7 @@ def print_totals_as_text(num_shipments, config, totals):
         print(
             "\t\t cluster width: {0} stems\n"
             "\t\t maximum infested stems per cluster: {1} stems".format(
-                sim_params.cluster_width, sim_params.max_stems_per_cluster
+                sim_params.cluster_width, sim_params.max_infested_stems_per_cluster
             )
         )
     print(
