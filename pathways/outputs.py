@@ -320,6 +320,7 @@ def config_to_simplified_simulation_params(config):
         infestation_param="",
         pest_arrangement="",
         max_infested_stems_per_cluster="",
+        pest_distribution="",
         cluster_width="",
         inspection_unit="",
         within_box_pct="",
@@ -342,7 +343,11 @@ def config_to_simplified_simulation_params(config):
         sim_params.max_infested_stems_per_cluster = config["pest"]["clustered"][
             "max_infested_stems_per_cluster"
         ]
-        sim_params.cluster_width = config["pest"]["clustered"]["parameters"][0]
+        sim_params.pest_distribution = config["pest"]["clustered"]["distribution"]
+        if sim_params.pest_distribution == "random":
+            sim_params.cluster_width = config["pest"]["clustered"]["parameters"][0]
+        else:
+            sim_params.cluster_width = None
     else:
         sim_params.max_infested_stems_per_cluster = None
         sim_params.cluster_width = None
