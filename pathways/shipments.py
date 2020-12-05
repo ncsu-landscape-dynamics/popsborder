@@ -479,53 +479,78 @@ def add_pest_clusters(config, shipment):
         cluster_sizes = _infested_stems_to_cluster_sizes(
             infested_stems, max_infested_stems_per_cluster
         )
-        for cluster_size in cluster_sizes:
-            # Generate cluster as indices in the array of stems
-            distribution = config["clustered"]["distribution"]
-            if distribution == "gamma":
-                param1, param2 = config["clustered"]["parameters"]
+        cluster_indexes = []
+        distribution = config["clustered"]["distribution"]
+        if distribution == "gamma":
+            param1, param2 = config["clustered"]["parameters"]
+            gamma_min_max = stats.gamma.interval(0.999, param1, scale=param2)
+            max_width = gamma_min_max[1] - gamma_min_max[0]
+            if max_width < max_infested_stems_per_cluster:
+                raise ValueError(
+                    "Gamma distribution width (currently {max_width},"
+                    " determined by shape and rate parameters)"
+                    " needs to be at least as large as max_infested_stems_per_cluster"
+                    " (currently {max_infested_stems_per_cluster})".format(**locals())
+                )
+            # cluster can't be wider/longer than the current list of stems
+            max_width = min(max_width, num_stems)
+            strata = max(1, math.floor(num_stems / max_width))
+            cluster_strata = np.random.choice(strata, len(cluster_sizes), replace=False)
+            for index, cluster_size in enumerate(cluster_sizes):
                 cluster = stats.gamma.rvs(param1, scale=param2, size=cluster_size)
-            elif distribution == "random":
-                max_width = config["clustered"]["parameters"][0]
-                if max_width < cluster_size:
-                    raise ValueError(
-                        "First parameter of random distribution (maximum cluster width,"
-                        " currently {max_width})"
-                        " needs to be at least as large as max_infested_stems_per_cluster"
-                        " (currently {max_infested_stems_per_cluster})".format(
-                            **locals()
-                        )
-                    )
-                # cluster can't be wider/longer than the current list of stems
-                max_width = min(max_width, num_stems)
-                cluster = np.random.choice(max_width, cluster_size, replace=False)
-            elif distribution == "continuous":
-                cluster = np.arange(0, cluster_size)
-            else:
-                raise RuntimeError(
-                    "Unknown cluster distribution: {distribution}".format(**locals())
-                )
-            assert min(cluster) >= 0, "Cluster values need to be valid indices"
-            cluster_max = max(cluster)
-            if cluster_max > num_stems - 1:
-                # If the max index specified by the cluster is outside of stem
-                # array index range, fit the cluster values into that range.
-                cluster = np.interp(
-                    cluster, (cluster.min(), cluster.max()), (0, num_stems - 1)
-                )
-            else:
-                # If the cluster valus are within stem array index range,
-                # place the cluster randomly in the array of stems.
-                high = num_stems - cluster_max
-                cluster_start = np.random.randint(low=0, high=high)
+                cluster_start = math.floor((num_stems / strata) * cluster_strata[index])
                 cluster += cluster_start
-            assert max(cluster) < num_stems, "Cluster values need to be valid indices"
-            cluster = cluster.astype(np.int)
-            # The resulting infestation rate (number of infested stems) might be
-            # lower because the clusters overlap.
-            np.put(shipment["stems"], cluster, 1)
-            if distribution in ("random", "continuous"):
-                assert len(np.unique(cluster)) == cluster_size
+                cluster_indexes.extend(list(cluster))
+        elif distribution == "random":
+            max_width = config["clustered"]["parameters"][0]
+            if max_width < max_infested_stems_per_cluster:
+                raise ValueError(
+                    "First parameter of random distribution (maximum cluster width,"
+                    " currently {max_width})"
+                    " needs to be at least as large as max_infested_stems_per_cluster"
+                    " (currently {max_infested_stems_per_cluster})".format(**locals())
+                )
+            # cluster can't be wider/longer than the current list of stems
+            max_width = min(max_width, num_stems)
+            strata = max(1, math.floor(num_stems / max_width))
+            cluster_strata = np.random.choice(strata, len(cluster_sizes), replace=False)
+            for index, cluster_size in enumerate(cluster_sizes):
+                cluster = np.random.choice(max_width, cluster_size, replace=False)
+                cluster_start = math.floor((num_stems / strata) * cluster_strata[index])
+                cluster += cluster_start
+                cluster_indexes.extend(list(cluster))
+        elif distribution == "continuous":
+            strata = max(
+                1, math.floor(shipment.num_boxes / max_infested_stems_per_cluster)
+            )
+            cluster_strata = np.random.choice(strata, len(cluster_sizes), replace=False)
+            for index, cluster_size in enumerate(cluster_sizes):
+                cluster = np.arange(0, cluster_size)
+                cluster_start = math.floor((num_stems / strata) * cluster_strata[index])
+                cluster += cluster_start
+                cluster_indexes.extend(list(cluster))
+        else:
+            raise RuntimeError(
+                "Unknown cluster distribution: {distribution}".format(**locals())
+            )
+        cluster_indexes = np.array(cluster_indexes, dtype=np.int)
+        assert min(cluster_indexes) >= 0, "Cluster values need to be valid indices"
+        cluster_max = max(cluster_indexes)
+        if cluster_max > num_stems - 1:
+            # If the max index specified by the cluster is outside of stem
+            # array index range, fit the cluster values into that range.
+            cluster_indexes = np.interp(
+                cluster_indexes,
+                (cluster_indexes.min(), cluster_indexes.max()),
+                (0, num_stems - 1),
+            )
+        assert (
+            max(cluster_indexes) < num_stems
+        ), "Cluster values need to be valid indices"
+        np.put(shipment["stems"], cluster_indexes, 1)
+        print(len(cluster_indexes))
+        print(len(np.unique(cluster_indexes)))
+        # if len(np.unique(cluster_indexes)) == cluster_size
         assert np.count_nonzero(shipment["stems"]) <= infested_stems
 
     else:
