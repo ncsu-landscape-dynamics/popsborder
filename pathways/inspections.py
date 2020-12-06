@@ -32,7 +32,6 @@ import types
 import weakref
 import numpy as np
 
-from .shipments import get_stems_per_box
 
 if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error
@@ -379,7 +378,6 @@ def select_units_to_inspect(config, shipment, n_units_to_inspect):
     """
     unit = config["inspection"]["unit"]
     selection_strategy = config["inspection"]["selection_strategy"]
-    stems_per_box = shipment.stems_per_box
 
     if selection_strategy == "tailgate":
         indexes_to_inspect = list(range(n_units_to_inspect))
