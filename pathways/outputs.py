@@ -322,9 +322,9 @@ def config_to_simplified_simulation_params(config):
         pest_arrangement="",
         max_infested_stems_per_cluster="",
         pest_distribution="",
-        cluster_width="",
+        max_cluster_width="",
         inspection_unit="",
-        within_box_pct="",
+        within_box_proportion="",
         sample_strategy="",
         sample_params="",
         selection_strategy="",
@@ -346,18 +346,16 @@ def config_to_simplified_simulation_params(config):
             "max_infested_stems_per_cluster"
         ]
         sim_params.pest_distribution = config["pest"]["clustered"]["distribution"]
-        if sim_params.pest_distribution == "random":
-            sim_params.cluster_width = config["pest"]["clustered"]["parameters"][0]
-        else:
-            sim_params.cluster_width = None
+        sim_params.max_cluster_width = config["pest"]["clustered"]["max_cluster_width"]
     else:
         sim_params.max_infested_stems_per_cluster = None
-        sim_params.cluster_width = None
+        sim_params.max_cluster_width = None
+        sim_params.pest_distribution = None
     sim_params.inspection_unit = config["inspection"]["unit"]
-    sim_params.within_box_pct = config["inspection"]["within_box_pct"]
+    sim_params.within_box_proportion = config["inspection"]["within_box_proportion"]
     sim_params.sample_strategy = config["inspection"]["sample_strategy"]
-    if sim_params.sample_strategy == "percentage":
-        sim_params.sample_params = config["inspection"]["percentage"]["proportion"]
+    if sim_params.sample_strategy == "proportion":
+        sim_params.sample_params = config["inspection"]["proportion"]["value"]
     elif sim_params.sample_strategy == "hypergeometric":
         sim_params.sample_params = config["inspection"]["hypergeometric"][
             "detection_level"
@@ -415,20 +413,21 @@ def print_totals_as_text(num_shipments, config, totals):
         )
     print("\t pest arrangement: {0}".format(sim_params.pest_arrangement))
     if sim_params.pest_arrangement == "clustered":
-        print(
-            "\t\t cluster width: {0} stems\n"
-            "\t\t maximum infested stems per cluster: {1} stems".format(
-                sim_params.cluster_width, sim_params.max_infested_stems_per_cluster
+        print("\t\t cluster width: {0} stems".format(sim_params.max_cluster_width))
+        if sim_params.infestation_unit in ["stem", "stems"]:
+            print(
+                "\t\t maximum infested stems per cluster: {0} stems".format(
+                    sim_params.max_infested_stems_per_cluster
+                )
             )
-        )
     print(
         "inspection:\n\t unit: {0}\n\t sample strategy: {1}".format(
             sim_params.inspection_unit,
             sim_params.sample_strategy,
         )
     )
-    if sim_params.sample_strategy == "percentage":
-        print("\t\t proportion: {0}".format(sim_params.sample_params))
+    if sim_params.sample_strategy == "proportion":
+        print("\t\t value: {0}".format(sim_params.sample_params))
     elif sim_params.sample_strategy == "hypergeometric":
         print("\t\t detection level: {0}".format(sim_params.sample_params))
     elif sim_params.sample_strategy == "fixed_n":
@@ -446,7 +445,7 @@ def print_totals_as_text(num_shipments, config, totals):
     ):
         print(
             "\t minimum proportion of stems inspected within box: {0}".format(
-                sim_params.within_box_pct
+                sim_params.within_box_proportion
             )
         )
     print("\n")

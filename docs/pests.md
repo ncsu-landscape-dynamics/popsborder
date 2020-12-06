@@ -67,33 +67,28 @@ If using `arrangement` = `clustered`, the configuration is as follows:
 
 ```
   clustered:
-    max_infested_stems_per_cluster: 10
-    distribution: gamma
-    parameters:
-    - 4
-    - 2
+    max_infested_stems_per_cluster: 200
+    max_cluster_width: 600
+    distribution: random
 ```
 
-The cluster size in terms of infested stems is limited by
+The maximum number of infested stems within a cluster is limited by
 `max_infested_stems_per_cluster`. If `max_infested_stems_per_cluster` is
-exceeded, more than one cluster is generated so that number of stems in each
-cluster conforms to this limit. Note that `max_infested_stems_per_cluster` is
-also used to determine infested boxes per cluster when `infestation_unit` =
-`boxes` by dividing `max_infested_stems_per_cluster` by `stems_per_box`.
+exceeded, more than one cluster is generated so that number of infested
+stems in each cluster conforms to this limit. The maximum width of the
+cluster (range over which stems may be infested) is limited by
+`max_cluster_width`.
+
+Note that when `infestation_unit` = `boxes`, `max_cluster_width` is also
+used to determine the number of infested boxes per cluster by dividing
+`max_cluster_width` by `stems_per_box` rounded to nearest integer.
 
 The distribution used to place infested stems within each cluster can be
-`gamma`, `random`, or `continuous`. The `gamma` option uses the gamma
-distribution and takes two parameters (shape and rate) that determine the total
-width of the cluster (range over which stems may be randomly infested) and
-probability distriubtion shape. The `random` option uses the uniform random
-distribution and takes one parameter to define the total width of the cluster
-(range over which stems may be randomly infested). Note that when
-`infestation_unit` = `boxes`, the `random` arrangement does not use this total
-width parameter. In this case, the total width of the cluster in terms of boxes
-will equal `max_infested_stems_per_cluster` / `stems_per_box` rounded to nearest
-integer. The `continuous` distribution does not have any parameters and produces
-infested stems next to each other so the number of infested stems in the cluster
-is always the same as the total width of the cluster.
+`random`, or `continuous`. The `random` option places infested stems
+within each cluster using a uniform random distribution. The
+`continuous` distribution places infested stems within each cluster
+continuously (next to each other) so the number of infested stems in the
+cluster is always the same as the total width of the cluster.
 
 ### Random box
 The settings for `random_box` is:
