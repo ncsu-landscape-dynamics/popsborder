@@ -434,6 +434,13 @@ def _infested_boxes_to_cluster_sizes(infested_boxes, max_boxes_per_cluster):
     return cluster_sizes
 
 
+def create_stratas_for_clusters(num_units, cluster_width, cluster_sizes):
+    """Divide array of shipment stems or boxes into strata wide enough for clusters."""
+    num_strata = max(1, math.floor(num_units / cluster_width))
+    cluster_strata = np.random.choice(num_strata, len(cluster_sizes), replace=False)
+    return num_strata, cluster_strata
+
+
 def add_pest_clusters(config, shipment):
     """Add pest clusters to shipment
 
@@ -458,18 +465,17 @@ def add_pest_clusters(config, shipment):
         cluster_sizes = _infested_boxes_to_cluster_sizes(
             infested_boxes, max_boxes_per_cluster
         )
-        strata = max(1, math.floor(shipment.num_boxes / max_boxes_per_cluster))
-        cluster_strata = np.random.choice(strata, len(cluster_sizes), replace=False)
+        num_strata, cluster_strata = create_stratas_for_clusters(
+            num_boxes, max_boxes_per_cluster, cluster_sizes
+        )
         for index, cluster_size in enumerate(cluster_sizes):
-            cluster_start = (
-                math.floor(shipment.num_boxes / strata) * cluster_strata[index]
-            )
+            cluster_start = math.floor(num_boxes / num_strata) * cluster_strata[index]
             cluster_indexes = np.arange(
                 start=cluster_start, stop=cluster_start + cluster_size
             )
             for cluster_index in cluster_indexes:
                 shipment.boxes[cluster_index].stems.fill(1)
-        assert np.count_nonzero(shipment["boxes"]) <= infested_boxes
+        assert np.count_nonzero(shipment.boxes) <= infested_boxes
 
     elif infestation_unit in ["stem", "stems"]:
         num_stems = shipment.num_stems
@@ -494,11 +500,14 @@ def add_pest_clusters(config, shipment):
                 )
             # cluster can't be wider/longer than the current list of stems
             max_width = min(max_width, num_stems)
-            strata = max(1, math.floor(num_stems / max_width))
-            cluster_strata = np.random.choice(strata, len(cluster_sizes), replace=False)
+            num_strata, cluster_strata = create_stratas_for_clusters(
+                num_stems, max_width, cluster_sizes
+            )
             for index, cluster_size in enumerate(cluster_sizes):
                 cluster = stats.gamma.rvs(param1, scale=param2, size=cluster_size)
-                cluster_start = math.floor((num_stems / strata) * cluster_strata[index])
+                cluster_start = math.floor(
+                    (num_stems / num_strata) * cluster_strata[index]
+                )
                 cluster += cluster_start
                 cluster_indexes.extend(list(cluster))
         elif distribution == "random":
@@ -512,21 +521,25 @@ def add_pest_clusters(config, shipment):
                 )
             # cluster can't be wider/longer than the current list of stems
             max_width = min(max_width, num_stems)
-            strata = max(1, math.floor(num_stems / max_width))
-            cluster_strata = np.random.choice(strata, len(cluster_sizes), replace=False)
+            num_strata, cluster_strata = create_stratas_for_clusters(
+                num_stems, max_width, cluster_sizes
+            )
             for index, cluster_size in enumerate(cluster_sizes):
                 cluster = np.random.choice(max_width, cluster_size, replace=False)
-                cluster_start = math.floor((num_stems / strata) * cluster_strata[index])
+                cluster_start = math.floor(
+                    (num_stems / num_strata) * cluster_strata[index]
+                )
                 cluster += cluster_start
                 cluster_indexes.extend(list(cluster))
         elif distribution == "continuous":
-            strata = max(
-                1, math.floor(shipment.num_boxes / max_infested_stems_per_cluster)
+            num_strata, cluster_strata = create_stratas_for_clusters(
+                num_stems, max_infested_stems_per_cluster, cluster_sizes
             )
-            cluster_strata = np.random.choice(strata, len(cluster_sizes), replace=False)
             for index, cluster_size in enumerate(cluster_sizes):
                 cluster = np.arange(0, cluster_size)
-                cluster_start = math.floor((num_stems / strata) * cluster_strata[index])
+                cluster_start = math.floor(
+                    (num_stems / num_strata) * cluster_strata[index]
+                )
                 cluster += cluster_start
                 cluster_indexes.extend(list(cluster))
         else:
@@ -534,7 +547,6 @@ def add_pest_clusters(config, shipment):
                 "Unknown cluster distribution: {distribution}".format(**locals())
             )
         cluster_indexes = np.array(cluster_indexes, dtype=np.int)
-        assert min(cluster_indexes) >= 0, "Cluster values need to be valid indices"
         cluster_max = max(cluster_indexes)
         if cluster_max > num_stems - 1:
             # If the max index specified by the cluster is outside of stem
@@ -544,12 +556,11 @@ def add_pest_clusters(config, shipment):
                 (cluster_indexes.min(), cluster_indexes.max()),
                 (0, num_stems - 1),
             )
-        assert (
-            max(cluster_indexes) < num_stems
-        ), "Cluster values need to be valid indices"
-        np.put(shipment["stems"], cluster_indexes, 1)
-        # if len(np.unique(cluster_indexes)) == cluster_size
-        assert np.count_nonzero(shipment["stems"]) <= infested_stems
+        assert min(cluster_indexes) >= 0, "Cluster values need to be valid indices"
+        assert max(cluster_indexes) < num_stems
+        np.put(shipment.stems, cluster_indexes, 1)
+        # Assertion will fail with gamma clusters
+        assert np.count_nonzero(shipment.stems) == infested_stems
 
     else:
         raise RuntimeError(
