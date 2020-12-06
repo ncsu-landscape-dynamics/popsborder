@@ -548,8 +548,6 @@ def add_pest_clusters(config, shipment):
             max(cluster_indexes) < num_stems
         ), "Cluster values need to be valid indices"
         np.put(shipment["stems"], cluster_indexes, 1)
-        print(len(cluster_indexes))
-        print(len(np.unique(cluster_indexes)))
         # if len(np.unique(cluster_indexes)) == cluster_size
         assert np.count_nonzero(shipment["stems"]) <= infested_stems
 
