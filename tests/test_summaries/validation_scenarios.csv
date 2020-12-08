@@ -1,0 +1,3 @@
+name,shipment_name,inspection_name,shipment/boxes/min,shipment/boxes/max,shipment/stems_per_box/default,pest/infestation_unit,pest/infestation_rate/parameters,pest/arrangement,pest/clustered/distribution,inspection/unit,inspection/sample_strategy,inspection/percentage/proportion,inspection/hypergeometric/detection_level,inspection/selection_strategy,inspection/within_box_pct,inspection/hierarchical/outer
+clustered_10,clustered,boxes 0.01 hypergeometric random,10,10,100,stem,"[1, 80]",random,random,stems,hypergeometric,,0.01,random,1,
+clustered_12,clustered,boxes 0.05 hypergeometric random,10,10,200,box,"[1, 80]",clustered,random,box,proportion,0.02,0.05,random,1,
