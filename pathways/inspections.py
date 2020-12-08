@@ -80,12 +80,12 @@ def sample_proportion(config, shipment):
     ratio = config["inspection"]["proportion"]["value"]
     num_stems = shipment.num_stems
     num_boxes = shipment.num_boxes
-    min_boxes = config.get("min_boxes", 1)
+    min_boxes = config["inspection"]["min_boxes"]
 
     if unit in ["stem", "stems"]:
-        n_units_to_inspect = int(math.ceil(ratio * num_stems))
+        n_units_to_inspect = round(ratio * num_stems)
     elif unit in ["box", "boxes"]:
-        n_units_to_inspect = int(math.ceil(ratio * num_boxes))
+        n_units_to_inspect = round(ratio * num_boxes)
         n_units_to_inspect = max(min_boxes, n_units_to_inspect)
         n_units_to_inspect = min(num_boxes, n_units_to_inspect)
     else:
@@ -174,7 +174,7 @@ def sample_n(config, shipment):
     stems_per_box = shipment.stems_per_box
     num_stems = shipment.num_stems
     num_boxes = shipment.num_boxes
-    min_boxes = config.get("min_boxes", 1)
+    min_boxes = config["inspection"]["min_boxes"]
 
     if unit in ["stem", "stems"]:
         max_stems = compute_max_inspectable_stems(
@@ -203,7 +203,7 @@ def convert_stems_to_boxes_fixed_pct(config, shipment, n_stems_to_inspect):
     """
     stems_per_box = shipment.stems_per_box
     within_box_proportion = config["inspection"]["within_box_proportion"]
-    min_boxes = config.get("min_boxes", 1)
+    min_boxes = config["inspection"]["min_boxes"]
     num_boxes = shipment.num_boxes
     inspect_per_box = int(math.ceil(within_box_proportion * stems_per_box))
 
@@ -227,7 +227,7 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
     outer = config["inspection"]["hierarchical"]["outer"]
     stems_per_box = shipment.stems_per_box
     within_box_proportion = config["inspection"]["within_box_proportion"]
-    min_boxes = config.get("min_boxes", 1)
+    min_boxes = config["inspection"]["min_boxes"]
     num_boxes = shipment.num_boxes
     num_stems = shipment.num_stems
 
