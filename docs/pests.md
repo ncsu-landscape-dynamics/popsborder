@@ -4,14 +4,14 @@
 The unit used for infesting a shipment can be determined by:
 ```
 pest:
-  infestation unit: stems
+  infestation_unit: stems
 ```
 
-The possible values for `infestation unit` include `stems` and `boxes`. If
-`infestation unit` = stems, the infestation rate (described below) is applied to
+The possible values for `infestation_unit` include `stems` and `boxes`. If
+`infestation_unit` = stems, the infestation rate (described below) is applied to
 the total number of stems in the shipment and individual stems are infested
 using the specified pest arrangement method (described below). Alternatively, if
-`infestation unit` = boxes, the infestation rate is applied to the total number
+`infestation_unit` = boxes, the infestation rate is applied to the total number
 of boxes in the shipment and whole boxes are infested using the specified pest
 arrangement method.
 
