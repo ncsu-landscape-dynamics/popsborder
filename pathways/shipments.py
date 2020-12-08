@@ -397,7 +397,8 @@ def _infested_stems_to_cluster_sizes(infested_stems, max_infested_stems_per_clus
     if infested_stems > max_infested_stems_per_cluster:
         # Split into n clusters so that n-1 clusters have the max size and
         # the last one has the remaining stems.
-        # Alternative would be sth like round(infested_stems/max_infested_stems_per_cluster)
+        # Alternative would be sth like:
+        # round(infested_stems/max_infested_stems_per_cluster)
         sum_stems = 0
         cluster_sizes = []
         while sum_stems < infested_stems - max_infested_stems_per_cluster:
@@ -489,8 +490,13 @@ def add_pest_clusters(config, shipment):
         distribution = config["clustered"]["distribution"]
         if distribution == "gamma":
             param1, param2 = config["clustered"]["parameters"]
-            gamma_min_max = stats.gamma.interval(0.999, param1, scale=param2)
-            max_width = gamma_min_max[1] - gamma_min_max[0]
+            # Set value for proportion of distribution to get range (very close but not
+            # equal to 1)
+            distribution_proportion = 0.999
+            gamma_min, gamma_max = stats.gamma.interval(
+                distribution_proportion, param1, scale=param2
+            )
+            max_width = gamma_max - gamma_min
             if max_width < max_infested_stems_per_cluster:
                 raise ValueError(
                     "Gamma distribution width (currently {max_width},"
