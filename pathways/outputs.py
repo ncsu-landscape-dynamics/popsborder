@@ -434,9 +434,8 @@ def print_totals_as_text(num_shipments, config, totals):
             )
             if sim_params.pest_distribution == "random":
                 print(
-                    "\t\t cluster width: {sim_params.max_cluster_stem_width} stems".format(
-                        **locals()
-                    )
+                    "\t\t cluster width: "
+                    "{sim_params.max_cluster_stem_width} stems".format(**locals())
                 )
 
     print(
