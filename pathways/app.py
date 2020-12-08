@@ -158,7 +158,8 @@ def main():
         )
     print_totals_as_text(args.num_shipments, config, totals)
     if detailed:
-        print(details[0])
+        print("Stems by box: {}".format(details[0]))
+        print("Indexes inspected: {}".format(details[1]))
 
 
 if __name__ == "__main__":
