@@ -20,6 +20,7 @@ shipment:
   stems_per_box:
     default: 10
 pest:
+  infestation_unit: stems
   infestation_rate:
     distribution: beta
     parameters:
@@ -31,10 +32,10 @@ pest:
     ratio: 0.5
 inspection:
   unit: stems
-  within_box_pct: 1.0
-  sample_strategy: percentage
-  percentage:
-    proportion: 0.02
+  within_box_proportion: 1.0
+  sample_strategy: proportion
+  proportion:
+    value: 0.02
     min_boxes: 1
   hypergeometric:
     detection_level: 0.05
@@ -84,5 +85,4 @@ def test_gives_reasonable_result(num_simulations):
         assert 0 <= result.pct_boxes_opened_detection <= 100
         assert 0 <= result.pct_stems_inspected_completion <= 100
         assert 0 <= result.pct_stems_inspected_detection <= 100
-        assert 0 <= result.pct_sample_if_to_detection <= 100
         assert 0 <= result.pct_pest_unreported_if_detection <= 100

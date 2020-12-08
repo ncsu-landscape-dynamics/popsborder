@@ -20,6 +20,7 @@ shipment:
   - NY JFK CBP
   - FL Miami Air CBP
 pest:
+  infestation_unit: stems
   infestation_rate:
     distribution: beta
     parameters:
@@ -31,10 +32,10 @@ pest:
     ratio: 0.5
 inspection:
   unit: stems
-  within_box_pct: 1.0
-  sample_strategy: percentage
-  percentage:
-    proportion: 0.02
+  within_box_proportion: 1.0
+  sample_strategy: proportion
+  proportion:
+    value: 0.02
     min_boxes: 1
   hypergeometric:
     detection_level: 0.05
