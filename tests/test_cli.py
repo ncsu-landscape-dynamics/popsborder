@@ -20,6 +20,7 @@ shipment:
   - NY JFK CBP
   - FL Miami Air CBP
 pest:
+  infestation_unit: stems
   infestation_rate:
     distribution: beta
     parameters:

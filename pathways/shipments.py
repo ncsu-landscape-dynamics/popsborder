@@ -397,7 +397,8 @@ def _infested_stems_to_cluster_sizes(infested_stems, max_infested_stems_per_clus
     if infested_stems > max_infested_stems_per_cluster:
         # Split into n clusters so that n-1 clusters have the max size and
         # the last one has the remaining stems.
-        # Alternative would be sth like round(infested_stems/max_infested_stems_per_cluster)
+        # Alternative would be sth like:
+        # round(infested_stems/max_infested_stems_per_cluster)
         sum_stems = 0
         cluster_sizes = []
         while sum_stems < infested_stems - max_infested_stems_per_cluster:
