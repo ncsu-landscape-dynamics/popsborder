@@ -32,7 +32,7 @@ pest:
     ratio: 0.5
 inspection:
   unit: stems
-  within_box_pct: 1.0
+  within_box_proportion: 1.0
   sample_strategy: proportion
   proportion:
     value: 0.02
