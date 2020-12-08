@@ -33,9 +33,9 @@ pest:
 inspection:
   unit: stems
   within_box_pct: 1.0
-  sample_strategy: percentage
-  percentage:
-    proportion: 0.02
+  sample_strategy: proportion
+  proportion:
+    value: 0.02
     min_boxes: 1
   hypergeometric:
     detection_level: 0.05

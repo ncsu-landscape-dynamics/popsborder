@@ -13,6 +13,7 @@ pest:
   arrangement: clustered
   clustered:
     max_infested_stems_per_cluster: 1000
+    max_cluster_width: 600
     distribution: continuous
 """
 
@@ -25,10 +26,9 @@ pest:
     value: 0.12
   arrangement: clustered
   clustered:
-    max_infested_stems_per_cluster: 1000
+    max_infested_stems_per_cluster: 200
+    max_cluster_width: 600
     distribution: random
-    parameters:
-    - 1000
 """
 
 
