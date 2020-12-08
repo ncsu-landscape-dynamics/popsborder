@@ -67,28 +67,29 @@ If using `arrangement` = `clustered`, the configuration is as follows:
 
 ```
   clustered:
-    max_infested_stems_per_cluster: 200
-    max_cluster_width: 600
+    max_infested_units_per_cluster: 200
     distribution: random
+      max_cluster_stem_width: 600
 ```
 
-The maximum number of infested stems within a cluster is limited by
-`max_infested_stems_per_cluster`. If `max_infested_stems_per_cluster` is
-exceeded, more than one cluster is generated so that number of infested
-stems in each cluster conforms to this limit. The maximum width of the
-cluster (range over which stems may be infested) is limited by
-`max_cluster_width`.
+The maximum number of infested units (stems or boxes depending on
+`infestation_unit` used) within a cluster is limited by
+`max_infested_units_per_cluster`. If `max_infested_units_per_cluster` is
+exceeded, more than one cluster is generated so that the number of infested
+units in each cluster conforms to this limit.
 
-Note that when `infestation_unit` = `boxes`, `max_cluster_width` is also
-used to determine the number of infested boxes per cluster by dividing
-`max_cluster_width` by `stems_per_box` rounded to nearest integer.
+If `infestation_unit` = `boxes`, no additional parameters are used.
 
-The distribution used to place infested stems within each cluster can be
-`random`, or `continuous`. The `random` option places infested stems
-within each cluster using a uniform random distribution. The
-`continuous` distribution places infested stems within each cluster
-continuously (next to each other) so the number of infested stems in the
-cluster is always the same as the total width of the cluster.
+If `infestation_unit` = `stems`, the stems can be placed into clusters using a
+`random` or `continuous` distribution. The `random` option places infested stems
+within each cluster using a uniform random distribution. The maximum width of
+the cluster (range over which stems may be infested) is limited by
+`max_cluster_stem_width` and has the effect of increasing or decreasing the
+density of infested stems within a cluster. The `continuous` distribution places
+infested stems within each cluster continuously (next to each other) so the
+number of infested stems in the cluster is always the same as the total width of
+the cluster.
+
 
 ### Random box
 The settings for `random_box` is:

@@ -320,9 +320,9 @@ def config_to_simplified_simulation_params(config):
         infestation_type="",
         infestation_param="",
         pest_arrangement="",
-        max_infested_stems_per_cluster="",
+        max_infested_units_per_cluster="",
         pest_distribution="",
-        max_cluster_width="",
+        max_cluster_stem_width="",
         inspection_unit="",
         within_box_proportion="",
         sample_strategy="",
@@ -342,14 +342,16 @@ def config_to_simplified_simulation_params(config):
         sim_params.infestation_param = None
     sim_params.pest_arrangement = config["pest"]["arrangement"]
     if sim_params.pest_arrangement == "clustered":
-        sim_params.max_infested_stems_per_cluster = config["pest"]["clustered"][
-            "max_infested_stems_per_cluster"
+        sim_params.max_infested_units_per_cluster = config["pest"]["clustered"][
+            "max_infested_units_per_cluster"
         ]
         sim_params.pest_distribution = config["pest"]["clustered"]["distribution"]
-        sim_params.max_cluster_width = config["pest"]["clustered"]["max_cluster_width"]
+        sim_params.max_cluster_stem_width = config["pest"]["clustered"]["random"][
+            "max_cluster_stem_width"
+        ]
     else:
-        sim_params.max_infested_stems_per_cluster = None
-        sim_params.max_cluster_width = None
+        sim_params.max_infested_units_per_cluster = None
+        sim_params.max_cluster_stem_width = None
         sim_params.pest_distribution = None
     sim_params.inspection_unit = config["inspection"]["unit"]
     sim_params.within_box_proportion = config["inspection"]["within_box_proportion"]
@@ -417,17 +419,22 @@ def print_totals_as_text(num_shipments, config, totals):
     if sim_params.pest_arrangement == "clustered":
         if sim_params.infestation_unit in ["box", "boxes"]:
             print(
-                "\t\t maximum cluster width: "
-                "{sim_params.max_cluster_width} stems".format(**locals())
+                "\t\t maximum infested boxes per cluster: "
+                "{sim_params.max_infested_units_per_cluster} boxes".format(**locals())
             )
         if sim_params.infestation_unit in ["stem", "stems"]:
             print(
                 "\t\t maximum infested stems per cluster: "
-                "{sim_params.max_infested_stems_per_cluster} stems".format(**locals())
+                "{sim_params.max_infested_units_per_cluster} stems".format(**locals())
+            )
+            print(
+                "\t\t cluster distribution: {sim_params.pest_distribution}".format(
+                    **locals()
+                )
             )
             if sim_params.pest_distribution == "random":
                 print(
-                    "\t\t cluster width: {sim_params.max_cluster_width} stems".format(
+                    "\t\t cluster width: {sim_params.max_cluster_stem_width} stems".format(
                         **locals()
                     )
                 )
