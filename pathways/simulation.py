@@ -206,9 +206,6 @@ def simulation(
         pct_stems_inspected_detection=(
             (total_stems_inspected_detection / total_num_stems) * 100
         ),
-        pct_sample_if_to_detection=(
-            (total_stems_inspected_detection / total_stems_inspected_completion) * 100
-        ),
         pct_pest_unreported_if_detection=pct_pest_unreported_if_detection,
         true_infestation_rate=true_infestation_rate / num_shipments,
         max_missed_infestation_rate=max_missed_infestation_rate,
@@ -255,7 +252,6 @@ def run_simulation(
         avg_stems_inspected_detection=0,
         pct_stems_inspected_completion=0,
         pct_stems_inspected_detection=0,
-        pct_sample_if_to_detection=0,
         pct_pest_unreported_if_detection=0,
         true_infestation_rate=0,
         max_missed_infestation_rate=0,
@@ -291,7 +287,6 @@ def run_simulation(
         totals.avg_stems_inspected_detection += result.avg_stems_inspected_detection
         totals.pct_stems_inspected_completion += result.pct_stems_inspected_completion
         totals.pct_stems_inspected_detection += result.pct_stems_inspected_detection
-        totals.pct_sample_if_to_detection += result.pct_sample_if_to_detection
         totals.pct_pest_unreported_if_detection += (
             result.pct_pest_unreported_if_detection
         )
@@ -323,7 +318,6 @@ def run_simulation(
     totals.avg_stems_inspected_detection /= float(num_simulations)
     totals.pct_stems_inspected_completion /= float(num_simulations)
     totals.pct_stems_inspected_detection /= float(num_simulations)
-    totals.pct_sample_if_to_detection /= float(num_simulations)
     totals.pct_pest_unreported_if_detection /= float(num_simulations)
     totals.true_infestation_rate /= float(num_simulations)
     if totals.false_negative_present:

@@ -41,6 +41,7 @@ shipment:
 # aqim_file: aqim_2011_2020_joined_stems_boxes.csv
 aqim_file: blank_aqim_for_testing.csv
 pest:
+  infestation_unit: stems
   infestation_rate:
     distribution: beta
     value: 0.01
@@ -52,11 +53,14 @@ pest:
       #- 0.942631386983
       #- 273.264725126
       # both
-      - 0.243875716307
-      - 223.427186223
+      #- 0.243875716307
+      #- 223.427186223
+      # centered at 0.7%
+      - 9.99240788476
+      - 1417.4944328
   arrangement: clustered
   clustered:
-    max_stems_per_cluster: 200
+    max_infested_stems_per_cluster: 200
     distribution: random
     parameters:
       # random

@@ -125,6 +125,7 @@ class ParameterShipmentGenerator:
             flower=flower,
             num_stems=num_stems,
             stems=stems,
+            stems_per_box=stems_per_box,
             num_boxes=num_boxes,
             arrival_time=self.date,
             boxes=boxes,
@@ -175,6 +176,7 @@ class F280ShipmentGenerator:
             flower=record["COMMODITY"],
             num_stems=num_stems,
             stems=stems,
+            stems_per_box=stems_per_box,
             num_boxes=num_boxes,
             arrival_time=date,
             boxes=boxes,
@@ -233,6 +235,7 @@ class AQIMShipmentGenerator:
             flower=record["COMMODITY_LIST"],
             num_stems=num_stems,
             stems=stems,
+            stems_per_box=stems_per_box,
             num_boxes=num_boxes,
             arrival_time=date,
             boxes=boxes,
@@ -275,6 +278,7 @@ def get_shipment_generator(config):
     return shipment_generator
 
 
+# This function is not used or working, consider updating or removing.
 def add_pest_to_random_box(config, shipment, infestation_rate=None):
     """Add pest to shipment
 
@@ -320,6 +324,7 @@ def add_pest_to_random_box(config, shipment, infestation_rate=None):
 
 def num_stems_to_infest(config, num_stems):
     """Return number of stems to be infested
+    Rounds up or down to nearest integer.
 
     Config is the ``infestation_rate`` dictionary.
     """
@@ -333,8 +338,28 @@ def num_stems_to_infest(config, num_stems):
         raise RuntimeError(
             "Unknown infestation rate distribution: {distribution}".format(**locals())
         )
-    infested_stems = int(num_stems * infestation_rate)
+    infested_stems = round(num_stems * infestation_rate)
     return infested_stems
+
+
+def num_boxes_to_infest(config, num_boxes):
+    """Return number of boxes to be infested.
+    Rounds up or down to nearest integer.
+
+    Config is the ``infestation_rate`` dictionary.
+    """
+    distribution = config["distribution"]
+    if distribution == "fixed_value":
+        infestation_rate = config["value"]
+    elif distribution == "beta":
+        param1, param2 = config["parameters"]
+        infestation_rate = float(stats.beta.rvs(param1, param2, size=1))
+    else:
+        raise RuntimeError(
+            "Unknown infestation rate distribution: {distribution}".format(**locals())
+        )
+    infested_boxes = round(num_boxes * infestation_rate)
+    return infested_boxes
 
 
 def add_pest_uniform_random(config, shipment):
@@ -342,28 +367,43 @@ def add_pest_uniform_random(config, shipment):
 
     Infestation rate is determined using the ``infestation_rate`` config key.
     """
-    infested_stems = num_stems_to_infest(config["infestation_rate"], shipment.num_stems)
-    if infested_stems == 0:
-        return
-    indexes = np.random.choice(shipment.num_stems, infested_stems, replace=False)
-    np.put(shipment["stems"], indexes, 1)
-    assert np.count_nonzero(shipment["stems"]) == infested_stems
+    infestation_unit = config["infestation_unit"]
+    if infestation_unit in ["box", "boxes"]:
+        infested_boxes = num_boxes_to_infest(
+            config["infestation_rate"], shipment.num_boxes
+        )
+        if infested_boxes == 0:
+            return
+        indexes = np.random.choice(shipment.num_boxes, infested_boxes, replace=False)
+        for index in indexes:
+            shipment.boxes[index].stems.fill(1)
+        assert np.count_nonzero(shipment["boxes"]) == infested_boxes
+    if infestation_unit in ["stem", "stems"]:
+        infested_stems = num_stems_to_infest(
+            config["infestation_rate"], shipment.num_stems
+        )
+        if infested_stems == 0:
+            return
+        indexes = np.random.choice(shipment.num_stems, infested_stems, replace=False)
+        np.put(shipment["stems"], indexes, 1)
+        assert np.count_nonzero(shipment["stems"]) == infested_stems
 
 
-def _infested_stems_to_cluster_sizes(infested_stems, max_stems_per_cluster):
+def _infested_stems_to_cluster_sizes(infested_stems, max_infested_stems_per_cluster):
     """Get list of cluster sizes for a given number of infested stems
 
-    The size of each cluster is limited by max_stems_per_cluster.
+    The size of each cluster is limited by max_infested_stems_per_cluster.
     """
-    if infested_stems > max_stems_per_cluster:
+    if infested_stems > max_infested_stems_per_cluster:
         # Split into n clusters so that n-1 clusters have the max size and
         # the last one has the remaining stems.
-        # Alternative would be sth like round(infested_stems/max_stems_per_cluster)
+        # Alternative would be sth like:
+        # round(infested_stems/max_infested_stems_per_cluster)
         sum_stems = 0
         cluster_sizes = []
-        while sum_stems < infested_stems - max_stems_per_cluster:
-            sum_stems += max_stems_per_cluster
-            cluster_sizes.append(max_stems_per_cluster)
+        while sum_stems < infested_stems - max_infested_stems_per_cluster:
+            sum_stems += max_infested_stems_per_cluster
+            cluster_sizes.append(max_infested_stems_per_cluster)
         # add remaining stems
         cluster_sizes.append(infested_stems - sum_stems)
         sum_stems += infested_stems - sum_stems
@@ -371,6 +411,35 @@ def _infested_stems_to_cluster_sizes(infested_stems, max_stems_per_cluster):
     else:
         cluster_sizes = [infested_stems]
     return cluster_sizes
+
+
+def _infested_boxes_to_cluster_sizes(infested_boxes, max_boxes_per_cluster):
+    """Get list of cluster sizes for a given number of infested stems
+
+    The size of each cluster is limited by max_infested_stems_per_cluster.
+    """
+    if infested_boxes > max_boxes_per_cluster:
+        # Split into n clusters so that n-1 clusters have the max size and
+        # the last one has the remaining stems.
+        sum_boxes = 0
+        cluster_sizes = []
+        while sum_boxes < infested_boxes - max_boxes_per_cluster:
+            sum_boxes += max_boxes_per_cluster
+            cluster_sizes.append(max_boxes_per_cluster)
+        # add remaining boxes
+        cluster_sizes.append(infested_boxes - sum_boxes)
+        sum_boxes += infested_boxes - sum_boxes
+        assert sum_boxes == infested_boxes
+    else:
+        cluster_sizes = [infested_boxes]
+    return cluster_sizes
+
+
+def create_stratas_for_clusters(num_units, cluster_width, cluster_sizes):
+    """Divide array of shipment stems or boxes into strata wide enough for clusters."""
+    num_strata = max(1, math.floor(num_units / cluster_width))
+    cluster_strata = np.random.choice(num_strata, len(cluster_sizes), replace=False)
+    return num_strata, cluster_strata
 
 
 def add_pest_clusters(config, shipment):
@@ -381,60 +450,128 @@ def add_pest_clusters(config, shipment):
     Each item (box) in boxes (list) is set to True if a pest/pathogen is
     there, False otherwise.
     """
-    num_stems = shipment["num_stems"]
-    infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
-    if infested_stems == 0:
-        return
-    max_stems_per_cluster = config["clustered"]["max_stems_per_cluster"]
-    cluster_sizes = _infested_stems_to_cluster_sizes(
-        infested_stems, max_stems_per_cluster
-    )
-    for cluster_size in cluster_sizes:
-        # Generate cluster as indices in the array of stems
+    infestation_unit = config["infestation_unit"]
+    max_infested_stems_per_cluster = config["clustered"][
+        "max_infested_stems_per_cluster"
+    ]
+
+    if infestation_unit in ["box", "boxes"]:
+        num_boxes = shipment.num_boxes
+        infested_boxes = num_boxes_to_infest(config["infestation_rate"], num_boxes)
+        if infested_boxes == 0:
+            return
+        max_boxes_per_cluster = math.ceil(
+            max_infested_stems_per_cluster / shipment["stems_per_box"]
+        )
+        cluster_sizes = _infested_boxes_to_cluster_sizes(
+            infested_boxes, max_boxes_per_cluster
+        )
+        num_strata, cluster_strata = create_stratas_for_clusters(
+            num_boxes, max_boxes_per_cluster, cluster_sizes
+        )
+        for index, cluster_size in enumerate(cluster_sizes):
+            cluster_start = math.floor(num_boxes / num_strata) * cluster_strata[index]
+            cluster_indexes = np.arange(
+                start=cluster_start, stop=cluster_start + cluster_size
+            )
+            for cluster_index in cluster_indexes:
+                shipment.boxes[cluster_index].stems.fill(1)
+        assert np.count_nonzero(shipment.boxes) <= infested_boxes
+
+    elif infestation_unit in ["stem", "stems"]:
+        num_stems = shipment.num_stems
+        infested_stems = num_stems_to_infest(config["infestation_rate"], num_stems)
+        if infested_stems == 0:
+            return
+        cluster_sizes = _infested_stems_to_cluster_sizes(
+            infested_stems, max_infested_stems_per_cluster
+        )
+        cluster_indexes = []
         distribution = config["clustered"]["distribution"]
         if distribution == "gamma":
             param1, param2 = config["clustered"]["parameters"]
-            cluster = stats.gamma.rvs(param1, scale=param2, size=cluster_size)
-        elif distribution == "random":
-            max_width = config["clustered"]["parameters"][0]
-            if max_width < cluster_size:
+            # Set value for proportion of distribution to get range (very close but not
+            # equal to 1)
+            distribution_proportion = 0.999
+            gamma_min, gamma_max = stats.gamma.interval(
+                distribution_proportion, param1, scale=param2
+            )
+            max_width = gamma_max - gamma_min
+            if max_width < max_infested_stems_per_cluster:
                 raise ValueError(
-                    "First parameter of random distribution (maximum cluster width,"
-                    " currently {max_width})"
-                    " needs to be at least as large as max_stems_per_cluster"
-                    " (currently {max_stems_per_cluster})".format(**locals())
+                    "Gamma distribution width (currently {max_width},"
+                    " determined by shape and rate parameters)"
+                    " needs to be at least as large as max_infested_stems_per_cluster"
+                    " (currently {max_infested_stems_per_cluster})".format(**locals())
                 )
             # cluster can't be wider/longer than the current list of stems
             max_width = min(max_width, num_stems)
-            cluster = np.random.choice(max_width, cluster_size, replace=False)
+            num_strata, cluster_strata = create_stratas_for_clusters(
+                num_stems, max_width, cluster_sizes
+            )
+            for index, cluster_size in enumerate(cluster_sizes):
+                cluster = stats.gamma.rvs(param1, scale=param2, size=cluster_size)
+                cluster_start = math.floor(
+                    (num_stems / num_strata) * cluster_strata[index]
+                )
+                cluster += cluster_start
+                cluster_indexes.extend(list(cluster))
+        elif distribution == "random":
+            max_width = config["clustered"]["parameters"][0]
+            if max_width < max_infested_stems_per_cluster:
+                raise ValueError(
+                    "First parameter of random distribution (maximum cluster width,"
+                    " currently {max_width})"
+                    " needs to be at least as large as max_infested_stems_per_cluster"
+                    " (currently {max_infested_stems_per_cluster})".format(**locals())
+                )
+            # cluster can't be wider/longer than the current list of stems
+            max_width = min(max_width, num_stems)
+            num_strata, cluster_strata = create_stratas_for_clusters(
+                num_stems, max_width, cluster_sizes
+            )
+            for index, cluster_size in enumerate(cluster_sizes):
+                cluster = np.random.choice(max_width, cluster_size, replace=False)
+                cluster_start = math.floor(
+                    (num_stems / num_strata) * cluster_strata[index]
+                )
+                cluster += cluster_start
+                cluster_indexes.extend(list(cluster))
         elif distribution == "continuous":
-            cluster = np.arange(0, cluster_size)
+            num_strata, cluster_strata = create_stratas_for_clusters(
+                num_stems, max_infested_stems_per_cluster, cluster_sizes
+            )
+            for index, cluster_size in enumerate(cluster_sizes):
+                cluster = np.arange(0, cluster_size)
+                cluster_start = math.floor(
+                    (num_stems / num_strata) * cluster_strata[index]
+                )
+                cluster += cluster_start
+                cluster_indexes.extend(list(cluster))
         else:
             raise RuntimeError(
                 "Unknown cluster distribution: {distribution}".format(**locals())
             )
-        assert min(cluster) >= 0, "Cluster values need to be valid indices"
-        cluster_max = max(cluster)
+        cluster_indexes = np.array(cluster_indexes, dtype=np.int)
+        cluster_max = max(cluster_indexes)
         if cluster_max > num_stems - 1:
             # If the max index specified by the cluster is outside of stem
             # array index range, fit the cluster values into that range.
-            cluster = np.interp(
-                cluster, (cluster.min(), cluster.max()), (0, num_stems - 1)
+            cluster_indexes = np.interp(
+                cluster_indexes,
+                (cluster_indexes.min(), cluster_indexes.max()),
+                (0, num_stems - 1),
             )
-        else:
-            # If the cluster valus are within stem array index range,
-            # place the cluster randomly in the array of stems.
-            high = num_stems - cluster_max
-            cluster_start = np.random.randint(low=0, high=high)
-            cluster += cluster_start
-        assert max(cluster) < num_stems, "Cluster values need to be valid indices"
-        cluster = cluster.astype(np.int)
-        # The resulting infestation rate (number of infested stems) might be
-        # lower because the clusters overlap.
-        np.put(shipment["stems"], cluster, 1)
-        if distribution in ("random", "continuous"):
-            assert len(np.unique(cluster)) == cluster_size
-    assert np.count_nonzero(shipment["stems"]) <= infested_stems
+        assert min(cluster_indexes) >= 0, "Cluster values need to be valid indices"
+        assert max(cluster_indexes) < num_stems
+        np.put(shipment.stems, cluster_indexes, 1)
+        # Assertion will fail with gamma clusters
+        assert np.count_nonzero(shipment.stems) == infested_stems
+
+    else:
+        raise RuntimeError(
+            "Unknown infestation unit: {infestation_unit}".format(**locals())
+        )
 
 
 def get_pest_function(config):

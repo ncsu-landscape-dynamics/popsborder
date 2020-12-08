@@ -316,10 +316,12 @@ class SuccessRates(object):
 def config_to_simplified_simulation_params(config):
     """Convert configuration into a simplified set of selected parameters"""
     sim_params = types.SimpleNamespace(
+        infestation_unit="",
         infestation_type="",
         infestation_param="",
         pest_arrangement="",
-        max_stems_per_cluster="",
+        max_infested_stems_per_cluster="",
+        pest_distribution="",
         cluster_width="",
         inspection_unit="",
         within_box_pct="",
@@ -330,6 +332,7 @@ def config_to_simplified_simulation_params(config):
         selection_param_2="",
     )
 
+    sim_params.infestation_unit = config["pest"]["infestation_unit"]
     sim_params.infestation_type = config["pest"]["infestation_rate"]["distribution"]
     if sim_params.infestation_type == "fixed_value":
         sim_params.infestation_param = config["pest"]["infestation_rate"]["value"]
@@ -339,12 +342,16 @@ def config_to_simplified_simulation_params(config):
         sim_params.infestation_param = None
     sim_params.pest_arrangement = config["pest"]["arrangement"]
     if sim_params.pest_arrangement == "clustered":
-        sim_params.max_stems_per_cluster = config["pest"]["clustered"][
-            "max_stems_per_cluster"
+        sim_params.max_infested_stems_per_cluster = config["pest"]["clustered"][
+            "max_infested_stems_per_cluster"
         ]
-        sim_params.cluster_width = config["pest"]["clustered"]["parameters"][0]
+        sim_params.pest_distribution = config["pest"]["clustered"]["distribution"]
+        if sim_params.pest_distribution == "random":
+            sim_params.cluster_width = config["pest"]["clustered"]["parameters"][0]
+        else:
+            sim_params.cluster_width = None
     else:
-        sim_params.max_stems_per_cluster = None
+        sim_params.max_infested_stems_per_cluster = None
         sim_params.cluster_width = None
     sim_params.inspection_unit = config["inspection"]["unit"]
     sim_params.within_box_pct = config["inspection"]["within_box_pct"]
@@ -392,7 +399,12 @@ def print_totals_as_text(num_shipments, config, totals):
             round(totals.num_stems / num_shipments)
         )
     )
-    print("infestation:\n\t type: {0}".format(sim_params.infestation_type))
+
+    print(
+        "infestation:\n\t unit: {0} \n\t type: {1}".format(
+            sim_params.infestation_unit, sim_params.infestation_type
+        )
+    )
     if sim_params.infestation_type == "fixed_value":
         print("\t\t infestation rate: {0}".format(sim_params.infestation_param))
     elif sim_params.infestation_type == "beta":
@@ -406,7 +418,7 @@ def print_totals_as_text(num_shipments, config, totals):
         print(
             "\t\t cluster width: {0} stems\n"
             "\t\t maximum infested stems per cluster: {1} stems".format(
-                sim_params.cluster_width, sim_params.max_stems_per_cluster
+                sim_params.cluster_width, sim_params.max_infested_stems_per_cluster
             )
         )
     print(
@@ -476,8 +488,6 @@ def print_totals_as_text(num_shipments, config, totals):
         "\t to detection: {totals.avg_stems_inspected_detection:.0f}".format(**locals())
     )
     print(
-        "Avg. % sample completed if sample ends at detection: "
-        "{totals.pct_sample_if_to_detection:.2f}%\n"
         "Avg. % infested stems unreported if sample ends at detection: "
         "{totals.pct_pest_unreported_if_detection:.2f}%".format(**locals())
     )
