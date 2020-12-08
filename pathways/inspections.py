@@ -418,6 +418,7 @@ def inspect(config, shipment, n_units_to_inspect):
     # Inspect selected boxes, count opened boxes, inspected stems, and infested stems
     # to detection and completion
     ret = types.SimpleNamespace(
+        indexes_to_inspect=indexes_to_inspect,
         boxes_opened_completion=0,
         boxes_opened_detection=0,
         stems_inspected_completion=0,
