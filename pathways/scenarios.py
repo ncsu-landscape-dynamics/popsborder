@@ -83,7 +83,9 @@ def update_config(config, record):
     return config
 
 
-def run_scenarios(config, scenario_table, seed, num_simulations, num_shipments):
+def run_scenarios(
+    config, scenario_table, seed, num_simulations, num_shipments, detailed=False
+):
     """Run scenarios based on the configuration and list of scenarios
 
     Parameters
@@ -108,17 +110,32 @@ def run_scenarios(config, scenario_table, seed, num_simulations, num_shipments):
         result and configuration for that scenario.
     """
     results = []
+    if detailed:
+        scenario_details = []
     for record in scenario_table:
         print(record["name"])
         scenario_config = update_config(config, record)
-        result = run_simulation(
-            config=scenario_config,
-            num_simulations=num_simulations,
-            num_shipments=num_shipments,
-            seed=seed,
-        )
+        if detailed:
+            result, details = run_simulation(
+                config=scenario_config,
+                num_simulations=num_simulations,
+                num_shipments=num_shipments,
+                seed=seed,
+                detailed=True,
+            )
+            scenario_details.append(details)
+        else:
+            result = run_simulation(
+                config=scenario_config,
+                num_simulations=num_simulations,
+                num_shipments=num_shipments,
+                seed=seed,
+            )
         results.append((result, scenario_config))
-    return results
+    if detailed:
+        return results, scenario_details
+    else:
+        return results
 
 
 def load_scenario_table(filename):
