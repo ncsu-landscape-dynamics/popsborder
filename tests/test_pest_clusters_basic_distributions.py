@@ -6,6 +6,7 @@ from pathways.shipments import add_pest_clusters, Box
 
 CONTINUOUS_CONFIG = """\
 pest:
+  infestation_unit: stems
   infestation_rate:
     distribution: fixed_value
     value: 0.08
@@ -18,6 +19,7 @@ pest:
 
 RANDOM_CONFIG = """\
 pest:
+  infestation_unit: stems
   infestation_rate:
     distribution: fixed_value
     value: 0.12
