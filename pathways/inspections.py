@@ -463,7 +463,10 @@ def inspect(config, shipment, n_units_to_inspect):
                     # Update detected variable if infested stems found in box
                     detected = True
                 stems_inspected += inspect_per_box
-            assert ret.stems_inspected_completion == n_units_to_inspect
+            assert (
+                ret.stems_inspected_completion == n_units_to_inspect
+            ), """Check if number of stems is evenly divisible by stems per box.
+            Partial boxes not supported when using heirarchical selection."""
         else:  # All other stem selection strategies inspected the same way
             # Empty lists to hold opened boxes indexes, will be duplicates bc box index
             # computed per inspected stem
