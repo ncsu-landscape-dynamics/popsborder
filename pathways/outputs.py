@@ -320,11 +320,11 @@ def config_to_simplified_simulation_params(config):
         infestation_type="",
         infestation_param="",
         pest_arrangement="",
-        max_infested_stems_per_cluster="",
+        max_infested_units_per_cluster="",
         pest_distribution="",
-        cluster_width="",
+        max_cluster_stem_width="",
         inspection_unit="",
-        within_box_pct="",
+        within_box_proportion="",
         sample_strategy="",
         sample_params="",
         selection_strategy="",
@@ -342,22 +342,22 @@ def config_to_simplified_simulation_params(config):
         sim_params.infestation_param = None
     sim_params.pest_arrangement = config["pest"]["arrangement"]
     if sim_params.pest_arrangement == "clustered":
-        sim_params.max_infested_stems_per_cluster = config["pest"]["clustered"][
-            "max_infested_stems_per_cluster"
+        sim_params.max_infested_units_per_cluster = config["pest"]["clustered"][
+            "max_infested_units_per_cluster"
         ]
         sim_params.pest_distribution = config["pest"]["clustered"]["distribution"]
-        if sim_params.pest_distribution == "random":
-            sim_params.cluster_width = config["pest"]["clustered"]["parameters"][0]
-        else:
-            sim_params.cluster_width = None
+        sim_params.max_cluster_stem_width = config["pest"]["clustered"]["random"][
+            "max_cluster_stem_width"
+        ]
     else:
-        sim_params.max_infested_stems_per_cluster = None
-        sim_params.cluster_width = None
+        sim_params.max_infested_units_per_cluster = None
+        sim_params.max_cluster_stem_width = None
+        sim_params.pest_distribution = None
     sim_params.inspection_unit = config["inspection"]["unit"]
-    sim_params.within_box_pct = config["inspection"]["within_box_pct"]
+    sim_params.within_box_proportion = config["inspection"]["within_box_proportion"]
     sim_params.sample_strategy = config["inspection"]["sample_strategy"]
-    if sim_params.sample_strategy == "percentage":
-        sim_params.sample_params = config["inspection"]["percentage"]["proportion"]
+    if sim_params.sample_strategy == "proportion":
+        sim_params.sample_params = config["inspection"]["proportion"]["value"]
     elif sim_params.sample_strategy == "hypergeometric":
         sim_params.sample_params = config["inspection"]["hypergeometric"][
             "detection_level"
@@ -383,12 +383,14 @@ def print_totals_as_text(num_shipments, config, totals):
     """Prints simulation result as text"""
     sim_params = config_to_simplified_simulation_params(config)
 
-    # "On average, inspecting {0:.0f}% of shipments.".format(
-    #    100 * totals.num_inspections / float(args.num_shipments))
+    # "On average, inspecting {0:.0f}% of shipments.".format(100 *
+    #    totals.num_inspections / float(args.num_shipments))
     print("\n")
     print("Simulation parameters:")
     print("-----------------------")
-    print("shipments:\n\t Number shipments simulated: {0}".format(num_shipments))
+    print(
+        "shipments:\n\t Number shipments simulated: {num_shipments}".format(**locals())
+    )
     print(
         "\t Avg. number of boxes per shipment: {0}".format(
             round(totals.num_boxes / num_shipments)
@@ -401,80 +403,108 @@ def print_totals_as_text(num_shipments, config, totals):
     )
 
     print(
-        "infestation:\n\t unit: {0} \n\t type: {1}".format(
-            sim_params.infestation_unit, sim_params.infestation_type
-        )
+        "infestation:\n\t unit: {sim_params.infestation_unit} \n\t type: "
+        "{sim_params.infestation_type}".format(**locals())
     )
     if sim_params.infestation_type == "fixed_value":
-        print("\t\t infestation rate: {0}".format(sim_params.infestation_param))
+        print(
+            "\t\t infestation rate: {sim_params.infestation_param}".format(**locals())
+        )
     elif sim_params.infestation_type == "beta":
         print(
-            "\t\t infestation distribution parameters: {0}".format(
-                sim_params.infestation_param
-            )
+            "\t\t infestation distribution parameters: "
+            "{sim_params.infestation_param}".format(**locals())
         )
-    print("\t pest arrangement: {0}".format(sim_params.pest_arrangement))
+    print("\t pest arrangement: {sim_params.pest_arrangement}".format(**locals()))
     if sim_params.pest_arrangement == "clustered":
+        if sim_params.infestation_unit in ["box", "boxes"]:
+            print(
+                "\t\t maximum infested boxes per cluster: "
+                "{sim_params.max_infested_units_per_cluster} boxes".format(**locals())
+            )
+        if sim_params.infestation_unit in ["stem", "stems"]:
+            print(
+                "\t\t maximum infested stems per cluster: "
+                "{sim_params.max_infested_units_per_cluster} stems".format(**locals())
+            )
+            print(
+                "\t\t cluster distribution: {sim_params.pest_distribution}".format(
+                    **locals()
+                )
+            )
+            if sim_params.pest_distribution == "random":
+                print(
+                    "\t\t cluster width: "
+                    "{sim_params.max_cluster_stem_width} stems".format(**locals())
+                )
+
+    print(
+        "inspection:\n\t unit: {sim_params.inspection_unit}\n\t sample strategy: "
+        "{sim_params.sample_strategy}".format(**locals())
+    )
+    if sim_params.sample_strategy == "proportion":
+        print("\t\t value: {sim_params.sample_params}".format(**locals()))
+    elif sim_params.sample_strategy == "hypergeometric":
+        print("\t\t detection level: {sim_params.sample_params}".format(**locals()))
+    elif sim_params.sample_strategy == "fixed_n":
+        print("\t\t sample size: {sim_params.sample_params}".format(**locals()))
+    print("\t selection strategy: {sim_params.selection_strategy}".format(**locals()))
+    if sim_params.selection_strategy == "hierarchical":
         print(
-            "\t\t cluster width: {0} stems\n"
-            "\t\t maximum infested stems per cluster: {1} stems".format(
-                sim_params.cluster_width, sim_params.max_infested_stems_per_cluster
+            "\t\t box selection strategy: {sim_params.selection_param_1}".format(
+                **locals()
             )
         )
-    print(
-        "inspection:\n\t unit: {0}\n\t sample strategy: {1}".format(
-            sim_params.inspection_unit,
-            sim_params.sample_strategy,
-        )
-    )
-    if sim_params.sample_strategy == "percentage":
-        print("\t\t proportion: {0}".format(sim_params.sample_params))
-    elif sim_params.sample_strategy == "hypergeometric":
-        print("\t\t detection level: {0}".format(sim_params.sample_params))
-    elif sim_params.sample_strategy == "fixed_n":
-        print("\t\t sample size: {0}".format(sim_params.sample_params))
-    print("\t selection strategy: {0}".format(sim_params.selection_strategy))
-    if sim_params.selection_strategy == "hierarchical":
-        print("\t\t box selection strategy: {0}".format(sim_params.selection_param_1))
         if sim_params.selection_param_1 == "interval":
             print(
-                "\t\t box selection interval: {0}".format(sim_params.selection_param_2)
+                "\t\t box selection interval: {sim_params.selection_param_2}".format(
+                    **locals()
+                )
             )
     if (
         sim_params.inspection_unit in ["box", "boxes"]
         or sim_params.selection_strategy == "hierarchical"
     ):
         print(
-            "\t minimum proportion of stems inspected within box: {0}".format(
-                sim_params.within_box_pct
-            )
+            "\t minimum proportion of stems inspected within box: "
+            "{sim_params.within_box_proportion}".format(**locals())
         )
     print("\n")
 
-    print("Simulation results:")
+    print("Simulation results: (averaged across all simulation runs)")
     print("-----------------------")
-    print("Avg. % contaminated shipments slipped: {0:.2f}%".format(totals.missing))
-    print("Avg. num. shipments slipped: {0:,.0f}".format(totals.false_neg))
-    print("Avg. num. shipments intercepted: {0:,.0f}".format(totals.intercepted))
-    print("Total number of slipped pests: {0:,.0f}".format(totals.total_missed_pests))
     print(
-        "Total number of intercepted pests: {0:,.0f}".format(
-            totals.total_intercepted_pests
+        "Avg. % contaminated shipments slipped: {totals.missing:.2f}%".format(
+            **locals()
         )
     )
-    print("Avg. infestation rate: {0:.3f}".format(totals.true_infestation_rate))
+    print("Avg. num. shipments slipped: {totals.false_neg:,.0f}".format(**locals()))
+    print(
+        "Avg. num. shipments intercepted: {totals.intercepted:,.0f}".format(**locals())
+    )
+    print(
+        "Total number of slipped pests: {totals.total_missed_pests:,.0f}".format(
+            **locals()
+        )
+    )
+    print(
+        "Total number of intercepted pests: "
+        "{totals.total_intercepted_pests:,.0f}".format(**locals())
+    )
+    print("Infestation rate:")
+    print("\tOverall avg: {totals.true_infestation_rate:.3f}".format(**locals()))
     if totals.max_missed_infestation_rate is not None:
         print(
-            "Avg. infestation rate of slipped shipments: "
+            "\tSlipped shipments avg.: "
             "{totals.avg_missed_infestation_rate:.3f}\n"
-            "Max. infestation rate of slipped shipments: "
+            "\tSlipped shipments max.: "
             "{totals.max_missed_infestation_rate:.3f}".format(**locals())
         )
     if totals.max_intercepted_infestation_rate is not None:
         print(
-            "Avg. infestation rate of intercepted shipments: "
+            "\tIntercepted shipments avg.: "
             "{totals.avg_intercepted_infestation_rate:.3f}\n"
-            "Max. infestation rate of intercepted shipments: "
+            "\tIntercepted shipments max.: "
             "{totals.max_intercepted_infestation_rate:.3f}".format(**locals())
         )
     print(

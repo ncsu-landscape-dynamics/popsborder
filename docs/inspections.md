@@ -17,41 +17,42 @@ The proportion of stems within a box to be inspected can be determined by:
 
 ```
 inspection:
-  within_box_pct: 1
+  within_box_proportion: 1
 ```
 
-The value of `within_box_pct` can be set to any value greater than 0 and less
-than or equal to 1. By default, `within_box_pct = 1` meaning all stems within a
-box can be inspected. If `within_box_pct < 1`, only the first `n =
-within_box_pct * stems_per_box` stems in each box will be inspected.
+The value of `within_box_proportion` can be set to any value greater than 0 and
+less than or equal to 1. By default, `within_box_proportion = 1` meaning all
+stems within a box can be inspected. If `within_box_proportion < 1`, only the
+first `n = within_box_proportion * stems_per_box` stems in each box will be
+inspected.
 
 ## Sample strategy
 The sample strategy can be determined by:
 
 ```
 inspection:
-  sample_strategy: percentage
+  sample_strategy: proportion
 ```
 
 The sample strategy defines the method used to compute the number of units to
-inspect. The possible sample strategies include `percentage` for sampling a
-specified percent of units, `hypergeometric` for sampling to detect a specified
-infestation level at a specified confidence level using the hypergeometric
-distribution, `fixed_n` for sampling a specified number of units, and `all` for
-sampling all units.
+inspect. The possible sample strategies include `proportion` for sampling a
+specified proportion of units, `hypergeometric` for sampling to detect a
+specified infestation level at a specified confidence level using the
+hypergeometric distribution, `fixed_n` for sampling a specified number of units,
+and `all` for sampling all units.
 
-### Percentage strategy
+### Proportion strategy
 
-The settings for `percentage` are:
+The settings for `proportion` are:
 
 ```
 inspection:
-  percentage:
-      proportion: 0.02
+  proportion:
+      value: 0.02
       min_boxes: 1
 ```
 
-The percentage value is set by `proportion` and the minimum number of boxes to
+The proportion value is set by `proportion` and the minimum number of boxes to
  be inspected is set by `min_boxes`. If `unit = "stems"`, the number of stems to
  inspect is computed by `proportion * num_stems`. Similarly, if `unit =
  "boxes"`, the number of boxes to inspect is computed by `proportion *
@@ -89,12 +90,13 @@ inspection:
 
 The number of units to be inspected can be any integer set by `fixed_n`. If
 `unit = "stems"`, the sample size will be set to the minimum of two values:
-`fixed_n` and the maximum number of inspectable stems based on `within_box_pct`
-(`max_stems = within_box_pct * stems_per_box * num_boxes`). If `unit = "boxes"`,
-the sample size will be set to `fixed_n` if `min_boxes <= fixed_n <= num_boxes`.
-If `fixed_n` is less than the minimum number of boxes to inspect, number of
-boxes to inspect will be set to `min_boxes`. If `fixed_n` exceeds the number of
-boxes in the shipment, number of boxes to inspect will be set to `num_boxes`.
+`fixed_n` and the maximum number of inspectable stems based on
+`within_box_proportion` (`max_stems = within_box_proportion * stems_per_box *
+num_boxes`). If `unit = "boxes"`, the sample size will be set to `fixed_n` if
+`min_boxes <= fixed_n <= num_boxes`. If `fixed_n` is less than the minimum
+number of boxes to inspect, number of boxes to inspect will be set to
+`min_boxes`. If `fixed_n` exceeds the number of boxes in the shipment, number of
+boxes to inspect will be set to `num_boxes`.
 
 ## Selection strategy
 The unit selection strategy can be determined by:
@@ -132,9 +134,20 @@ The possible values for `outer` are `random` for selecting the outer units using
 a random uniform distribution and `interval` for selecting every *nth* outer
 unit. If `outer = "interval"`, the interval size is set by `interval`.
 
-A simple example using the following configuration: ``` shipment: stems_per_box:
-default: 200 inspection: unit: stem within_box_pct: 0.25 sample_strategy:
-hypergeometric selection_strategy: hierarchical hierarchical: outer: random ```
+A simple example using the following configuration: 
+
+``` 
+shipment: 
+  stems_per_box:
+    default: 200 
+inspection: 
+  unit: stem 
+  within_box_proportion: 0.25 
+  sample_strategy: hypergeometric 
+  selection_strategy: hierarchical 
+  hierarchical: 
+    outer: random
+```
 
 In this case, the sample size is calculated using the hypergeometric approach
 based on the total number of stems in the shipment and the stems to be inspected
@@ -142,11 +155,11 @@ are selected using the hierarchical approach.
 
 Let's say the computed sample size (`n_units_to_inspect`) is 200 stems. The
 following steps are used to determine which stems to inspect. First, the
-`within_box_pct` value is used to determine how many boxes need to be opened to
-get to the sample size. The number of stems inspected per box is
-`within_box_pct` * `stems_per_box` (200 * 0.25 = 50), so only 50 stems would be
-inspected per box. The number of boxes that need to be opened to get to the
-sample size is `n_units_to_inspect` / `inspect_per_box` (200 / 50 = 4), so 4
+`within_box_proportion` value is used to determine how many boxes need to be
+opened to get to the sample size. The number of stems inspected per box is
+`within_box_proportion` * `stems_per_box` (200 * 0.25 = 50), so only 50 stems
+would be inspected per box. The number of boxes that need to be opened to get to
+the sample size is `n_units_to_inspect` / `inspect_per_box` (200 / 50 = 4), so 4
 boxes need to be opened. Once the number of boxes needed is determined, those
 boxes are then selected from the shipment randomly since `outer = "random"` and
 the first 25% of stems are inspected tailgate style, i.e., first *n*. 

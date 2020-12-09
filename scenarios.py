@@ -28,10 +28,10 @@ def main():
             "pest/arrangement",
             "inspection/unit",
             "inspection/sample_strategy",
-            "inspection/percentage/proportion",
+            "inspection/proportion/value",
             "inspection/hypergeometric/detection_level",
             "inspection/selection_strategy",
-            "inspection/within_box_pct",
+            "inspection/within_box_proportion",
             "inspection/hierarchical/outer",
         ],
         result_columns=[

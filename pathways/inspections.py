@@ -32,7 +32,6 @@ import types
 import weakref
 import numpy as np
 
-from .shipments import get_stems_per_box
 
 if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error
@@ -40,21 +39,21 @@ if not hasattr(weakref, "finalize"):
 
 def inspect_first(shipment):
     """Inspect only the first box in the shipment"""
-    if shipment["boxes"][0]:
+    if shipment.boxes[0]:
         return False, 1
     return True, 1
 
 
 def inspect_one_random(shipment):
     """Inspect only one randomly picked box in the shipment"""
-    if random.choice(shipment["boxes"]):
+    if random.choice(shipment.boxes):
         return False, 1
     return True, 1
 
 
 def inspect_all(shipment):
     """Inspect all boxes in the shipment"""
-    return not is_shipment_diseased(shipment), shipment["num_boxes"]
+    return not is_shipment_diseased(shipment), shipment.num_boxes
 
 
 def inspect_first_n(num_boxes, shipment):
@@ -63,24 +62,24 @@ def inspect_first_n(num_boxes, shipment):
     :param num_boxes: Number of boxes to inspect
     :param shipment: Shipment to inspect
     """
-    num_boxes = min(len(shipment["boxes"]), num_boxes)
+    num_boxes = min(len(shipment.boxes), num_boxes)
     for i in range(num_boxes):
-        if shipment["boxes"][i]:
+        if shipment.boxes[i]:
             return False, i + 1
     return True, num_boxes
 
 
-def sample_percentage(config, shipment):
-    """Set sample size to sample units from shipment using percentage strategy.
+def sample_proportion(config, shipment):
+    """Set sample size to sample units from shipment using proportion strategy.
     Return number of units to inspect.
 
     :param config: Configuration to be used595
     :param shipment: Shipment to be inspected
     """
     unit = config["inspection"]["unit"]
-    ratio = config["inspection"]["percentage"]["proportion"]
-    num_stems = shipment["num_stems"]
-    num_boxes = shipment["num_boxes"]
+    ratio = config["inspection"]["proportion"]["value"]
+    num_stems = shipment.num_stems
+    num_boxes = shipment.num_boxes
     min_boxes = config.get("min_boxes", 1)
 
     if unit in ["stem", "stems"]:
@@ -130,8 +129,8 @@ def sample_hypergeometric(config, shipment):
     unit = config["inspection"]["unit"]
     detection_level = config["inspection"]["hypergeometric"]["detection_level"]
     confidence_level = config["inspection"]["hypergeometric"]["confidence_level"]
-    num_stems = shipment["num_stems"]
-    num_boxes = shipment["num_boxes"]
+    num_stems = shipment.num_stems
+    num_boxes = shipment.num_boxes
 
     if unit in ["stem", "stems"]:
         n_units_to_inspect = compute_hypergeometric(
@@ -155,9 +154,9 @@ def sample_all(config, shipment):
     """
     unit = config["inspection"]["unit"]
     if unit in ["stem", "stems"]:
-        n_units_to_inspect = shipment["num_stems"]
+        n_units_to_inspect = shipment.num_stems
     elif unit in ["box", "boxes"]:
-        n_units_to_inspect = shipment["num_boxes"]
+        n_units_to_inspect = shipment.num_boxes
     return n_units_to_inspect
 
 
@@ -171,17 +170,15 @@ def sample_n(config, shipment):
     """
     fixed_n = config["inspection"]["fixed_n"]
     unit = config["inspection"]["unit"]
-    within_box_pct = config["inspection"]["within_box_pct"]
-    pathway = shipment["pathway"]
-    stems_per_box = config["shipment"]["stems_per_box"]
-    stems_per_box = get_stems_per_box(stems_per_box, pathway)
-    num_stems = shipment["num_stems"]
-    num_boxes = shipment["num_boxes"]
+    within_box_proportion = config["inspection"]["within_box_proportion"]
+    stems_per_box = shipment.stems_per_box
+    num_stems = shipment.num_stems
+    num_boxes = shipment.num_boxes
     min_boxes = config.get("min_boxes", 1)
 
     if unit in ["stem", "stems"]:
         max_stems = compute_max_inspectable_stems(
-            num_stems, stems_per_box, within_box_pct
+            num_stems, stems_per_box, within_box_proportion
         )
         # Check if max number of stems that can be inspected is less than fixed number.
         n_units_to_inspect = min(max_stems, fixed_n)
@@ -194,7 +191,7 @@ def sample_n(config, shipment):
 
 def convert_stems_to_boxes_fixed_pct(config, shipment, n_stems_to_inspect):
     """Convert number of stems to inspect to number of boxes to inspect based on
-    the number of stems per box and the percentage of stems to inspect per box
+    the number of stems per box and the proportion of stems to inspect per box
     specified in the config. Adjust number of boxes to inspect to be at least
     the minimum number of boxes to inspect specified in the config and at most the
     total number of boxes in the shipment.
@@ -204,13 +201,11 @@ def convert_stems_to_boxes_fixed_pct(config, shipment, n_stems_to_inspect):
     :param shipment: Shipment to be inspected
     :param n_stems_to_inspect: Number of stems to inspect defined in sample functions.
     """
-    pathway = shipment["pathway"]
-    stems_per_box = config["shipment"]["stems_per_box"]
-    stems_per_box = get_stems_per_box(stems_per_box, pathway)
-    within_box_pct = config["inspection"]["within_box_pct"]
+    stems_per_box = shipment.stems_per_box
+    within_box_proportion = config["inspection"]["within_box_proportion"]
     min_boxes = config.get("min_boxes", 1)
-    num_boxes = shipment["num_boxes"]
-    inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
+    num_boxes = shipment.num_boxes
+    inspect_per_box = int(math.ceil(within_box_proportion * stems_per_box))
 
     n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
     n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
@@ -230,10 +225,8 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
     :param n_stems_to_inspect: Number of stems to inspect defined by sample functions.
     """
     outer = config["inspection"]["hierarchical"]["outer"]
-    pathway = shipment.pathway
-    stems_per_box = config["shipment"]["stems_per_box"]
-    stems_per_box = get_stems_per_box(stems_per_box, pathway)
-    within_box_pct = config["inspection"]["within_box_pct"]
+    stems_per_box = shipment.stems_per_box
+    within_box_proportion = config["inspection"]["within_box_proportion"]
     min_boxes = config.get("min_boxes", 1)
     num_boxes = shipment.num_boxes
     num_stems = shipment.num_stems
@@ -241,10 +234,10 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
     if outer == "random":
         # Check if within box pct is high enough to achieve sample size.
         max_stems = compute_max_inspectable_stems(
-            num_stems, stems_per_box, within_box_pct
+            num_stems, stems_per_box, within_box_proportion
         )
         if max_stems >= n_stems_to_inspect:
-            inspect_per_box = math.ceil(within_box_pct * stems_per_box)
+            inspect_per_box = math.ceil(within_box_proportion * stems_per_box)
             n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
         else:
             # If not, divide sample size across number of boxes to get number
@@ -258,11 +251,11 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
         # Should be at least 1.
         max_boxes = max(1, round(num_boxes / interval))
         # Assumes full boxes, no remainder partial box.
-        max_stems = max_boxes * (math.ceil(within_box_pct * stems_per_box))
+        max_stems = max_boxes * (math.ceil(within_box_proportion * stems_per_box))
         # Check if within box percent is high enough and/or interval is
         # low enough to achieve sample size
         if max_stems >= n_stems_to_inspect:
-            inspect_per_box = math.ceil(within_box_pct * stems_per_box)
+            inspect_per_box = math.ceil(within_box_proportion * stems_per_box)
             n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
         # If not, divide sample size across max boxes to get number of
         # stems to inspect per box.
@@ -283,7 +276,7 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
     return n_boxes_to_inspect, inspect_per_box
 
 
-def compute_max_inspectable_stems(num_stems, stems_per_box, within_box_pct):
+def compute_max_inspectable_stems(num_stems, stems_per_box, within_box_proportion):
     """Compute maximum number of stems that can be inspected in a shipment based
     on within box percent. If within box percent is less than 1 (partial box
     inspections), then maximum number of stems that can be inspected will be
@@ -291,9 +284,9 @@ def compute_max_inspectable_stems(num_stems, stems_per_box, within_box_pct):
 
     :param num_stems: total number of stems in shipment
     :param stems_per_box: number of stems in each box
-    :param within_box_pct: percentage of stems to be inspected per box
+    :param within_box_proportion: proportion of stems to be inspected per box
     """
-    inspect_per_box = math.ceil(within_box_pct * stems_per_box)
+    inspect_per_box = math.ceil(within_box_proportion * stems_per_box)
     num_full_boxes = math.floor(num_stems / stems_per_box)
     full_box_inspectable_stems = num_full_boxes * inspect_per_box
     remainder_box = num_stems % stems_per_box
@@ -385,8 +378,6 @@ def select_units_to_inspect(config, shipment, n_units_to_inspect):
     """
     unit = config["inspection"]["unit"]
     selection_strategy = config["inspection"]["selection_strategy"]
-    stems_per_box = config["shipment"]["stems_per_box"]
-    stems_per_box = get_stems_per_box(stems_per_box, shipment.pathway)
 
     if selection_strategy == "tailgate":
         indexes_to_inspect = list(range(n_units_to_inspect))
@@ -420,9 +411,7 @@ def inspect(config, shipment, n_units_to_inspect):
 
     unit = config["inspection"]["unit"]
     selection_strategy = config["inspection"]["selection_strategy"]
-    pathway = shipment["pathway"]
-    stems_per_box = config["shipment"]["stems_per_box"]
-    stems_per_box = get_stems_per_box(stems_per_box, pathway)
+    stems_per_box = shipment["stems_per_box"]
 
     indexes_to_inspect = select_units_to_inspect(config, shipment, n_units_to_inspect)
 
@@ -504,8 +493,8 @@ def inspect(config, shipment, n_units_to_inspect):
             ret.boxes_opened_detection = len(set(boxes_opened_detection))
     elif unit in ["box", "boxes"]:
         # Partial box inspections allowed to reduce number of stems inspected if desired
-        within_box_pct = config["inspection"]["within_box_pct"]
-        inspect_per_box = int(math.ceil(within_box_pct * stems_per_box))
+        within_box_proportion = config["inspection"]["within_box_proportion"]
+        inspect_per_box = int(math.ceil(within_box_proportion * stems_per_box))
         detected = False
         ret.boxes_opened_completion = n_units_to_inspect
         ret.stems_inspected_completion = n_units_to_inspect * inspect_per_box
@@ -513,7 +502,7 @@ def inspect(config, shipment, n_units_to_inspect):
             if not detected:
                 ret.boxes_opened_detection += 1
             # If inspecting full box, use box object for inspection
-            if within_box_pct in [1, 1.0]:
+            if within_box_proportion in [1, 1.0]:
                 if not detected:
                     ret.stems_inspected_detection += shipment.boxes[index].num_stems
                 if shipment.boxes[index]:
@@ -546,10 +535,10 @@ def inspect(config, shipment, n_units_to_inspect):
 def get_sample_function(config):
     """Based on config, return function to sample a shipment."""
     sample_strategy = config["inspection"]["sample_strategy"]
-    if sample_strategy == "percentage":
+    if sample_strategy == "proportion":
 
         def sample(shipment):
-            return sample_percentage(config=config, shipment=shipment)
+            return sample_proportion(config=config, shipment=shipment)
 
     elif sample_strategy == "hypergeometric":
 
@@ -584,11 +573,11 @@ def is_flower_of_the_day(cfrp, flower, date):
 def naive_cfrp(config, shipment, date):
     """Decided if the shipment should be expected based on CFRP and size"""
     # returns 2 bools: should_inspect, CFRP applied
-    flower = shipment["flower"]
+    flower = shipment.flower
     cfrp = config["flowers"]
     max_boxes = config["max_boxes"]
     # we have flowers in the CFRP, flower is in CFRP, and not too big shipment
-    if cfrp and flower in cfrp and shipment["num_boxes"] <= max_boxes:
+    if cfrp and flower in cfrp and shipment.num_boxes <= max_boxes:
         if is_flower_of_the_day(cfrp, flower, date):
             return True, "naive_cfrp"  # is FotD, inspect
         return False, "naive_cfrp"  # not FotD, release
@@ -619,7 +608,7 @@ def get_inspection_needed_function(config):
 
 def is_shipment_diseased(shipment):
     """Return True if at least one box has pest"""
-    for box in shipment["boxes"]:
+    for box in shipment.boxes:
         if box:
             return True
     return False
@@ -631,14 +620,14 @@ def shipment_infestation_rate(shipment):
     Infestation rate is here defined as number of
     infested stems divided by the number stems.
     """
-    count = np.count_nonzero(shipment["stems"])
-    return count / shipment["num_stems"]
+    count = np.count_nonzero(shipment.stems)
+    return count / shipment.num_stems
 
 
 def count_diseased_boxes(shipment):
     """Return number of boxes with pest"""
     count = 0
-    for box in shipment["boxes"]:
+    for box in shipment.boxes:
         if box:
             count += 1
     return count
@@ -646,5 +635,5 @@ def count_diseased_boxes(shipment):
 
 def count_diseased_stems(shipment):
     """Return number of stems with pest"""
-    count = np.count_nonzero(shipment["stems"])
+    count = np.count_nonzero(shipment.stems)
     return count
