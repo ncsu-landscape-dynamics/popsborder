@@ -460,14 +460,11 @@ def add_pest_clusters(config, shipment):
         infested_boxes = num_boxes_to_infest(config["infestation_rate"], num_boxes)
         if infested_boxes == 0:
             return
-        max_boxes_per_cluster = math.ceil(
-            max_infested_units_per_cluster / shipment.stems_per_box
-        )
         cluster_sizes = _infested_boxes_to_cluster_sizes(
-            infested_boxes, max_boxes_per_cluster
+            infested_boxes, max_infested_units_per_cluster
         )
         num_strata, cluster_strata = create_stratas_for_clusters(
-            num_boxes, max_boxes_per_cluster, cluster_sizes
+            num_boxes, max_infested_units_per_cluster, cluster_sizes
         )
         for index, cluster_size in enumerate(cluster_sizes):
             cluster_start = math.floor(num_boxes / num_strata) * cluster_strata[index]
