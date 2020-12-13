@@ -113,7 +113,8 @@ def run_scenarios(
     if detailed:
         scenario_details = []
     for record in scenario_table:
-        print(record["name"])
+        scenario_name = record["name"]
+        print(f"Running scenario: {scenario_name}")
         scenario_config = update_config(config, record)
         if detailed:
             result, details = run_simulation(
