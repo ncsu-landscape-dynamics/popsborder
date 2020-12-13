@@ -438,6 +438,10 @@ def _infested_boxes_to_cluster_sizes(infested_boxes, max_boxes_per_cluster):
 def create_stratas_for_clusters(num_units, cluster_width, cluster_sizes):
     """Divide array of shipment stems or boxes into strata wide enough for clusters."""
     num_strata = max(1, math.floor(num_units / cluster_width))
+    assert num_strata >= len(
+        cluster_sizes
+    ), """Cannot avoid overlapping clusters. Either increase max_infested_units_per_cluster,
+    or decrease max_cluster_stem_width (if using stem infestation_unit)"""
     cluster_strata = np.random.choice(num_strata, len(cluster_sizes), replace=False)
     return num_strata, cluster_strata
 
