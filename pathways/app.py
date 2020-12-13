@@ -121,7 +121,7 @@ def main():
         "-d",
         "--detailed",
         action="store_true",
-        help="Save array of stems and inspection indexes",
+        help="Output array of stems and inspection indexes",
     )
     output_group.add_argument(
         "-h",
