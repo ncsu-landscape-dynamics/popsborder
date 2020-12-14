@@ -56,7 +56,13 @@ def random_seed(seed):
 
 
 def simulation(
-    config, num_shipments, seed, output_f280_file=None, verbose=False, pretty=None
+    config,
+    num_shipments,
+    seed,
+    output_f280_file=None,
+    verbose=False,
+    pretty=None,
+    detailed=False,
 ):
     """Simulate shipments, their infestation, and their inspection
 
@@ -97,10 +103,14 @@ def simulation(
     add_pest = get_pest_function(config)
     is_inspection_needed = get_inspection_needed_function(config)
     sample = get_sample_function(config)
-
+    if detailed:
+        details = [[], []]
     for unused_i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
         add_pest(shipment)
+        if detailed:
+            for box in shipment.boxes:
+                details[0].append(box.stems)
         if pretty:
             pretty_config = config.get("pretty", {})
             print(pretty_shipment(shipment, style=pretty, config=pretty_config))
@@ -121,10 +131,13 @@ def simulation(
             total_stems_inspected_detection += ret.stems_inspected_detection
             total_infested_stems_completion += ret.infested_stems_completion
             total_infested_stems_detection += ret.infested_stems_detection
+            if detailed:
+                details[1].append(ret.indexes_to_inspect)
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
             total_num_boxes += shipment["num_boxes"]
             total_num_stems += shipment["num_stems"]
+
         form280.fill(
             shipment["arrival_time"],
             shipment,
@@ -183,40 +196,81 @@ def simulation(
         avg_intercepted_infestation_rate = 0
         pct_pest_unreported_if_detection = 0
 
-    return types.SimpleNamespace(
-        missing=missing,
-        false_neg=false_neg,
-        intercepted=success_rates.true_positive,
-        num_inspections=num_inspections,
-        total_num_boxes=total_num_boxes,
-        total_num_stems=total_num_stems,
-        avg_boxes_opened_completion=total_boxes_opened_completion / num_shipments,
-        avg_boxes_opened_detection=total_boxes_opened_detection / num_shipments,
-        pct_boxes_opened_completion=(
-            (total_boxes_opened_completion / total_num_boxes) * 100
-        ),
-        pct_boxes_opened_detection=(
-            (total_boxes_opened_detection / total_num_boxes) * 100
-        ),
-        avg_stems_inspected_completion=total_stems_inspected_completion / num_shipments,
-        avg_stems_inspected_detection=total_stems_inspected_detection / num_shipments,
-        pct_stems_inspected_completion=(
-            (total_stems_inspected_completion / total_num_stems) * 100
-        ),
-        pct_stems_inspected_detection=(
-            (total_stems_inspected_detection / total_num_stems) * 100
-        ),
-        pct_pest_unreported_if_detection=pct_pest_unreported_if_detection,
-        true_infestation_rate=true_infestation_rate / num_shipments,
-        max_missed_infestation_rate=max_missed_infestation_rate,
-        avg_missed_infestation_rate=avg_missed_infestation_rate,
-        max_intercepted_infestation_rate=max_intercepted_infestation_rate,
-        avg_intercepted_infestation_rate=avg_intercepted_infestation_rate,
-        false_negative_present=false_negative_present,
-        true_positive_present=true_positive_present,
-        total_intercepted_pests=total_intercepted_pests,
-        total_missed_pests=total_missed_pests,
-    )
+    if detailed:
+        return types.SimpleNamespace(
+            details=details,
+            missing=missing,
+            false_neg=false_neg,
+            intercepted=success_rates.true_positive,
+            num_inspections=num_inspections,
+            total_num_boxes=total_num_boxes,
+            total_num_stems=total_num_stems,
+            avg_boxes_opened_completion=total_boxes_opened_completion / num_shipments,
+            avg_boxes_opened_detection=total_boxes_opened_detection / num_shipments,
+            pct_boxes_opened_completion=(
+                (total_boxes_opened_completion / total_num_boxes) * 100
+            ),
+            pct_boxes_opened_detection=(
+                (total_boxes_opened_detection / total_num_boxes) * 100
+            ),
+            avg_stems_inspected_completion=total_stems_inspected_completion
+            / num_shipments,
+            avg_stems_inspected_detection=total_stems_inspected_detection
+            / num_shipments,
+            pct_stems_inspected_completion=(
+                (total_stems_inspected_completion / total_num_stems) * 100
+            ),
+            pct_stems_inspected_detection=(
+                (total_stems_inspected_detection / total_num_stems) * 100
+            ),
+            pct_pest_unreported_if_detection=pct_pest_unreported_if_detection,
+            true_infestation_rate=true_infestation_rate / num_shipments,
+            max_missed_infestation_rate=max_missed_infestation_rate,
+            avg_missed_infestation_rate=avg_missed_infestation_rate,
+            max_intercepted_infestation_rate=max_intercepted_infestation_rate,
+            avg_intercepted_infestation_rate=avg_intercepted_infestation_rate,
+            false_negative_present=false_negative_present,
+            true_positive_present=true_positive_present,
+            total_intercepted_pests=total_intercepted_pests,
+            total_missed_pests=total_missed_pests,
+        )
+    else:
+        return types.SimpleNamespace(
+            missing=missing,
+            false_neg=false_neg,
+            intercepted=success_rates.true_positive,
+            num_inspections=num_inspections,
+            total_num_boxes=total_num_boxes,
+            total_num_stems=total_num_stems,
+            avg_boxes_opened_completion=total_boxes_opened_completion / num_shipments,
+            avg_boxes_opened_detection=total_boxes_opened_detection / num_shipments,
+            pct_boxes_opened_completion=(
+                (total_boxes_opened_completion / total_num_boxes) * 100
+            ),
+            pct_boxes_opened_detection=(
+                (total_boxes_opened_detection / total_num_boxes) * 100
+            ),
+            avg_stems_inspected_completion=total_stems_inspected_completion
+            / num_shipments,
+            avg_stems_inspected_detection=total_stems_inspected_detection
+            / num_shipments,
+            pct_stems_inspected_completion=(
+                (total_stems_inspected_completion / total_num_stems) * 100
+            ),
+            pct_stems_inspected_detection=(
+                (total_stems_inspected_detection / total_num_stems) * 100
+            ),
+            pct_pest_unreported_if_detection=pct_pest_unreported_if_detection,
+            true_infestation_rate=true_infestation_rate / num_shipments,
+            max_missed_infestation_rate=max_missed_infestation_rate,
+            avg_missed_infestation_rate=avg_missed_infestation_rate,
+            max_intercepted_infestation_rate=max_intercepted_infestation_rate,
+            avg_intercepted_infestation_rate=avg_intercepted_infestation_rate,
+            false_negative_present=false_negative_present,
+            true_positive_present=true_positive_present,
+            total_intercepted_pests=total_intercepted_pests,
+            total_missed_pests=total_missed_pests,
+        )
 
 
 def run_simulation(
@@ -227,6 +281,7 @@ def run_simulation(
     output_f280_file=None,
     verbose=False,
     pretty=None,
+    detailed=False,
 ):
     """Run the simulation function specified number of times
 
@@ -272,7 +327,10 @@ def run_simulation(
             output_f280_file=output_f280_file,
             verbose=verbose,
             pretty=pretty,
+            detailed=detailed,
         )
+        if detailed and i == 0:
+            details = result.details
         totals.missing += result.missing
         totals.false_neg += result.false_neg
         totals.intercepted += result.intercepted
@@ -335,7 +393,10 @@ def run_simulation(
     totals.total_intercepted_pests /= float(num_simulations)
     totals.total_missed_pests /= float(num_simulations)
 
-    return totals
+    if detailed:
+        return totals, details
+    else:
+        return totals
 
 
 def load_configuration_yaml_from_text(text):

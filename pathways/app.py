@@ -118,6 +118,12 @@ def main():
         help="Print messages about each shipment inspection process",
     )
     output_group.add_argument(
+        "-d",
+        "--detailed",
+        action="store_true",
+        help="Output array of stems and inspection indexes",
+    )
+    output_group.add_argument(
         "-h",
         "--help",
         action="help",
@@ -127,16 +133,33 @@ def main():
     args = parser.parse_args()
 
     config = load_configuration(args.config_file)
-    totals = run_simulation(
-        config=config,
-        num_simulations=args.num_simulations,
-        num_shipments=args.num_shipments,
-        seed=args.seed,
-        output_f280_file=args.output_file,
-        verbose=args.verbose,
-        pretty=args.pretty,
-    )
+    detailed = args.detailed
+    if detailed:
+        totals, details = run_simulation(
+            config=config,
+            num_simulations=args.num_simulations,
+            num_shipments=args.num_shipments,
+            seed=args.seed,
+            output_f280_file=args.output_file,
+            verbose=args.verbose,
+            pretty=args.pretty,
+            detailed=args.detailed,
+        )
+    else:
+        totals = run_simulation(
+            config=config,
+            num_simulations=args.num_simulations,
+            num_shipments=args.num_shipments,
+            seed=args.seed,
+            output_f280_file=args.output_file,
+            verbose=args.verbose,
+            pretty=args.pretty,
+            detailed=args.detailed,
+        )
     print_totals_as_text(args.num_shipments, config, totals)
+    if detailed:
+        print("Stems by box: {}".format(details[0]))
+        print("Indexes inspected: {}".format(details[1]))
 
 
 if __name__ == "__main__":
