@@ -49,6 +49,8 @@ def main():
             "pct_pest_unreported_if_detection",
             "total_missed_pests",
             "total_intercepted_pests",
+            "false_neg",
+            "intercepted",
         ],
     )
 
