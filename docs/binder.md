@@ -5,7 +5,7 @@ or scripts in a cloud environment without any need for setup or an
 account.
 
 Binder works as any other website, but instead of pressing
-links or buttons, you can run Python code which runs in the somewhere
+links or buttons, you can run Python code which runs somewhere in the
 cloud (not on you computer). This means that you don't have to install
 anything on your computer and it is really just another website.
 However, this also means that you cannot upload any private or internal
