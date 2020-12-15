@@ -63,7 +63,8 @@ xxooooooxx|oooooooooo|oooxooooxx|ooooooooxo|ooooxooooo|ooooxoooox
 Alternatively, if you want to plot and further analyze the simulated shipments
 and inspections, use `detailed = True` in the `run_scenarios()` function to
 return an object with arrays of stems (binary values representing infested or
-not) and the stem or box indexes inspected.
+not) and the stem or box indexes inspected. If multiple simulation iterations
+are being used, the details from the first simulation will be used.
 
 ```
 num_shipments = 10
