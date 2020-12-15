@@ -58,7 +58,7 @@ pest:
       # centered at 0.7%
       - 0.0194628
       - 2.7609372
-  arrangement: clustered
+  arrangement: random
   clustered:
     max_infested_units_per_cluster: 200
     distribution: random
