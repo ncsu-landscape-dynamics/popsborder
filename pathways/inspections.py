@@ -243,8 +243,8 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
             # If not, divide sample size across number of boxes to get number
             # of stems to inspect per box.
             print(
-                "Warning: Within box proportion is too low to achieve sample size."
-                " Automatically increasing within box proportion to achieve sample size."
+                "Warning: Within box proportion is too low to achieve sample size. "
+                "Automatically increasing within box proportion to achieve sample size."
             )
             inspect_per_box = math.ceil(n_stems_to_inspect / num_boxes)
             n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
