@@ -242,6 +242,10 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
         else:
             # If not, divide sample size across number of boxes to get number
             # of stems to inspect per box.
+            print(
+                "Warning: Within box proportion is too low to achieve sample size."
+                " Automatically increasing within box proportion to achieve sample size."
+            )
             inspect_per_box = math.ceil(n_stems_to_inspect / num_boxes)
             n_boxes_to_inspect = math.ceil(n_stems_to_inspect / inspect_per_box)
 
@@ -260,6 +264,11 @@ def compute_n_outer_to_inspect(config, shipment, n_stems_to_inspect):
         # If not, divide sample size across max boxes to get number of
         # stems to inspect per box.
         else:
+            print(
+                "Warning: Within box proportion is too low and/or interval is too "
+                "high to achieve sample size. Automatically increasing within box "
+                "proportion to achieve sample size."
+            )
             inspect_per_box = math.ceil(n_stems_to_inspect / max_boxes)
             # If not enough boxes to achieve sample size, inspect all stems
             # and increase n_boxes_to_inspect as needed.
@@ -396,7 +405,7 @@ def select_units_to_inspect(config, shipment, n_units_to_inspect):
     return indexes_to_inspect
 
 
-def inspect(config, shipment, n_units_to_inspect):
+def inspect(config, shipment, n_units_to_inspect, detailed):
     """Inspect selected units using both end strategies (to detection, to completion)
     Return number of boxes opened, stems inspected, and infested stems found for
     each end strategy.
@@ -418,7 +427,7 @@ def inspect(config, shipment, n_units_to_inspect):
     # Inspect selected boxes, count opened boxes, inspected stems, and infested stems
     # to detection and completion
     ret = types.SimpleNamespace(
-        indexes_to_inspect=indexes_to_inspect,
+        inspected_stem_indexes=[],
         boxes_opened_completion=0,
         boxes_opened_detection=0,
         stems_inspected_completion=0,
@@ -438,7 +447,7 @@ def inspect(config, shipment, n_units_to_inspect):
             ret.boxes_opened_completion = len(indexes_to_inspect)
             stems_inspected = 0
             # Loop through selected box indexes (random or interval selection)
-            for box in indexes_to_inspect:
+            for box_index in indexes_to_inspect:
                 if not detected:
                     ret.boxes_opened_detection += 1
                 sample_remainder = n_units_to_inspect - stems_inspected
@@ -448,7 +457,14 @@ def inspect(config, shipment, n_units_to_inspect):
                 if sample_remainder < inspect_per_box:
                     inspect_per_box = sample_remainder
                 # In each box, loop through first n stems (n = inspect_per_box)
-                for stem in (shipment.boxes[box]).stems[0:inspect_per_box]:
+                for stem_in_box_index, stem in enumerate(
+                    (shipment.boxes[box_index]).stems[0:inspect_per_box]
+                ):
+                    if detailed:
+                        stem_index = shipment.stem_in_box_to_stem_index(
+                            box_index, stem_in_box_index
+                        )
+                        ret.inspected_stem_indexes.append(stem_index)
                     ret.stems_inspected_completion += 1
                     if not detected:
                         ret.stems_inspected_detection += 1
@@ -474,15 +490,19 @@ def inspect(config, shipment, n_units_to_inspect):
             boxes_opened_detection = []
             # Loop through stems in sorted index list (sorted in index functions)
             # Inspection progresses through indexes in ascending order
-            for index in indexes_to_inspect:
+            for stem_index in indexes_to_inspect:
+                if detailed:
+                    ret.inspected_stem_indexes.append(stem_index)
                 ret.stems_inspected_completion += 1
                 # Compute box index number
-                boxes_opened_completion.append(math.floor(index / stems_per_box))
+                boxes_opened_completion.append(math.floor(stem_index / stems_per_box))
                 if not detected:
                     ret.stems_inspected_detection += 1
                     # Compute box index number
-                    boxes_opened_detection.append(math.floor(index / stems_per_box))
-                if shipment.stems[index]:
+                    boxes_opened_detection.append(
+                        math.floor(stem_index / stems_per_box)
+                    )
+                if shipment.stems[stem_index]:
                     # Count every infested stem in sample
                     ret.infested_stems_completion += 1
                     if not detected:
@@ -502,32 +522,26 @@ def inspect(config, shipment, n_units_to_inspect):
         detected = False
         ret.boxes_opened_completion = n_units_to_inspect
         ret.stems_inspected_completion = n_units_to_inspect * inspect_per_box
-        for index in indexes_to_inspect:
+        for box_index in indexes_to_inspect:
             if not detected:
                 ret.boxes_opened_detection += 1
-            # If inspecting full box, use box object for inspection
-            if within_box_proportion in [1, 1.0]:
-                if not detected:
-                    ret.stems_inspected_detection += shipment.boxes[index].num_stems
-                if shipment.boxes[index]:
-                    ret.infested_stems_completion += np.count_nonzero(
-                        shipment.boxes[index].stems
-                    )
-                    if not detected:
-                        ret.infested_stems_detection += np.count_nonzero(
-                            (shipment.boxes[index]).stems
-                        )
             # In each box, loop through first n stems (n = inspect_per_box)
-            else:
-                for stem in (shipment.boxes[index]).stems[0:inspect_per_box]:
+            for stem_in_box_index, stem in enumerate(
+                (shipment.boxes[box_index]).stems[0:inspect_per_box]
+            ):
+                if detailed:
+                    stem_index = shipment.stem_in_box_to_stem_index(
+                        box_index, stem_in_box_index
+                    )
+                    ret.inspected_stem_indexes.append(stem_index)
+                if not detected:
+                    ret.stems_inspected_detection += 1
+                if stem:
+                    # Count every infested stem in sample
+                    ret.infested_stems_completion += 1
+                    # If first infested box inspected, count infested stems in box
                     if not detected:
-                        ret.stems_inspected_detection += 1
-                    if stem:
-                        # Count every infested stem in sample
-                        ret.infested_stems_completion += 1
-                        # If first infested box inspected, count infested stems in box
-                        if not detected:
-                            ret.infested_stems_detection += 1
+                        ret.infested_stems_detection += 1
             # If box contained infested stems, changed detected variable
             if ret.infested_stems_detection > 0:
                 detected = True

@@ -78,6 +78,15 @@ class Shipment(collections.UserDict):
         """Count infested stems in box."""
         return np.count_nonzero(self.stems)
 
+    def stem_in_box_to_stem_index(self, box_index, stem_in_box_index):
+        """Convert stem index in a box to stem index in the shipment"""
+        if box_index == 0:
+            return stem_in_box_index
+        stems = 0
+        for box in self.boxes[:box_index]:
+            stems += box.num_stems
+        return stems + stem_in_box_index
+
 
 class ParameterShipmentGenerator:
     """Generate a shipments based on configuration parameters"""

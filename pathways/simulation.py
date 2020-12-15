@@ -120,7 +120,7 @@ def simulation(
         )
         if must_inspect:
             n_units_to_inspect = sample(shipment)
-            ret = inspect(config, shipment, n_units_to_inspect)
+            ret = inspect(config, shipment, n_units_to_inspect, detailed)
             shipment_checked_ok = ret.shipment_checked_ok
             num_inspections += 1
             total_num_boxes += shipment["num_boxes"]
@@ -132,7 +132,7 @@ def simulation(
             total_infested_stems_completion += ret.infested_stems_completion
             total_infested_stems_detection += ret.infested_stems_detection
             if detailed:
-                details[1].append(ret.indexes_to_inspect)
+                details[1].append(ret.inspected_stem_indexes)
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
             total_num_boxes += shipment["num_boxes"]
