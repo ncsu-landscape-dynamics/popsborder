@@ -361,6 +361,8 @@ def run_simulation(
     totals.total_missed_pests /= float(num_simulations)
 
     if detailed:
+        # details are stems and inspected stem from first simulation run only
+        # totals are an average of all simulation runs
         return details, totals
     else:
         return totals
