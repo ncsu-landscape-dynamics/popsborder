@@ -101,7 +101,6 @@ def simulation(
     if detailed:
         stem_details = []
         inspected_stem_details = []
-        details = [stem_details, inspected_stem_details]
 
     shipment_generator = get_shipment_generator(config)
     add_pest = get_pest_function(config)
@@ -234,7 +233,7 @@ def simulation(
         total_missed_pests=total_missed_pests,
     )
     if detailed:
-        simulation_results.details = details
+        simulation_results.details = [stem_details, inspected_stem_details]
 
     return simulation_results
 

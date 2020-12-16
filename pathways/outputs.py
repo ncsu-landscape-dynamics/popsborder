@@ -387,7 +387,7 @@ def print_totals_as_text(num_shipments, config, totals):
     #    totals.num_inspections / float(args.num_shipments))
     print("\n")
     print("Simulation parameters:")
-    print("-----------------------")
+    print("----------------------------------------------------------")
     print(
         "shipments:\n\t Number shipments simulated: {num_shipments}".format(**locals())
     )
@@ -472,7 +472,7 @@ def print_totals_as_text(num_shipments, config, totals):
     print("\n")
 
     print("Simulation results: (averaged across all simulation runs)")
-    print("-----------------------")
+    print("----------------------------------------------------------")
     print(
         "Avg. % contaminated shipments slipped: {totals.missing:.2f}%".format(
             **locals()
