@@ -100,18 +100,12 @@ def compute_hypergeometric(detection_level, confidence_level, population_size):
     size (total number of stems or boxes in shipment), detection level,
     and confidence level.
     """
-    # Equation comes from RBS spreadsheet for calculating hypergeometric sample sizes
+    # Equation comes from RBS spreadsheet for calculating hypergeometric
+    # sample sizes created by IICA, USDA APHIS PPQ, and NAPPO.
     sample_size = math.ceil(
         (1 - ((1 - confidence_level) ** (1 / (detection_level * population_size))))
         * (population_size - (((detection_level * population_size) - 1) / 2))
     )
-
-    # Binomial approximation - appropriate for very large shipments with
-    # well mixed infestations (no clustering).
-    # Works when sample size is < 5% of shipment size
-    # sample_size = math.ceil(
-    #     math.log(1 - confidence_level) / math.log(1 - detection_level)
-    # )
 
     # The computation gives sample size > num boxes when using 1% detection
     # Make max sample size = population size
