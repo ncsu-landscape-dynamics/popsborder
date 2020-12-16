@@ -78,6 +78,15 @@ class Shipment(collections.UserDict):
         """Count infested stems in box."""
         return np.count_nonzero(self.stems)
 
+    def stem_in_box_to_stem_index(self, box_index, stem_in_box_index):
+        """Convert stem index in a box to stem index in the shipment"""
+        if box_index == 0:
+            return stem_in_box_index
+        stems = 0
+        for box in self.boxes[:box_index]:
+            stems += box.num_stems
+        return stems + stem_in_box_index
+
 
 class ParameterShipmentGenerator:
     """Generate a shipments based on configuration parameters"""
@@ -438,6 +447,10 @@ def _infested_boxes_to_cluster_sizes(infested_boxes, max_boxes_per_cluster):
 def create_stratas_for_clusters(num_units, cluster_width, cluster_sizes):
     """Divide array of shipment stems or boxes into strata wide enough for clusters."""
     num_strata = max(1, math.floor(num_units / cluster_width))
+    assert num_strata >= len(
+        cluster_sizes
+    ), """Cannot avoid overlapping clusters. Either increase max_infested_units_per_cluster,
+    or decrease max_cluster_stem_width (if using stem infestation_unit)"""
     cluster_strata = np.random.choice(num_strata, len(cluster_sizes), replace=False)
     return num_strata, cluster_strata
 

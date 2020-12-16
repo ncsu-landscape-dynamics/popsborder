@@ -31,18 +31,20 @@ pest:
     probability: 0.2
     ratio: 0.5
 inspection:
-  unit: stems
-  within_box_proportion: 1.0
-  sample_strategy: proportion
+  unit: boxes
+  within_box_proportion: 1
+  sample_strategy: hypergeometric
+  min_boxes: 0
   proportion:
     value: 0.02
-    min_boxes: 1
   hypergeometric:
-    detection_level: 0.05
+    detection_level: 0.1
     confidence_level: 0.95
-    min_boxes: 1
   fixed_n: 10
   selection_strategy: random
+  hierarchical:
+    outer: random
+    interval: 3
 """
 
 

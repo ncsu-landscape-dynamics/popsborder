@@ -56,7 +56,13 @@ def random_seed(seed):
 
 
 def simulation(
-    config, num_shipments, seed, output_f280_file=None, verbose=False, pretty=None
+    config,
+    num_shipments,
+    seed,
+    output_f280_file=None,
+    verbose=False,
+    pretty=None,
+    detailed=False,
 ):
     """Simulate shipments, their infestation, and their inspection
 
@@ -92,6 +98,9 @@ def simulation(
     missed_infestation_rate = []
     total_intercepted_pests = 0
     total_missed_pests = 0
+    if detailed:
+        stem_details = []
+        inspected_stem_details = []
 
     shipment_generator = get_shipment_generator(config)
     add_pest = get_pest_function(config)
@@ -101,6 +110,9 @@ def simulation(
     for unused_i in range(num_shipments):
         shipment = shipment_generator.generate_shipment()
         add_pest(shipment)
+        if detailed:
+            for box in shipment.boxes:
+                stem_details.append(box.stems)
         if pretty:
             pretty_config = config.get("pretty", {})
             print(pretty_shipment(shipment, style=pretty, config=pretty_config))
@@ -110,7 +122,7 @@ def simulation(
         )
         if must_inspect:
             n_units_to_inspect = sample(shipment)
-            ret = inspect(config, shipment, n_units_to_inspect)
+            ret = inspect(config, shipment, n_units_to_inspect, detailed)
             shipment_checked_ok = ret.shipment_checked_ok
             num_inspections += 1
             total_num_boxes += shipment["num_boxes"]
@@ -121,10 +133,13 @@ def simulation(
             total_stems_inspected_detection += ret.stems_inspected_detection
             total_infested_stems_completion += ret.infested_stems_completion
             total_infested_stems_detection += ret.infested_stems_detection
+            if detailed:
+                inspected_stem_details.append(ret.inspected_stem_indexes)
         else:
             shipment_checked_ok = True  # assuming or hoping it's ok
             total_num_boxes += shipment["num_boxes"]
             total_num_stems += shipment["num_stems"]
+
         form280.fill(
             shipment["arrival_time"],
             shipment,
@@ -183,7 +198,7 @@ def simulation(
         avg_intercepted_infestation_rate = 0
         pct_pest_unreported_if_detection = 0
 
-    return types.SimpleNamespace(
+    simulation_results = types.SimpleNamespace(
         missing=missing,
         false_neg=false_neg,
         intercepted=success_rates.true_positive,
@@ -217,6 +232,10 @@ def simulation(
         total_intercepted_pests=total_intercepted_pests,
         total_missed_pests=total_missed_pests,
     )
+    if detailed:
+        simulation_results.details = [stem_details, inspected_stem_details]
+
+    return simulation_results
 
 
 def run_simulation(
@@ -227,6 +246,7 @@ def run_simulation(
     output_f280_file=None,
     verbose=False,
     pretty=None,
+    detailed=False,
 ):
     """Run the simulation function specified number of times
 
@@ -272,7 +292,12 @@ def run_simulation(
             output_f280_file=output_f280_file,
             verbose=verbose,
             pretty=pretty,
+            detailed=detailed,
         )
+        if detailed and i == 0:
+            # details are from first run of simulation only
+            details = result.details
+        # totals are an average of all simulation runs
         totals.missing += result.missing
         totals.false_neg += result.false_neg
         totals.intercepted += result.intercepted
@@ -335,7 +360,10 @@ def run_simulation(
     totals.total_intercepted_pests /= float(num_simulations)
     totals.total_missed_pests /= float(num_simulations)
 
-    return totals
+    if detailed:
+        return details, totals
+    else:
+        return totals
 
 
 def load_configuration_yaml_from_text(text):

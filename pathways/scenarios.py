@@ -83,7 +83,9 @@ def update_config(config, record):
     return config
 
 
-def run_scenarios(config, scenario_table, seed, num_simulations, num_shipments):
+def run_scenarios(
+    config, scenario_table, seed, num_simulations, num_shipments, detailed=False
+):
     """Run scenarios based on the configuration and list of scenarios
 
     Parameters
@@ -109,15 +111,22 @@ def run_scenarios(config, scenario_table, seed, num_simulations, num_shipments):
     """
     results = []
     for record in scenario_table:
-        print(record["name"])
+        scenario_name = record["name"]
+        print(f"Running scenario: {scenario_name}")
         scenario_config = update_config(config, record)
         result = run_simulation(
             config=scenario_config,
             num_simulations=num_simulations,
             num_shipments=num_shipments,
             seed=seed,
+            detailed=detailed,
         )
-        results.append((result, scenario_config))
+        if detailed:
+            # The result is tuple of details ([0]) and simulation totals ([1]).
+            results.append((result[0], result[1], scenario_config))
+        else:
+            # The result is simulation totals.
+            results.append((result, scenario_config))
     return results
 
 
