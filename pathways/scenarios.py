@@ -110,33 +110,24 @@ def run_scenarios(
         result and configuration for that scenario.
     """
     results = []
-    if detailed:
-        scenario_details = []
     for record in scenario_table:
         scenario_name = record["name"]
         print(f"Running scenario: {scenario_name}")
         scenario_config = update_config(config, record)
+        result = run_simulation(
+            config=scenario_config,
+            num_simulations=num_simulations,
+            num_shipments=num_shipments,
+            seed=seed,
+            detailed=detailed,
+        )
         if detailed:
-            result, details = run_simulation(
-                config=scenario_config,
-                num_simulations=num_simulations,
-                num_shipments=num_shipments,
-                seed=seed,
-                detailed=True,
-            )
-            scenario_details.append(details)
+            # The result is tuple of details ([0]) and simulation totals ([1]).
+            results.append((result[0], result[1], scenario_config))
         else:
-            result = run_simulation(
-                config=scenario_config,
-                num_simulations=num_simulations,
-                num_shipments=num_shipments,
-                seed=seed,
-            )
-        results.append((result, scenario_config))
-    if detailed:
-        return results, scenario_details
-    else:
-        return results
+            # The result is simulation totals.
+            results.append((result, scenario_config))
+    return results
 
 
 def load_scenario_table(filename):
