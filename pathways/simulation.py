@@ -118,15 +118,15 @@ def simulation(
             print(pretty_consignment(consignment, style=pretty, config=pretty_config))
 
         must_inspect, applied_program = is_inspection_needed(
-            consignment, consignment["arrival_time"]
+            consignment, consignment.date
         )
         if must_inspect:
             n_units_to_inspect = sample(consignment)
             ret = inspect(config, consignment, n_units_to_inspect, detailed)
             consignment_checked_ok = ret.consignment_checked_ok
             num_inspections += 1
-            total_num_boxes += consignment["num_boxes"]
-            total_num_items += consignment["num_items"]
+            total_num_boxes += consignment.num_boxes
+            total_num_items += consignment.num_items
             total_boxes_opened_completion += ret.boxes_opened_completion
             total_boxes_opened_detection += ret.boxes_opened_detection
             total_items_inspected_completion += ret.items_inspected_completion
@@ -137,11 +137,11 @@ def simulation(
                 inspected_item_details.append(ret.inspected_item_indexes)
         else:
             consignment_checked_ok = True  # assuming or hoping it's ok
-            total_num_boxes += consignment["num_boxes"]
-            total_num_items += consignment["num_items"]
+            total_num_boxes += consignment.num_boxes
+            total_num_items += consignment.num_items
 
         form280.fill(
-            consignment["arrival_time"],
+            consignment.date,
             consignment,
             consignment_checked_ok,
             must_inspect,
@@ -193,7 +193,7 @@ def simulation(
         avg_intercepted_contamination_rate = sum(intercepted_contamination_rate) / len(
             intercepted_contamination_rate
         )
-        pct_contaminants_unreported_if_detection = (
+        pct_contaminant_unreported_if_detection = (
             1
             - (total_contaminated_items_detection / total_contaminated_items_completion)
         ) * 100
@@ -201,7 +201,7 @@ def simulation(
         true_positive_present = False
         max_intercepted_contamination_rate = 0
         avg_intercepted_contamination_rate = 0
-        pct_contaminants_unreported_if_detection = 0
+        pct_contaminant_unreported_if_detection = 0
 
     simulation_results = types.SimpleNamespace(
         missing=missing,
@@ -228,7 +228,7 @@ def simulation(
         pct_items_inspected_detection=(
             (total_items_inspected_detection / total_num_items) * 100
         ),
-        pct_contaminants_unreported_if_detection=pct_contaminants_unreported_if_detection,
+        pct_contaminant_unreported_if_detection=pct_contaminant_unreported_if_detection,
         true_contamination_rate=true_contamination_rate / num_consignments,
         max_missed_contamination_rate=max_missed_contamination_rate,
         avg_missed_contamination_rate=avg_missed_contamination_rate,
@@ -279,7 +279,7 @@ def run_simulation(
         avg_items_inspected_detection=0,
         pct_items_inspected_completion=0,
         pct_items_inspected_detection=0,
-        pct_contaminants_unreported_if_detection=0,
+        pct_contaminant_unreported_if_detection=0,
         true_contamination_rate=0,
         max_missed_contamination_rate=0,
         avg_missed_contamination_rate=0,
@@ -319,8 +319,8 @@ def run_simulation(
         totals.avg_items_inspected_detection += result.avg_items_inspected_detection
         totals.pct_items_inspected_completion += result.pct_items_inspected_completion
         totals.pct_items_inspected_detection += result.pct_items_inspected_detection
-        totals.pct_contaminants_unreported_if_detection += (
-            result.pct_contaminants_unreported_if_detection
+        totals.pct_contaminant_unreported_if_detection += (
+            result.pct_contaminant_unreported_if_detection
         )
         totals.true_contamination_rate += result.true_contamination_rate
         totals.max_missed_contamination_rate += result.max_missed_contamination_rate
@@ -350,7 +350,7 @@ def run_simulation(
     totals.avg_items_inspected_detection /= float(num_simulations)
     totals.pct_items_inspected_completion /= float(num_simulations)
     totals.pct_items_inspected_detection /= float(num_simulations)
-    totals.pct_contaminants_unreported_if_detection /= float(num_simulations)
+    totals.pct_contaminant_unreported_if_detection /= float(num_simulations)
     totals.true_contamination_rate /= float(num_simulations)
     if totals.false_negative_present:
         totals.max_missed_contamination_rate /= float(totals.false_negative_present)

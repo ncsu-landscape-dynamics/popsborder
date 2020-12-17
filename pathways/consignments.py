@@ -71,8 +71,44 @@ class Consignment(collections.UserDict):
     # Inheriting from this library class is its intended use, so disable ancestors msg.
     # pylint: disable=too-many-ancestors
 
+    def __init__(
+        self,
+        flower,
+        num_items,
+        items,
+        items_per_box,
+        num_boxes,
+        date,
+        boxes,
+        origin,
+        port,
+        pathway,
+    ):
+        """Store reference to associated attributes
+
+        :param flower: string
+        :param num_items: integer
+        :param items_per_box: integer
+        :param num_boxes: integer
+        :param date: Array-like object of items
+        :param boxes: Array-like object of boxes
+        :param origin: string
+        :param port: string
+        :param pathway: string
+        """
+        self.flower = flower
+        self.num_items = num_items
+        self.items = items
+        self.items_per_box = items_per_box
+        self.num_boxes = num_boxes
+        self.date = date
+        self.boxes = boxes
+        self.origin = origin
+        self.port = port
+        self.pathway = pathway
+
     def __getattr__(self, name):
-        return self[name]
+        return self.name
 
     def count_contaminated(self):
         """Count contaminated items in box."""
@@ -136,7 +172,7 @@ class ParameterConsignmentGenerator:
             items=items,
             items_per_box=items_per_box,
             num_boxes=num_boxes,
-            arrival_time=self.date,
+            date=self.date,
             boxes=boxes,
             origin=origin,
             port=port,
@@ -187,7 +223,7 @@ class F280ConsignmentGenerator:
             items=items,
             items_per_box=items_per_box,
             num_boxes=num_boxes,
-            arrival_time=date,
+            date=date,
             boxes=boxes,
             origin=record["ORIGIN_NM"],
             port=record["LOCATION"],
@@ -209,7 +245,7 @@ class AQIMConsignmentGenerator:
             record = next(self.reader)
         except StopIteration:
             raise RuntimeError(
-                "More consignments requested than number of records in provided AQIM data"
+                "More consignments requested than number of records in AQIM data"
             )
         pathway = record["CARGO_FORM"]
         items_per_box = self.items_per_box
@@ -246,7 +282,7 @@ class AQIMConsignmentGenerator:
             items=items,
             items_per_box=items_per_box,
             num_boxes=num_boxes,
-            arrival_time=date,
+            date=date,
             boxes=boxes,
             origin=record["ORIGIN"],
             port=record["LOCATION"],
@@ -386,7 +422,6 @@ def add_contaminant_uniform_random(config, consignment):
         indexes = np.random.choice(
             consignment.num_boxes, contaminated_boxes, replace=False
         )
-        print(indexes)
         for index in indexes:
             consignment.boxes[index].items.fill(1)
         assert np.count_nonzero(consignment.boxes) == contaminated_boxes
@@ -452,11 +487,11 @@ def _contaminated_boxes_to_cluster_sizes(contaminated_boxes, max_boxes_per_clust
 
 
 def create_stratas_for_clusters(num_units, cluster_width, cluster_sizes):
-    """Divide array of consignment items or boxes into strata wide enough for clusters."""
+    """Divide array of items or boxes into strata wide enough for clusters."""
     num_strata = max(1, math.floor(num_units / cluster_width))
     assert num_strata >= len(
         cluster_sizes
-    ), """Cannot avoid overlapping clusters. Either increase max_contaminated_units_per_cluster,
+    ), """Cannot avoid overlapping clusters. Increase max_contaminated_units_per_cluster
     or decrease max_cluster_item_width (if using item contamination_unit)"""
     cluster_strata = np.random.choice(num_strata, len(cluster_sizes), replace=False)
     return num_strata, cluster_strata
@@ -515,8 +550,8 @@ def add_contaminant_clusters(config, consignment):
             ]
             if max_cluster_item_width < max_contaminated_units_per_cluster:
                 raise ValueError(
-                    "Maximum cluster width, currently {max_cluster_item_width})"
-                    " needs to be at least as large as max_contaminated_units_per_cluster"
+                    "Maximum cluster width, currently {max_cluster_item_width}, needs"
+                    " to be at least as large as max_contaminated_units_per_cluster"
                     " (currently {max_contaminated_units_per_cluster})".format(
                         **locals()
                     )

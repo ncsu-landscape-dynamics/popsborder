@@ -420,14 +420,14 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
 
     unit = config["inspection"]["unit"]
     selection_strategy = config["inspection"]["selection_strategy"]
-    items_per_box = consignment["items_per_box"]
+    items_per_box = consignment.items_per_box
 
     indexes_to_inspect = select_units_to_inspect(
         config, consignment, n_units_to_inspect
     )
 
-    # Inspect selected boxes, count opened boxes, inspected items, and contaminated items
-    # to detection and completion
+    # Inspect selected boxes, count opened boxes, inspected items, and contaminated
+    # items to detection and completion
     ret = types.SimpleNamespace(
         inspected_item_indexes=[],
         boxes_opened_completion=0,
@@ -541,7 +541,8 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                 if item:
                     # Count every contaminated item in sample
                     ret.contaminated_items_completion += 1
-                    # If first contaminated box inspected, count contaminated items in box
+                    # If first contaminated box inspected,
+                    # count contaminated items in box
                     if not detected:
                         ret.contaminated_items_detection += 1
             # If box contained contaminated items, changed detected variable

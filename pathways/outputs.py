@@ -294,7 +294,7 @@ class SuccessRates(object):
     def record_success_rate(self, checked_ok, actually_ok, consignment):
         """Record testing result for one consignment
 
-        :param checked_ok: True if the consignment tested negative on presence of contamination
+        :param checked_ok: True if no contaminant was found in consignment
         :param actually_ok: True if the consignment actually does not have contamination
         :param shipmemt: The shipement itself (for reporting purposes)
         """
@@ -450,9 +450,8 @@ def print_totals_as_text(num_consignments, config, totals):
                 )
             )
             print(
-                "\t\t cluster distribution: {sim_params.contaminant_distribution}".format(
-                    **locals()
-                )
+                "\t\t cluster distribution: "
+                "{sim_params.contaminant_distribution}".format(**locals())
             )
             if sim_params.contaminant_distribution == "random":
                 print(
@@ -543,7 +542,7 @@ def print_totals_as_text(num_consignments, config, totals):
     )
     print(
         "Avg. % contaminated items unreported if sample ends at detection: "
-        "{totals.pct_contaminants_unreported_if_detection:.2f}%".format(**locals())
+        "{totals.pct_contaminant_unreported_if_detection:.2f}%".format(**locals())
     )
 
 
