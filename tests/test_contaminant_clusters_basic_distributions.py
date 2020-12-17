@@ -56,7 +56,7 @@ def test_continuous_clusters():
     add_contaminant_clusters(config, consignment)
     contamination_rate = 0.08
     contaminated_items = int(num_items * contamination_rate)
-    assert np.count_nonzero(consignment.items) == contaminated_items
+    assert np.count_nonzero(consignment["items"]) == contaminated_items
 
 
 def test_random_clusters():
@@ -68,4 +68,4 @@ def test_random_clusters():
     add_contaminant_clusters(config, consignment)
     contamination_rate = 0.12
     contaminated_items = int(num_items * contamination_rate)
-    assert np.count_nonzero(consignment.items) == contaminated_items
+    assert np.count_nonzero(consignment["items"]) == contaminated_items
