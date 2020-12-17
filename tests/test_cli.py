@@ -3,11 +3,11 @@ import subprocess
 
 
 CONFIG = """\
-shipment:
+consignment:
   boxes:
     min: 1
     max: 50
-  stems_per_box:
+  items_per_box:
     default: 10
   origins:
   - Netherlands
@@ -19,9 +19,9 @@ shipment:
   ports:
   - NY JFK CBP
   - FL Miami Air CBP
-pest:
-  infestation_unit: stems
-  infestation_rate:
+contamination:
+  contamination_unit: items
+  contamination_rate:
     distribution: beta
     parameters:
     - 4
@@ -42,8 +42,8 @@ inspection:
     confidence_level: 0.95
   fixed_n: 10
   selection_strategy: random
-  hierarchical:
-    outer: random
+  cluster:
+    cluster_selection: random
     interval: 3
 """
 
@@ -73,5 +73,5 @@ def test_gives_result(tmp_path):
     config.write_text(CONFIG)
     for seed in range(10):
         assert "slipped" in run_pathways_cli(
-            num_shipments=10, config_file=str(config), seed=seed
+            num_consignments=10, config_file=str(config), seed=seed
         )

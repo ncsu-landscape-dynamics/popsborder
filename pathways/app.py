@@ -32,7 +32,7 @@ from .simulation import run_simulation, load_configuration
 from .outputs import print_totals_as_text
 
 USAGE = """Usage:
-  {} <number of simulations> <number of shipments> <config file>
+  {} <number of simulations> <number of consignments> <config file>
 """
 
 
@@ -68,14 +68,14 @@ def get_executable_name():
 def main():
     """Process command line parameters and run the simulation"""
     parser = argparse.ArgumentParser(
-        description="Pathway simulation of infested shipments",
+        description="Pathway simulation of contaminated consignments",
         formatter_class=CustomHelpFormatter,
         add_help=False,
         prog=get_executable_name(),
     )
     basic = parser.add_argument_group("Simulation parameters (required)")
     basic.add_argument(
-        "--num-shipments", type=int, required=True, help="Number of shipments"
+        "--num-consignments", type=int, required=True, help="Number of consignments"
     )
     basic.add_argument(
         "--config-file", type=str, required=True, help="Path to configuration file"
@@ -96,8 +96,8 @@ def main():
         "--output-file", type=str, required=False, help="Path to output F280 csv file"
     )
     pretty_choices = (
-        ("boxes", "Show boxes with individual stems (default)"),
-        ("stems", "Show individual stems only"),
+        ("boxes", "Show boxes with individual items (default)"),
+        ("items", "Show individual items only"),
         ("boxes_only", "Show only boxes as the items"),
     )
     output_group.add_argument(
@@ -107,7 +107,7 @@ def main():
         nargs="?",  # value is optional
         choices=[i[0] for i in pretty_choices],
         help=(
-            "Show pretty unicode output for each shipment\n"
+            "Show pretty unicode output for each consignment\n"
             + "\n".join(["\n    ".join(i) for i in pretty_choices])
         ),
     )
@@ -115,13 +115,13 @@ def main():
         "-v",
         "--verbose",
         action="store_true",
-        help="Print messages about each shipment inspection process",
+        help="Print messages about each consignment inspection process",
     )
     output_group.add_argument(
         "-d",
         "--detailed",
         action="store_true",
-        help="Output array of stems and inspection indexes",
+        help="Output array of items and inspection indexes",
     )
     output_group.add_argument(
         "-h",
@@ -138,7 +138,7 @@ def main():
         details, totals = run_simulation(
             config=config,
             num_simulations=args.num_simulations,
-            num_shipments=args.num_shipments,
+            num_consignments=args.num_consignments,
             seed=args.seed,
             output_f280_file=args.output_file,
             verbose=args.verbose,
@@ -149,16 +149,16 @@ def main():
         totals = run_simulation(
             config=config,
             num_simulations=args.num_simulations,
-            num_shipments=args.num_shipments,
+            num_consignments=args.num_consignments,
             seed=args.seed,
             output_f280_file=args.output_file,
             verbose=args.verbose,
             pretty=args.pretty,
             detailed=args.detailed,
         )
-    print_totals_as_text(args.num_shipments, config, totals)
+    print_totals_as_text(args.num_consignments, config, totals)
     if detailed:
-        print("Stems by box: {}".format(details[0]))
+        print("Items by box: {}".format(details[0]))
         print("Indexes inspected: {}".format(details[1]))
 
 
