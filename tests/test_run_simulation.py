@@ -75,10 +75,7 @@ def test_gives_reasonable_result(num_simulations):
     config["consignment"]["boxes"]["max"] = max_boxes
     for seed in range(10):
         result = run_simulation(
-            config=config,
-            num_simulations=1,
-            num_consignments=100,
-            seed=seed,
+            config=config, num_simulations=1, num_consignments=100, seed=seed,
         )
         test_min_boxes = min_boxes * num_consignments
         test_max_boxes = max_boxes * num_consignments
@@ -87,4 +84,4 @@ def test_gives_reasonable_result(num_simulations):
         assert 0 <= result.pct_boxes_opened_detection <= 100
         assert 0 <= result.pct_items_inspected_completion <= 100
         assert 0 <= result.pct_items_inspected_detection <= 100
-        assert 0 <= result.pct_contaminants_unreported_if_detection <= 100
+        assert 0 <= result.pct_contaminant_unreported_if_detection <= 100

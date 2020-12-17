@@ -506,9 +506,8 @@ def print_totals_as_text(num_consignments, config, totals):
         )
     )
     print(
-        "Total number of slipped contaminants: {totals.total_missed_contaminants:,.0f}".format(
-            **locals()
-        )
+        "Total number of slipped contaminants: "
+        "{totals.total_missed_contaminants:,.0f}".format(**locals())
     )
     print(
         "Total number of intercepted contaminants: "

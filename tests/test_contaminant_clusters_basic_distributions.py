@@ -50,7 +50,7 @@ def get_consignment(num_stems):
 def test_continuous_clusters():
     """Test contamination rate of clustered arrangement with continuous distribution"""
     random_seed(42)
-    config = load_configuration_yaml_from_text(CONTINUOUS_CONFIG)["contaminant"]
+    config = load_configuration_yaml_from_text(CONTINUOUS_CONFIG)["contamination"]
     num_stems = 100
     consignment = get_consignment(num_stems)
     add_contaminant_clusters(config, consignment)
@@ -62,7 +62,7 @@ def test_continuous_clusters():
 def test_random_clusters():
     """Test contamination rate of clustered arrangement with random distribution"""
     random_seed(42)
-    config = load_configuration_yaml_from_text(RANDOM_CONFIG)["contaminant"]
+    config = load_configuration_yaml_from_text(RANDOM_CONFIG)["contamination"]
     num_stems = 550
     consignment = get_consignment(num_stems)
     add_contaminant_clusters(config, consignment)
