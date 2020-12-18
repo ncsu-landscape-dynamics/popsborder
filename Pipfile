@@ -9,6 +9,8 @@ pylint = "*"
 flake8 = "*"
 black = "==18.6b4"
 pytest-datadir = "*"
+matplotlib = "*"
+seaborn = "*"
 
 [packages]
 pathways = {editable = true, path = "."}
