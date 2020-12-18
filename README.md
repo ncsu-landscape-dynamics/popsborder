@@ -160,13 +160,13 @@ installed and then run certain tools before each commit or pull request,
 however you will have a chance to see and correct the errors also after
 you open a pull request.
 
-## Install everything using pipenv
+### Install everything using pipenv
 
 ```
-pipenv install
+pipenv install --dev
 ```
 
-## Install development dependencies manually
+### Install development dependencies manually
 
 Install the following packages:
 
@@ -177,7 +177,7 @@ flake8 pylint black pytest pytest-datadir
 Install these using *pip* or *conda* possibly into a (virtual)
 environment.
 
-## Run testing
+### Run tests
 
 To run these from command line use:
 
@@ -187,6 +187,19 @@ pylint pathways
 black .
 pytest tests/
 ```
+
+### Modifying notebooks
+
+We store computed notebooks as they serve as documentation and
+examples.
+After modification, notebooks should be recomputed, e.g., by
+*Restart kernel and run all cells* to ensure that the notebook runs
+with the cells executed in order and that there are minimal changes
+to the notebook (e.g., executed cell numbers).
+
+The standard `git diff` is not particularly useful for `.ipynb` files,
+especially for computed ones, but the rendered file can be viewed in PR
+and *nbdiff* in command line can show a human-readable difference.
 
 ## Authors
 
