@@ -19,10 +19,10 @@ dependencies and it will work in any directory.
 
 ## Example
 
-Direct run of the simulation with 1000 shipments repeated 20 times:
+Direct run of the simulation with 1000 consignments repeated 20 times:
 
 ```
-python -m pathways --num-simulations 20 --num-shipments 1000 --config-file config.yml
+python -m pathways --num-simulations 20 --num-consignments 1000 --config-file config.yml
 ```
 
 ## Command line options
@@ -37,7 +37,7 @@ python -m pathways --help
 
 The following sample script included in the repository shows simple
 runs of the simulation with predefined values
-covering both success rate in detection of pests and generation of F280
+covering both success rate in detection of contaminants and generation of F280
 records:
 
 ```
@@ -46,4 +46,4 @@ records:
 
 ---
 
-Next: [Shipments](shipments.md)
+Next: [Consignments](consignments.md)

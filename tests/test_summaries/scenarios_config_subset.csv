@@ -1,41 +1,41 @@
-name,shipment_name,inspection_name,shipment/boxes/min,shipment/boxes/max,shipment/stems_per_box/default,pest/infestation_rate/parameters,pest/arrangement,inspection/unit,inspection/sample_strategy,inspection/proportion/proportion,inspection/hypergeometric/detection_level,inspection/selection_strategy,inspection/within_box_pct,inspection/hierarchical/outer
+name,consignment_name,inspection_name,consignment/boxes/min,consignment/boxes/max,consignment/items_per_box/default,contamination/contamination_rate/parameters,contamination/arrangement,inspection/unit,inspection/sample_strategy,inspection/proportion/proportion,inspection/hypergeometric/detection_level,inspection/selection_strategy,inspection/within_box_pct,inspection/cluster/cluster_selection
 clustered_12,clustered,boxes 0.05 hypergeometric random,5,25,200,"[1, 80]",clustered,box,hypergeometric,,0.01,random,1,
-clustered_11,clustered,boxes 0.05 hypergeometric tailgate,5,25,200,"[1, 80]",clustered,box,hypergeometric,,0.01,tailgate,1,
+clustered_11,clustered,boxes 0.05 hypergeometric convenience,5,25,200,"[1, 80]",clustered,box,hypergeometric,,0.01,convenience,1,
 clustered_02,clustered,boxes 2% random,5,25,200,"[1, 80]",clustered,box,proportion,0.02,,random,1,
-clustered_01,clustered,boxes 2% tailgate,5,25,200,"[1, 80]",clustered,box,proportion,0.02,,tailgate,1,
-clustered_39,clustered,stems 0.05 hypergeometric hierarchical interval,5,25,200,"[1, 80]",clustered,stem,hypergeometric,,0.01,hierarchical,0.25,interval
-clustered_38,clustered,stems 0.05 hypergeometric random,5,25,200,"[1, 80]",clustered,stem,hypergeometric,,0.01,random,1,
-clustered_19,clustered,stems 2% hierarchical interval,5,25,200,"[1, 80]",clustered,stem,proportion,0.02,,hierarchical,0.25,interval
-clustered_18,clustered,stems 2% random,5,25,200,"[1, 80]",clustered,stem,proportion,0.02,,random,1,
+clustered_01,clustered,boxes 2% convenience,5,25,200,"[1, 80]",clustered,box,proportion,0.02,,convenience,1,
+clustered_39,clustered,items 0.05 hypergeometric cluster interval,5,25,200,"[1, 80]",clustered,item,hypergeometric,,0.01,cluster,0.25,interval
+clustered_38,clustered,items 0.05 hypergeometric random,5,25,200,"[1, 80]",clustered,item,hypergeometric,,0.01,random,1,
+clustered_19,clustered,items 2% cluster interval,5,25,200,"[1, 80]",clustered,item,proportion,0.02,,cluster,0.25,interval
+clustered_18,clustered,items 2% random,5,25,200,"[1, 80]",clustered,item,proportion,0.02,,random,1,
 random_12,random,boxes 0.05 hypergeometric random,5,25,200,"[1, 80]",random,box,hypergeometric,,0.01,random,1,
-random_11,random,boxes 0.05 hypergeometric tailgate,5,25,200,"[1, 80]",random,box,hypergeometric,,0.01,tailgate,1,
+random_11,random,boxes 0.05 hypergeometric convenience,5,25,200,"[1, 80]",random,box,hypergeometric,,0.01,convenience,1,
 random_02,random,boxes 2% random,5,25,200,"[1, 80]",random,box,proportion,0.02,,random,1,
-random_01,random,boxes 2% tailgate,5,25,200,"[1, 80]",random,box,proportion,0.02,,tailgate,1,
-random_39,random,stems 0.05 hypergeometric hierarchical interval,5,25,200,"[1, 80]",random,stem,hypergeometric,,0.01,hierarchical,0.25,interval
-random_38,random,stems 0.05 hypergeometric random,5,25,200,"[1, 80]",random,stem,hypergeometric,,0.01,random,1,
-random_19,random,stems 2% hierarchical interval,5,25,200,"[1, 80]",random,stem,proportion,0.02,,hierarchical,0.25,interval
-random_18,random,stems 2% random,5,25,200,"[1, 80]",random,stem,proportion,0.02,,random,1,
+random_01,random,boxes 2% convenience,5,25,200,"[1, 80]",random,box,proportion,0.02,,convenience,1,
+random_39,random,items 0.05 hypergeometric cluster interval,5,25,200,"[1, 80]",random,item,hypergeometric,,0.01,cluster,0.25,interval
+random_38,random,items 0.05 hypergeometric random,5,25,200,"[1, 80]",random,item,hypergeometric,,0.01,random,1,
+random_19,random,items 2% cluster interval,5,25,200,"[1, 80]",random,item,proportion,0.02,,cluster,0.25,interval
+random_18,random,items 2% random,5,25,200,"[1, 80]",random,item,proportion,0.02,,random,1,
 maritime_12,maritime,boxes 0.05 hypergeometric random,5,25,700,"[1, 80]",random,box,hypergeometric,,0.01,random,1,
-maritime_11,maritime,boxes 0.05 hypergeometric tailgate,5,25,700,"[1, 80]",random,box,hypergeometric,,0.01,tailgate,1,
+maritime_11,maritime,boxes 0.05 hypergeometric convenience,5,25,700,"[1, 80]",random,box,hypergeometric,,0.01,convenience,1,
 maritime_02,maritime,boxes 2% random,5,25,700,"[1, 80]",random,box,proportion,0.02,,random,1,
-maritime_01,maritime,boxes 2% tailgate,5,25,700,"[1, 80]",random,box,proportion,0.02,,tailgate,1,
-maritime_39,maritime,stems 0.05 hypergeometric hierarchical interval,5,25,700,"[1, 80]",random,stem,hypergeometric,,0.01,hierarchical,0.25,interval
-maritime_38,maritime,stems 0.05 hypergeometric random,5,25,700,"[1, 80]",random,stem,hypergeometric,,0.01,random,1,
-maritime_19,maritime,stems 2% hierarchical interval,5,25,700,"[1, 80]",random,stem,proportion,0.02,,hierarchical,0.25,interval
-maritime_18,maritime,stems 2% random,5,25,700,"[1, 80]",random,stem,proportion,0.02,,random,1,
-infestation5_12,infestation5,boxes 0.05 hypergeometric random,5,25,200,"[4, 80]",random,box,hypergeometric,,0.01,random,1,
-infestation5_11,infestation5,boxes 0.05 hypergeometric tailgate,5,25,200,"[4, 80]",random,box,hypergeometric,,0.01,tailgate,1,
-infestation5_02,infestation5,boxes 2% random,5,25,200,"[4, 80]",random,box,proportion,0.02,,random,1,
-infestation5_01,infestation5,boxes 2% tailgate,5,25,200,"[4, 80]",random,box,proportion,0.02,,tailgate,1,
-infestation5_39,infestation5,stems 0.05 hypergeometric hierarchical interval,5,25,200,"[4, 80]",random,stem,hypergeometric,,0.01,hierarchical,0.25,interval
-infestation5_38,infestation5,stems 0.05 hypergeometric random,5,25,200,"[4, 80]",random,stem,hypergeometric,,0.01,random,1,
-infestation5_19,infestation5,stems 2% hierarchical interval,5,25,200,"[4, 80]",random,stem,proportion,0.02,,hierarchical,0.25,interval
-infestation5_18,infestation5,stems 2% random,5,25,200,"[4, 80]",random,stem,proportion,0.02,,random,1,
+maritime_01,maritime,boxes 2% convenience,5,25,700,"[1, 80]",random,box,proportion,0.02,,convenience,1,
+maritime_39,maritime,items 0.05 hypergeometric cluster interval,5,25,700,"[1, 80]",random,item,hypergeometric,,0.01,cluster,0.25,interval
+maritime_38,maritime,items 0.05 hypergeometric random,5,25,700,"[1, 80]",random,item,hypergeometric,,0.01,random,1,
+maritime_19,maritime,items 2% cluster interval,5,25,700,"[1, 80]",random,item,proportion,0.02,,cluster,0.25,interval
+maritime_18,maritime,items 2% random,5,25,700,"[1, 80]",random,item,proportion,0.02,,random,1,
+contamination5_12,contamination5,boxes 0.05 hypergeometric random,5,25,200,"[4, 80]",random,box,hypergeometric,,0.01,random,1,
+contamination5_11,contamination5,boxes 0.05 hypergeometric convenience,5,25,200,"[4, 80]",random,box,hypergeometric,,0.01,convenience,1,
+contamination5_02,contamination5,boxes 2% random,5,25,200,"[4, 80]",random,box,proportion,0.02,,random,1,
+contamination5_01,contamination5,boxes 2% convenience,5,25,200,"[4, 80]",random,box,proportion,0.02,,convenience,1,
+contamination5_39,contamination5,items 0.05 hypergeometric cluster interval,5,25,200,"[4, 80]",random,item,hypergeometric,,0.01,cluster,0.25,interval
+contamination5_38,contamination5,items 0.05 hypergeometric random,5,25,200,"[4, 80]",random,item,hypergeometric,,0.01,random,1,
+contamination5_19,contamination5,items 2% cluster interval,5,25,200,"[4, 80]",random,item,proportion,0.02,,cluster,0.25,interval
+contamination5_18,contamination5,items 2% random,5,25,200,"[4, 80]",random,item,proportion,0.02,,random,1,
 clustered_large_12,clustered_large,boxes 0.05 hypergeometric clustered,25,500,200,"[1, 80]",clustered,box,hypergeometric,,0.01,random,1,
-clustered_large_11,clustered_large,boxes 0.05 hypergeometric tailgate,25,500,200,"[1, 80]",clustered,box,hypergeometric,,0.01,tailgate,1,
+clustered_large_11,clustered_large,boxes 0.05 hypergeometric convenience,25,500,200,"[1, 80]",clustered,box,hypergeometric,,0.01,convenience,1,
 clustered_large_02,clustered_large,boxes 2% clustered,25,500,200,"[1, 80]",clustered,box,proportion,0.02,,random,1,
-clustered_large_01,clustered_large,boxes 2% tailgate,25,500,200,"[1, 80]",clustered,box,proportion,0.02,,tailgate,1,
-clustered_large_39,clustered_large,stems 0.05 hypergeometric hierarchical interval,25,500,200,"[1, 80]",clustered,stem,hypergeometric,,0.01,hierarchical,0.25,interval
-clustered_large_38,clustered_large,stems 0.05 hypergeometric clustered,25,500,200,"[1, 80]",clustered,stem,hypergeometric,,0.01,random,1,
-clustered_large_19,clustered_large,stems 2% hierarchical interval,25,500,200,"[1, 80]",clustered,stem,proportion,0.02,,hierarchical,0.25,interval
-clustered_large_18,clustered_large,stems 2% clustered,25,500,200,"[1, 80]",clustered,stem,proportion,0.02,,random,1,
+clustered_large_01,clustered_large,boxes 2% convenience,25,500,200,"[1, 80]",clustered,box,proportion,0.02,,convenience,1,
+clustered_large_39,clustered_large,items 0.05 hypergeometric cluster interval,25,500,200,"[1, 80]",clustered,item,hypergeometric,,0.01,cluster,0.25,interval
+clustered_large_38,clustered_large,items 0.05 hypergeometric clustered,25,500,200,"[1, 80]",clustered,item,hypergeometric,,0.01,random,1,
+clustered_large_19,clustered_large,items 2% cluster interval,25,500,200,"[1, 80]",clustered,item,proportion,0.02,,cluster,0.25,interval
+clustered_large_18,clustered_large,items 2% clustered,25,500,200,"[1, 80]",clustered,item,proportion,0.02,,random,1,

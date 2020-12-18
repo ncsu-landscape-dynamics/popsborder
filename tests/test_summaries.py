@@ -11,15 +11,15 @@ def test_scenarios(datadir, tmp_path):
         scenario_table=scenario_table,
         seed=42,
         num_simulations=2,
-        num_shipments=10,
+        num_consignments=10,
     )
     assert len(scenario_table) == len(results)
     config_columns = [
         "name",
-        "shipment/boxes/min",
-        "shipment/boxes/max",
-        "shipment/stems_per_box/default",
-        "pest/infestation_rate/parameters",
+        "consignment/boxes/min",
+        "consignment/boxes/max",
+        "consignment/items_per_box/default",
+        "contamination/contamination_rate/parameters",
     ]
     result_columns = [
         "missing",

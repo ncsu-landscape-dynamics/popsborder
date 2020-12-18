@@ -33,7 +33,7 @@ import types
 from functools import reduce
 import operator
 
-from .inspections import count_diseased_boxes
+from .inspections import count_contaminated_boxes
 
 if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error
@@ -64,10 +64,12 @@ def pretty_content(array, config=None):
 
 
 # Pylint 2.4.4 does not see usage of a variables in a format string.
-def pretty_header(shipment, line=None, config=None):  # pylint: disable=unused-argument
-    """Return header for a shipment
+def pretty_header(
+    consignment, line=None, config=None
+):  # pylint: disable=unused-argument
+    """Return header for a consignment
 
-    Basic info about the shipment is included and the remainining space
+    Basic info about the consignment is included and the remainining space
     in a terminal window is filled with horizonal box characters.
     (The assumption is that this will be printed in the terminal.)
     """
@@ -87,10 +89,10 @@ def pretty_header(shipment, line=None, config=None):  # pylint: disable=unused-a
     else:
         horizontal = line
     header = (
-        "{horizontal}{horizontal} Shipment"
+        "{horizontal}{horizontal} Consignment"
         " {horizontal}{horizontal}"
-        " Boxes: {shipment[num_boxes]} {horizontal}{horizontal}"
-        " Stems: {shipment[num_stems]} "
+        " Boxes: {consignment[num_boxes]} {horizontal}{horizontal}"
+        " Items: {consignment[num_items]} "
     ).format(**locals())
     if size > len(header):
         size = size - len(header)
@@ -100,17 +102,17 @@ def pretty_header(shipment, line=None, config=None):  # pylint: disable=unused-a
     return "{header}{rule}".format(**locals())
 
 
-def pretty_shipment_stems(shipment, config=None):
-    """Pretty-print shipment focusing on individual stems"""
+def pretty_consignment_items(consignment, config=None):
+    """Pretty-print consignment focusing on individual items"""
     config = config if config else {}
     # pylint: disable=possibly-unused-variable
-    header = pretty_header(shipment, config=config)
-    body = pretty_content(shipment["stems"], config=config)
+    header = pretty_header(consignment, config=config)
+    body = pretty_content(consignment["items"], config=config)
     return "{header}\n{body}".format(**locals())
 
 
-def pretty_shipment_boxes(shipment, config=None):
-    """Pretty-print shipment showing individual stems in boxes"""
+def pretty_consignment_boxes(consignment, config=None):
+    """Pretty-print consignment showing individual items in boxes"""
     config = config if config else {}
     line = config.get("box_line", "|")
     spaces = config.get("spaces", True)
@@ -121,58 +123,58 @@ def pretty_shipment_boxes(shipment, config=None):
     else:
         separator = line
     # pylint: disable=possibly-unused-variable
-    header = pretty_header(shipment, config=config)
+    header = pretty_header(consignment, config=config)
     body = separator.join(
-        [pretty_content(box.stems, config=config) for box in shipment["boxes"]]
+        [pretty_content(box.items, config=config) for box in consignment["boxes"]]
     )
     return "{header}\n{body}".format(**locals())
 
 
-def pretty_shipment_boxes_only(shipment, config=None):
-    """Pretty-print shipment showing individual boxes"""
+def pretty_consignment_boxes_only(consignment, config=None):
+    """Pretty-print consignment showing individual boxes"""
     config = config if config else {}
     # pylint: disable=possibly-unused-variable
     line = config.get("horizontal_line", "light")
-    header = pretty_header(shipment, line=line, config=config)
-    body = pretty_content(shipment["boxes"], config=config)
+    header = pretty_header(consignment, line=line, config=config)
+    body = pretty_content(consignment["boxes"], config=config)
     return "{header}\n{body}".format(**locals())
 
 
-def pretty_shipment(shipment, style, config=None):
-    """Pretty-print shipment in a given style
+def pretty_consignment(consignment, style, config=None):
+    """Pretty-print consignment in a given style
 
-    :param style: Style of pretty-printing (boxes, boxes_only, stems)
+    :param style: Style of pretty-printing (boxes, boxes_only, items)
     """
     config = config if config else {}
     if style == "boxes":
-        return pretty_shipment_boxes(shipment, config=config)
+        return pretty_consignment_boxes(consignment, config=config)
     elif style == "boxes_only":
-        return pretty_shipment_boxes_only(shipment, config=config)
-    elif style == "stems":
-        return pretty_shipment_stems(shipment, config=config)
+        return pretty_consignment_boxes_only(consignment, config=config)
+    elif style == "items":
+        return pretty_consignment_items(consignment, config=config)
     else:
         raise ValueError(
-            "Unknown style value for pretty printing of shipments: {pretty}".format(
+            "Unknown style value for pretty printing of consignments: {pretty}".format(
                 **locals()
             )
         )
 
 
 class PrintReporter(object):
-    """Reporter class which prints a message for each shipment"""
+    """Reporter class which prints a message for each consignment"""
 
     # Reporter objects carry functions, but many not use any attributes.
     # pylint: disable=no-self-use,missing-function-docstring
     def true_negative(self):
-        print("Inspection worked, didn't miss anything (no pest) [TN]")
+        print("Inspection worked, didn't miss anything (no contaminants) [TN]")
 
     def true_positive(self):
-        print("Inspection worked, found pest [TP]")
+        print("Inspection worked, found contaminant [TP]")
 
-    def false_negative(self, shipment):
+    def false_negative(self, consignment):
         print(
-            "Inspection failed, missed {} boxes with pest [FN]".format(
-                count_diseased_boxes(shipment)
+            "Inspection failed, missed {} boxes with contaminants [FN]".format(
+                count_contaminated_boxes(consignment)
             )
         )
 
@@ -187,7 +189,7 @@ class MuteReporter(object):
     def true_positive(self):
         pass
 
-    def false_negative(self, shipment):
+    def false_negative(self, consignment):
         pass
 
 
@@ -249,13 +251,13 @@ class Form280(object):
                 disposition = codes.get("inspected_pest", "Pest Found")
         return disposition
 
-    def fill(self, date, shipment, ok, must_inspect, applied_program):
+    def fill(self, date, consignment, ok, must_inspect, applied_program):
         """Fill one entry in the F280 form
 
-        :param date: Shipment or inspection date
-        :param shipment: Shipment which was tested
-        :param ok: True if the shipment was tested negative (no pest present)
-        :param must_inspect: True if the shipment was selected for inspection
+        :param date: Consignment or inspection date
+        :param consignment: Consignment which was tested
+        :param ok: True if the consignment was tested negative (no pest present)
+        :param must_inspect: True if the consignment was selected for inspection
         :param apllied_program: Identifier of the program applied or None
         """
         disposition_code = self.disposition(ok, must_inspect, applied_program)
@@ -263,17 +265,17 @@ class Form280(object):
             self.writer.writerow(
                 [
                     date.strftime("%Y-%m-%d"),
-                    shipment["port"],
-                    shipment["origin"],
-                    shipment["flower"],
+                    consignment["port"],
+                    consignment["origin"],
+                    consignment["flower"],
                     disposition_code,
                 ]
             )
         elif self.print_to_stdout:
             print(
-                "F280: {date:%Y-%m-%d} | {shipment[port]} | {shipment[origin]}"
-                " | {shipment[flower]} | {disposition_code}".format(
-                    shipment, **locals()
+                "F280: {date:%Y-%m-%d} | {consignment[port]} | {consignment[origin]}"
+                " | {consignment[flower]} | {disposition_code}".format(
+                    consignment, **locals()
                 )
             )
 
@@ -289,11 +291,11 @@ class SuccessRates(object):
         self.false_negative = 0
         self.reporter = reporter
 
-    def record_success_rate(self, checked_ok, actually_ok, shipment):
-        """Record testing result for one shipment
+    def record_success_rate(self, checked_ok, actually_ok, consignment):
+        """Record testing result for one consignment
 
-        :param checked_ok: True if the shipment tested negative on presence of pest
-        :param actually_ok: True if the shipment actually does not have pest
+        :param checked_ok: True if no contaminant was found in consignment
+        :param actually_ok: True if the consignment actually does not have contamination
         :param shipmemt: The shipement itself (for reporting purposes)
         """
         if checked_ok and actually_ok:
@@ -305,24 +307,24 @@ class SuccessRates(object):
             self.reporter.true_positive()
         elif checked_ok and not actually_ok:
             self.false_negative += 1
-            self.reporter.false_negative(shipment)
+            self.reporter.false_negative(consignment)
         elif not checked_ok and actually_ok:
             raise RuntimeError(
-                "Inspection result is infested,"
-                " but actually the shipment is not infested (programmer error)"
+                "Inspection result is contaminated,"
+                " but actually the consignment is not contaminated (programmer error)"
             )
 
 
 def config_to_simplified_simulation_params(config):
     """Convert configuration into a simplified set of selected parameters"""
     sim_params = types.SimpleNamespace(
-        infestation_unit="",
-        infestation_type="",
-        infestation_param="",
-        pest_arrangement="",
-        max_infested_units_per_cluster="",
-        pest_distribution="",
-        max_cluster_stem_width="",
+        contamination_unit="",
+        contamination_type="",
+        contamination_param="",
+        contaminant_arrangement="",
+        max_contaminated_units_per_cluster="",
+        contaminant_distribution="",
+        max_cluster_item_width="",
         inspection_unit="",
         within_box_proportion="",
         sample_strategy="",
@@ -332,27 +334,35 @@ def config_to_simplified_simulation_params(config):
         selection_param_2="",
     )
 
-    sim_params.infestation_unit = config["pest"]["infestation_unit"]
-    sim_params.infestation_type = config["pest"]["infestation_rate"]["distribution"]
-    if sim_params.infestation_type == "fixed_value":
-        sim_params.infestation_param = config["pest"]["infestation_rate"]["value"]
-    elif sim_params.infestation_type == "beta":
-        sim_params.infestation_param = config["pest"]["infestation_rate"]["parameters"]
-    else:
-        sim_params.infestation_param = None
-    sim_params.pest_arrangement = config["pest"]["arrangement"]
-    if sim_params.pest_arrangement == "clustered":
-        sim_params.max_infested_units_per_cluster = config["pest"]["clustered"][
-            "max_infested_units_per_cluster"
+    sim_params.contamination_unit = config["contamination"]["contamination_unit"]
+    sim_params.contamination_type = config["contamination"]["contamination_rate"][
+        "distribution"
+    ]
+    if sim_params.contamination_type == "fixed_value":
+        sim_params.contamination_param = config["contamination"]["contamination_rate"][
+            "value"
         ]
-        sim_params.pest_distribution = config["pest"]["clustered"]["distribution"]
-        sim_params.max_cluster_stem_width = config["pest"]["clustered"]["random"][
-            "max_cluster_stem_width"
+    elif sim_params.contamination_type == "beta":
+        sim_params.contamination_param = config["contamination"]["contamination_rate"][
+            "parameters"
         ]
     else:
-        sim_params.max_infested_units_per_cluster = None
-        sim_params.max_cluster_stem_width = None
-        sim_params.pest_distribution = None
+        sim_params.contamination_param = None
+    sim_params.contaminant_arrangement = config["contamination"]["arrangement"]
+    if sim_params.contaminant_arrangement == "clustered":
+        sim_params.max_contaminated_units_per_cluster = config["contamination"][
+            "clustered"
+        ]["max_contaminated_units_per_cluster"]
+        sim_params.contaminant_distribution = config["contamination"]["clustered"][
+            "distribution"
+        ]
+        sim_params.max_cluster_item_width = config["contamination"]["clustered"][
+            "random"
+        ]["max_cluster_item_width"]
+    else:
+        sim_params.max_contaminated_units_per_cluster = None
+        sim_params.max_cluster_item_width = None
+        sim_params.contaminant_distribution = None
     sim_params.inspection_unit = config["inspection"]["unit"]
     sim_params.within_box_proportion = config["inspection"]["within_box_proportion"]
     sim_params.sample_strategy = config["inspection"]["sample_strategy"]
@@ -367,75 +377,86 @@ def config_to_simplified_simulation_params(config):
     else:
         sim_params.sample_params = None
     sim_params.selection_strategy = config["inspection"]["selection_strategy"]
-    if sim_params.selection_strategy == "hierarchical":
-        sim_params.selection_param_1 = config["inspection"]["hierarchical"]["outer"]
+    if sim_params.selection_strategy == "cluster":
+        sim_params.selection_param_1 = config["inspection"]["cluster"][
+            "cluster_selection"
+        ]
         if sim_params.selection_param_1 == "interval":
-            sim_params.selection_param_2 = config["inspection"]["hierarchical"][
-                "interval"
-            ]
+            sim_params.selection_param_2 = config["inspection"]["cluster"]["interval"]
     else:
         sim_params.selection_param_1 = None
         sim_params.selection_param_2 = None
     return sim_params
 
 
-def print_totals_as_text(num_shipments, config, totals):
+def print_totals_as_text(num_consignments, config, totals):
     """Prints simulation result as text"""
     sim_params = config_to_simplified_simulation_params(config)
 
-    # "On average, inspecting {0:.0f}% of shipments.".format(100 *
-    #    totals.num_inspections / float(args.num_shipments))
+    # "On average, inspecting {0:.0f}% of consignments.".format(100 *
+    #    totals.num_inspections / float(args.num_consignments))
     print("\n")
     print("Simulation parameters:")
     print("----------------------------------------------------------")
     print(
-        "shipments:\n\t Number shipments simulated: {num_shipments}".format(**locals())
-    )
-    print(
-        "\t Avg. number of boxes per shipment: {0}".format(
-            round(totals.num_boxes / num_shipments)
+        "consignments:\n\t Number consignments simulated: {num_consignments}".format(
+            **locals()
         )
     )
     print(
-        "\t Avg. number of stems per shipment: {0}".format(
-            round(totals.num_stems / num_shipments)
+        "\t Avg. number of boxes per consignment: {0}".format(
+            round(totals.num_boxes / num_consignments)
+        )
+    )
+    print(
+        "\t Avg. number of items per consignment: {0}".format(
+            round(totals.num_items / num_consignments)
         )
     )
 
     print(
-        "infestation:\n\t unit: {sim_params.infestation_unit} \n\t type: "
-        "{sim_params.infestation_type}".format(**locals())
+        "contamination:\n\t unit: {sim_params.contamination_unit} \n\t type: "
+        "{sim_params.contamination_type}".format(**locals())
     )
-    if sim_params.infestation_type == "fixed_value":
+    if sim_params.contamination_type == "fixed_value":
         print(
-            "\t\t infestation rate: {sim_params.infestation_param}".format(**locals())
+            "\t\t contamination rate: {sim_params.contamination_param}".format(
+                **locals()
+            )
         )
-    elif sim_params.infestation_type == "beta":
+    elif sim_params.contamination_type == "beta":
         print(
-            "\t\t infestation distribution parameters: "
-            "{sim_params.infestation_param}".format(**locals())
+            "\t\t contamination distribution parameters: "
+            "{sim_params.contamination_param}".format(**locals())
         )
-    print("\t pest arrangement: {sim_params.pest_arrangement}".format(**locals()))
-    if sim_params.pest_arrangement == "clustered":
-        if sim_params.infestation_unit in ["box", "boxes"]:
+    print(
+        "\t contaminant arrangement: {sim_params.contaminant_arrangement}".format(
+            **locals()
+        )
+    )
+    if sim_params.contaminant_arrangement == "clustered":
+        if sim_params.contamination_unit in ["box", "boxes"]:
             print(
-                "\t\t maximum infested boxes per cluster: "
-                "{sim_params.max_infested_units_per_cluster} boxes".format(**locals())
-            )
-        if sim_params.infestation_unit in ["stem", "stems"]:
-            print(
-                "\t\t maximum infested stems per cluster: "
-                "{sim_params.max_infested_units_per_cluster} stems".format(**locals())
-            )
-            print(
-                "\t\t cluster distribution: {sim_params.pest_distribution}".format(
+                "\t\t maximum contaminated boxes per cluster: "
+                "{sim_params.max_contaminated_units_per_cluster} boxes".format(
                     **locals()
                 )
             )
-            if sim_params.pest_distribution == "random":
+        if sim_params.contamination_unit in ["item", "items"]:
+            print(
+                "\t\t maximum contaminated items per cluster: "
+                "{sim_params.max_contaminated_units_per_cluster} items".format(
+                    **locals()
+                )
+            )
+            print(
+                "\t\t cluster distribution: "
+                "{sim_params.contaminant_distribution}".format(**locals())
+            )
+            if sim_params.contaminant_distribution == "random":
                 print(
                     "\t\t cluster width: "
-                    "{sim_params.max_cluster_stem_width} stems".format(**locals())
+                    "{sim_params.max_cluster_item_width} items".format(**locals())
                 )
 
     print(
@@ -449,7 +470,7 @@ def print_totals_as_text(num_shipments, config, totals):
     elif sim_params.sample_strategy == "fixed_n":
         print("\t\t sample size: {sim_params.sample_params}".format(**locals()))
     print("\t selection strategy: {sim_params.selection_strategy}".format(**locals()))
-    if sim_params.selection_strategy == "hierarchical":
+    if sim_params.selection_strategy == "cluster":
         print(
             "\t\t box selection strategy: {sim_params.selection_param_1}".format(
                 **locals()
@@ -463,10 +484,10 @@ def print_totals_as_text(num_shipments, config, totals):
             )
     if (
         sim_params.inspection_unit in ["box", "boxes"]
-        or sim_params.selection_strategy == "hierarchical"
+        or sim_params.selection_strategy == "cluster"
     ):
         print(
-            "\t minimum proportion of stems inspected within box: "
+            "\t minimum proportion of items inspected within box: "
             "{sim_params.within_box_proportion}".format(**locals())
         )
     print("\n")
@@ -474,52 +495,53 @@ def print_totals_as_text(num_shipments, config, totals):
     print("Simulation results: (averaged across all simulation runs)")
     print("----------------------------------------------------------")
     print(
-        "Avg. % contaminated shipments slipped: {totals.missing:.2f}%".format(
+        "Avg. % contaminated consignments slipped: {totals.missing:.2f}%".format(
             **locals()
         )
     )
-    print("Avg. num. shipments slipped: {totals.false_neg:,.0f}".format(**locals()))
+    print("Avg. num. consignments slipped: {totals.false_neg:,.0f}".format(**locals()))
     print(
-        "Avg. num. shipments intercepted: {totals.intercepted:,.0f}".format(**locals())
-    )
-    print(
-        "Total number of slipped pests: {totals.total_missed_pests:,.0f}".format(
+        "Avg. num. consignments intercepted: {totals.intercepted:,.0f}".format(
             **locals()
         )
     )
     print(
-        "Total number of intercepted pests: "
-        "{totals.total_intercepted_pests:,.0f}".format(**locals())
+        "Total number of slipped contaminants: "
+        "{totals.total_missed_contaminants:,.0f}".format(**locals())
     )
-    print("Infestation rate:")
-    print("\tOverall avg: {totals.true_infestation_rate:.3f}".format(**locals()))
-    if totals.max_missed_infestation_rate is not None:
+    print(
+        "Total number of intercepted contaminants: "
+        "{totals.total_intercepted_contaminants:,.0f}".format(**locals())
+    )
+    print("Contamination rate:")
+    print("\tOverall avg: {totals.true_contamination_rate:.3f}".format(**locals()))
+    if totals.max_missed_contamination_rate is not None:
         print(
-            "\tSlipped shipments avg.: "
-            "{totals.avg_missed_infestation_rate:.3f}\n"
-            "\tSlipped shipments max.: "
-            "{totals.max_missed_infestation_rate:.3f}".format(**locals())
+            "\tSlipped consignments avg.: "
+            "{totals.avg_missed_contamination_rate:.3f}\n"
+            "\tSlipped consignments max.: "
+            "{totals.max_missed_contamination_rate:.3f}".format(**locals())
         )
-    if totals.max_intercepted_infestation_rate is not None:
+    if totals.max_intercepted_contamination_rate is not None:
         print(
-            "\tIntercepted shipments avg.: "
-            "{totals.avg_intercepted_infestation_rate:.3f}\n"
-            "\tIntercepted shipments max.: "
-            "{totals.max_intercepted_infestation_rate:.3f}".format(**locals())
+            "\tIntercepted consignments avg.: "
+            "{totals.avg_intercepted_contamination_rate:.3f}\n"
+            "\tIntercepted consignments max.: "
+            "{totals.max_intercepted_contamination_rate:.3f}".format(**locals())
         )
     print(
-        "Avg. number of boxes opened per shipment:\n\t to completion: "
+        "Avg. number of boxes opened per consignment:\n\t to completion: "
         "{totals.avg_boxes_opened_completion:.0f}\n"
         "\t to detection: {totals.avg_boxes_opened_detection:.0f}".format(**locals())
     )
     print(
-        "Avg. number of stems inspected per shipment:\n\t to completion: "
-        "{totals.avg_stems_inspected_completion:.0f}\n"
-        "\t to detection: {totals.avg_stems_inspected_detection:.0f}".format(**locals())
+        "Avg. number of items inspected per consignment:\n\t to completion: "
+        "{totals.avg_items_inspected_completion:.0f}\n"
+        "\t to detection: {totals.avg_items_inspected_detection:.0f}".format(**locals())
     )
     print(
-        "Avg. % infested stems unreported if sample ends at detection: "
-        "{totals.pct_pest_unreported_if_detection:.2f}%".format(**locals())
+        "Avg. % contaminated items unreported if sample ends at detection: "
+        "{totals.pct_contaminant_unreported_if_detection:.2f}%".format(**locals())
     )
 
 

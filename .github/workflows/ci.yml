@@ -99,7 +99,7 @@ jobs:
         pip install .
     - name: Basic test
       run: |
-        python -m pathways --num-simulations 5 --num-shipments 50 --config-file config.yml
+        python -m pathways --num-simulations 5 --num-consignments 50 --config-file config.yml
     - name: Test with pytest
       run: |
         pip install pytest pytest-datadir

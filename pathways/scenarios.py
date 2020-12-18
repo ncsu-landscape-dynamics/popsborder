@@ -84,7 +84,7 @@ def update_config(config, record):
 
 
 def run_scenarios(
-    config, scenario_table, seed, num_simulations, num_shipments, detailed=False
+    config, scenario_table, seed, num_simulations, num_consignments, detailed=False
 ):
     """Run scenarios based on the configuration and list of scenarios
 
@@ -100,7 +100,7 @@ def run_scenarios(
         simulation within a scenario runs with a different seed based on this one.
     num_simulations : int
         Num of simulations for each scenario.
-    num_shipments : int
+    num_consignments : int
         Number of shipements in each simulation.
 
     Returns
@@ -117,7 +117,7 @@ def run_scenarios(
         result = run_simulation(
             config=scenario_config,
             num_simulations=num_simulations,
-            num_shipments=num_shipments,
+            num_consignments=num_consignments,
             seed=seed,
             detailed=detailed,
         )
