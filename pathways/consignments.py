@@ -256,7 +256,7 @@ class AQIMConsignmentGenerator:
         # If quantity is given in boxes, use item_per_box to convert to items.
         if unit in ["Box/Carton"]:
             num_items = int(record["QUANTITY"]) * items_per_box
-        elif unit in ["Items"]:
+        elif unit in ["Stems"]:
             num_items = int(record["QUANTITY"])
         else:
             raise RuntimeError("Unsupported quantity unit: {unit}".format(**locals()))
@@ -425,7 +425,7 @@ def add_contaminant_uniform_random(config, consignment):
         for index in indexes:
             consignment.boxes[index].items.fill(1)
         assert np.count_nonzero(consignment.boxes) == contaminated_boxes
-    if contamination_unit in ["item", "items"]:
+    elif contamination_unit in ["item", "items"]:
         contaminated_items = num_items_to_contaminate(
             config["contamination_rate"], consignment.num_items
         )
@@ -436,6 +436,10 @@ def add_contaminant_uniform_random(config, consignment):
         )
         np.put(consignment.items, indexes, 1)
         assert np.count_nonzero(consignment.items) == contaminated_items
+    else:
+        raise RuntimeError(
+            "Unknown contamination unit: {contamination_unit}".format(**locals())
+        )
 
 
 def _contaminated_items_to_cluster_sizes(
