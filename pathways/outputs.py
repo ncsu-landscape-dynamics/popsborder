@@ -391,6 +391,9 @@ def config_to_simplified_simulation_params(config):
 
 def print_totals_as_text(num_consignments, config, totals):
     """Prints simulation result as text"""
+    # This is straightforward printing with simpler branches. Only few variables.
+    # pylint: disable=too-many-branches,too-many-statements
+
     sim_params = config_to_simplified_simulation_params(config)
 
     # "On average, inspecting {0:.0f}% of consignments.".format(100 *
