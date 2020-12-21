@@ -147,6 +147,9 @@ def load_scenario_table(filename):
     with open(filename) as file:
         for row in csv.DictReader(file):
             for key, value in row.items():
+                # if not value:
+                #     row[key] = None
+                #     continue
                 try:
                     value = int(value)
                     row[key] = value

@@ -2,7 +2,7 @@ name,consignment name,inspection name,aqim_file,consignment/boxes/min,consignmen
 consignment scenarios 1,aqim,box hypergeometric 0.1,aqim_all.csv,,,200,box,beta,"[6.095, 828.883]",,clustered,random,2,,boxes,hypergeometric,0.1,random,1
 consignment scenarios 2,maritime,box hypergeometric 0.1,aqim_all.csv,,,700,box,beta,"[6.095, 828.883]",,clustered,random,2,,boxes,hypergeometric,0.1,random,1
 consignment scenarios 3,maritime,box hypergeometric 0.1,aqim_all.csv,,,700,item,beta,"[0.460, 229.523]",,clustered,random,100,200,boxes,hypergeometric,0.1,random,1
-consignment scenarios 4,direct to consumer,box hypergeometric 0.1,n/a,1,6,200,item,beta,"[0.460, 229.523]",,clustered,random,100,200,boxes,hypergeometric,0.1,random,1
+consignment scenarios 4,direct to consumer,box hypergeometric 0.1,,1,6,200,item,beta,"[0.460, 229.523]",,clustered,random,100,200,boxes,hypergeometric,0.1,random,1
 consignment scenarios 5,aqim,box hypergeometric 0.1,aqim_all.csv,,,200,box,beta,"[6.095, 828.883]",,clustered,random,2,,boxes,hypergeometric,0.1,random,1
 consignment scenarios 6,box high variability,box hypergeometric 0.1,aqim_all.csv,,,200,box,beta,"[0.529, 71.938]",,clustered,random,2,,boxes,hypergeometric,0.1,random,1
 consignment scenarios 7,box high mean,box hypergeometric 0.1,aqim_all.csv,,,200,box,beta,"[45.167, 2213.180]",,clustered,random,2,,boxes,hypergeometric,0.1,random,1
