@@ -1,9 +1,9 @@
-name,consignment name,inspection name,contamination/contamination_rate/parameters,contamination/arrangement,contamination/clustered/distribution,contamination/clustered/max_contaminated_units_per_cluster,inspection/unit
-contamination rate 1,random item beta,box hypergeometric 0.1 random,"[1.296, 384.027]",random,,,boxes
-contamination rate 2,clustered item beta,box hypergeometric 0.1 random,"[1.296, 384.027]",clustered,random,2,boxes
-contamination rate 3,random item beta,item hypergeometric 0.1 random,"[1.296, 384.027]",random,,,items
-contamination rate 4,clustered item beta,item hypergeometric 0.1 random,"[1.296, 384.027]",clustered,random,2,items
-contamination rate 5,random item beta,box hypergeometric 0.1 random,"[6.095, 828.883]",random,,,boxes
-contamination rate 6,clustered item beta,box hypergeometric 0.1 random,"[6.095, 828.883]",clustered,random,2,boxes
-contamination rate 7,random item beta,item hypergeometric 0.1 random,"[6.095, 828.883]",random,,,items
-contamination rate 8,clustered item beta,item hypergeometric 0.1 random,"[6.095, 828.883]",clustered,random,2,items
+name,consignment name,inspection name,aqim_file,contamination/contamination_rate/parameters,contamination/arrangement,contamination/clustered/distribution,contamination/clustered/max_contaminated_units_per_cluster,inspection/unit,inspection/sample_strategy,inspection/hypergeometric/detection_level,inspection/selection_strategy,inspection/within_box_proportion,inspection/cluster/cluster_selection
+contamination rate 1,random item beta,box hypergeometric 0.1 random,aqim_all.csv,"[1.296, 384.027]",random,,,boxes,hypergeometric,0.1,random,1,
+contamination rate 2,clustered item beta,box hypergeometric 0.1 random,aqim_all.csv,"[1.296, 384.027]",clustered,random,2,boxes,hypergeometric,0.1,random,1,
+contamination rate 3,random item beta,item hypergeometric 0.1 random,aqim_all.csv,"[1.296, 384.027]",random,,,items,hypergeometric,0.1,random,1,
+contamination rate 4,clustered item beta,item hypergeometric 0.1 random,aqim_all.csv,"[1.296, 384.027]",clustered,random,2,items,hypergeometric,0.1,random,1,
+contamination rate 5,random item beta,box hypergeometric 0.1 random,aqim_all.csv,"[6.095, 828.883]",random,,,boxes,hypergeometric,0.1,random,1,
+contamination rate 6,clustered item beta,box hypergeometric 0.1 random,aqim_all.csv,"[6.095, 828.883]",clustered,random,2,boxes,hypergeometric,0.1,random,1,
+contamination rate 7,random item beta,item hypergeometric 0.1 random,aqim_all.csv,"[6.095, 828.883]",random,,,items,hypergeometric,0.1,random,1,
+contamination rate 8,clustered item beta,item hypergeometric 0.1 random,aqim_all.csv,"[6.095, 828.883]",clustered,random,2,items,hypergeometric,0.1,random,1,

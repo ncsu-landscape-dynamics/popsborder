@@ -303,12 +303,12 @@ def get_items_per_box(items_per_box, pathway):
 
 def get_consignment_generator(config):
     """Based on config, return consignment generator object."""
-    if "f280_file" in config:
+    if ("f280_file" in config) and (config["f280_file"] != "n/a"):
         consignment_generator = F280ConsignmentGenerator(
             items_per_box=config["consignment"]["items_per_box"],
             filename=config["f280_file"],
         )
-    elif "aqim_file" in config:
+    elif ("aqim_file" in config) and (config["aqim_file"] != "n/a"):
         consignment_generator = AQIMConsignmentGenerator(
             items_per_box=config["consignment"]["items_per_box"],
             filename=config["aqim_file"],

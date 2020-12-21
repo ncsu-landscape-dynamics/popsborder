@@ -1,0 +1,16 @@
+name,consignment name,inspection name,aqim_file,consignment/boxes/min,consignment/boxes/max,consignment/items_per_box/default,contamination/contamination_unit,contamination/contamination_rate/distribution,contamination/contamination_rate/parameters,contamination/contamination_rate/value,contamination/arrangement,contamination/clustered/distribution,contamination/clustered/max_contaminated_units_per_cluster,contamination/clustered/random/max_cluster_item_width,inspection/unit,inspection/sample_strategy,inspection/hypergeometric/detection_level,inspection/selection_strategy,inspection/within_box_proportion
+consignment scenarios 1,aqim,box hypergeometric 0.1,aqim_all.csv,,,200,box,beta,"[6.095, 828.883]",,clustered,random,2,,boxes,hypergeometric,0.1,random,1
+consignment scenarios 2,maritime,box hypergeometric 0.1,aqim_all.csv,,,700,box,beta,"[6.095, 828.883]",,clustered,random,2,,boxes,hypergeometric,0.1,random,1
+consignment scenarios 3,maritime,box hypergeometric 0.1,aqim_all.csv,,,700,item,beta,"[0.460, 229.523]",,clustered,random,100,200,boxes,hypergeometric,0.1,random,1
+consignment scenarios 4,direct to consumer,box hypergeometric 0.1,n/a,1,6,200,item,beta,"[0.460, 229.523]",,clustered,random,100,200,boxes,hypergeometric,0.1,random,1
+consignment scenarios 5,aqim,box hypergeometric 0.1,aqim_all.csv,,,200,box,beta,"[6.095, 828.883]",,clustered,random,2,,boxes,hypergeometric,0.1,random,1
+consignment scenarios 6,box high variability,box hypergeometric 0.1,aqim_all.csv,,,200,box,beta,"[0.529, 71.938]",,clustered,random,2,,boxes,hypergeometric,0.1,random,1
+consignment scenarios 7,box high mean,box hypergeometric 0.1,aqim_all.csv,,,200,box,beta,"[45.167, 2213.180]",,clustered,random,2,,boxes,hypergeometric,0.1,random,1
+consignment scenarios 8,stem match aqim,box hypergeometric 0.1,aqim_all.csv,,,200,item,beta,"[0.460, 229.523]",,clustered,random,100,200,boxes,hypergeometric,0.1,random,1
+consignment scenarios 9,stem high variability,box hypergeometric 0.1,aqim_all.csv,,,200,item,beta,"[0.040, 19.920]",,clustered,random,100,200,boxes,hypergeometric,0.1,random,1
+consignment scenarios 10,stem high mean,box hypergeometric 0.1,aqim_all.csv,,,200,item,beta,"[11.407, 1129.289]",,clustered,random,100,200,boxes,hypergeometric,0.1,random,1
+consignment scenarios 11,stem random,box hypergeometric 0.1,aqim_all.csv,,,200,item,beta,"[0.460, 229.523]",,random,,,,boxes,hypergeometric,0.1,random,1
+consignment scenarios 12,stem cluster small,box hypergeometric 0.1,aqim_all.csv,,,200,item,beta,"[0.460, 229.523]",,clustered,random,25,50,boxes,hypergeometric,0.1,random,1
+consignment scenarios 13,stem cluster mid,box hypergeometric 0.1,aqim_all.csv,,,200,item,beta,"[0.460, 229.523]",,clustered,random,100,200,boxes,hypergeometric,0.1,random,1
+consignment scenarios 14,stem cluster large,box hypergeometric 0.1,aqim_all.csv,,,200,item,beta,"[0.460, 229.523]",,clustered,random,200,400,boxes,hypergeometric,0.1,random,1
+consignment scenarios 15,stem cluster continuous,box hypergeometric 0.1,aqim_all.csv,,,200,item,beta,"[0.460, 229.523]",,clustered,continuous,100,,boxes,hypergeometric,0.1,random,1
