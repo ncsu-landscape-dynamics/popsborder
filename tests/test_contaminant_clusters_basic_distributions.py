@@ -1,8 +1,8 @@
 import numpy as np
-from datetime import date
+import datetime
 
 from pathways.simulation import random_seed, load_configuration_yaml_from_text
-from pathways.consignments import add_contaminant_clusters, Box
+from pathways.consignments import add_contaminant_clusters, Consignment, Box
 
 CONTINUOUS_CONFIG = """\
 contamination:
@@ -35,15 +35,17 @@ contamination:
 def get_consignment(num_items):
     """Get basic consignment with given number of items all in one box"""
     items = np.zeros(num_items, dtype=np.int)
-    return dict(
+    return Consignment(
         flower="Rosa",
-        arrival_time=date(2018, 2, 15),
+        date=datetime.date(2018, 2, 15),
         origin="Mexico",
         port="FL Miami Air CBP",
         num_items=num_items,
         items=items,
         num_boxes=1,
         boxes=[Box(items)],
+        items_per_box=num_items,
+        pathway="air",
     )
 
 
@@ -56,7 +58,7 @@ def test_continuous_clusters():
     add_contaminant_clusters(config, consignment)
     contamination_rate = 0.08
     contaminated_items = int(num_items * contamination_rate)
-    assert np.count_nonzero(consignment["items"]) == contaminated_items
+    assert np.count_nonzero(consignment.items) == contaminated_items
 
 
 def test_random_clusters():
@@ -68,4 +70,4 @@ def test_random_clusters():
     add_contaminant_clusters(config, consignment)
     contamination_rate = 0.12
     contaminated_items = int(num_items * contamination_rate)
-    assert np.count_nonzero(consignment["items"]) == contaminated_items
+    assert np.count_nonzero(consignment.items) == contaminated_items
