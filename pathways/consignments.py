@@ -70,6 +70,8 @@ class Consignment(collections.UserDict):
 
     # Inheriting from this library class is its intended use, so disable ancestors msg.
     # pylint: disable=too-many-ancestors
+    # This class is meant to hold a lot of attributes.
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
@@ -96,6 +98,7 @@ class Consignment(collections.UserDict):
         :param port: string
         :param pathway: string
         """
+        super().__init__()
         self.flower = flower
         self.num_items = num_items
         self.items = items
