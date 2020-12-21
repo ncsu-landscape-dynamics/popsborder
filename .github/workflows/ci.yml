@@ -79,7 +79,7 @@ jobs:
         pip install black
         black --check --diff .
 
-  test-scripts:
+  tests:
 
     runs-on: ubuntu-20.04
     strategy:
@@ -102,7 +102,7 @@ jobs:
       run: |
         pytest tests/
 
-  tests:
+  test-scripts:
 
     runs-on: ubuntu-20.04
     strategy:
