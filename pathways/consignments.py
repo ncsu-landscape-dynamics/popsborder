@@ -70,6 +70,8 @@ class Consignment(collections.UserDict):
 
     # Inheriting from this library class is its intended use, so disable ancestors msg.
     # pylint: disable=too-many-ancestors
+    # This class is meant to hold a lot of attributes.
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
@@ -96,6 +98,7 @@ class Consignment(collections.UserDict):
         :param port: string
         :param pathway: string
         """
+        super().__init__()
         self.flower = flower
         self.num_items = num_items
         self.items = items
@@ -388,8 +391,7 @@ def num_items_to_contaminate(config, num_items):
 
 
 def num_boxes_to_contaminate(config, num_boxes):
-    """Return number of boxes to be contaminated.
-    Rounds up or down to nearest integer.
+    """Return number of boxes to be contaminated as float.
 
     Config is the ``contamination_rate`` dictionary.
     """
@@ -403,7 +405,7 @@ def num_boxes_to_contaminate(config, num_boxes):
         raise RuntimeError(
             "Unknown contamination rate distribution: {distribution}".format(**locals())
         )
-    contaminated_boxes = round(num_boxes * contamination_rate)
+    contaminated_boxes = num_boxes * contamination_rate
     return contaminated_boxes
 
 
@@ -419,22 +421,31 @@ def add_contaminant_uniform_random(config, consignment):
         )
         if contaminated_boxes == 0:
             return
-        indexes = np.random.choice(
-            consignment.num_boxes, contaminated_boxes, replace=False
+        box_indexes = np.random.choice(
+            consignment.num_boxes, math.ceil(contaminated_boxes), replace=False
         )
-        for index in indexes:
-            consignment.boxes[index].items.fill(1)
-        assert np.count_nonzero(consignment.boxes) == contaminated_boxes
+        for index, box_index in enumerate(box_indexes):
+            if index == len(box_indexes) - 1:
+                box_proportion = math.modf(contaminated_boxes)[0]
+                if box_proportion == 0.0:
+                    box_proportion = 1
+                contaminated_stems = math.ceil(
+                    consignment.items_per_box * box_proportion
+                )
+                consignment.boxes[box_index].items[0:contaminated_stems].fill(1)
+                continue
+            consignment.boxes[box_index].items.fill(1)
+        assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
     elif contamination_unit in ["item", "items"]:
         contaminated_items = num_items_to_contaminate(
             config["contamination_rate"], consignment.num_items
         )
         if contaminated_items == 0:
             return
-        indexes = np.random.choice(
+        item_indexes = np.random.choice(
             consignment.num_items, contaminated_items, replace=False
         )
-        np.put(consignment.items, indexes, 1)
+        np.put(consignment.items, item_indexes, 1)
         assert np.count_nonzero(consignment.items) == contaminated_items
     else:
         raise RuntimeError(
@@ -473,20 +484,20 @@ def _contaminated_boxes_to_cluster_sizes(contaminated_boxes, max_boxes_per_clust
 
     The size of each cluster is limited by max_contaminated_units_per_cluster.
     """
-    if contaminated_boxes > max_boxes_per_cluster:
+    if math.ceil(contaminated_boxes) > max_boxes_per_cluster:
         # Split into n clusters so that n-1 clusters have the max size and
         # the last one has the remaining items.
         sum_boxes = 0
         cluster_sizes = []
-        while sum_boxes < contaminated_boxes - max_boxes_per_cluster:
+        while sum_boxes < math.ceil(contaminated_boxes) - max_boxes_per_cluster:
             sum_boxes += max_boxes_per_cluster
             cluster_sizes.append(max_boxes_per_cluster)
         # add remaining boxes
-        cluster_sizes.append(contaminated_boxes - sum_boxes)
-        sum_boxes += contaminated_boxes - sum_boxes
-        assert sum_boxes == contaminated_boxes
+        cluster_sizes.append(math.ceil(contaminated_boxes) - sum_boxes)
+        sum_boxes += math.ceil(contaminated_boxes) - sum_boxes
+        assert sum_boxes == math.ceil(contaminated_boxes)
     else:
-        cluster_sizes = [contaminated_boxes]
+        cluster_sizes = [math.ceil(contaminated_boxes)]
     return cluster_sizes
 
 
@@ -501,109 +512,124 @@ def create_stratas_for_clusters(num_units, cluster_width, cluster_sizes):
     return num_strata, cluster_strata
 
 
-def add_contaminant_clusters(config, consignment):
-    """Add contaminant clusters to consignment
-
-    Assuming a list of boxes with the non-contaminated boxes set to False.
-
-    Each item (box) in boxes (list) is set to True if a contaminant is
-    there, False otherwise.
-    """
-    contamination_unit = config["contamination_unit"]
+def add_contaminant_clusters_to_boxes(config, consignment):
+    """Add contaminant clusters to boxes in a consignment"""
     max_contaminated_units_per_cluster = config["clustered"][
         "max_contaminated_units_per_cluster"
     ]
+    num_boxes = consignment.num_boxes
+    contaminated_boxes = num_boxes_to_contaminate(
+        config["contamination_rate"], num_boxes
+    )
+    if contaminated_boxes == 0:
+        return
+    cluster_sizes = _contaminated_boxes_to_cluster_sizes(
+        contaminated_boxes, max_contaminated_units_per_cluster
+    )
+    num_strata, cluster_strata = create_stratas_for_clusters(
+        num_boxes, max_contaminated_units_per_cluster, cluster_sizes
+    )
+    for index, cluster_size in enumerate(cluster_sizes):
+        cluster_start = math.floor(num_boxes / num_strata) * cluster_strata[index]
+        cluster_indexes = np.arange(
+            start=cluster_start, stop=cluster_start + cluster_size
+        )
+        for i, cluster_index in enumerate(cluster_indexes):
+            if index == len(cluster_sizes) - 1:
+                if i == len(cluster_indexes) - 1:
+                    box_proportion = math.modf(contaminated_boxes)[0]
+                    if box_proportion == 0.0:
+                        box_proportion = 1
+                    contaminated_stems = math.ceil(
+                        consignment.items_per_box * box_proportion
+                    )
+                    consignment.boxes[cluster_index].items[0:contaminated_stems].fill(1)
+                    continue
+            consignment.boxes[cluster_index].items.fill(1)
+    assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
 
-    if contamination_unit in ["box", "boxes"]:
-        num_boxes = consignment.num_boxes
-        contaminated_boxes = num_boxes_to_contaminate(
-            config["contamination_rate"], num_boxes
-        )
-        if contaminated_boxes == 0:
-            return
-        cluster_sizes = _contaminated_boxes_to_cluster_sizes(
-            contaminated_boxes, max_contaminated_units_per_cluster
-        )
+
+def add_contaminant_clusters_to_items(config, consignment):
+    """Add contaminant clusters to items in a consignment"""
+    # This has 16/15 local variables. if you make this any more complex,
+    # you need to split this function and delete the pylint disable.
+    # pylint: disable=too-many-locals
+    max_contaminated_units_per_cluster = config["clustered"][
+        "max_contaminated_units_per_cluster"
+    ]
+    num_items = consignment.num_items
+    contaminated_items = num_items_to_contaminate(
+        config["contamination_rate"], num_items
+    )
+    if contaminated_items == 0:
+        return
+    cluster_sizes = _contaminated_items_to_cluster_sizes(
+        contaminated_items, max_contaminated_units_per_cluster
+    )
+    cluster_indexes = []
+    distribution = config["clustered"]["distribution"]
+    if distribution == "random":
+        max_cluster_item_width = config["clustered"]["random"]["max_cluster_item_width"]
+        if max_cluster_item_width < max_contaminated_units_per_cluster:
+            raise ValueError(
+                "Maximum cluster width, currently {max_cluster_item_width}, needs"
+                " to be at least as large as max_contaminated_units_per_cluster"
+                " (currently {max_contaminated_units_per_cluster})".format(**locals())
+            )
+        # cluster can't be wider/longer than the current list of items
+        max_cluster_item_width = min(max_cluster_item_width, num_items)
         num_strata, cluster_strata = create_stratas_for_clusters(
-            num_boxes, max_contaminated_units_per_cluster, cluster_sizes
+            num_items, max_cluster_item_width, cluster_sizes
         )
         for index, cluster_size in enumerate(cluster_sizes):
-            cluster_start = math.floor(num_boxes / num_strata) * cluster_strata[index]
-            cluster_indexes = np.arange(
-                start=cluster_start, stop=cluster_start + cluster_size
+            cluster = np.random.choice(
+                max_cluster_item_width, cluster_size, replace=False
             )
-            for cluster_index in cluster_indexes:
-                consignment.boxes[cluster_index].items.fill(1)
-        assert np.count_nonzero(consignment.boxes) <= contaminated_boxes
+            cluster_start = math.floor((num_items / num_strata) * cluster_strata[index])
+            cluster += cluster_start
+            cluster_indexes.extend(list(cluster))
+    elif distribution == "continuous":
+        num_strata, cluster_strata = create_stratas_for_clusters(
+            num_items, max_contaminated_units_per_cluster, cluster_sizes
+        )
+        for index, cluster_size in enumerate(cluster_sizes):
+            cluster = np.arange(0, cluster_size)
+            cluster_start = math.floor((num_items / num_strata) * cluster_strata[index])
+            cluster += cluster_start
+            cluster_indexes.extend(list(cluster))
+    else:
+        raise RuntimeError(
+            "Unknown cluster distribution: {distribution}".format(**locals())
+        )
+    cluster_indexes = np.array(cluster_indexes, dtype=np.int)
+    cluster_max = max(cluster_indexes)
+    if cluster_max > num_items - 1:
+        # If the max index specified by the cluster is outside of item
+        # array index range, fit the cluster values into that range.
+        cluster_indexes = np.interp(
+            cluster_indexes,
+            (cluster_indexes.min(), cluster_indexes.max()),
+            (0, num_items - 1),
+        )
+    assert min(cluster_indexes) >= 0, "Cluster values need to be valid indices"
+    assert max(cluster_indexes) < num_items
+    np.put(consignment.items, cluster_indexes, 1)
+    assert np.count_nonzero(consignment.items) == contaminated_items
 
+
+def add_contaminant_clusters(config, consignment):
+    """Add contaminant clusters to consignment
+
+    Item (separately or in boxes) with contaminat in *consignment* evaluate
+    to True after runing this function.
+    This function does not touch the not items not selected for contamination.
+    However, they are expected to be zero.
+    """
+    contamination_unit = config["contamination_unit"]
+    if contamination_unit in ["box", "boxes"]:
+        add_contaminant_clusters_to_boxes(config, consignment)
     elif contamination_unit in ["item", "items"]:
-        num_items = consignment.num_items
-        contaminated_items = num_items_to_contaminate(
-            config["contamination_rate"], num_items
-        )
-        if contaminated_items == 0:
-            return
-        cluster_sizes = _contaminated_items_to_cluster_sizes(
-            contaminated_items, max_contaminated_units_per_cluster
-        )
-        cluster_indexes = []
-        distribution = config["clustered"]["distribution"]
-        if distribution == "random":
-            max_cluster_item_width = config["clustered"]["random"][
-                "max_cluster_item_width"
-            ]
-            if max_cluster_item_width < max_contaminated_units_per_cluster:
-                raise ValueError(
-                    "Maximum cluster width, currently {max_cluster_item_width}, needs"
-                    " to be at least as large as max_contaminated_units_per_cluster"
-                    " (currently {max_contaminated_units_per_cluster})".format(
-                        **locals()
-                    )
-                )
-            # cluster can't be wider/longer than the current list of items
-            max_cluster_item_width = min(max_cluster_item_width, num_items)
-            num_strata, cluster_strata = create_stratas_for_clusters(
-                num_items, max_cluster_item_width, cluster_sizes
-            )
-            for index, cluster_size in enumerate(cluster_sizes):
-                cluster = np.random.choice(
-                    max_cluster_item_width, cluster_size, replace=False
-                )
-                cluster_start = math.floor(
-                    (num_items / num_strata) * cluster_strata[index]
-                )
-                cluster += cluster_start
-                cluster_indexes.extend(list(cluster))
-        elif distribution == "continuous":
-            num_strata, cluster_strata = create_stratas_for_clusters(
-                num_items, max_contaminated_units_per_cluster, cluster_sizes
-            )
-            for index, cluster_size in enumerate(cluster_sizes):
-                cluster = np.arange(0, cluster_size)
-                cluster_start = math.floor(
-                    (num_items / num_strata) * cluster_strata[index]
-                )
-                cluster += cluster_start
-                cluster_indexes.extend(list(cluster))
-        else:
-            raise RuntimeError(
-                "Unknown cluster distribution: {distribution}".format(**locals())
-            )
-        cluster_indexes = np.array(cluster_indexes, dtype=np.int)
-        cluster_max = max(cluster_indexes)
-        if cluster_max > num_items - 1:
-            # If the max index specified by the cluster is outside of item
-            # array index range, fit the cluster values into that range.
-            cluster_indexes = np.interp(
-                cluster_indexes,
-                (cluster_indexes.min(), cluster_indexes.max()),
-                (0, num_items - 1),
-            )
-        assert min(cluster_indexes) >= 0, "Cluster values need to be valid indices"
-        assert max(cluster_indexes) < num_items
-        np.put(consignment.items, cluster_indexes, 1)
-        assert np.count_nonzero(consignment.items) == contaminated_items
-
+        add_contaminant_clusters_to_items(config, consignment)
     else:
         raise RuntimeError(
             "Unknown contamination unit: {contamination_unit}".format(**locals())
