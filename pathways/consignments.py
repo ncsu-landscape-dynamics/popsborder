@@ -98,7 +98,18 @@ class Consignment(collections.UserDict):
         :param port: string
         :param pathway: string
         """
-        super().__init__()
+        super().__init__(
+            flower=flower,
+            num_items=num_items,
+            items=items,
+            items_per_box=items_per_box,
+            num_boxes=num_boxes,
+            date=date,
+            boxes=boxes,
+            origin=origin,
+            port=port,
+            pathway=pathway,
+        )
         self.flower = flower
         self.num_items = num_items
         self.items = items
