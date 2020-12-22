@@ -183,7 +183,7 @@ def sample_n(config, consignment):
     return n_units_to_inspect
 
 
-def convert_items_to_boxes_fixed_pct(config, consignment, n_items_to_inspect):
+def convert_items_to_boxes_fixed_proportion(config, consignment, n_items_to_inspect):
     """Convert number of items to inspect to number of boxes to inspect based on
     the number of items per box and the proportion of items to inspect per box
     specified in the config. Adjust number of boxes to inspect to be at least
@@ -210,7 +210,7 @@ def convert_items_to_boxes_fixed_pct(config, consignment, n_items_to_inspect):
 def compute_n_clusters_to_inspect(config, consignment, n_items_to_inspect):
     """Compute number of cluster units (boxes) that need to be opened to achieve item
     sample size when using the cluster selection strategy. Use config within box
-    percent if possible or compute minimum number of items to inspect per box
+    proportion if possible or compute minimum number of items to inspect per box
     required to achieve item sample size.
     Return number of boxes to inspect and number of items to inspect per box.
 
@@ -226,7 +226,7 @@ def compute_n_clusters_to_inspect(config, consignment, n_items_to_inspect):
     num_items = consignment.num_items
 
     if cluster_selection == "random":
-        # Check if within box pct is high enough to achieve sample size.
+        # Check if within box proportion is high enough to achieve sample size.
         max_items = compute_max_inspectable_items(
             num_items, items_per_box, within_box_proportion
         )
@@ -250,7 +250,7 @@ def compute_n_clusters_to_inspect(config, consignment, n_items_to_inspect):
         max_boxes = max(1, round(num_boxes / interval))
         # Assumes full boxes, no remainder partial box.
         max_items = max_boxes * (math.ceil(within_box_proportion * items_per_box))
-        # Check if within box percent is high enough and/or interval is
+        # Check if within box proportion is high enough and/or interval is
         # low enough to achieve sample size
         if max_items >= n_items_to_inspect:
             inspect_per_box = math.ceil(within_box_proportion * items_per_box)
@@ -283,7 +283,7 @@ def compute_n_clusters_to_inspect(config, consignment, n_items_to_inspect):
 
 def compute_max_inspectable_items(num_items, items_per_box, within_box_proportion):
     """Compute maximum number of items that can be inspected in a consignment based
-    on within box percent. If within box percent is less than 1 (partial box
+    on within box proportion. If within box proportion is less than 1 (partial box
     inspections), then maximum number of items that can be inspected will be
     less than the total number of items in the consignment.
 
@@ -442,7 +442,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
         detected = False
         if selection_strategy == "cluster":
             # Compute num items to inspect per box to achieve sample size
-            # based on within box pct.
+            # based on within box proportion.
             inspect_per_box = (
                 compute_n_clusters_to_inspect(config, consignment, n_units_to_inspect)
             )[1]
@@ -484,7 +484,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
             assert (
                 ret.items_inspected_completion == n_units_to_inspect
             ), """Check if number of items is evenly divisible by items per box.
-            Partial boxes not supported when using heirarchical selection."""
+            Partial boxes not supported when using cluster selection."""
         else:  # All other item selection strategies inspected the same way
             # Empty lists to hold opened boxes indexes, will be duplicates bc box index
             # computed per inspected item
