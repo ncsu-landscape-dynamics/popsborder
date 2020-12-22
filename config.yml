@@ -1,7 +1,7 @@
 consignment:
   boxes:
-    min: 10
-    max: 10
+    min: 100
+    max: 100
   items_per_box:
     default: 200
     air:
@@ -38,17 +38,17 @@ consignment:
     - TX Brownsville CBP
     - WA Blaine CBP
 # f280_file: F280_sample.csv
-aqim_file:
+aqim_file: aqim_all.csv
 #aqim_file: blank_aqim_for_testing.csv
 contamination:
   contamination_unit: box
   contamination_rate:
-    distribution: beta
+    distribution: fixed_value
     value: 0.01
     parameters:
       # stems
-      #- 0.9998207923
-      #- 5578.1175514
+      - 0.9998207923
+      - 5578.1175514
       # boxes (mean 0.00336, sd 0.003)
       #- 0.873
       #- 258.957
@@ -58,21 +58,18 @@ contamination:
       # centered at 0.7%
       #- 0.0194628
       #- 2.7609372
-      # beta dist mean 0.0005 (overall median rate from AQIM) sd 0.0025 (approx from AQIM sd of median by origin)
-      #- 0.049
-      #- 88.542
-      # beta dist mean 0.0005 (overall median rate from AQIM) sd 0.0051
-      #- 0.012
-      #- 21.276
-      # beta dist mean 0.00336 (overall AQIM median rate for box insp unit) sd 0.00359 (approx from AQIM sd of median by origin)
-      #- 0.888942592593
-      #- 260.564761111
-      # fitted beta to box data, converted to stems
-      - 1.296
-      - 384.027
+      # fitted beta to box data
+      #- 1.008
+      #- 320.055
+      # Using median and std error from box GLM
+      #- 0.002
+      #- 0.664
+      # lower mean
+      #- 0.026
+      #- 51.261
   arrangement: random
   clustered:
-    max_contaminated_units_per_cluster: 50
+    max_contaminated_units_per_cluster: 2
     distribution: clustered
     random:
       max_cluster_item_width: 100
