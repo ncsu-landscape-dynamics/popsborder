@@ -418,7 +418,7 @@ def print_totals_as_text(num_consignments, config, totals):
     )
 
     print(
-        "contamination:\n\t unit: {sim_params.contamination_unit} \n\t type: "
+        "contamination:\n\t unit: {sim_params.contamination_unit}\n\t type: "
         "{sim_params.contamination_type}".format(**locals())
     )
     if sim_params.contamination_type == "fixed_value":
