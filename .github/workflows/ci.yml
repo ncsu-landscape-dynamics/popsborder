@@ -122,5 +122,6 @@ jobs:
         pip install .
     - name: Run Bash scripts in the repository
       run: |
+        cd examples/bash
         ./bash_examples.sh
         ./generate_synthetic_F280_dataset.sh test.csv 100
