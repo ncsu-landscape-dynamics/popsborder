@@ -419,23 +419,27 @@ def add_contaminant_uniform_random(config, consignment):
         contaminated_boxes = num_boxes_to_contaminate(
             config["contamination_rate"], consignment.num_boxes
         )
-        if contaminated_boxes == 0:
+        if contaminated_boxes == 0.0:
             return
         box_indexes = np.random.choice(
             consignment.num_boxes, math.ceil(contaminated_boxes), replace=False
         )
-        for index, box_index in enumerate(box_indexes):
-            if index == len(box_indexes) - 1:
-                box_proportion = math.modf(contaminated_boxes)[0]
-                if box_proportion == 0.0:
-                    box_proportion = 1
-                contaminated_stems = math.ceil(
-                    consignment.items_per_box * box_proportion
-                )
-                consignment.boxes[box_index].items[0:contaminated_stems].fill(1)
-                continue
+        # Contaminate full boxes except for last one
+        for box_index in box_indexes[:-1]:
             consignment.boxes[box_index].items.fill(1)
-        assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
+        # Use remainder of contaminated_boxes to partially contaminate
+        # last box if needed
+        partial_box_proportion = math.modf(contaminated_boxes)[0]
+        # If contaminated_boxes is whole number, contaminate full box
+        if partial_box_proportion == 0.0:
+            partial_box_proportion = 1
+        partial_box_contaminated_stems = round(
+            consignment.boxes[box_indexes[-1]].num_items * partial_box_proportion
+        )
+        consignment.boxes[box_indexes[-1]].items[0:partial_box_contaminated_stems].fill(
+            1
+        )
+        # assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
     elif contamination_unit in ["item", "items"]:
         contaminated_items = num_items_to_contaminate(
             config["contamination_rate"], consignment.num_items
@@ -484,20 +488,21 @@ def _contaminated_boxes_to_cluster_sizes(contaminated_boxes, max_boxes_per_clust
 
     The size of each cluster is limited by max_contaminated_units_per_cluster.
     """
-    if math.ceil(contaminated_boxes) > max_boxes_per_cluster:
+    contaminated_boxes = math.ceil(contaminated_boxes)
+    if contaminated_boxes > max_boxes_per_cluster:
         # Split into n clusters so that n-1 clusters have the max size and
         # the last one has the remaining items.
         sum_boxes = 0
         cluster_sizes = []
-        while sum_boxes < math.ceil(contaminated_boxes) - max_boxes_per_cluster:
+        while sum_boxes < contaminated_boxes - max_boxes_per_cluster:
             sum_boxes += max_boxes_per_cluster
             cluster_sizes.append(max_boxes_per_cluster)
         # add remaining boxes
-        cluster_sizes.append(math.ceil(contaminated_boxes) - sum_boxes)
-        sum_boxes += math.ceil(contaminated_boxes) - sum_boxes
-        assert sum_boxes == math.ceil(contaminated_boxes)
+        cluster_sizes.append(contaminated_boxes - sum_boxes)
+        sum_boxes += contaminated_boxes - sum_boxes
+        assert sum_boxes == contaminated_boxes
     else:
-        cluster_sizes = [math.ceil(contaminated_boxes)]
+        cluster_sizes = [contaminated_boxes]
     return cluster_sizes
 
 
@@ -529,24 +534,35 @@ def add_contaminant_clusters_to_boxes(config, consignment):
     num_strata, cluster_strata = create_stratas_for_clusters(
         num_boxes, max_contaminated_units_per_cluster, cluster_sizes
     )
-    for index, cluster_size in enumerate(cluster_sizes):
+    # Contaminate full boxes in all clusters except the last one
+    for index, cluster_size in enumerate(cluster_sizes[:-1]):
         cluster_start = math.floor(num_boxes / num_strata) * cluster_strata[index]
         cluster_indexes = np.arange(
             start=cluster_start, stop=cluster_start + cluster_size
         )
-        for i, cluster_index in enumerate(cluster_indexes):
-            if index == len(cluster_sizes) - 1:
-                if i == len(cluster_indexes) - 1:
-                    box_proportion = math.modf(contaminated_boxes)[0]
-                    if box_proportion == 0.0:
-                        box_proportion = 1
-                    contaminated_stems = math.ceil(
-                        consignment.items_per_box * box_proportion
-                    )
-                    consignment.boxes[cluster_index].items[0:contaminated_stems].fill(1)
-                    continue
+        for cluster_index in cluster_indexes:
             consignment.boxes[cluster_index].items.fill(1)
-    assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
+    # In last box of last cluster, contaminate partial box if needed
+    cluster_start = (
+        math.floor(num_boxes / num_strata) * cluster_strata[len(cluster_sizes) - 1]
+    )
+    cluster_indexes = np.arange(
+        start=cluster_start, stop=cluster_start + cluster_sizes[-1]
+    )
+    for cluster_index in cluster_indexes[:-1]:
+        consignment.boxes[cluster_index].items.fill(1)
+    # Use remainder of contaminated_boxes to partially contaminate last box
+    partial_box_proportion = math.modf(contaminated_boxes)[0]
+    # If contaminated_boxes is whole number, contaminate full box
+    if partial_box_proportion == 0.0:
+        partial_box_proportion = 1
+    partial_box_contaminated_stems = round(
+        consignment.boxes[cluster_indexes[-1]].num_items * partial_box_proportion
+    )
+    consignment.boxes[cluster_indexes[-1]].items[0:partial_box_contaminated_stems].fill(
+        1
+    )
+    # assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
 
 
 def add_contaminant_clusters_to_items(config, consignment):
