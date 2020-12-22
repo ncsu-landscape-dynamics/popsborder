@@ -432,9 +432,9 @@ def add_contaminant_uniform_random(config, consignment):
                 contaminated_stems = math.ceil(
                     consignment.items_per_box * box_proportion
                 )
-                consignment.boxes[index].items[0:contaminated_stems].fill(1)
+                consignment.boxes[box_index].items[0:contaminated_stems].fill(1)
                 continue
-            consignment.boxes[index].items.fill(1)
+            consignment.boxes[box_index].items.fill(1)
         assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
     elif contamination_unit in ["item", "items"]:
         contaminated_items = num_items_to_contaminate(
