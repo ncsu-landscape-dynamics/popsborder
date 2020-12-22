@@ -31,4 +31,6 @@ jobs:
         fi
     - name: Pure Python notebooks
       run: |
+        jupyter nbconvert --execute --to notebook --inplace contaminant_clustering.ipynb
+        jupyter nbconvert --execute --to notebook --inplace prob_distributions.ipynb
         jupyter nbconvert --execute --to notebook --inplace scenario_plots.ipynb
