@@ -1,7 +1,7 @@
 consignment:
   boxes:
-    min: 10
-    max: 10
+    min: 100
+    max: 100
   items_per_box:
     default: 200
     air:
@@ -38,13 +38,13 @@ consignment:
     - TX Brownsville CBP
     - WA Blaine CBP
 # f280_file: F280_sample.csv
-aqim_file: aqim_box_insp_unit.csv
-#aqim_file: blank_aqim_for_testing.csv
+#aqim_file: aqim_all.csv
+aqim_file: blank_aqim_for_testing.csv
 contamination:
-  contamination_unit: item
+  contamination_unit: box
   contamination_rate:
-    distribution: beta
-    value: 0.01
+    distribution: fixed_value
+    value: 0.001
     parameters:
       # stems
       #- 0.9998207923
@@ -58,7 +58,7 @@ contamination:
       # centered at 0.7%
       #- 0.0194628
       #- 2.7609372
-  arrangement: clustered
+  arrangement: random
   clustered:
     max_contaminated_units_per_cluster: 25
     distribution: continuous
@@ -76,7 +76,7 @@ contamination:
 #       - Actinidia
 #     max_boxes: 10 # do not apply to consignments larger than
 inspection:
-  unit: item
+  unit: box
   within_box_proportion: 0.05
   sample_strategy: hypergeometric
   min_boxes: 0

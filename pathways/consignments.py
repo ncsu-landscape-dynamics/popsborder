@@ -317,12 +317,12 @@ def get_items_per_box(items_per_box, pathway):
 
 def get_consignment_generator(config):
     """Based on config, return consignment generator object."""
-    if "f280_file" in config:
+    if ("f280_file" in config) and config["f280_file"]:
         consignment_generator = F280ConsignmentGenerator(
             items_per_box=config["consignment"]["items_per_box"],
             filename=config["f280_file"],
         )
-    elif "aqim_file" in config:
+    elif ("aqim_file" in config) and config["aqim_file"]:
         consignment_generator = AQIMConsignmentGenerator(
             items_per_box=config["consignment"]["items_per_box"],
             filename=config["aqim_file"],
@@ -402,8 +402,7 @@ def num_items_to_contaminate(config, num_items):
 
 
 def num_boxes_to_contaminate(config, num_boxes):
-    """Return number of boxes to be contaminated.
-    Rounds up or down to nearest integer.
+    """Return number of boxes to be contaminated as float.
 
     Config is the ``contamination_rate`` dictionary.
     """
@@ -417,7 +416,7 @@ def num_boxes_to_contaminate(config, num_boxes):
         raise RuntimeError(
             "Unknown contamination rate distribution: {distribution}".format(**locals())
         )
-    contaminated_boxes = round(num_boxes * contamination_rate)
+    contaminated_boxes = num_boxes * contamination_rate
     return contaminated_boxes
 
 
@@ -431,24 +430,37 @@ def add_contaminant_uniform_random(config, consignment):
         contaminated_boxes = num_boxes_to_contaminate(
             config["contamination_rate"], consignment.num_boxes
         )
-        if contaminated_boxes == 0:
+        if contaminated_boxes == 0.0:
             return
-        indexes = np.random.choice(
-            consignment.num_boxes, contaminated_boxes, replace=False
+        box_indexes = np.random.choice(
+            consignment.num_boxes, math.ceil(contaminated_boxes), replace=False
         )
-        for index in indexes:
-            consignment.boxes[index].items.fill(1)
-        assert np.count_nonzero(consignment.boxes) == contaminated_boxes
+        # Contaminate full boxes except for last one
+        for box_index in box_indexes[:-1]:
+            consignment.boxes[box_index].items.fill(1)
+        # Use remainder of contaminated_boxes to partially contaminate
+        # last box if needed
+        partial_box_proportion = math.modf(contaminated_boxes)[0]
+        # If contaminated_boxes is whole number, contaminate full box
+        if partial_box_proportion == 0.0:
+            partial_box_proportion = 1
+        partial_box_contaminated_stems = round(
+            consignment.boxes[box_indexes[-1]].num_items * partial_box_proportion
+        )
+        consignment.boxes[box_indexes[-1]].items[0:partial_box_contaminated_stems].fill(
+            1
+        )
+        # assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
     elif contamination_unit in ["item", "items"]:
         contaminated_items = num_items_to_contaminate(
             config["contamination_rate"], consignment.num_items
         )
         if contaminated_items == 0:
             return
-        indexes = np.random.choice(
+        item_indexes = np.random.choice(
             consignment.num_items, contaminated_items, replace=False
         )
-        np.put(consignment.items, indexes, 1)
+        np.put(consignment.items, item_indexes, 1)
         assert np.count_nonzero(consignment.items) == contaminated_items
     else:
         raise RuntimeError(
@@ -487,6 +499,7 @@ def _contaminated_boxes_to_cluster_sizes(contaminated_boxes, max_boxes_per_clust
 
     The size of each cluster is limited by max_contaminated_units_per_cluster.
     """
+    contaminated_boxes = math.ceil(contaminated_boxes)
     if contaminated_boxes > max_boxes_per_cluster:
         # Split into n clusters so that n-1 clusters have the max size and
         # the last one has the remaining items.
@@ -532,14 +545,35 @@ def add_contaminant_clusters_to_boxes(config, consignment):
     num_strata, cluster_strata = create_stratas_for_clusters(
         num_boxes, max_contaminated_units_per_cluster, cluster_sizes
     )
-    for index, cluster_size in enumerate(cluster_sizes):
+    # Contaminate full boxes in all clusters except the last one
+    for index, cluster_size in enumerate(cluster_sizes[:-1]):
         cluster_start = math.floor(num_boxes / num_strata) * cluster_strata[index]
         cluster_indexes = np.arange(
             start=cluster_start, stop=cluster_start + cluster_size
         )
         for cluster_index in cluster_indexes:
             consignment.boxes[cluster_index].items.fill(1)
-    assert np.count_nonzero(consignment.boxes) <= contaminated_boxes
+    # In last box of last cluster, contaminate partial box if needed
+    cluster_start = (
+        math.floor(num_boxes / num_strata) * cluster_strata[len(cluster_sizes) - 1]
+    )
+    cluster_indexes = np.arange(
+        start=cluster_start, stop=cluster_start + cluster_sizes[-1]
+    )
+    for cluster_index in cluster_indexes[:-1]:
+        consignment.boxes[cluster_index].items.fill(1)
+    # Use remainder of contaminated_boxes to partially contaminate last box
+    partial_box_proportion = math.modf(contaminated_boxes)[0]
+    # If contaminated_boxes is whole number, contaminate full box
+    if partial_box_proportion == 0.0:
+        partial_box_proportion = 1
+    partial_box_contaminated_stems = round(
+        consignment.boxes[cluster_indexes[-1]].num_items * partial_box_proportion
+    )
+    consignment.boxes[cluster_indexes[-1]].items[0:partial_box_contaminated_stems].fill(
+        1
+    )
+    # assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
 
 
 def add_contaminant_clusters_to_items(config, consignment):
