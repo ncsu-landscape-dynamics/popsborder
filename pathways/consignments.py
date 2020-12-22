@@ -450,7 +450,13 @@ def add_contaminant_uniform_random(config, consignment):
         consignment.boxes[box_indexes[-1]].items[0:partial_box_contaminated_stems].fill(
             1
         )
-        # assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
+        # Check if correct number of boxes contaminated, should be rounded up
+        # contaminated_boxes, or may be rounded down contaminated_boxes
+        # if no stems were contaminated in last partial box
+        assert np.count_nonzero(consignment.boxes) in (
+            math.ceil(contaminated_boxes),
+            math.ceil(contaminated_boxes) - 1,
+        )
     elif contamination_unit in ["item", "items"]:
         contaminated_items = num_items_to_contaminate(
             config["contamination_rate"], consignment.num_items
@@ -573,7 +579,13 @@ def add_contaminant_clusters_to_boxes(config, consignment):
     consignment.boxes[cluster_indexes[-1]].items[0:partial_box_contaminated_stems].fill(
         1
     )
-    # assert np.count_nonzero(consignment.boxes) == math.ceil(contaminated_boxes)
+    # Check if correct number of boxes contaminated, should be rounded up
+    # contaminated_boxes, or may be rounded down contaminated_boxes
+    # if no stems were contaminated in last partial box
+    assert np.count_nonzero(consignment.boxes) in (
+        math.ceil(contaminated_boxes),
+        math.ceil(contaminated_boxes) - 1,
+    )
 
 
 def add_contaminant_clusters_to_items(config, consignment):
