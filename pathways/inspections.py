@@ -481,10 +481,10 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     # Update detected variable if contaminated items found in box
                     detected = True
                 items_inspected += inspect_per_box
-            assert (
-                ret.items_inspected_completion == n_units_to_inspect
-            ), """Check if number of items is evenly divisible by items per box.
-            Partial boxes not supported when using cluster selection."""
+            # assert (
+            #     ret.items_inspected_completion == n_units_to_inspect
+            # ), """Check if number of items is evenly divisible by items per box.
+            # Partial boxes not supported when using cluster selection."""
         else:  # All other item selection strategies inspected the same way
             # Empty lists to hold opened boxes indexes, will be duplicates bc box index
             # computed per inspected item
