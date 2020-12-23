@@ -38,30 +38,33 @@ consignment:
     - TX Brownsville CBP
     - WA Blaine CBP
 # f280_file: F280_sample.csv
-#aqim_file: aqim_all.csv
-aqim_file: blank_aqim_for_testing.csv
+aqim_file: aqim_all.csv
+#aqim_file: blank_aqim_for_testing.csv
 contamination:
   contamination_unit: box
   contamination_rate:
-    distribution: fixed_value
-    value: 0.001
+    distribution: beta
+    value: 0.01
     parameters:
-      # stems
-      #- 0.9998207923
-      #- 5578.1175514
-      # boxes
-      #- 0.942631386983
-      #- 273.264725126
-      # both
-      - 0.243875716307
-      - 223.427186223
       # centered at 0.7%
       #- 0.0194628
       #- 2.7609372
-  arrangement: random
+      # fitted beta to box data
+      #- 1.008
+      #- 320.055
+      # Using mean from box GLM (0.003) and adjust sd to match (0.032)
+      #- 0.0088
+      #- 2.9121
+      # mid mean (0.0019) mid sd (0.0198)
+      - 0.0092
+      - 4.828
+      # low mean (0.0004) and low sd (0.0032)
+      #- 0.0156
+      #- 39.0313
+  arrangement: clustered
   clustered:
-    max_contaminated_units_per_cluster: 25
-    distribution: continuous
+    max_contaminated_units_per_cluster: 2
+    distribution: random
     random:
       max_cluster_item_width: 100
   random_box:
@@ -77,7 +80,7 @@ contamination:
 #     max_boxes: 10 # do not apply to consignments larger than
 inspection:
   unit: box
-  within_box_proportion: 0.05
+  within_box_proportion: 1
   sample_strategy: hypergeometric
   min_boxes: 0
   proportion:

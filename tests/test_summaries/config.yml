@@ -38,10 +38,10 @@ consignment:
     - TX Brownsville CBP
     - WA Blaine CBP
 # f280_file: F280_sample.csv
-#aqim_file: aqim_2011_2020_joined_stems_boxes.csv
+aqim_file: aqim_all.csv
 #aqim_file: blank_aqim_for_testing.csv
 contamination:
-  contamination_unit: item
+  contamination_unit: box
   contamination_rate:
     distribution: beta
     value: 0.01
