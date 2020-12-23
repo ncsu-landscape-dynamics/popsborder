@@ -1,9 +1,9 @@
-name: Notebooks CI
+name: Long running tests
 
 on: [push, pull_request]
 
 jobs:
-  run-notebooks:
+  notebooks:
 
     runs-on: ubuntu-20.04
     strategy:
@@ -22,6 +22,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install .
         pip install jupyter nbconvert matplotlib seaborn
-    - name: Pure Python notebooks
+    - name: Run notebooks
       run: |
-        jupyter nbconvert --execute --to notebook --inplace contaminant_clustering.ipynb
+        jupyter nbconvert --execute --to notebook --inplace validation_plots.ipynb
