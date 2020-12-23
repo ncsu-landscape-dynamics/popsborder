@@ -519,18 +519,33 @@ def _contaminated_boxes_to_cluster_sizes(contaminated_boxes, max_boxes_per_clust
         sum_boxes += contaminated_boxes - sum_boxes
         assert sum_boxes == contaminated_boxes
     else:
-        cluster_sizes = [contaminated_boxes]
+        cluster_sizes = [math.ceil(contaminated_boxes)]
     return cluster_sizes
 
 
-def create_stratas_for_clusters(num_units, cluster_width, cluster_sizes):
+def choose_stratas_for_clusters(
+    num_units, cluster_width, cluster_sizes, contaminated_items
+):
     """Divide array of items or boxes into strata wide enough for clusters."""
-    num_strata = max(1, math.floor(num_units / cluster_width))
+    num_strata = max(1, math.ceil(num_units / cluster_width))
     assert num_strata >= len(
         cluster_sizes
     ), """Cannot avoid overlapping clusters. Increase max_contaminated_units_per_cluster
     or decrease max_cluster_item_width (if using item contamination_unit)"""
-    cluster_strata = np.random.choice(num_strata, len(cluster_sizes), replace=False)
+    if len(cluster_sizes) == num_strata:
+        if contaminated_items % cluster_width == 0:
+            cluster_strata = np.random.choice(
+                num_strata, len(cluster_sizes), replace=False
+            )
+        else:
+            cluster_strata = np.random.choice(
+                num_strata - 1, len(cluster_sizes) - 1, replace=False
+            )
+            cluster_strata = np.append(cluster_strata, num_strata - 1)
+    else:
+        cluster_strata = np.random.choice(
+            num_strata - 1, len(cluster_sizes), replace=False
+        )
     return num_strata, cluster_strata
 
 
@@ -548,20 +563,20 @@ def add_contaminant_clusters_to_boxes(config, consignment):
     cluster_sizes = _contaminated_boxes_to_cluster_sizes(
         contaminated_boxes, max_contaminated_units_per_cluster
     )
-    num_strata, cluster_strata = create_stratas_for_clusters(
-        num_boxes, max_contaminated_units_per_cluster, cluster_sizes
+    num_strata, cluster_strata = choose_stratas_for_clusters(
+        num_boxes, max_contaminated_units_per_cluster, cluster_sizes, contaminated_boxes
     )
     # Contaminate full boxes in all clusters except the last one
     for index, cluster_size in enumerate(cluster_sizes[:-1]):
-        cluster_start = math.floor(num_boxes / num_strata) * cluster_strata[index]
+        cluster_start = math.ceil((num_boxes / num_strata) * cluster_strata[index])
         cluster_indexes = np.arange(
             start=cluster_start, stop=cluster_start + cluster_size
         )
         for cluster_index in cluster_indexes:
             consignment.boxes[cluster_index].items.fill(1)
     # In last box of last cluster, contaminate partial box if needed
-    cluster_start = (
-        math.floor(num_boxes / num_strata) * cluster_strata[len(cluster_sizes) - 1]
+    cluster_start = math.ceil(
+        (num_boxes / num_strata) * cluster_strata[len(cluster_sizes) - 1]
     )
     cluster_indexes = np.arange(
         start=cluster_start, stop=cluster_start + cluster_sizes[-1]
@@ -617,23 +632,26 @@ def add_contaminant_clusters_to_items(config, consignment):
             )
         # cluster can't be wider/longer than the current list of items
         max_cluster_item_width = min(max_cluster_item_width, num_items)
-        num_strata, cluster_strata = create_stratas_for_clusters(
-            num_items, max_cluster_item_width, cluster_sizes
+        num_strata, cluster_strata = choose_stratas_for_clusters(
+            num_items, max_cluster_item_width, cluster_sizes, contaminated_items
         )
         for index, cluster_size in enumerate(cluster_sizes):
             cluster = np.random.choice(
                 max_cluster_item_width, cluster_size, replace=False
             )
-            cluster_start = math.floor((num_items / num_strata) * cluster_strata[index])
+            cluster_start = math.ceil((num_items / num_strata) * cluster_strata[index])
             cluster += cluster_start
             cluster_indexes.extend(list(cluster))
     elif distribution == "continuous":
-        num_strata, cluster_strata = create_stratas_for_clusters(
-            num_items, max_contaminated_units_per_cluster, cluster_sizes
+        num_strata, cluster_strata = choose_stratas_for_clusters(
+            num_items,
+            max_contaminated_units_per_cluster,
+            cluster_sizes,
+            contaminated_items,
         )
         for index, cluster_size in enumerate(cluster_sizes):
             cluster = np.arange(0, cluster_size)
-            cluster_start = math.floor((num_items / num_strata) * cluster_strata[index])
+            cluster_start = math.ceil((num_items / num_strata) * cluster_strata[index])
             cluster += cluster_start
             cluster_indexes.extend(list(cluster))
     else:
