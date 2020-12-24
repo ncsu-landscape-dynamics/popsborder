@@ -568,15 +568,15 @@ def add_contaminant_clusters_to_boxes(config, consignment):
     )
     # Contaminate full boxes in all clusters except the last one
     for index, cluster_size in enumerate(cluster_sizes[:-1]):
-        cluster_start = math.ceil((num_boxes / num_strata) * cluster_strata[index])
+        cluster_start = max_contaminated_units_per_cluster * cluster_strata[index]
         cluster_indexes = np.arange(
             start=cluster_start, stop=cluster_start + cluster_size
         )
         for cluster_index in cluster_indexes:
             consignment.boxes[cluster_index].items.fill(1)
     # In last box of last cluster, contaminate partial box if needed
-    cluster_start = math.ceil(
-        (num_boxes / num_strata) * cluster_strata[len(cluster_sizes) - 1]
+    cluster_start = (
+        max_contaminated_units_per_cluster * cluster_strata[len(cluster_sizes) - 1]
     )
     cluster_indexes = np.arange(
         start=cluster_start, stop=cluster_start + cluster_sizes[-1]
@@ -636,10 +636,13 @@ def add_contaminant_clusters_to_items(config, consignment):
             num_items, max_cluster_item_width, cluster_sizes, contaminated_items
         )
         for index, cluster_size in enumerate(cluster_sizes):
-            cluster = np.random.choice(
-                max_cluster_item_width, cluster_size, replace=False
-            )
-            cluster_start = math.ceil((num_items / num_strata) * cluster_strata[index])
+            if index == (len(cluster_sizes) - 1):
+                cluster = np.arange(cluster_size)
+            else:
+                cluster = np.random.choice(
+                    max_cluster_item_width, cluster_size, replace=False
+                )
+            cluster_start = max_cluster_item_width * cluster_strata[index]
             cluster += cluster_start
             cluster_indexes.extend(list(cluster))
     elif distribution == "continuous":
@@ -651,7 +654,7 @@ def add_contaminant_clusters_to_items(config, consignment):
         )
         for index, cluster_size in enumerate(cluster_sizes):
             cluster = np.arange(0, cluster_size)
-            cluster_start = math.ceil((num_items / num_strata) * cluster_strata[index])
+            cluster_start = max_contaminated_units_per_cluster * cluster_strata[index]
             cluster += cluster_start
             cluster_indexes.extend(list(cluster))
     else:
@@ -659,15 +662,6 @@ def add_contaminant_clusters_to_items(config, consignment):
             "Unknown cluster distribution: {distribution}".format(**locals())
         )
     cluster_indexes = np.array(cluster_indexes, dtype=np.int)
-    cluster_max = max(cluster_indexes)
-    if cluster_max > num_items - 1:
-        # If the max index specified by the cluster is outside of item
-        # array index range, fit the cluster values into that range.
-        cluster_indexes = np.interp(
-            cluster_indexes,
-            (cluster_indexes.min(), cluster_indexes.max()),
-            (0, num_items - 1),
-        )
     assert min(cluster_indexes) >= 0, "Cluster values need to be valid indices"
     assert max(cluster_indexes) < num_items
     np.put(consignment.items, cluster_indexes, 1)
