@@ -514,7 +514,7 @@ def _contaminated_boxes_to_cluster_sizes(contaminated_boxes, max_boxes_per_clust
         while sum_boxes < contaminated_boxes - max_boxes_per_cluster:
             sum_boxes += max_boxes_per_cluster
             cluster_sizes.append(max_boxes_per_cluster)
-        # add remaining boxes
+        # add last cluster with remaining contaminated boxes
         cluster_sizes.append(contaminated_boxes - sum_boxes)
         sum_boxes += contaminated_boxes - sum_boxes
         assert sum_boxes == contaminated_boxes
@@ -523,30 +523,29 @@ def _contaminated_boxes_to_cluster_sizes(contaminated_boxes, max_boxes_per_clust
     return cluster_sizes
 
 
-def choose_stratas_for_clusters(
-    num_units, cluster_width, cluster_sizes, contaminated_items
-):
-    """Divide array of items or boxes into strata wide enough for clusters."""
+def choose_strata_for_clusters(num_units, cluster_width, cluster_sizes):
+    """Divide array of items or boxes into strata wide enough for clusters.
+    """
+    # Round up to create one smaller remainder stratum if needed
     num_strata = max(1, math.ceil(num_units / cluster_width))
     assert num_strata >= len(
         cluster_sizes
     ), """Cannot avoid overlapping clusters. Increase max_contaminated_units_per_cluster
     or decrease max_cluster_item_width (if using item contamination_unit)"""
     if len(cluster_sizes) == num_strata:
-        if contaminated_items % cluster_width == 0:
+        cluster_strata = np.arange(num_strata)
+    # If not all strata needed (num of clusters is less than num of strata), do not use
+    # last strata if its smaller that the rest (remainder from rounding up)
+    else:
+        if num_units % cluster_width == 0:
             cluster_strata = np.random.choice(
                 num_strata, len(cluster_sizes), replace=False
             )
         else:
             cluster_strata = np.random.choice(
-                num_strata - 1, len(cluster_sizes) - 1, replace=False
+                num_strata - 1, len(cluster_sizes), replace=False
             )
-            cluster_strata = np.append(cluster_strata, num_strata - 1)
-    else:
-        cluster_strata = np.random.choice(
-            num_strata - 1, len(cluster_sizes), replace=False
-        )
-    return num_strata, cluster_strata
+    return cluster_strata
 
 
 def add_contaminant_clusters_to_boxes(config, consignment):
@@ -563,8 +562,8 @@ def add_contaminant_clusters_to_boxes(config, consignment):
     cluster_sizes = _contaminated_boxes_to_cluster_sizes(
         contaminated_boxes, max_contaminated_units_per_cluster
     )
-    num_strata, cluster_strata = choose_stratas_for_clusters(
-        num_boxes, max_contaminated_units_per_cluster, cluster_sizes, contaminated_boxes
+    cluster_strata = choose_strata_for_clusters(
+        num_boxes, max_contaminated_units_per_cluster, cluster_sizes
     )
     # Contaminate full boxes in all clusters except the last one
     for index, cluster_size in enumerate(cluster_sizes[:-1]):
@@ -605,9 +604,6 @@ def add_contaminant_clusters_to_boxes(config, consignment):
 
 def add_contaminant_clusters_to_items(config, consignment):
     """Add contaminant clusters to items in a consignment"""
-    # This has 16/15 local variables. if you make this any more complex,
-    # you need to split this function and delete the pylint disable.
-    # pylint: disable=too-many-locals
     max_contaminated_units_per_cluster = config["clustered"][
         "max_contaminated_units_per_cluster"
     ]
@@ -632,28 +628,27 @@ def add_contaminant_clusters_to_items(config, consignment):
             )
         # cluster can't be wider/longer than the current list of items
         max_cluster_item_width = min(max_cluster_item_width, num_items)
-        num_strata, cluster_strata = choose_stratas_for_clusters(
-            num_items, max_cluster_item_width, cluster_sizes, contaminated_items
+        cluster_strata = choose_strata_for_clusters(
+            num_items, max_cluster_item_width, cluster_sizes
         )
         for index, cluster_size in enumerate(cluster_sizes):
-            if index == (len(cluster_sizes) - 1):
-                cluster = np.arange(cluster_size)
-            else:
-                cluster = np.random.choice(
-                    max_cluster_item_width, cluster_size, replace=False
-                )
             cluster_start = max_cluster_item_width * cluster_strata[index]
+            # Use smaller cluster width if placing items in smaller remainder stratum
+            cluster_width = min(
+                max_cluster_item_width, (consignment.num_items - cluster_start)
+            )
+            assert (
+                cluster_width >= cluster_size
+            ), "Not enough items available to contaminate in selected cluster stratum."
+            cluster = np.random.choice(cluster_width, cluster_size, replace=False)
             cluster += cluster_start
             cluster_indexes.extend(list(cluster))
     elif distribution == "continuous":
-        num_strata, cluster_strata = choose_stratas_for_clusters(
-            num_items,
-            max_contaminated_units_per_cluster,
-            cluster_sizes,
-            contaminated_items,
+        cluster_strata = choose_strata_for_clusters(
+            num_items, max_contaminated_units_per_cluster, cluster_sizes,
         )
         for index, cluster_size in enumerate(cluster_sizes):
-            cluster = np.arange(0, cluster_size)
+            cluster = np.arange(cluster_size)
             cluster_start = max_contaminated_units_per_cluster * cluster_strata[index]
             cluster += cluster_start
             cluster_indexes.extend(list(cluster))
