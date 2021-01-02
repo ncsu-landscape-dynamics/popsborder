@@ -524,8 +524,7 @@ def _contaminated_boxes_to_cluster_sizes(contaminated_boxes, max_boxes_per_clust
 
 
 def choose_strata_for_clusters(num_units, cluster_width, cluster_sizes):
-    """Divide array of items or boxes into strata wide enough for clusters.
-    """
+    """Divide array of items or boxes into strata wide enough for clusters."""
     # Round up to create one smaller remainder stratum if needed
     num_strata = max(1, math.ceil(num_units / cluster_width))
     assert num_strata >= len(
