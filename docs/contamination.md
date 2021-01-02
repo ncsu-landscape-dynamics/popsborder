@@ -10,10 +10,9 @@ contamination:
 The possible values for `contamination_unit` include `items` and `boxes`. If
 `contamination_unit` = items, the contamination rate (described below) is applied to
 the total number of items in the consignment and individual items are contaminated
-using the specified contaminant arrangement method (described below). Alternatively, if
-`contamination_unit` = boxes, the contamination rate is applied to the total number
-of boxes in the consignment and whole boxes are contaminated using the specified contaminant
-arrangement method.
+using the specified contaminant arrangement method (described below). 
+
+Alternatively, if `contamination_unit` = boxes, the contamination rate is applied to the total number of boxes in the consignment. The number of boxes to contaminate is computed as a decimal (float). Full boxes are contaminated (all items within box), except for the last box which uses the remainder of the computed number of boxes to contaminate to determine the number of items to contaminate within the box. Items are contaminated in a continuous arrangement (sequentially). For example, if there are 10 boxes with 200 items per box and the contamination rate is 0.15, the number of boxes to contaminate is 1.5. One full box and the first half of one box will be contaminated.
 
 ## Contamination rate
 The contamination rate can be determined by:
@@ -85,10 +84,9 @@ If `contamination_unit` = `items`, the items can be placed into clusters using a
 within each cluster using a uniform random distribution. The maximum width of
 the cluster (range over which items may be contaminated) is limited by
 `max_cluster_item_width` and has the effect of increasing or decreasing the
-density of contaminated items within a cluster. The `continuous` distribution places
-contaminated items within each cluster continuously (next to each other) so the
-number of contaminated items in the cluster is always the same as the total width of
-the cluster.
+density of contaminated items within a cluster. The density of contaminated items within a cluster must be sufficiently high to achieve the contamination rate. To avoid overlapping clusters, the items are divided into strata large enough for one cluster and strata are selected uniform randomly to contaminate.
+
+The `continuous` distribution places contaminated items within each cluster continuously (next to each other) so the number of contaminated items in the cluster is always the same as the total width of the cluster.
 
 
 ### Random box
