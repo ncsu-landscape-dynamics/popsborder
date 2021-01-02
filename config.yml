@@ -38,8 +38,8 @@ consignment:
     - TX Brownsville CBP
     - WA Blaine CBP
 # f280_file: F280_sample.csv
-aqim_file: aqim_all.csv
-#aqim_file: blank_aqim_for_testing.csv
+#aqim_file: aqim_all.csv
+aqim_file: blank_aqim_for_testing.csv
 contamination:
   contamination_unit: item
   contamination_rate:
@@ -53,11 +53,11 @@ contamination:
       #- 1.008
       #- 320.055
       # Using mean from box GLM (0.003) and adjust sd to match (0.032)
-      #- 0.0088
-      #- 2.9121
+      - 0.0088
+      - 2.9121
       # mid mean (0.0019) mid sd (0.01875)
-      - 0.0102
-      - 5.3839
+      #- 0.0102
+      #- 5.3839
       # low mean (0.0004) and low sd (0.0031)
       #- 0.0166
       #- 41.59
