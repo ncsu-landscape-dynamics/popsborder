@@ -29,8 +29,8 @@ sample validation 7,clustered 10,item proportion interval cluster,20,20,100,item
 sample validation 8,clustered 10,item proportion random cluster,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,proportion,0.02,,cluster,0.1,random,item 0.1 clustered random
 sample validation 9,clustered 10,box hypergeometric random,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,hypergeometric,,0.05,random,1,,item 0.1 clustered random
 sample validation 10,clustered 10,box hypergeometric convenience,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,hypergeometric,,0.05,convenience,1,,item 0.1 clustered random
-sample validation 11,clustered 10,box proportion random,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,proportion,0.1,,random,1,,item 0.1 clustered random
-sample validation 12,clustered 10,box proportion convenience,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,proportion,0.1,,convenience,1,,item 0.1 clustered random
+sample validation 11,clustered 10,box proportion random,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,proportion,0.02,,random,1,,item 0.1 clustered random
+sample validation 12,clustered 10,box proportion convenience,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,proportion,0.02,,convenience,1,,item 0.1 clustered random
 sample validation 13,clustered 100,item hypergeometric random,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,random,1,,item 0.1 clustered random
 sample validation 14,clustered 100,item hypergeometric convenience,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,convenience,1,,item 0.1 clustered random
 sample validation 15,clustered 10,item hypergeometric interval cluster,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,cluster,0.1,interval,item 0.1 clustered random
