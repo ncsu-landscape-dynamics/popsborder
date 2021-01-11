@@ -14,11 +14,11 @@ contaminate validation 12,item 0.2 clustered continuous,box proportion convenien
 contaminate validation 13,item 0.2 random ,box proportion convenience,10,10,100,item,fixed_value,,0.2,random,,,,boxes,0,proportion,0,,convenience,1,,item 0.2 random 
 contaminate validation 14,box 0.2 clustered ,box proportion convenience,10,10,100,box,fixed_value,,0.2,clustered,,2,,boxes,0,proportion,0,,convenience,1,,box 0.2 clustered 
 contaminate validation 15,box 0.2 random ,box proportion convenience,10,10,100,box,fixed_value,,0.2,random,,,,boxes,0,proportion,0,,convenience,1,,box 0.2 random 
-contaminate validation 16,item beta clustered random,box proportion convenience,100,100,100,item,beta,"[0.0194628, 2.7609372]",,clustered,random,90,100,boxes,0,proportion,0,,convenience,1,,item beta clustered random
-contaminate validation 17,item beta clustered continuous,box proportion convenience,100,100,100,item,beta,"[0.0194628, 2.7609372]",,clustered,continuous,50,,boxes,0,proportion,0,,convenience,1,,item beta clustered continuous
-contaminate validation 18,item beta random ,box proportion convenience,100,100,100,item,beta,"[0.0194628, 2.7609372]",,random,,,,boxes,0,proportion,0,,convenience,1,,item beta random 
-contaminate validation 19,box beta clustered ,box proportion convenience,100,100,100,box,beta,"[0.0194628, 2.7609372]",,clustered,,2,,boxes,0,proportion,0,,convenience,1,,box beta clustered 
-contaminate validation 20,box beta random ,box proportion convenience,100,100,100,box,beta,"[0.0194628, 2.7609372]",,random,,,,boxes,0,proportion,0,,convenience,1,,box beta random 
+contaminate validation 16,item beta clustered random,box proportion convenience,100,100,100,item,beta,"[0.760265625, 107.849109375]",,clustered,random,90,100,boxes,0,proportion,0,,convenience,1,,item beta clustered random
+contaminate validation 17,item beta clustered continuous,box proportion convenience,100,100,100,item,beta,"[0.760265625, 107.849109375]",,clustered,continuous,50,,boxes,0,proportion,0,,convenience,1,,item beta clustered continuous
+contaminate validation 18,item beta random ,box proportion convenience,100,100,100,item,beta,"[0.760265625, 107.849109375]",,random,,,,boxes,0,proportion,0,,convenience,1,,item beta random 
+contaminate validation 19,box beta clustered ,box proportion convenience,100,100,100,box,beta,"[0.760265625, 107.849109375]",,clustered,,2,,boxes,0,proportion,0,,convenience,1,,box beta clustered 
+contaminate validation 20,box beta random ,box proportion convenience,100,100,100,box,beta,"[0.760265625, 107.849109375]",,random,,,,boxes,0,proportion,0,,convenience,1,,box beta random 
 sample validation 1,clustered 10,item hypergeometric random,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,random,1,,item 0.1 clustered random
 sample validation 2,clustered 10,item hypergeometric convenience,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,convenience,1,,item 0.1 clustered random
 sample validation 3,clustered 10,item hypergeometric interval cluster,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,cluster,0.1,interval,item 0.1 clustered random
