@@ -455,7 +455,7 @@ def add_contaminant_uniform_random(config, consignment):
         # if no stems were contaminated in last partial box
         assert np.count_nonzero(consignment.boxes) in (
             math.ceil(contaminated_boxes),
-            math.ceil(contaminated_boxes) - 1,
+            math.floor(contaminated_boxes),
         )
     elif contamination_unit in ["item", "items"]:
         contaminated_items = num_items_to_contaminate(
@@ -524,22 +524,40 @@ def _contaminated_boxes_to_cluster_sizes(contaminated_boxes, max_boxes_per_clust
 
 
 def choose_strata_for_clusters(num_units, cluster_width, cluster_sizes):
-    """Divide array of items or boxes into strata wide enough for clusters."""
-    # Round up to create one smaller remainder stratum if needed
+    """Divide array of items or boxes into strata wide enough for clusters
+    so that they do not overlap. If array is not equally divisible by cluster_width,
+    create one smaller strata that can be used for a smaller cluster if needed.
+    This is important for very high contamination rates that require nearly all units
+    to be contaminated.
+    Randomly select strata to place contaminant clusters. If contamination rate is
+    low enough that not all strata are needed, omit smaller strata created from
+    remainder and only select from strata wide enough to contain full sized cluster.
+    Return strata selected to contaminate with clusters.
+
+    num_units: number of boxes or items in consignment
+    cluster_width: size of cluster in terms of boxes or units
+    cluster_sizes: list of cluster sizes to contaminate
+    """
+    # Round up so that one smaller remainder stratum is included
     num_strata = max(1, math.ceil(num_units / cluster_width))
+    # Make sure there are enough strata for the number of clusters needed.
     assert num_strata >= len(
         cluster_sizes
     ), """Cannot avoid overlapping clusters. Increase max_contaminated_units_per_cluster
     or decrease max_cluster_item_width (if using item contamination_unit)"""
+    # If all strata are needed, all strata will be contaminated with cluster
     if len(cluster_sizes) == num_strata:
         cluster_strata = np.arange(num_strata)
     # If not all strata needed (num of clusters is less than num of strata), do not use
-    # last strata if its smaller that the rest (remainder from rounding up)
+    # last strata if its smaller than cluster_width (remainder from rounding up)
     else:
+        # if no remainder (all strata are equal length), select any strata for clusters
         if num_units % cluster_width == 0:
             cluster_strata = np.random.choice(
                 num_strata, len(cluster_sizes), replace=False
             )
+        # if last strata is smaller and not all strata are needed,
+        # do not include last strata as option for placing clusters
         else:
             cluster_strata = np.random.choice(
                 num_strata - 1, len(cluster_sizes), replace=False
@@ -566,6 +584,7 @@ def add_contaminant_clusters_to_boxes(config, consignment):
     )
     # Contaminate full boxes in all clusters except the last one
     for index, cluster_size in enumerate(cluster_sizes[:-1]):
+        # Find starting index of strata (cluster width * strata index)
         cluster_start = max_contaminated_units_per_cluster * cluster_strata[index]
         cluster_indexes = np.arange(
             start=cluster_start, stop=cluster_start + cluster_size
