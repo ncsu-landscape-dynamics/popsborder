@@ -545,7 +545,7 @@ def choose_strata_for_clusters(num_units, cluster_width, cluster_sizes):
         cluster_sizes
     ), """Cannot avoid overlapping clusters. Increase max_contaminated_units_per_cluster
     or decrease max_cluster_item_width (if using item contamination_unit)"""
-    # If all strata are needed, all strata will be contaminated with cluster
+    # If all strata are needed, all strata are selected for clusters
     if len(cluster_sizes) == num_strata:
         cluster_strata = np.arange(num_strata)
     # If not all strata needed (num of clusters is less than num of strata), do not use
@@ -663,7 +663,7 @@ def add_contaminant_clusters_to_items(config, consignment):
             cluster_indexes.extend(list(cluster))
     elif distribution == "continuous":
         cluster_strata = choose_strata_for_clusters(
-            num_items, max_contaminated_units_per_cluster, cluster_sizes,
+            num_items, max_contaminated_units_per_cluster, cluster_sizes
         )
         for index, cluster_size in enumerate(cluster_sizes):
             cluster = np.arange(cluster_size)
