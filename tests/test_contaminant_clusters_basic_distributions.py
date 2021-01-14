@@ -28,7 +28,7 @@ contamination:
     contaminated_units_per_cluster: 200
     distribution: random
     random:
-      max_cluster_item_width: 600
+      cluster_item_width: 600
 """
 
 
