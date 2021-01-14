@@ -12,7 +12,15 @@ The possible values for `contamination_unit` include `items` and `boxes`. If
 the total number of items in the consignment and individual items are contaminated
 using the specified contaminant arrangement method (described below). 
 
-Alternatively, if `contamination_unit` = boxes, the contamination rate is applied to the total number of boxes in the consignment. The number of boxes to contaminate is computed as a decimal (float). Full boxes are contaminated (all items within box), except for the last box which uses the remainder of the computed number of boxes to contaminate to determine the number of items to contaminate within the box. Items are contaminated in a continuous arrangement (sequentially). For example, if there are 10 boxes with 200 items per box and the contamination rate is 0.15, the number of boxes to contaminate is 1.5. One full box and the first half of one box will be contaminated.
+Alternatively, if `contamination_unit` = boxes, the contamination rate is
+applied to the total number of boxes in the consignment. The number of boxes to
+contaminate is computed as a decimal (float). Full boxes are contaminated (all
+items within box), except for the last box which uses the remainder of the
+computed number of boxes to contaminate to determine the number of items to
+contaminate within the box. Items are contaminated in a continuous arrangement
+(sequentially). For example, if there are 10 boxes with 200 items per box and
+the contamination rate is 0.15, the number of boxes to contaminate is 1.5. One
+full box and the first half of one box will be contaminated.
 
 ## Contamination rate
 The contamination rate can be determined by:
