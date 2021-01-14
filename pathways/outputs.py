@@ -356,9 +356,9 @@ def config_to_simplified_simulation_params(config):
         sim_params.contaminant_distribution = config["contamination"]["clustered"][
             "distribution"
         ]
-        sim_params.cluster_item_width = config["contamination"]["clustered"][
-            "random"
-        ]["cluster_item_width"]
+        sim_params.cluster_item_width = config["contamination"]["clustered"]["random"][
+            "cluster_item_width"
+        ]
     else:
         sim_params.contaminated_units_per_cluster = None
         sim_params.cluster_item_width = None
