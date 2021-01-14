@@ -66,28 +66,42 @@ If using `arrangement` = `clustered`, the configuration is as follows:
 
 ```
   clustered:
-    max_contaminated_units_per_cluster: 200
-    distribution: random
-      max_cluster_item_width: 600
+    contaminated_units_per_cluster: 200
 ```
 
-The maximum number of contaminated units (items or boxes depending on
-`contamination_unit` used) within a cluster is limited by
-`max_contaminated_units_per_cluster`. If `max_contaminated_units_per_cluster` is
+The number of contaminated units (items or boxes depending on
+`contamination_unit`) within a cluster is limited by
+`contaminated_units_per_cluster`. If `contaminated_units_per_cluster` is
 exceeded, more than one cluster is generated so that the number of contaminated
 units in each cluster conforms to this limit.
 
 If `contamination_unit` = `boxes`, no additional parameters are used.
 
-If `contamination_unit` = `items`, the items can be placed into clusters using a
-`random` or `continuous` distribution. The `random` option places contaminated items
-within each cluster using a uniform random distribution. The maximum width of
-the cluster (range over which items may be contaminated) is limited by
-`max_cluster_item_width` and has the effect of increasing or decreasing the
-density of contaminated items within a cluster. The density of contaminated items within a cluster must be sufficiently high to achieve the contamination rate. To avoid overlapping clusters, the items are divided into strata large enough for one cluster and strata are selected uniform randomly to contaminate.
+If `contamination_unit` = `items`, a `distribution` should also be specified.
+The configuration is as follows:
 
-The `continuous` distribution places contaminated items within each cluster continuously (next to each other) so the number of contaminated items in the cluster is always the same as the total width of the cluster.
+```
+  clustered:
+    contaminated_units_per_cluster: 200
+    distribution: random
+      cluster_item_width: 600
+```
 
+Items can be placed into clusters using a `random` or `continuous` distribution.
+
+The `continuous` distribution places contaminated items within each cluster
+continuously (next to each other) so the number of contaminated items in the
+cluster is always the same as the total width of the cluster. The parameter
+`cluster_item_width` is not used if the cluster distribution is `continuous`.
+
+The `random` distribution option places contaminated items within each cluster
+using a uniform random distribution. The total width of the cluster (range over
+which items may be contaminated) is limited by `cluster_item_width` and has the
+effect of increasing or decreasing the density of contaminated items within a
+cluster. The density of contaminated items within a cluster must be sufficiently
+high to achieve the contamination rate. To avoid overlapping clusters, the items
+are divided into strata large enough for one cluster and strata to contaminate
+are selected uniform randomly.
 
 ### Random box
 The settings for `random_box` is:

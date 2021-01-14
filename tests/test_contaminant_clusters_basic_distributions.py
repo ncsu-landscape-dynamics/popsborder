@@ -12,7 +12,7 @@ contamination:
     value: 0.08
   arrangement: clustered
   clustered:
-    max_contaminated_units_per_cluster: 1000
+    contaminated_units_per_cluster: 1000
     distribution: continuous
 """
 
@@ -25,7 +25,7 @@ contamination:
     value: 0.12
   arrangement: clustered
   clustered:
-    max_contaminated_units_per_cluster: 200
+    contaminated_units_per_cluster: 200
     distribution: random
     random:
       max_cluster_item_width: 600

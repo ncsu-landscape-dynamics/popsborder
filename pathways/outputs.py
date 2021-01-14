@@ -322,9 +322,9 @@ def config_to_simplified_simulation_params(config):
         contamination_type="",
         contamination_param="",
         contaminant_arrangement="",
-        max_contaminated_units_per_cluster="",
+        contaminated_units_per_cluster="",
         contaminant_distribution="",
-        max_cluster_item_width="",
+        cluster_item_width="",
         inspection_unit="",
         within_box_proportion="",
         sample_strategy="",
@@ -350,18 +350,18 @@ def config_to_simplified_simulation_params(config):
         sim_params.contamination_param = None
     sim_params.contaminant_arrangement = config["contamination"]["arrangement"]
     if sim_params.contaminant_arrangement == "clustered":
-        sim_params.max_contaminated_units_per_cluster = config["contamination"][
+        sim_params.contaminated_units_per_cluster = config["contamination"][
             "clustered"
-        ]["max_contaminated_units_per_cluster"]
+        ]["contaminated_units_per_cluster"]
         sim_params.contaminant_distribution = config["contamination"]["clustered"][
             "distribution"
         ]
-        sim_params.max_cluster_item_width = config["contamination"]["clustered"][
+        sim_params.cluster_item_width = config["contamination"]["clustered"][
             "random"
-        ]["max_cluster_item_width"]
+        ]["cluster_item_width"]
     else:
-        sim_params.max_contaminated_units_per_cluster = None
-        sim_params.max_cluster_item_width = None
+        sim_params.contaminated_units_per_cluster = None
+        sim_params.cluster_item_width = None
         sim_params.contaminant_distribution = None
     sim_params.inspection_unit = config["inspection"]["unit"]
     sim_params.within_box_proportion = config["inspection"]["within_box_proportion"]
@@ -441,16 +441,12 @@ def print_totals_as_text(num_consignments, config, totals):
         if sim_params.contamination_unit in ["box", "boxes"]:
             print(
                 "\t\t maximum contaminated boxes per cluster: "
-                "{sim_params.max_contaminated_units_per_cluster} boxes".format(
-                    **locals()
-                )
+                "{sim_params.contaminated_units_per_cluster} boxes".format(**locals())
             )
         if sim_params.contamination_unit in ["item", "items"]:
             print(
                 "\t\t maximum contaminated items per cluster: "
-                "{sim_params.max_contaminated_units_per_cluster} items".format(
-                    **locals()
-                )
+                "{sim_params.contaminated_units_per_cluster} items".format(**locals())
             )
             print(
                 "\t\t cluster distribution: "
@@ -459,7 +455,7 @@ def print_totals_as_text(num_consignments, config, totals):
             if sim_params.contaminant_distribution == "random":
                 print(
                     "\t\t cluster width: "
-                    "{sim_params.max_cluster_item_width} items".format(**locals())
+                    "{sim_params.cluster_item_width} items".format(**locals())
                 )
 
     print(
