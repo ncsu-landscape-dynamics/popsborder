@@ -500,20 +500,22 @@ def _contaminated_items_to_cluster_sizes(
     return cluster_sizes
 
 
-def _contaminated_boxes_to_cluster_sizes(contaminated_boxes, max_boxes_per_cluster):
+def _contaminated_boxes_to_cluster_sizes(
+    contaminated_boxes, contaminated_units_per_cluster
+):
     """Get list of cluster sizes for a given number of contaminated items
 
     The size of each cluster is limited by contaminated_units_per_cluster.
     """
     contaminated_boxes = math.ceil(contaminated_boxes)
-    if contaminated_boxes > max_boxes_per_cluster:
+    if contaminated_boxes > contaminated_units_per_cluster:
         # Split into n clusters so that n-1 clusters have the max size and
         # the last one has the remaining items.
         sum_boxes = 0
         cluster_sizes = []
-        while sum_boxes < contaminated_boxes - max_boxes_per_cluster:
-            sum_boxes += max_boxes_per_cluster
-            cluster_sizes.append(max_boxes_per_cluster)
+        while sum_boxes < contaminated_boxes - contaminated_units_per_cluster:
+            sum_boxes += contaminated_units_per_cluster
+            cluster_sizes.append(contaminated_units_per_cluster)
         # add last cluster with remaining contaminated boxes
         cluster_sizes.append(contaminated_boxes - sum_boxes)
         sum_boxes += contaminated_boxes - sum_boxes
@@ -541,10 +543,11 @@ def choose_strata_for_clusters(num_units, cluster_width, num_clusters):
     # Round up so that one smaller remainder stratum is included
     num_strata = max(1, math.ceil(num_units / cluster_width))
     # Make sure there are enough strata for the number of clusters needed.
-    assert (
-        num_strata >= num_clusters
-    ), """Cannot avoid overlapping clusters. Increase contaminated_units_per_cluster
-    or decrease cluster_item_width (if using item contamination_unit)"""
+    if num_strata < num_clusters:
+        raise ValueError(
+            """Cannot avoid overlapping clusters. Increase contaminated_units_per_cluster
+            or decrease cluster_item_width (if using item contamination_unit)"""
+        )
     # If all strata are needed, all strata are selected for clusters
     if num_clusters == num_strata:
         cluster_strata = np.arange(num_strata)
