@@ -41,29 +41,32 @@ consignment:
 #aqim_file: aqim_all.csv
 aqim_file: blank_aqim_for_testing.csv
 contamination:
-  contamination_unit: box
+  contamination_unit: item
   contamination_rate:
-    distribution: fixed_value
-    value: 0.001
+    distribution: beta
+    value: 0.01
     parameters:
-      # stems
-      #- 0.9998207923
-      #- 5578.1175514
-      # boxes
-      #- 0.942631386983
-      #- 273.264725126
-      # both
-      - 0.243875716307
-      - 223.427186223
       # centered at 0.7%
       #- 0.0194628
       #- 2.7609372
-  arrangement: random
+      # fitted beta to box data
+      #- 1.008
+      #- 320.055
+      # Using mean from box GLM (0.003) and adjust sd to match (0.032)
+      - 0.0088
+      - 2.9121
+      # mid mean (0.0019) mid sd (0.01875)
+      #- 0.0102
+      #- 5.3839
+      # low mean (0.0004) and low sd (0.0031)
+      #- 0.0166
+      #- 41.59
+  arrangement: clustered
   clustered:
-    max_contaminated_units_per_cluster: 25
-    distribution: continuous
+    contaminated_units_per_cluster: 180
+    distribution: random
     random:
-      max_cluster_item_width: 100
+      cluster_item_width: 200
   random_box:
     probability: 0.2
     ratio: 0.5
@@ -77,7 +80,7 @@ contamination:
 #     max_boxes: 10 # do not apply to consignments larger than
 inspection:
   unit: box
-  within_box_proportion: 0.05
+  within_box_proportion: 1
   sample_strategy: hypergeometric
   min_boxes: 0
   proportion:

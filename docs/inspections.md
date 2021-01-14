@@ -77,8 +77,9 @@ calculated using a hypergeometric distribution (sampling without replacement) as
 described in (Fosgate, 2009). The equation used to compute the sample size is:
   
 ```math
-n=(1-(alpha)^1/D)(N-(D-1/2))
+n=(1-(alpha)^1/D*N)(N-(D*N-1/2))
 ```
+where alpha is 1 - `confidence_level`, D is `detection_level`, and N is `num_units`.
 
 ### Fixed *n* strategy
 The settings for `fixed_n` are:
