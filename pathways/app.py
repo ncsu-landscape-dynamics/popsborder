@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-# Simulation for evaluataion of pathways
-# Copyright (C) 2018-2020 Vaclav Petras
+# Simulation for evaluation of pathways
+# Copyright (C) 2018-2021 Vaclav Petras and others (see below)
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,6 +21,7 @@
 CLI for the simulation of pathways
 
 .. codeauthor:: Vaclav Petras <wenzeslaus gmail com>
+.. codeauthor:: Kellyn P. Montgomery
 """
 
 from __future__ import print_function, division
