@@ -200,7 +200,16 @@ The number of contaminated units detected for each end strategy is compared to
 quantify the proportion of contaminants reported when the inspection is ended at
 detection. 
 
-## Cut Flower Release Program (CFRP)
+## Naive Cut Flower Release Program
+
+A prototype implementation of a simple theoretical release program modeled
+after the Cut Flower Release Program (CFRP) is included in the simulation
+as *Naive Cut Flower Release Program* (`naive_cfrp`).
+When activated, only one kind of flowers is inspected each day
+(a day is based on the date which is a attribute of the consignment).
+The program is applied to consignments which have flowers specified in `flowers`
+and which have less then `max_boxes`.
+The program parameters can be specified like this:
 
 ```
 release_programs:
