@@ -33,7 +33,7 @@ Get all command line options for the simulation by running:
 python -m pathways --help
 ```
 
-## Post processing the output
+## Post-processing the output
 
 The following sample script included in the repository shows simple
 runs of the simulation with predefined values
@@ -41,7 +41,7 @@ covering both success rate in detection of contaminants and generation of F280
 records:
 
 ```
-./run.sh
+./examples/bash/bash_examples.sh
 ```
 
 ---

@@ -5,6 +5,9 @@ types of results it can give, and other use cases.
 
 ## Synthetic F280 records
 
+Datasets like this one can be generated in case synthetic data with certain
+properties or without privacy issues are needed:
+
 | Date | Port | Origin | Flower | Action |
 | ---- | ---- | ------ | ------ | ------ |
 | 1 | RDU | Estonia | Gloriosa | RELEASE |
@@ -16,14 +19,16 @@ types of results it can give, and other use cases.
 | 5 | Miami | Taiwan | Gladiolus | PROHIBIT |
 | 5 | RDU | Estonia | Aegilops | RELEASE |
 
-### Will we intercept a new pest?
+Example workflow is included in [Obtaining synthetic F280 records](synthetic_f280.md).
+
+## Will we intercept a new pest?
 
 Using a given system of border controls, will we intercept a new pest?
 In this case, we would modify the parameters how pests in shipments from
 a particular part of the world are added, e.g. by increasing their
 probability, based on another model projecting immersion of such pest.
 
-### How sensitive are our interception tests to level of infestation?
+## How sensitive are our interception tests to level of infestation?
 
 Given a specific set of import rules, how much pest needs to be present
 in the shipments for us to detect it? Additionally, how much pest needs
@@ -47,7 +52,7 @@ infested shipment.
 | 10%            | 77%    |
 
 
-### Does a new import rule increase chance of missing a pest?
+## Does a new import rule increase chance of missing a pest?
 
 With a given (example) configuration of the shipment generation and
 the CFRP, we can get a table like this relating number of flowers in
@@ -91,18 +96,24 @@ in each shipment, our chances of detecting the pest increase:
 | 4     | 15%    |
 | 5     | 12%    |
 
-### How much pest is in the real shipments?
+## How much pest is in the real shipments?
 
 Given known import rules and sampling rates and the actual collected
 data, how much pest is present in the actual shipments? By comparing the actual
 collected data and the simulated results, we can determine, for given
 sampling rates, how much pest is present in the actual shipments.
 
-### Is is better to inspect more shipments or a random box?
+## Is is better to inspect more shipments or a random box?
 
 Is our detection rate higher when we pick a random (randomly sampled)
 box in fewer amount of shipments or when we just look at a box on
 top (an easily accessible one) in more (or all) shipments?
+
+## See also
+
+* Jupyter Notebooks, Python scripts, and Bash scripts included in the repository
+* [Obtaining synthetic F280 records](synthetic_f280.md)
+* [Outputs](outputs.md)
 
 ---
 
