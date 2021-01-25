@@ -3,8 +3,7 @@
 Here are examples of questions this tool can help to answer,
 types of results it can give, and other use cases.
 
-## What is the approximate contamination rate of a set of inspected
-consignments?
+## What is the approximate contamination rate of a set of inspected consignments?
 
 Given known inspection protocols (sample size and selection method) and
 records containing the inpsection outcomes, what is the approxiamte
@@ -19,10 +18,9 @@ in the actual consignments.
 Given assumed contamination rates and consignment sizes, what percentage
 of contaminates are not being intercepted by border inspections when using
 various inspection methods? This information could be useful for estimating
-propagule pressure for quarantine significant pest species.
+propagule pressure for quarantine-significant pest species.
 
-## what are the trade offs between effort and effectiveness for
-various inspection protocols?
+## what are the trade offs between effort and effectiveness for various inspection protocols?
 
 For example, is the inspection success rate higher when we isnpect fewer
 consignments using hypergeometric random sampling, or when we inspect
