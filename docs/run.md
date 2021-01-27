@@ -5,7 +5,8 @@ The two basic ways to run the simulation are a Python package and command line i
 The configuration file contains all parameters needed for a single simulation run. The package documentation explains the configuration parameters in detail. The configuration format is YAML which is both human and machine readable and writable and JSON is supported as an alternative. The configuration file consists of a set of key and value pairs, which specify the parameters used for consignment generation, contamination, and inspection.
 The path to the configuration file must be provided as a function or command line argument, along with the number consignments and stochastic runs to simulate.
 
-You can use the package from either the command line or Python.
+You can use the package from the command line (using the command line interface
+of the Python package) or directly from Python (within an IDE or Jupyter Notebook).
 While calling the functions in Python is flexible and advantageous for incorporating the simulation in a larger analytical workflow, the command line interface is straightforward and useful for exploring different behaviors of the consignment inspections or the simulation itself.
 Python API is documented in docstrings (available in code or through Python help function). For running simulation in the command line,
 see a dedicated [CLI page](cli.md) in this documentation.
