@@ -44,7 +44,7 @@ contamination:
   contamination_unit: box
   contamination_rate:
     distribution: beta
-    value: 0.01
+    value: 0.0027
     parameters:
       # stems
       #- 0.9998207923
