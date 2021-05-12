@@ -34,7 +34,7 @@ inspection:
   tolerance_level: 0
 ```
 
-The simulation provides a count of the number of missed consigments with contamination rates below the specified `tolerance_level`, which can be any value between 0 and 1. The resulting count can be used to adjust the overall missed contaminated consignments when evaluating inspection efficacy. For example, if an inspection strategy fails to detect 100 out of 500 contaminated consignments (20% slippage), but 80 of the missed consignments had a `contamination_rate` < `tolerance_level`, you may choose to adjust the inspection slippage rate to not include the 80 consignments above the tolerance level (decreases to 4% slippage).
+The simulation provides a count of the number of missed consigments with contamination rates below the specified `tolerance_level`, which can be any value between 0 and 1. The resulting count can be used to adjust the overall missed contaminated consignments when evaluating inspection efficacy. For example, if an inspection strategy fails to detect 100 out of 500 contaminated consignments (20% slippage), but 80 of the missed consignments had a `contamination_rate` < `tolerance_level`, you may choose to adjust the inspection slippage rate to only include the 20 consignments with contamination rates above the tolerance level (decreases to 4% slippage).
 
 ## Sample strategy
 The sample strategy can be determined by:
