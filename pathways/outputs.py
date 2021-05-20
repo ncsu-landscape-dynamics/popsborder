@@ -502,7 +502,7 @@ def print_totals_as_text(num_consignments, config, totals):
     print("Avg. num. consignments slipped: {totals.false_neg:,.0f}".format(**locals()))
     print(
         "Avg. num. slipped consignments within tolerance "
-        "level: {totals.missed_tolerance:,.0f}".format(**locals())
+        "level: {totals.missed_within_tolerance:,.0f}".format(**locals())
     )
     print(
         "Avg. num. consignments intercepted: {totals.intercepted:,.0f}".format(
