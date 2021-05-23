@@ -19,7 +19,7 @@
 Various outputs for pathways simulation
 
 .. codeauthor:: Vaclav Petras <wenzeslaus gmail com>
-.. codeauthor:: Kellyn P. Montgomery
+.. codeauthor:: Kellyn P. Montgomery <kellynmontgomery gmail com>
 """
 
 from __future__ import print_function, division
@@ -294,7 +294,7 @@ class SuccessRates(object):
 
         :param checked_ok: True if no contaminant was found in consignment
         :param actually_ok: True if the consignment actually does not have contamination
-        :param shipmemt: The shipement itself (for reporting purposes)
+        :param shipmemt: The shipment itself (for reporting purposes)
         """
         if checked_ok and actually_ok:
             self.true_negative += 1
@@ -316,6 +316,7 @@ class SuccessRates(object):
 def config_to_simplified_simulation_params(config):
     """Convert configuration into a simplified set of selected parameters"""
     sim_params = types.SimpleNamespace(
+        tolerance_level="",
         contamination_unit="",
         contamination_type="",
         contamination_param="",
@@ -332,6 +333,7 @@ def config_to_simplified_simulation_params(config):
         selection_param_2="",
     )
 
+    sim_params.tolerance_level = config["inspection"]["tolerance_level"]
     sim_params.contamination_unit = config["contamination"]["contamination_unit"]
     sim_params.contamination_type = config["contamination"]["contamination_rate"][
         "distribution"
@@ -400,17 +402,16 @@ def print_totals_as_text(num_consignments, config, totals):
     print("Simulation parameters:")
     print("----------------------------------------------------------")
     print(
-        "consignments:\n\t Number consignments simulated: {num_consignments}".format(
-            **locals()
-        )
+        "consignments:\n\t Number consignments simulated: "
+        "{num_consignments:,.0f}".format(**locals())
     )
     print(
-        "\t Avg. number of boxes per consignment: {0}".format(
+        "\t Avg. number of boxes per consignment: {:,d}".format(
             round(totals.num_boxes / num_consignments)
         )
     )
     print(
-        "\t Avg. number of items per consignment: {0}".format(
+        "\t Avg. number of items per consignment: {:,d}".format(
             round(totals.num_items / num_consignments)
         )
     )
@@ -439,12 +440,12 @@ def print_totals_as_text(num_consignments, config, totals):
         if sim_params.contamination_unit in ["box", "boxes"]:
             print(
                 "\t\t maximum contaminated boxes per cluster: "
-                "{sim_params.contaminated_units_per_cluster} boxes".format(**locals())
+                "{sim_params.contaminated_units_per_cluster:,} boxes".format(**locals())
             )
         if sim_params.contamination_unit in ["item", "items"]:
             print(
                 "\t\t maximum contaminated items per cluster: "
-                "{sim_params.contaminated_units_per_cluster} items".format(**locals())
+                "{sim_params.contaminated_units_per_cluster:,} items".format(**locals())
             )
             print(
                 "\t\t cluster distribution: "
@@ -453,7 +454,7 @@ def print_totals_as_text(num_consignments, config, totals):
             if sim_params.contaminant_distribution == "random":
                 print(
                     "\t\t cluster width: "
-                    "{sim_params.cluster_item_width} items".format(**locals())
+                    "{sim_params.cluster_item_width:,} items".format(**locals())
                 )
 
     print(
@@ -487,6 +488,7 @@ def print_totals_as_text(num_consignments, config, totals):
             "\t minimum proportion of items inspected within box: "
             "{sim_params.within_box_proportion}".format(**locals())
         )
+    print("\t tolerance level: {sim_params.tolerance_level}".format(**locals()))
     print("\n")
 
     print("Simulation results: (averaged across all simulation runs)")
@@ -496,7 +498,22 @@ def print_totals_as_text(num_consignments, config, totals):
             **locals()
         )
     )
+    print(
+        "Adjusted avg. % contaminated consignments slipped (excluding slipped "
+        "consignments with contamination rates below tolerance level): "
+        "{:.2f}%".format(
+            (
+                (totals.false_neg - totals.missed_within_tolerance)
+                / (totals.false_neg + totals.intercepted)
+            )
+            * 100
+        )
+    )
     print("Avg. num. consignments slipped: {totals.false_neg:,.0f}".format(**locals()))
+    print(
+        "Avg. num. slipped consignments within tolerance "
+        "level: {totals.missed_within_tolerance:,.0f}".format(**locals())
+    )
     print(
         "Avg. num. consignments intercepted: {totals.intercepted:,.0f}".format(
             **locals()
@@ -528,13 +545,15 @@ def print_totals_as_text(num_consignments, config, totals):
         )
     print(
         "Avg. number of boxes opened per consignment:\n\t to completion: "
-        "{totals.avg_boxes_opened_completion:.0f}\n"
-        "\t to detection: {totals.avg_boxes_opened_detection:.0f}".format(**locals())
+        "{totals.avg_boxes_opened_completion:,.0f}\n"
+        "\t to detection: {totals.avg_boxes_opened_detection:,.0f}".format(**locals())
     )
     print(
         "Avg. number of items inspected per consignment:\n\t to completion: "
-        "{totals.avg_items_inspected_completion:.0f}\n"
-        "\t to detection: {totals.avg_items_inspected_detection:.0f}".format(**locals())
+        "{totals.avg_items_inspected_completion:,.0f}\n"
+        "\t to detection: {totals.avg_items_inspected_detection:,.0f}".format(
+            **locals()
+        )
     )
     print(
         "Avg. % contaminated items unreported if sample ends at detection: "
