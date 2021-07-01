@@ -99,7 +99,7 @@ To run these from command line use:
 
 ```
 flake8 .
-pylint pops_border
+pylint popsborder
 black .
 pytest tests/
 ```

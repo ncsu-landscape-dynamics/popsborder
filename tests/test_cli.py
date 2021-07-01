@@ -63,7 +63,7 @@ def dict_to_options(dictionary):
 def run_cli(**kwargs):
     # Using unpacking into a list literal from Python 3.5
     return subprocess.check_output(
-        [sys.executable, "-m", "pops_border", *dict_to_options(kwargs)],
+        [sys.executable, "-m", "popsborder", *dict_to_options(kwargs)],
         universal_newlines=True,
     )
 
