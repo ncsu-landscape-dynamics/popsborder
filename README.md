@@ -99,7 +99,7 @@ To run these from command line use:
 
 ```
 flake8 .
-pylint pathways
+pylint pops_border
 black .
 pytest tests/
 ```

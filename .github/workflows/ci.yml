@@ -58,7 +58,7 @@ jobs:
     - name: Lint with Pylint
       run: |
         pip install pylint==2.4.4
-        pylint pathways
+        pylint pops_border
 
   black-code-style:
 

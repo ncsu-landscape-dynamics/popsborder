@@ -1,8 +1,8 @@
 import numpy as np
 import datetime
 
-from pathways.simulation import random_seed, load_configuration_yaml_from_text
-from pathways.consignments import add_contaminant_clusters, Consignment, Box
+from pops_border.simulation import random_seed, load_configuration_yaml_from_text
+from pops_border.consignments import add_contaminant_clusters, Consignment, Box
 
 CONTINUOUS_CONFIG = """\
 contamination:

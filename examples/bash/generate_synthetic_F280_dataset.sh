@@ -8,4 +8,4 @@ if [ -z "$1" ] || [ -z "$2" ]
     exit 1
 fi
 
-python -m pathways --num-simulations 1 --num-consignments $2 --config-file config.yml --output-file $1
+python -m pops_border --num-simulations 1 --num-consignments $2 --config-file config.yml --output-file $1

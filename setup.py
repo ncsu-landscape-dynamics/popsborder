@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="pathways",
-    version="0.0.3",
+    name="pops_border",
+    version="0.9.0",
     author="Vaclav Petras",
     author_email="vpetras@ncsu.edu",
     description="Simulation for evaluation of pathways",

@@ -11,7 +11,7 @@ the Python standard library while the `yaml` package needs to be
 installed (as of Python 3.8).
 
 Unless you install the package or modify Python path, you will need to
-run in from the directory with the *pathways* package, i.e., the root
+run in from the directory with the *pops_border* package, i.e., the root
 directory of the repository.
 
 If you install the package using *pip*, *pip* will take of the
@@ -22,7 +22,7 @@ dependencies and it will work in any directory.
 Direct run of the simulation with 1000 consignments repeated 20 times:
 
 ```
-python -m pathways --num-simulations 20 --num-consignments 1000 --config-file config.yml
+python -m pops_border --num-simulations 20 --num-consignments 1000 --config-file config.yml
 ```
 
 ## Command line options
@@ -30,7 +30,7 @@ python -m pathways --num-simulations 20 --num-consignments 1000 --config-file co
 Get all command line options for the simulation by running:
 
 ```
-python -m pathways --help
+python -m pops_border --help
 ```
 
 ## Post-processing the output

@@ -60,10 +60,10 @@ def dict_to_options(dictionary):
     return options
 
 
-def run_pathways_cli(**kwargs):
+def run_cli(**kwargs):
     # Using unpacking into a list literal from Python 3.5
     return subprocess.check_output(
-        [sys.executable, "-m", "pathways", *dict_to_options(kwargs)],
+        [sys.executable, "-m", "pops_border", *dict_to_options(kwargs)],
         universal_newlines=True,
     )
 
@@ -72,6 +72,6 @@ def test_gives_result(tmp_path):
     config = tmp_path / "config.yml"
     config.write_text(CONFIG)
     for seed in range(10):
-        assert "slipped" in run_pathways_cli(
+        assert "slipped" in run_cli(
             num_consignments=10, config_file=str(config), seed=seed
         )
