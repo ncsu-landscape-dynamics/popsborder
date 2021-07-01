@@ -299,7 +299,7 @@ def run_simulation(
         result = simulation(
             config=config,
             num_consignments=num_consignments,
-            seed=seed + i if seed else None,
+            seed=seed + i if seed is not None else None,
             output_f280_file=output_f280_file,
             verbose=verbose,
             pretty=pretty,
