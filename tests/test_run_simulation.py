@@ -1,5 +1,5 @@
 import pytest
-from pops_border.simulation import run_simulation, load_configuration_yaml_from_text
+from popsborder.simulation import run_simulation, load_configuration_yaml_from_text
 
 
 CONFIG = """\
