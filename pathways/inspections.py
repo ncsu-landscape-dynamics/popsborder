@@ -1,4 +1,4 @@
-# Simulation for evaluation of pathways
+# Simulation of contaminated consignments and their inspections
 # Copyright (C) 2018-2021 Vaclav Petras and others (see below)
 
 # This program is free software; you can redistribute it and/or modify it under
@@ -15,8 +15,7 @@
 # this program; if not, see https://www.gnu.org/licenses/gpl-2.0.html
 
 
-"""
-Inspections of consignments in pathways simulation
+"""Inspections of consignments
 
 .. codeauthor:: Vaclav Petras <wenzeslaus gmail com>
 .. codeauthor:: Kellyn P. Montgomery
