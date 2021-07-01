@@ -167,7 +167,7 @@ class ParameterConsignmentGenerator:
         items_per_box = get_items_per_box(items_per_box, pathway)
         num_boxes = random.randint(num_boxes_min, num_boxes_max)
         num_items = items_per_box * num_boxes
-        items = np.zeros(num_items, dtype=np.int)
+        items = np.zeros(num_items, dtype=np.int64)
         boxes = []
         for i in range(num_boxes):
             lower = i * items_per_box
@@ -210,7 +210,7 @@ class F280ConsignmentGenerator:
             )
 
         num_items = int(record["QUANTITY"])
-        items = np.zeros(num_items, dtype=np.int)
+        items = np.zeros(num_items, dtype=np.int64)
 
         pathway = record["PATHWAY"]
         items_per_box = self.items_per_box
@@ -273,7 +273,7 @@ class AQIMConsignmentGenerator:
         else:
             raise RuntimeError("Unsupported quantity unit: {unit}".format(**locals()))
 
-        items = np.zeros(num_items, dtype=np.int)
+        items = np.zeros(num_items, dtype=np.int64)
 
         # rounding up to keep the max per box and have enough boxes
         num_boxes = int(math.ceil(num_items / float(items_per_box)))
@@ -673,7 +673,7 @@ def add_contaminant_clusters_to_items(config, consignment):
         raise RuntimeError(
             "Unknown cluster distribution: {distribution}".format(**locals())
         )
-    cluster_indexes = np.array(cluster_indexes, dtype=np.int)
+    cluster_indexes = np.array(cluster_indexes, dtype=np.int64)
     assert min(cluster_indexes) >= 0, "Cluster values need to be valid indices"
     assert max(cluster_indexes) < num_items
     np.put(consignment.items, cluster_indexes, 1)
