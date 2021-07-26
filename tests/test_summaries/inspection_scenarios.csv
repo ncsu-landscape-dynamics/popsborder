@@ -2,7 +2,7 @@ name,consignment name,inspection name,aqim_file,contamination/contamination_rate
 inspection scenario 1,aqim calibrated,item hypergeometric random cluster,aqim_box_insp_unit.csv,"[0.0091, 3.3769]",item,clustered,random,40,40,items,hypergeometric,,0.05,cluster,0.1,random
 inspection scenario 2,aqim calibrated,item hypergeometric interval cluster,aqim_box_insp_unit.csv,"[0.0091, 3.3769]",item,clustered,random,40,40,items,hypergeometric,,0.05,cluster,0.1,interval
 inspection scenario 3,aqim calibrated,item hypergeometric convenience,aqim_box_insp_unit.csv,"[0.0091, 3.3769]",item,clustered,random,40,40,items,hypergeometric,,0.05,convenience,1,
-inspection scenario 4,aqim calibrated ,item hypergeometric random,aqim_box_insp_unit.csv,"[0.0091, 3.3769]",item,clustered,random,40,40,items,hypergeometric,,0.05,random,1,
+inspection scenario 4,aqim calibrated,item hypergeometric random,aqim_box_insp_unit.csv,"[0.0091, 3.3769]",item,clustered,random,40,40,items,hypergeometric,,0.05,random,1,
 inspection scenario 5,aqim calibrated,item hypergeometric random cluster,aqim_box_insp_unit.csv,"[0.0091, 3.3769]",item,clustered,random,40,40,items,hypergeometric,,0.1,cluster,0.1,random
 inspection scenario 6,aqim calibrated,item hypergeometric interval cluster,aqim_box_insp_unit.csv,"[0.0091, 3.3769]",item,clustered,random,40,40,items,hypergeometric,,0.1,cluster,0.1,interval
 inspection scenario 7,aqim calibrated,item hypergeometric convenience,aqim_box_insp_unit.csv,"[0.0091, 3.3769]",item,clustered,random,40,40,items,hypergeometric,,0.1,convenience,1,
