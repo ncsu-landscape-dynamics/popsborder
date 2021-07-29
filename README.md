@@ -53,7 +53,7 @@ An example of how the simulation interface works is in
 
 To run the code without installing anything use Binder:
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/master?urlpath=lab/tree/example.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/main?urlpath=lab/tree/example.ipynb)
 
 If you are not familiar with Binder, see
 [our short intro](docs/binder.md).
