@@ -361,7 +361,9 @@ def select_cluster_indexes(config, consignment, n_units_to_inspect):
                 index += interval
         else:
             raise RuntimeError(
-                "Unknown cluster selection method: {cluster_unit}".format(**locals())
+                "Unknown cluster selection method: {cluster_selection}".format(
+                    **locals()
+                )
             )
     elif unit in ["box", "boxes"]:
         raise RuntimeError(
