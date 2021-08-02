@@ -34,7 +34,7 @@ contamination:
 
 def get_consignment(num_items):
     """Get basic consignment with given number of items all in one box"""
-    items = np.zeros(num_items, dtype=np.int)
+    items = np.zeros(num_items, dtype=int)
     return Consignment(
         flower="Rosa",
         date=datetime.date(2018, 2, 15),

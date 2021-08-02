@@ -72,7 +72,7 @@ def run_cli(**kwargs):
 def test_gives_result(tmp_path):
     config = tmp_path / "config.yml"
     config.write_text(CONFIG)
-    for seed in range(10):
+    for seed in range(30):
         assert "slipped" in run_cli(
             num_consignments=10, config_file=str(config), seed=seed
         )

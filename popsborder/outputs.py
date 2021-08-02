@@ -497,15 +497,19 @@ def print_totals_as_text(num_consignments, config, totals):
             **locals()
         )
     )
+    if totals.false_neg + totals.intercepted:
+        adj_avg_slipped = (
+            (totals.false_neg - totals.missed_within_tolerance)
+            / (totals.false_neg + totals.intercepted)
+        ) * 100
+    else:
+        # For consignments with zero contamination
+        adj_avg_slipped = 0
+
     print(
         "Adjusted avg. % contaminated consignments slipped (excluding slipped "
-        "consignments with contamination rates below tolerance level): "
-        "{:.2f}%".format(
-            (
-                (totals.false_neg - totals.missed_within_tolerance)
-                / (totals.false_neg + totals.intercepted)
-            )
-            * 100
+        "consignments with contamination rates below tolerance level): {}%".format(
+            adj_avg_slipped
         )
     )
     print("Avg. num. consignments slipped: {totals.false_neg:,.0f}".format(**locals()))
