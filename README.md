@@ -1,12 +1,16 @@
-# Pathway Simulation
+# PoPS Border
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/pathways-simulation/master?urlpath=lab/tree/example.ipynb)
-![CI](https://github.com/ncsu-landscape-dynamics/pathways-simulation/workflows/CI/badge.svg)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/main?urlpath=lab/tree/example.ipynb)
+[![CI](https://github.com/ncsu-landscape-dynamics/popsborder/workflows/CI/badge.svg)](https://github.com/ncsu-landscape-dynamics/popsborder/actions/workflows/ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Simulation for evaluation of pathways which generates synthetic shipment
-data and performs inspection on them. It is using the following model
-to understand the system:
+PoPS Border is a simulation (simulator) of contaminated consignments and
+contaminant presence testing which generates synthetic shipment data and
+performs inspection on them.
+
+## Model of reality
+
+The simulation is using the following model to understand the system:
 
 ```math
 f(x) -> y
@@ -38,6 +42,10 @@ with variations in contamination rates and test how different inspection
 methods influence inspection outcomes.
 See more use cases in a dedicated [documentation section](docs/use_cases.md).
 
+The prototype of the simulation was called _pathways-simulation_ because
+for some contaminants, such as pests, the main question is what
+are the pathways by which the contaminants are getting across the border.
+
 ## Documentation
 
 An example of how the simulation interface works is in
@@ -45,7 +53,7 @@ An example of how the simulation interface works is in
 
 To run the code without installing anything use Binder:
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/pathways-simulation/master?urlpath=lab/tree/example.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/main?urlpath=lab/tree/example.ipynb)
 
 If you are not familiar with Binder, see
 [our short intro](docs/binder.md).
@@ -99,7 +107,7 @@ To run these from command line use:
 
 ```
 flake8 .
-pylint pathways
+pylint popsborder
 black .
 pytest tests/
 ```

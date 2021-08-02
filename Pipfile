@@ -13,7 +13,7 @@ matplotlib = "*"
 seaborn = "==0.11.0"
 
 [packages]
-pathways = {editable = true, path = "."}
+popsborder = {editable = true, path = "."}
 pandas = "*"
 
 [requires]

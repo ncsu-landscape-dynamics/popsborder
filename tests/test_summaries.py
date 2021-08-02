@@ -1,6 +1,6 @@
-from pathways.scenarios import run_scenarios, load_scenario_table
-from pathways.simulation import load_configuration
-from pathways.outputs import save_scenario_result_to_pandas
+from popsborder.scenarios import run_scenarios, load_scenario_table
+from popsborder.simulation import load_configuration
+from popsborder.outputs import save_scenario_result_to_pandas
 
 
 def test_scenarios(datadir, tmp_path):

@@ -1,5 +1,5 @@
 import pytest
-from pathways.simulation import run_simulation, load_configuration_yaml_from_text
+from popsborder.simulation import run_simulation, load_configuration_yaml_from_text
 
 
 CONFIG = """\
@@ -65,7 +65,7 @@ def test_simulation_runs():
 
 @pytest.mark.parametrize("num_simulations", [1, 2, 3, 15])
 def test_gives_reasonable_result(num_simulations):
-    """Check that the result from the simualtion is in the expected range"""
+    """Check that the result from the simulation is in the expected range"""
     num_consignments = 100
     # We modify the existing configuration rather than defining a completely
     # new one as a separate YAML.
