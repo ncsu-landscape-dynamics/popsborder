@@ -4,10 +4,8 @@ from popsborder.outputs import save_scenario_result_to_table
 
 
 def main():
-    basic_config = load_configuration("tests/test_scenarios/config.yml")
-    scenario_table = load_scenario_table(
-        "tests/test_scenarios/scenarios_config_subset.csv"
-    )
+    basic_config = load_configuration("data/config.yml")
+    scenario_table = load_scenario_table("data/scenarios_config_subset.csv")
     results = run_scenarios(
         config=basic_config,
         scenario_table=scenario_table,
