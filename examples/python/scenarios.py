@@ -1,13 +1,13 @@
+#!/usr/bin/env python
+
 from popsborder.scenarios import run_scenarios, load_scenario_table
 from popsborder.simulation import load_configuration
 from popsborder.outputs import save_scenario_result_to_table
 
 
 def main():
-    basic_config = load_configuration("tests/test_scenarios/config.yml")
-    scenario_table = load_scenario_table(
-        "tests/test_scenarios/scenarios_config_subset.csv"
-    )
+    basic_config = load_configuration("data/config.yml")
+    scenario_table = load_scenario_table("data/scenarios_config_subset.csv")
     results = run_scenarios(
         config=basic_config,
         scenario_table=scenario_table,
@@ -45,8 +45,8 @@ def main():
             "avg_boxes_opened_detection",
             "avg_items_inspected_completion",
             "avg_items_inspected_detection",
-            "pct_sample_if_to_detection",
-            "pct_contaminants_unreported_if_detection",
+            "pct_items_inspected_detection",
+            "pct_contaminant_unreported_if_detection",
             "total_missed_contaminants",
             "total_intercepted_contaminants",
             "false_neg",

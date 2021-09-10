@@ -24,4 +24,4 @@ jobs:
         pip install jupyter nbconvert matplotlib seaborn
     - name: Run notebooks
       run: |
-        jupyter nbconvert --execute --to notebook --inplace validation_plots.ipynb
+        jupyter nbconvert --execute --to notebook --inplace examples/notebooks/validation_plots.ipynb
