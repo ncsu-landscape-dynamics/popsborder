@@ -28,8 +28,9 @@ jobs:
     - name: Convert example notebook to HTML
       run: |
         pip install jupyter nbconvert
-        jupyter nbconvert --execute --to html examples/notebooks/basic_with_command_line.ipynb --output artifacts/basic_with_command_line.html
-        jupyter nbconvert --execute --to html examples/notebooks/scenario_plots.ipynb --output artifacts/scenario_plots.html
+        cd examples/notebooks
+        jupyter nbconvert --execute --to html basic_with_command_line.ipynb --output ../../artifacts/basic_with_command_line.html
+        jupyter nbconvert --execute --to html scenario_plots.ipynb --output ../../artifacts/scenario_plots.html
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
