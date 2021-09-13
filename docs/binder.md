@@ -14,7 +14,7 @@ data or documents.
 Here is a link to the example notebook for the simulation using the
 mybinder.org service:
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/main?urlpath=lab/tree/example.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/main?urlpath=lab/tree/basic_with_command_line.ipynb)
 
 Note also that using mybinder.org is not required. You can run the
 notebook locally if you install Jupyter. The Binder (BinderHub) itself
