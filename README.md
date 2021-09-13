@@ -1,6 +1,6 @@
 # PoPS Border
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/main?urlpath=lab/tree/example.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/main?urlpath=lab/tree/examples/notebooks/basic_with_command_line.ipynb)
 [![CI](https://github.com/ncsu-landscape-dynamics/popsborder/workflows/CI/badge.svg)](https://github.com/ncsu-landscape-dynamics/popsborder/actions/workflows/ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
@@ -53,7 +53,7 @@ An example of how the simulation interface works is in
 
 To run the code without installing anything use Binder:
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/main?urlpath=lab/tree/example.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/main?urlpath=lab/tree/examples/notebooks/basic_with_command_line.ipynb)
 
 If you are not familiar with Binder, see
 [our short intro](docs/binder.md).
