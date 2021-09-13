@@ -1,9 +1,10 @@
-name: Deploy gh-pages
+name: Build gh-pages
 
 on:
   push:
     branches:
     - main
+  pull_request:
 
 jobs:
   build-deploy:
@@ -31,10 +32,18 @@ jobs:
         cd examples/notebooks
         jupyter nbconvert --execute --to html basic_with_command_line.ipynb --output ../../artifacts/basic_with_command_line.html
         jupyter nbconvert --execute --to html scenario_plots.ipynb --output ../../artifacts/scenario_plots.html
-    - name: Deploy
+    - name: Deploy if main
+      if: github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v3
       with:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         publish_branch: gh-pages
         publish_dir: ./artifacts
         force_orphan: true
+    - name: Upload artifact if not main
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v2
+      with:
+        name: gh-pages-draft
+        path: ./artifacts
+        retention-days: 4
