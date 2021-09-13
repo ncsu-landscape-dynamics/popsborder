@@ -1,37 +1,23 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+    - main
+  pull_request:
 
 jobs:
-  build:
-
-    runs-on: ubuntu-18.04
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8]
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install
-      run: |
-        python -m pip install --upgrade pip
-        pip install .
 
   linting-flake8:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.8
+        python-version: "3.9"
     - name: Install
       run: |
         python -m pip install --upgrade pip
@@ -43,14 +29,14 @@ jobs:
 
   linting-pylint:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.8
+        python-version: "3.9"
     - name: Install
       run: |
         python -m pip install --upgrade pip
@@ -62,14 +48,14 @@ jobs:
 
   black-code-style:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.8
+        python-version: "3.9"
     - name: Install
       run: |
         python -m pip install --upgrade pip
@@ -85,7 +71,11 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version:
+        - "3.6"
+        - "3.7"
+        - "3.8"
+        - "3.9"
 
     steps:
     - uses: actions/checkout@v2
@@ -101,31 +91,3 @@ jobs:
     - name: Test with pytest
       run: |
         pytest tests/
-
-  test-scripts:
-
-    runs-on: ubuntu-20.04
-    strategy:
-      max-parallel: 2
-      matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install
-      run: |
-        python -m pip install --upgrade pip
-        pip install .
-    - name: Run Bash example scripts
-      run: |
-        cd examples/bash
-        ./bash_examples.sh
-        ./generate_synthetic_F280_dataset.sh test.csv 100
-    - name: Run Python example scripts
-      run: |
-        cd examples/python
-        ./scenarios.py
