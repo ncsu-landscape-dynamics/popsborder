@@ -21,6 +21,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install .
+        pip install jupyter nbconvert matplotlib seaborn
     - name: Create synthetic F280 data as CSV
       run: |
         mkdir artifacts
@@ -28,7 +29,6 @@ jobs:
         ./generate_synthetic_F280_dataset.sh ../../artifacts/synthetic_records.csv 1000
     - name: Convert example notebook to HTML
       run: |
-        pip install jupyter nbconvert
         cd examples/notebooks
         jupyter nbconvert --execute --to html basic_with_command_line.ipynb --output ../../artifacts/basic_with_command_line.html
         jupyter nbconvert --execute --to html scenario_plots.ipynb --output ../../artifacts/scenario_plots.html
