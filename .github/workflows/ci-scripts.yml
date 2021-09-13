@@ -1,4 +1,4 @@
-name: Long running tests
+name: Example Scripts
 
 on:
   push:
@@ -7,13 +7,13 @@ on:
   pull_request:
 
 jobs:
-  notebooks:
+
+  test-scripts:
 
     runs-on: ubuntu-20.04
     strategy:
-      max-parallel: 4
       matrix:
-        python-version: [3.9]
+        python-version: [3.8, 3.9]
 
     steps:
     - uses: actions/checkout@v2
@@ -25,7 +25,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install .
-        pip install jupyter nbconvert matplotlib seaborn
-    - name: Run notebooks
+    - name: Run Bash example scripts
       run: |
-        jupyter nbconvert --execute --to notebook --inplace examples/notebooks/validation_plots.ipynb
+        cd examples/bash
+        ./bash_examples.sh
+        ./generate_synthetic_F280_dataset.sh test.csv 100
+    - name: Run Python example scripts
+      run: |
+        cd examples/python
+        ./scenarios.py
