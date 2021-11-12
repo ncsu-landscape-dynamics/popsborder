@@ -316,12 +316,16 @@ def get_consignment_generator(config):
     """Based on config, return consignment generator object."""
     config = config["consignment"]
     generation_method = config["generation_method"]
-    if (generation_method == "input_file") and (config["input_file"]["file_type"] == "F280"):
+    if (generation_method == "input_file") and (
+        config["input_file"]["file_type"] == "F280"
+    ):
         consignment_generator = F280ConsignmentGenerator(
             items_per_box=config["items_per_box"],
             filename=config["input_file"]["file_name"],
         )
-    elif (generation_method == "input_file") and (config["input_file"]["file_type"] == "AQIM"):
+    elif (generation_method == "input_file") and (
+        config["input_file"]["file_type"] == "AQIM"
+    ):
         consignment_generator = AQIMConsignmentGenerator(
             items_per_box=config["items_per_box"],
             filename=config["input_file"]["file_name"],
@@ -335,7 +339,9 @@ def get_consignment_generator(config):
         )
     else:
         raise RuntimeError(
-            "Unknown consignment generation method: {generation_method}".format(**locals())
+            "Unknown consignment generation method: {generation_method}".format(
+                **locals()
+            )
         )
     return consignment_generator
 
