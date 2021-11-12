@@ -314,22 +314,28 @@ def get_items_per_box(items_per_box, pathway):
 
 def get_consignment_generator(config):
     """Based on config, return consignment generator object."""
-    if ("f280_file" in config) and config["f280_file"]:
+    config = config["consignment"]
+    generation_method = config["generation_method"]
+    if (generation_method == "input_file") and (config["input_file"]["file_type"] == "F280"):
         consignment_generator = F280ConsignmentGenerator(
-            items_per_box=config["consignment"]["items_per_box"],
-            filename=config["f280_file"],
+            items_per_box=config["items_per_box"],
+            filename=config["input_file"]["file_name"],
         )
-    elif ("aqim_file" in config) and config["aqim_file"]:
+    elif (generation_method == "input_file") and (config["input_file"]["file_type"] == "AQIM"):
         consignment_generator = AQIMConsignmentGenerator(
-            items_per_box=config["consignment"]["items_per_box"],
-            filename=config["aqim_file"],
+            items_per_box=config["items_per_box"],
+            filename=config["input_file"]["file_name"],
+        )
+    elif generation_method == "parameter_based":
+        start_date = config.get("start_date", "2020-01-01")
+        consignment_generator = ParameterConsignmentGenerator(
+            parameters=config["parameter_based"],
+            items_per_box=config["items_per_box"],
+            start_date=start_date,
         )
     else:
-        start_date = config["consignment"].get("start_date", "2020-01-01")
-        consignment_generator = ParameterConsignmentGenerator(
-            parameters=config["consignment"],
-            items_per_box=config["consignment"]["items_per_box"],
-            start_date=start_date,
+        raise RuntimeError(
+            "Unknown consignment generation method: {generation_method}".format(**locals())
         )
     return consignment_generator
 
