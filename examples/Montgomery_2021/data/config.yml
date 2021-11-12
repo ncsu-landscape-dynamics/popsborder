@@ -1,5 +1,5 @@
 consignment:
-  generation_method: input_file
+  generation_method: parameter_based
   items_per_box:
     default: 200
     air:

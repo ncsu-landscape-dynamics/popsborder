@@ -74,8 +74,8 @@ def test_gives_reasonable_result(num_simulations):
     min_boxes = 30
     max_boxes = 150
     config = load_configuration_yaml_from_text(CONFIG)
-    config["consignment"]["boxes"]["min"] = min_boxes
-    config["consignment"]["boxes"]["max"] = max_boxes
+    config["consignment"]["parameter_based"]["boxes"]["min"] = min_boxes
+    config["consignment"]["parameter_based"]["boxes"]["max"] = max_boxes
     for seed in range(10):
         result = run_simulation(
             config=config, num_simulations=1, num_consignments=100, seed=seed
