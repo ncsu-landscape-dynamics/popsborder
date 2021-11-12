@@ -1,45 +1,47 @@
 consignment:
-  boxes:
-    min: 100
-    max: 100
+  generation_method: parameter_based
   items_per_box:
     default: 200
     air:
       default: 200
     maritime:
       default: 200
-  origins:
-    - Netherlands
-    - Mexico
-    - Israel
-    - Japan
-    - New Zealand
-    - India
-    - Tanzania
-  flowers:
-    - Hyacinthus
-    - Rosa
-    - Gerbera
-    - Agapanthus
-    - Aegilops
-    - Protea
-    - Liatris
-    - Mokara
-    - Anemone
-    - Actinidia
-  ports:
-    - NY JFK CBP
-    - FL Miami Air CBP
-    - HI Honolulu CBP
-    - AZ Phoenix CBP
-    - VA Dulles CBP
-    - CA San Francisco CBP
-    - WA Seattle Air CBP
-    - TX Brownsville CBP
-    - WA Blaine CBP
-# f280_file: F280_sample.csv
-#aqim_file: aqim_box_insp_unit.csv
-#aqim_file: blank_aqim_for_testing.csv
+  parameter_based:
+    boxes:
+      min: 100
+      max: 100
+    origins:
+      - Netherlands
+      - Mexico
+      - Israel
+      - Japan
+      - New Zealand
+      - India
+      - Tanzania
+    flowers:
+      - Hyacinthus
+      - Rosa
+      - Gerbera
+      - Agapanthus
+      - Aegilops
+      - Protea
+      - Liatris
+      - Mokara
+      - Anemone
+      - Actinidia
+    ports:
+      - NY JFK CBP
+      - FL Miami Air CBP
+      - HI Honolulu CBP
+      - AZ Phoenix CBP
+      - VA Dulles CBP
+      - CA San Francisco CBP
+      - WA Seattle Air CBP
+      - TX Brownsville CBP
+      - WA Blaine CBP
+  input_file:
+    file_type: AQIM
+    file_name: blank_aqim_for_testing.csv
 contamination:
   contamination_unit: item
   contamination_rate:

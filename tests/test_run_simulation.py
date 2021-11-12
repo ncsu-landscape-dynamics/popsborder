@@ -4,19 +4,21 @@ from popsborder.simulation import run_simulation, load_configuration_yaml_from_t
 
 CONFIG = """\
 consignment:
-  origins:
-  - Netherlands
-  - Mexico
-  flowers:
-  - Hyacinthus
-  - Rosa
-  - Gerbera
-  ports:
-  - NY JFK CBP
-  - FL Miami Air CBP
-  boxes:
-    min: 1
-    max: 50
+  generation_method: parameter_based
+  parameter_based:
+    origins:
+    - Netherlands
+    - Mexico
+    flowers:
+    - Hyacinthus
+    - Rosa
+    - Gerbera
+    ports:
+    - NY JFK CBP
+    - FL Miami Air CBP
+    boxes:
+      min: 1
+      max: 50
   items_per_box:
     default: 10
 contamination:
