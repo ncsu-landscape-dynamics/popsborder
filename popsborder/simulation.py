@@ -386,7 +386,7 @@ def load_configuration_yaml_from_text(text):
 
     if hasattr(yaml, "full_load"):
         return yaml.full_load(text)
-    return yaml.load(text)
+    return yaml.load(text)  # pylint: disable=no-value-for-parameter
 
 
 def load_configuration(filename):
@@ -406,6 +406,6 @@ def load_configuration(filename):
 
         if hasattr(yaml, "full_load"):
             return yaml.full_load(open(filename))
-        return yaml.load(open(filename))
+        return yaml.load(open(filename))  # pylint: disable=no-value-for-parameter
     else:
         sys.exit("Unknown file extension (file: {})".format(filename))
