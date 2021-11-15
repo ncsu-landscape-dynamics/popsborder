@@ -508,7 +508,7 @@ def print_totals_as_text(num_consignments, config, totals):
 
     print(
         "Adjusted avg. % contaminated consignments slipped (excluding slipped "
-        "consignments with contamination rates below tolerance level): {}%".format(
+        "consignments with contamination rates below tolerance level): {:.2f}%".format(
             adj_avg_slipped
         )
     )
