@@ -49,7 +49,7 @@ are the pathways by which the contaminants are getting across the border.
 ## Documentation
 
 An example of how the simulation interface works is in
-[this Jupyter notebook](notebooks/basic_with_command_line.ipynb).
+[this Jupyter notebook](examples/notebooks/basic_with_command_line.ipynb).
 
 To run the code without installing anything use Binder:
 
