@@ -610,7 +610,7 @@ def get_inspection_needed_function(config):
                 )
 
         else:
-            raise RuntimeError(f"Unknown release program: {program}")
+            raise RuntimeError("Unknown release program: {program}".format(**locals()))
     else:
         is_inspection_needed = inspect_always
     return is_inspection_needed
