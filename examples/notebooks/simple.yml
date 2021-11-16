@@ -1,0 +1,48 @@
+# In the configuration of the shipment generator, we only use couple of ports, flowers, and ports
+# because they are currently not used by the simulation anyway.
+consignment:
+  origins:
+  - Netherlands
+  - Mexico
+  flowers:
+  - Hyacinthus
+  - Rosa
+  ports:
+  - NY JFK CBP
+  - FL Miami Air CBP
+  # We set very low number of boxes and items.
+  boxes:
+    min: 2
+    max: 5
+  items_per_box:
+    default: 10
+contamination:
+  # We will contaminate individual items.
+  contamination_unit: item
+  # We use one of the simplest contaminant placement options.
+  # Fixed contamination rate for each consignment 
+  contamination_rate:
+    distribution: fixed_value
+    value: 0.05
+  # Contaminant present in a portion of random boxes
+  arrangement: random_box
+  random_box:
+    # Contaminants present in every second consignment on average
+    probability: 0.5
+    # Roughly a third of boxes should be contaminated
+    ratio: 0.33
+inspection:
+  # Decision about sampling will be made using items as a inspection unit.
+  unit: items
+  # We will inspect 2% of items.
+  sample_strategy: proportion
+  # We allow no boxes to be inspected.
+  min_boxes: 0
+  # No contamination tolerance threshold for this example, set to 0
+  tolerance_level: 0
+  proportion:
+    value: 0.02
+  # Once we pick a box, we will inspect all of its content.
+  within_box_proportion: 1
+  # Boxes for inspection are selected randomly.
+  selection_strategy: random

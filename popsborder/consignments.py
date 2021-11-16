@@ -270,7 +270,7 @@ class AQIMConsignmentGenerator:
         elif unit in ["Stems"]:
             num_items = int(record["QUANTITY"])
         else:
-            raise RuntimeError("Unsupported quantity unit: {unit}".format(**locals()))
+            raise RuntimeError(f"Unsupported quantity unit: {unit}")
 
         items = np.zeros(num_items, dtype=np.int64)
 
@@ -339,9 +339,7 @@ def get_consignment_generator(config):
         )
     else:
         raise RuntimeError(
-            "Unknown consignment generation method: {generation_method}".format(
-                **locals()
-            )
+            f"Unknown consignment generation method: {generation_method}"
         )
     return consignment_generator
 
@@ -403,9 +401,7 @@ def num_items_to_contaminate(config, num_items):
         param1, param2 = config["parameters"]
         contamination_rate = float(stats.beta.rvs(param1, param2, size=1))
     else:
-        raise RuntimeError(
-            "Unknown contamination rate distribution: {distribution}".format(**locals())
-        )
+        raise RuntimeError(f"Unknown contamination rate distribution: {distribution}")
     contaminated_items = round(num_items * contamination_rate)
     return contaminated_items
 
@@ -422,9 +418,7 @@ def num_boxes_to_contaminate(config, num_boxes):
         param1, param2 = config["parameters"]
         contamination_rate = float(stats.beta.rvs(param1, param2, size=1))
     else:
-        raise RuntimeError(
-            "Unknown contamination rate distribution: {distribution}".format(**locals())
-        )
+        raise RuntimeError(f"Unknown contamination rate distribution: {distribution}")
     contaminated_boxes = num_boxes * contamination_rate
     return contaminated_boxes
 
@@ -478,9 +472,7 @@ def add_contaminant_uniform_random(config, consignment):
         np.put(consignment.items, item_indexes, 1)
         assert np.count_nonzero(consignment.items) == contaminated_items
     else:
-        raise RuntimeError(
-            "Unknown contamination unit: {contamination_unit}".format(**locals())
-        )
+        raise RuntimeError(f"Unknown contamination unit: {contamination_unit}")
 
 
 def _contaminated_items_to_cluster_sizes(
@@ -650,9 +642,9 @@ def add_contaminant_clusters_to_items(config, consignment):
         cluster_item_width = config["clustered"]["random"]["cluster_item_width"]
         if cluster_item_width < contaminated_units_per_cluster:
             raise ValueError(
-                "Maximum cluster width, currently {cluster_item_width}, needs"
+                f"Maximum cluster width, currently {cluster_item_width}, needs"
                 " to be at least as large as contaminated_units_per_cluster"
-                " (currently {contaminated_units_per_cluster})".format(**locals())
+                " (currently {contaminated_units_per_cluster})"
             )
         # cluster can't be wider/longer than the current list of items
         cluster_item_width = min(cluster_item_width, num_items)
@@ -681,9 +673,7 @@ def add_contaminant_clusters_to_items(config, consignment):
             cluster += cluster_start
             cluster_indexes.extend(list(cluster))
     else:
-        raise RuntimeError(
-            "Unknown cluster distribution: {distribution}".format(**locals())
-        )
+        raise RuntimeError(f"Unknown cluster distribution: {distribution}")
     cluster_indexes = np.array(cluster_indexes, dtype=np.int64)
     assert min(cluster_indexes) >= 0, "Cluster values need to be valid indices"
     assert max(cluster_indexes) < num_items
@@ -705,9 +695,7 @@ def add_contaminant_clusters(config, consignment):
     elif contamination_unit in ["item", "items"]:
         add_contaminant_clusters_to_items(config, consignment)
     else:
-        raise RuntimeError(
-            "Unknown contamination unit: {contamination_unit}".format(**locals())
-        )
+        raise RuntimeError(f"Unknown contamination unit: {contamination_unit}")
 
 
 def get_contaminant_function(config):
@@ -737,7 +725,5 @@ def get_contaminant_function(config):
             )
 
     else:
-        raise RuntimeError(
-            "Unknown contaminant arrangement: {arrangement}".format(**locals())
-        )
+        raise RuntimeError(f"Unknown contaminant arrangement: {arrangement}")
     return add_contaminant_function
