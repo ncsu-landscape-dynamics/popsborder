@@ -2,15 +2,15 @@
 
 ## Consignment generation method
 The consignments can be either purely synthetic or based on inspection records
- (e.g., Form 280 or AQIM). Configuration for the consignments is under the
- `consignment` key in the configuration file.
+(e.g., Form 280 or AQIM). Configuration for the consignments is under the
+`consignment` key in the configuration file.
 
- The `generation_method` key can be either `parameter_based` to generate
- synthetic consignments based on user-provided list of parameter values, or
- `input_file` to create consignments that match inspection records in a CSV
- file.
+The `generation_method` key can be either `parameter_based` to generate
+synthetic consignments based on user-provided list of parameter values, or
+`input_file` to create consignments that match inspection records in a CSV
+file.
 
- ```yaml
+```yaml
 consignment:
   generation_method: parameter_based
 ```
@@ -26,15 +26,16 @@ consignment:
     default: 200
 ```
 
-Currently, no further settings for `items_per_box` are used, but in the future
-further settings might be added. For example, F280 and AQIM inspections records
-include information about the consignment pathway, which can be used to vary the
-value of `items_per_box`. The following is a configuration for generating
-consignments using a file called `AQIM_sample.csv` with `items_per_box` values
-that vary by `air` and `maritime` pathways. If the consignment arrives via an
-air pathway, one box will contain 200 items. If the consignment arrives via a
-maritime pathway, one box will contain 700 items. If the pathway is not `air` or
-`maritime`, a default value of 100 items per box is used.
+Only the `default` value for `items_per_box` is required, but the user may also
+vary the value by transport pathway. For example, F280 and AQIM inspections
+records include information about the consignment pathway, which can be used to
+vary the value of `items_per_box`. The following is a configuration for
+generating consignments using a file called `AQIM_sample.csv` with
+`items_per_box` values that vary by `air` and `maritime` pathways. If the
+consignment arrives via an air pathway, one box will contain 200 items. If the
+consignment arrives via a maritime pathway, one box will contain 700 items. If
+the pathway is not `air` or `maritime`, a default value of 100 items per box is
+used.
 
 ```yaml
 consignment:
@@ -51,8 +52,8 @@ consignment:
 ```
 
 Notice that the values for `items_per_box` are under a `default` key. In the
-future, the simulation may support other keys for specific commodities, origins,
-or ports.
+future, the simulation may support other keys to vary the number of
+`items_per_box` by commodity, origin, or port.
 
 ## Synthetic consignments
 
