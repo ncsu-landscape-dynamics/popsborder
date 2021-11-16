@@ -86,7 +86,7 @@ def sample_proportion(config, consignment):
         n_units_to_inspect = max(min_boxes, n_units_to_inspect)
         n_units_to_inspect = min(num_boxes, n_units_to_inspect)
     else:
-        raise RuntimeError("Unknown sampling unit: {unit}".format(**locals()))
+        raise RuntimeError(f"Unknown sampling unit: {unit}")
     return n_units_to_inspect
 
 
@@ -132,7 +132,7 @@ def sample_hypergeometric(config, consignment):
             detection_level, confidence_level, num_boxes
         )
     else:
-        raise RuntimeError("Unknown sampling unit: {unit}".format(**locals()))
+        raise RuntimeError(f"Unknown sampling unit: {unit}")
     return n_units_to_inspect
 
 
@@ -267,9 +267,7 @@ def compute_n_clusters_to_inspect(config, consignment, n_items_to_inspect):
                 inspect_per_box = items_per_box
             n_boxes_to_inspect = math.ceil(n_items_to_inspect / inspect_per_box)
     else:
-        raise RuntimeError(
-            "Unknown cluster selection method: {cluster_selection}".format(**locals())
-        )
+        raise RuntimeError(f"Unknown cluster selection method: {cluster_selection}")
 
     # Allow user specified box minimum override calculations
     n_boxes_to_inspect = max(min_boxes, n_boxes_to_inspect)
@@ -317,7 +315,7 @@ def select_random_indexes(unit, consignment, n_units_to_inspect):
             list(range(consignment.num_boxes)), n_units_to_inspect
         )
     else:
-        raise RuntimeError("Unknown unit: {unit}".format(**locals()))
+        raise RuntimeError(f"Unknown unit: {unit}")
     indexes_to_inspect.sort()
     return indexes_to_inspect
 
@@ -359,17 +357,13 @@ def select_cluster_indexes(config, consignment, n_units_to_inspect):
                 indexes_to_inspect.append(index)
                 index += interval
         else:
-            raise RuntimeError(
-                "Unknown cluster selection method: {cluster_selection}".format(
-                    **locals()
-                )
-            )
+            raise RuntimeError(f"Unknown cluster selection method: {cluster_selection}")
     elif unit in ["box", "boxes"]:
         raise RuntimeError(
             "Cannot use cluster selection strategy with box sampling unit"
         )
     else:
-        raise RuntimeError("Unknown unit: {unit}".format(**locals()))
+        raise RuntimeError(f"Unknown unit: {unit}")
     indexes_to_inspect.sort()
     return indexes_to_inspect
 
@@ -398,9 +392,7 @@ def select_units_to_inspect(config, consignment, n_units_to_inspect):
             config, consignment, n_units_to_inspect
         )
     else:
-        raise RuntimeError(
-            "Unknown selection strategy: {selection_strategy}".format(**locals())
-        )
+        raise RuntimeError(f"Unknown selection strategy: {selection_strategy}")
     return indexes_to_inspect
 
 
@@ -576,9 +568,7 @@ def get_sample_function(config):
             return sample_all(config=config, consignment=consignment)
 
     else:
-        raise RuntimeError(
-            "Unknown sample strategy: {sample_strategy}".format(**locals())
-        )
+        raise RuntimeError(f"Unknown sample strategy: {sample_strategy}")
     return sample
 
 

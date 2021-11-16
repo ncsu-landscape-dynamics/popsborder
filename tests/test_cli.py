@@ -4,21 +4,23 @@ import subprocess
 
 CONFIG = """\
 consignment:
-  boxes:
-    min: 1
-    max: 50
+  generation_method: parameter_based
   items_per_box:
     default: 10
-  origins:
-  - Netherlands
-  - Mexico
-  flowers:
-  - Hyacinthus
-  - Rosa
-  - Gerbera
-  ports:
-  - NY JFK CBP
-  - FL Miami Air CBP
+  parameter_based:
+    boxes:
+      min: 1
+      max: 50
+    origins:
+    - Netherlands
+    - Mexico
+    flowers:
+    - Hyacinthus
+    - Rosa
+    - Gerbera
+    ports:
+    - NY JFK CBP
+    - FL Miami Air CBP
 contamination:
   contamination_unit: items
   contamination_rate:

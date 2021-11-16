@@ -19,8 +19,8 @@ def test_scenarios(datadir, tmp_path):
         results,
         config_columns=[
             "name",
-            "consignment/boxes/min",
-            "consignment/boxes/max",
+            "consignment/parameter_based/boxes/min",
+            "consignment/parameter_based/boxes/max",
             "consignment/items_per_box/default",
             "contamination/contamination_rate/parameters",
         ],
