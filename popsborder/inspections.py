@@ -23,6 +23,7 @@
 
 from __future__ import print_function, division
 
+import functools
 import math
 import random
 import types
@@ -602,18 +603,15 @@ def inspect_always(consignment, date):  # pylint: disable=unused-argument
 def get_inspection_needed_function(config):
     """Based on config, return function to determine is inspection is needed."""
     if "release_programs" in config:
-        if "naive_cfrp" in config["release_programs"]:
-
-            def is_inspection_needed(consignment, date):
-                return naive_cfrp(
-                    config["release_programs"]["naive_cfrp"], consignment, date
-                )
-
-        else:
-            raise RuntimeError("Unknown release program: {program}".format(**locals()))
-    else:
-        is_inspection_needed = inspect_always
-    return is_inspection_needed
+        for name in sorted(config["release_programs"].keys()):
+            # Notably, this does not support multiple programs at once.
+            # We simply return whatever is the first program alphabetically
+            # or raise exception if there is an unknown program name.
+            if name == "naive_cfrp":
+                return functools.partial(naive_cfrp, config["release_programs"][name])
+            else:
+                raise RuntimeError(f"Unknown release program: {name}")
+    return inspect_always
 
 
 def is_consignment_contaminated(consignment):
