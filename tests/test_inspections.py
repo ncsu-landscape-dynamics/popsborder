@@ -78,4 +78,4 @@ def test_program_rejected():
         get_inspection_needed_function(
             load_configuration_yaml_from_text(DOES_NOT_EXIST_PROGRAM_CONFIG)
         )
-        assert "does_not_exist" in str(error)
+    assert "does_not_exist" in str(error)
