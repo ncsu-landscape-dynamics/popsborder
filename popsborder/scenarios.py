@@ -22,6 +22,8 @@
 
 import copy
 import collections.abc
+import json
+from pathlib import Path
 
 from .simulation import run_simulation
 
@@ -129,6 +131,30 @@ def run_scenarios(
     return results
 
 
+def text_to_value(arg):
+    """Convert text to int, float, or interpret it as JSON if possible
+
+    If the argument is not string, it is returned as is.
+    If conversion is not possible, the original text is returned.
+    None is returned for both None and an empty string.
+    """
+    if not isinstance(arg, str):
+        return arg
+    if not arg:
+        return None
+    try:
+        return int(arg)
+    except ValueError:
+        try:
+            return float(arg)
+        except ValueError:
+            try:
+                return json.loads(arg)
+            except json.JSONDecodeError:
+                # Return the original value.
+                return arg
+
+
 def load_scenario_table(filename):
     """Load a CSV file into a list of dictionaries
 
@@ -139,25 +165,35 @@ def load_scenario_table(filename):
     function.
     """
     # pylint: disable=import-outside-toplevel
-    import csv
-    import json
-
     table = []
+
+    # Read spreadsheet formats
+    if Path(filename).suffix.lower() != ".csv":
+        import openpyxl
+
+        try:
+            workbook = openpyxl.load_workbook(filename, read_only=True)
+            sheet = workbook.active
+            # Get header.
+            header = [cell.value for cell in sheet[1]]
+            # Read rows excluding the header.
+            for old_row in sheet.iter_rows(min_row=2):
+                new_row = {}
+                for key, cell in zip(header, old_row):
+                    new_row[key] = text_to_value(cell.value)
+                table.append(new_row)
+        finally:
+            # Read-only mode requires an explicit close and
+            # the workbook object is not a context manager.
+            workbook.close()
+        return table
+
+    # Read as CSV
     with open(filename) as file:
+        import csv
+
         for row in csv.DictReader(file):
             for key, value in row.items():
-                try:
-                    value = int(value)
-                    row[key] = value
-                except ValueError:
-                    try:
-                        value = float(value)
-                        row[key] = value
-                    except ValueError:
-                        try:
-                            value = json.loads(value)
-                            row[key] = value
-                        except json.JSONDecodeError:
-                            pass
+                row[key] = text_to_value(value)
             table.append(row)
     return table
