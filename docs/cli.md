@@ -11,7 +11,7 @@ the Python standard library while the `yaml` package needs to be
 installed (as of Python 3.8).
 
 Unless you install the package or modify Python path, you will need to
-run in from the directory with the *pathways* package, i.e., the root
+run in from the directory with the *popsborder* package, i.e., the root
 directory of the repository.
 
 If you install the package using *pip*, *pip* will take of the
@@ -19,10 +19,10 @@ dependencies and it will work in any directory.
 
 ## Example
 
-Direct run of the simulation with 1000 shipments repeated 20 times:
+Direct run of the simulation with 1000 consignments repeated 20 times:
 
 ```
-python -m pathways --num-simulations 20 --num-shipments 1000 --config-file config.yml
+python -m popsborder --num-simulations 20 --num-consignments 1000 --config-file config.yml
 ```
 
 ## Command line options
@@ -30,20 +30,20 @@ python -m pathways --num-simulations 20 --num-shipments 1000 --config-file confi
 Get all command line options for the simulation by running:
 
 ```
-python -m pathways --help
+python -m popsborder --help
 ```
 
-## Post processing the output
+## Post-processing the output
 
 The following sample script included in the repository shows simple
 runs of the simulation with predefined values
-covering both success rate in detection of pests and generation of F280
+covering both success rate in detection of contaminants and generation of F280
 records:
 
 ```
-./run.sh
+./examples/bash/bash_examples.sh
 ```
 
 ---
 
-Next: [Pests](pests.md)
+Next: [Consignments](consignments.md)

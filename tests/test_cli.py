@@ -3,19 +3,27 @@ import subprocess
 
 
 CONFIG = """\
-shipment:
-  origins:
-  - Netherlands
-  - Mexico
-  flowers:
-  - Hyacinthus
-  - Rosa
-  - Gerbera
-  boxes:
-    min: 1
-    max: 50
-pest:
-  infestation_rate:
+consignment:
+  generation_method: parameter_based
+  items_per_box:
+    default: 10
+  parameter_based:
+    boxes:
+      min: 1
+      max: 50
+    origins:
+    - Netherlands
+    - Mexico
+    flowers:
+    - Hyacinthus
+    - Rosa
+    - Gerbera
+    ports:
+    - NY JFK CBP
+    - FL Miami Air CBP
+contamination:
+  contamination_unit: items
+  contamination_rate:
     distribution: beta
     parameters:
     - 4
@@ -25,23 +33,21 @@ pest:
     probability: 0.2
     ratio: 0.5
 inspection:
-  unit: stems
-  within_box_pct: 1.0
-  sample_strategy: percentage
-  percentage:
-    proportion: 0.02
-    min_boxes: 1
+  unit: boxes
+  within_box_proportion: 1
+  sample_strategy: hypergeometric
+  min_boxes: 0
+  tolerance_level: 0
+  proportion:
+    value: 0.02
   hypergeometric:
-    detection_level: 0.05
+    detection_level: 0.1
     confidence_level: 0.95
-    min_boxes: 1
   fixed_n: 10
   selection_strategy: random
-ports:
-  - NY JFK CBP
-  - FL Miami Air CBP
-stems_per_box:
-  default: 10
+  cluster:
+    cluster_selection: random
+    interval: 3
 """
 
 
@@ -57,10 +63,10 @@ def dict_to_options(dictionary):
     return options
 
 
-def run_pathways_cli(**kwargs):
+def run_cli(**kwargs):
     # Using unpacking into a list literal from Python 3.5
     return subprocess.check_output(
-        [sys.executable, "-m", "pathways", *dict_to_options(kwargs)],
+        [sys.executable, "-m", "popsborder", *dict_to_options(kwargs)],
         universal_newlines=True,
     )
 
@@ -68,7 +74,7 @@ def run_pathways_cli(**kwargs):
 def test_gives_result(tmp_path):
     config = tmp_path / "config.yml"
     config.write_text(CONFIG)
-    for seed in range(10):
-        assert "slippage" in run_pathways_cli(
-            num_shipments=10, config_file=str(config), seed=seed
+    for seed in range(30):
+        assert "slipped" in run_cli(
+            num_consignments=10, config_file=str(config), seed=seed
         )

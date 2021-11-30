@@ -4,14 +4,14 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="pathways",
-    version="0.0.3",
-    author="Vaclav Petras",
+    name="PoPS Border",
+    version="0.9.0",
+    author="Vaclav Petras, Kellyn P. Montgomery",
     author_email="vpetras@ncsu.edu",
-    description="Simulation for evaluation of pathways",
+    description="Simulation of contaminated consignment and their inspections",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ncsu-landscape-dynamics/pathways-simulation",
+    url="https://github.com/ncsu-landscape-dynamics/popsborder",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -21,5 +21,5 @@ setuptools.setup(
         "Topic :: Scientific/Engineering",
     ],
     python_requires=">=3.5",
-    install_requires=["numpy", "scipy", "PyYAML"],
+    install_requires=["numpy", "scipy", "pandas", "PyYAML"],
 )

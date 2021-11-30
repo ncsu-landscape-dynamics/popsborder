@@ -1,0 +1,85 @@
+name,consignment name,inspection name,consignment/parameter_based/boxes/min,consignment/parameter_based/boxes/max,consignment/items_per_box/default,contamination/contamination_unit,contamination/contamination_rate/distribution,contamination/contamination_rate/parameters,contamination/contamination_rate/value,contamination/arrangement,contamination/clustered/distribution,contamination/clustered/contaminated_units_per_cluster,contamination/clustered/random/cluster_item_width,inspection/unit,inspection/min_boxes,inspection/sample_strategy,inspection/proportion/value,inspection/hypergeometric/detection_level,inspection/selection_strategy,inspection/within_box_proportion,inspection/cluster/cluster_selection,
+contaminate validation 1,item 0.01 random ,box proportion convenience,10,10,100,item,fixed_value,,0.01,random,,,,boxes,0,proportion,0,,convenience,1,,item 0.01 random 
+contaminate validation 2,item 0.1 random ,box proportion convenience,10,10,100,item,fixed_value,,0.1,random,,,,boxes,0,proportion,0,,convenience,1,,item 0.1 random 
+contaminate validation 3,item 0.01 clustered random,box proportion convenience,10,10,100,item,fixed_value,,0.01,clustered,random,50,100,boxes,0,proportion,0,,convenience,1,,item 0.01 clustered random
+contaminate validation 4,item 0.1 clustered random,box proportion convenience,10,10,100,item,fixed_value,,0.1,clustered,random,50,100,boxes,0,proportion,0,,convenience,1,,item 0.1 clustered random
+contaminate validation 5,item 0.01 clustered continuous,box proportion convenience,10,10,100,item,fixed_value,,0.01,clustered,continuous,50,,boxes,0,proportion,0,,convenience,1,,item 0.01 clustered continuous
+contaminate validation 6,item 0.1 clustered continuous,box proportion convenience,10,10,100,item,fixed_value,,0.1,clustered,continuous,50,,boxes,0,proportion,0,,convenience,1,,item 0.1 clustered continuous
+contaminate validation 7,item 0.2 random ,box proportion convenience,10,10,100,item,fixed_value,,0.2,random,,,,boxes,0,proportion,0,,convenience,1,,item 0.2 random 
+contaminate validation 8,item 0.2 clustered random,box proportion convenience,10,10,100,item,fixed_value,,0.2,clustered,random,50,100,boxes,0,proportion,0,,convenience,1,,item 0.2 clustered random
+contaminate validation 9,item 0.2 clustered continuous,box proportion convenience,10,10,100,item,fixed_value,,0.2,clustered,continuous,50,,boxes,0,proportion,0,,convenience,1,,item 0.2 clustered continuous
+contaminate validation 10,box 0.01 random ,box proportion convenience,10,10,100,box,fixed_value,,0.01,random,,,,boxes,0,proportion,0,,convenience,1,,box 0.01 random 
+contaminate validation 11,box 0.01 clustered ,box proportion convenience,10,10,100,box,fixed_value,,0.01,clustered,,2,,boxes,0,proportion,0,,convenience,1,,box 0.01 clustered 
+contaminate validation 12,box 0.1 random ,box proportion convenience,10,10,100,box,fixed_value,,0.1,random,,,,boxes,0,proportion,0,,convenience,1,,box 0.1 random 
+contaminate validation 13,box 0.1 clustered ,box proportion convenience,10,10,100,box,fixed_value,,0.1,clustered,,2,,boxes,0,proportion,0,,convenience,1,,box 0.1 clustered 
+contaminate validation 14,box 0.2 random ,box proportion convenience,10,10,100,box,fixed_value,,0.2,random,,,,boxes,0,proportion,0,,convenience,1,,box 0.2 random 
+contaminate validation 15,box 0.2 clustered ,box proportion convenience,10,10,100,box,fixed_value,,0.2,clustered,,2,,boxes,0,proportion,0,,convenience,1,,box 0.2 clustered 
+contaminate validation 16,item beta clustered random,box proportion convenience,100,100,100,item,beta,"[0.760265625, 107.849109375]",,clustered,random,90,100,boxes,0,proportion,0,,convenience,1,,item beta clustered random
+contaminate validation 17,item beta clustered continuous,box proportion convenience,100,100,100,item,beta,"[0.760265625, 107.849109375]",,clustered,continuous,50,,boxes,0,proportion,0,,convenience,1,,item beta clustered continuous
+contaminate validation 18,item beta random ,box proportion convenience,100,100,100,item,beta,"[0.760265625, 107.849109375]",,random,,,,boxes,0,proportion,0,,convenience,1,,item beta random 
+contaminate validation 19,box beta clustered ,box proportion convenience,100,100,100,box,beta,"[0.760265625, 107.849109375]",,clustered,,2,,boxes,0,proportion,0,,convenience,1,,box beta clustered 
+contaminate validation 20,box beta random ,box proportion convenience,100,100,100,box,beta,"[0.760265625, 107.849109375]",,random,,,,boxes,0,proportion,0,,convenience,1,,box beta random 
+sample validation 1,clustered 10,item hypergeometric random,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,random,1,,item 0.1 clustered random
+sample validation 2,clustered 10,item hypergeometric convenience,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,convenience,1,,item 0.1 clustered random
+sample validation 3,clustered 10,item hypergeometric interval cluster,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,cluster,0.1,interval,item 0.1 clustered random
+sample validation 4,clustered 10,item hypergeometric random cluster,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,cluster,0.1,random,item 0.1 clustered random
+sample validation 5,clustered 10,item proportion random,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,proportion,0.02,,random,1,,item 0.1 clustered random
+sample validation 6,clustered 10,item proportion convenience,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,proportion,0.02,,convenience,1,,item 0.1 clustered random
+sample validation 7,clustered 10,item proportion interval cluster,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,proportion,0.02,,cluster,0.1,interval,item 0.1 clustered random
+sample validation 8,clustered 10,item proportion random cluster,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,items,0,proportion,0.02,,cluster,0.1,random,item 0.1 clustered random
+sample validation 9,clustered 10,box hypergeometric random,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,hypergeometric,,0.05,random,1,,item 0.1 clustered random
+sample validation 10,clustered 10,box hypergeometric convenience,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,hypergeometric,,0.05,convenience,1,,item 0.1 clustered random
+sample validation 11,clustered 10,box proportion random,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,proportion,0.02,,random,1,,item 0.1 clustered random
+sample validation 12,clustered 10,box proportion convenience,20,20,100,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,proportion,0.02,,convenience,1,,item 0.1 clustered random
+sample validation 13,clustered 100,item hypergeometric random,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,random,1,,item 0.1 clustered random
+sample validation 14,clustered 100,item hypergeometric convenience,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,convenience,1,,item 0.1 clustered random
+sample validation 15,clustered 10,item hypergeometric interval cluster,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,cluster,0.1,interval,item 0.1 clustered random
+sample validation 16,clustered 10,item hypergeometric random cluster,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,hypergeometric,,0.05,cluster,0.1,random,item 0.1 clustered random
+sample validation 17,clustered 100,item proportion random,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,proportion,0.02,,random,1,,item 0.1 clustered random
+sample validation 18,clustered 100,item proportion convenience,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,proportion,0.02,,convenience,1,,item 0.1 clustered random
+sample validation 19,clustered 10,item proportion interval cluster,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,proportion,0.02,,cluster,0.1,interval,item 0.1 clustered random
+sample validation 20,clustered 10,item proportion random cluster,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,items,0,proportion,0.02,,cluster,0.1,random,item 0.1 clustered random
+sample validation 21,clustered 100,box hypergeometric random,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,hypergeometric,,0.05,random,1,,item 0.1 clustered random
+sample validation 22,clustered 100,box hypergeometric convenience,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,hypergeometric,,0.05,convenience,1,,item 0.1 clustered random
+sample validation 23,clustered 100,box proportion random,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,proportion,0.02,,random,1,,item 0.1 clustered random
+sample validation 24,clustered 100,box proportion convenience,100,100,200,item,fixed_value,,0.1,clustered,random,200,400,boxes,0,proportion,0.02,,convenience,1,,item 0.1 clustered random
+outcome validation 1,items random 0.01,items proportion 0.02,100,100,200,items,fixed_value,,0.01,random,,,,items,0,proportion,0.02,,random,1,,items 0.01 random 
+outcome validation 2,boxes random 0.01,boxes proportion 0.02,100,100,200,boxes,fixed_value,,0.01,random,,,,boxes,0,proportion,0.02,,random,1,,boxes 0.01 random 
+outcome validation 3,items random 0.01,items proportion 0.05,100,100,200,items,fixed_value,,0.01,random,,,,items,0,proportion,0.05,,random,1,,items 0.01 random 
+outcome validation 4,boxes random 0.01,boxes proportion 0.05,100,100,200,boxes,fixed_value,,0.01,random,,,,boxes,0,proportion,0.05,,random,1,,boxes 0.01 random 
+outcome validation 5,items random 0.01,items hypergeometric 0.1,100,100,200,items,fixed_value,,0.01,random,,,,items,0,hypergeometric,,0.1,random,1,,items 0.01 random 
+outcome validation 6,boxes random 0.01,boxes hypergeometric 0.1,100,100,200,boxes,fixed_value,,0.01,random,,,,boxes,0,hypergeometric,,0.1,random,1,,boxes 0.01 random 
+outcome validation 7,items random 0.01,items hypergeometric 0.05,100,100,200,items,fixed_value,,0.01,random,,,,items,0,hypergeometric,,0.05,random,1,,items 0.01 random 
+outcome validation 8,boxes random 0.01,boxes hypergeometric 0.05,100,100,200,boxes,fixed_value,,0.01,random,,,,boxes,0,hypergeometric,,0.05,random,1,,boxes 0.01 random 
+outcome validation 9,items random 0.01,items hypergeometric 0.01,100,100,200,items,fixed_value,,0.01,random,,,,items,0,hypergeometric,,0.01,random,1,,items 0.01 random 
+outcome validation 10,boxes random 0.01,boxes hypergeometric 0.01,100,100,200,boxes,fixed_value,,0.01,random,,,,boxes,0,hypergeometric,,0.01,random,1,,boxes 0.01 random 
+outcome validation 11,items random 0.1,items proportion 0.02,100,100,200,items,fixed_value,,0.1,random,,,,items,0,proportion,0.02,,random,1,,items 0.1 random 
+outcome validation 12,boxes random 0.1,boxes proportion 0.02,100,100,200,boxes,fixed_value,,0.1,random,,,,boxes,0,proportion,0.02,,random,1,,boxes 0.1 random 
+outcome validation 13,items random 0.1,items proportion 0.05,100,100,200,items,fixed_value,,0.1,random,,,,items,0,proportion,0.05,,random,1,,items 0.1 random 
+outcome validation 14,boxes random 0.1,boxes proportion 0.05,100,100,200,boxes,fixed_value,,0.1,random,,,,boxes,0,proportion,0.05,,random,1,,boxes 0.1 random 
+outcome validation 15,items random 0.1,items hypergeometric 0.1,100,100,200,items,fixed_value,,0.1,random,,,,items,0,hypergeometric,,0.1,random,1,,items 0.1 random 
+outcome validation 16,boxes random 0.1,boxes hypergeometric 0.1,100,100,200,boxes,fixed_value,,0.1,random,,,,boxes,0,hypergeometric,,0.1,random,1,,boxes 0.1 random 
+outcome validation 17,items random 0.1,items hypergeometric 0.05,100,100,200,items,fixed_value,,0.1,random,,,,items,0,hypergeometric,,0.05,random,1,,items 0.1 random 
+outcome validation 18,boxes random 0.1,boxes hypergeometric 0.05,100,100,200,boxes,fixed_value,,0.1,random,,,,boxes,0,hypergeometric,,0.05,random,1,,boxes 0.1 random 
+outcome validation 19,items random 0.1,items hypergeometric 0.01,100,100,200,items,fixed_value,,0.1,random,,,,items,0,hypergeometric,,0.01,random,1,,items 0.1 random 
+outcome validation 20,boxes random 0.1,boxes hypergeometric 0.01,100,100,200,boxes,fixed_value,,0.1,random,,,,boxes,0,hypergeometric,,0.01,random,1,,boxes 0.1 random 
+outcome validation 21,items clustered 0.01,items proportion 0.02,100,100,200,items,fixed_value,,0.01,clustered,random,50,100,items,0,proportion,0.02,,random,1,,items 0.01 clustered random
+outcome validation 22,boxes clustered 0.01,boxes proportion 0.02,100,100,200,boxes,fixed_value,,0.01,clustered,random,2,,boxes,0,proportion,0.02,,random,1,,boxes 0.01 clustered random
+outcome validation 23,items clustered 0.01,items proportion 0.05,100,100,200,items,fixed_value,,0.01,clustered,random,50,100,items,0,proportion,0.05,,random,1,,items 0.01 clustered random
+outcome validation 24,boxes clustered 0.01,boxes proportion 0.05,100,100,200,boxes,fixed_value,,0.01,clustered,random,2,,boxes,0,proportion,0.05,,random,1,,boxes 0.01 clustered random
+outcome validation 25,items clustered 0.01,items hypergeometric 0.1,100,100,200,items,fixed_value,,0.01,clustered,random,50,100,items,0,hypergeometric,,0.1,random,1,,items 0.01 clustered random
+outcome validation 26,boxes clustered 0.01,boxes hypergeometric 0.1,100,100,200,boxes,fixed_value,,0.01,clustered,random,2,,boxes,0,hypergeometric,,0.1,random,1,,boxes 0.01 clustered random
+outcome validation 27,items clustered 0.01,items hypergeometric 0.05,100,100,200,items,fixed_value,,0.01,clustered,random,50,100,items,0,hypergeometric,,0.05,random,1,,items 0.01 clustered random
+outcome validation 28,boxes clustered 0.01,boxes hypergeometric 0.05,100,100,200,boxes,fixed_value,,0.01,clustered,random,2,,boxes,0,hypergeometric,,0.05,random,1,,boxes 0.01 clustered random
+outcome validation 29,items clustered 0.01,items hypergeometric 0.01,100,100,200,items,fixed_value,,0.01,clustered,random,50,100,items,0,hypergeometric,,0.01,random,1,,items 0.01 clustered random
+outcome validation 30,boxes clustered 0.01,boxes hypergeometric 0.01,100,100,200,boxes,fixed_value,,0.01,clustered,random,2,,boxes,0,hypergeometric,,0.01,random,1,,boxes 0.01 clustered random
+outcome validation 31,items clustered 0.1,items proportion 0.02,100,100,200,items,fixed_value,,0.1,clustered,random,50,100,items,0,proportion,0.02,,random,1,,items 0.1 clustered random
+outcome validation 32,boxes clustered 0.1,boxes proportion 0.02,100,100,200,boxes,fixed_value,,0.1,clustered,random,2,,boxes,0,proportion,0.02,,random,1,,boxes 0.1 clustered random
+outcome validation 33,items clustered 0.1,items proportion 0.05,100,100,200,items,fixed_value,,0.1,clustered,random,50,100,items,0,proportion,0.05,,random,1,,items 0.1 clustered random
+outcome validation 34,boxes clustered 0.1,boxes proportion 0.05,100,100,200,boxes,fixed_value,,0.1,clustered,random,2,,boxes,0,proportion,0.05,,random,1,,boxes 0.1 clustered random
+outcome validation 35,items clustered 0.1,items hypergeometric 0.1,100,100,200,items,fixed_value,,0.1,clustered,random,50,100,items,0,hypergeometric,,0.1,random,1,,items 0.1 clustered random
+outcome validation 36,boxes clustered 0.1,boxes hypergeometric 0.1,100,100,200,boxes,fixed_value,,0.1,clustered,random,2,,boxes,0,hypergeometric,,0.1,random,1,,boxes 0.1 clustered random
+outcome validation 37,items clustered 0.1,items hypergeometric 0.05,100,100,200,items,fixed_value,,0.1,clustered,random,50,100,items,0,hypergeometric,,0.05,random,1,,items 0.1 clustered random
+outcome validation 38,boxes clustered 0.1,boxes hypergeometric 0.05,100,100,200,boxes,fixed_value,,0.1,clustered,random,2,,boxes,0,hypergeometric,,0.05,random,1,,boxes 0.1 clustered random
+outcome validation 39,items clustered 0.1,items hypergeometric 0.01,100,100,200,items,fixed_value,,0.1,clustered,random,50,100,items,0,hypergeometric,,0.01,random,1,,items 0.1 clustered random
+outcome validation 40,boxes clustered 0.1,boxes hypergeometric 0.01,100,100,200,boxes,fixed_value,,0.1,clustered,random,2,,boxes,0,hypergeometric,,0.01,random,1,,boxes 0.1 clustered random

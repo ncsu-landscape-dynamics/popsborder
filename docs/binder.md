@@ -5,7 +5,7 @@ or scripts in a cloud environment without any need for setup or an
 account.
 
 Binder works as any other website, but instead of pressing
-links or buttons, you can run Python code which runs in the somewhere
+links or buttons, you can run Python code which runs somewhere in the
 cloud (not on you computer). This means that you don't have to install
 anything on your computer and it is really just another website.
 However, this also means that you cannot upload any private or internal
@@ -14,7 +14,7 @@ data or documents.
 Here is a link to the example notebook for the simulation using the
 mybinder.org service:
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/pathways-simulation/master?urlpath=lab/tree/example.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ncsu-landscape-dynamics/popsborder/main?urlpath=lab/tree/examples/notebooks/basic_with_command_line.ipynb)
 
 Note also that using mybinder.org is not required. You can run the
 notebook locally if you install Jupyter. The Binder (BinderHub) itself
@@ -38,7 +38,7 @@ convenient for you. Here are the three choices:
 * You can use File Browser on the left. Right click on the notebook file,
   and pick *Download*. If you are contributing the notebook file into
   this repository, you need to use this option because it produces a
-  nicely formated file (however, there is no different in content or
+  nicely formatted file (however, there is no different in content or
   what you see once you display the notebook).
 
 * Next to the *Download* button there are "cloud download" and
@@ -61,3 +61,5 @@ To fix that, restart the kernel from menu using:
 After even more time of inactivity the whole environment shuts down.
 There is no way to restore it. To avoid any surprises, it is good to
 save your work often.
+
+Next: [Command line interface](cli.md)

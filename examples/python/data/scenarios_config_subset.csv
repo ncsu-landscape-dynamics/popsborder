@@ -1,0 +1,33 @@
+name,consignment_name,inspection_name,consignment/parameter_based/boxes/min,consignment/parameter_based/boxes/max,consignment/items_per_box/default,contamination/contamination_rate/parameters,contamination/arrangement,inspection/unit,inspection/sample_strategy,inspection/proportion/proportion,inspection/hypergeometric/detection_level,inspection/selection_strategy,inspection/within_box_pct,inspection/cluster/cluster_selection
+clustered_12,clustered,boxes 0.05 hypergeometric random,5,25,200,"[1, 80]",clustered,box,hypergeometric,,0.05,random,1,
+clustered_11,clustered,boxes 0.05 hypergeometric convenience,5,25,200,"[1, 80]",clustered,box,hypergeometric,,0.05,convenience,1,
+clustered_02,clustered,boxes 2% random,5,25,200,"[1, 80]",clustered,box,proportion,0.02,,random,1,
+clustered_01,clustered,boxes 2% convenience,5,25,200,"[1, 80]",clustered,box,proportion,0.02,,convenience,1,
+clustered_39,clustered,items 0.05 hypergeometric cluster interval,5,25,200,"[1, 80]",clustered,item,hypergeometric,,0.05,cluster,0.25,interval
+clustered_38,clustered,items 0.05 hypergeometric random,5,25,200,"[1, 80]",clustered,item,hypergeometric,,0.05,random,1,
+clustered_19,clustered,items 2% cluster interval,5,25,200,"[1, 80]",clustered,item,proportion,0.02,,cluster,0.25,interval
+clustered_18,clustered,items 2% random,5,25,200,"[1, 80]",clustered,item,proportion,0.02,,random,1,
+random_12,random,boxes 0.05 hypergeometric random,5,25,200,"[1, 80]",random,box,hypergeometric,,0.05,random,1,
+random_11,random,boxes 0.05 hypergeometric convenience,5,25,200,"[1, 80]",random,box,hypergeometric,,0.05,convenience,1,
+random_02,random,boxes 2% random,5,25,200,"[1, 80]",random,box,proportion,0.02,,random,1,
+random_01,random,boxes 2% convenience,5,25,200,"[1, 80]",random,box,proportion,0.02,,convenience,1,
+random_39,random,items 0.05 hypergeometric cluster interval,5,25,200,"[1, 80]",random,item,hypergeometric,,0.05,cluster,0.25,interval
+random_38,random,items 0.05 hypergeometric random,5,25,200,"[1, 80]",random,item,hypergeometric,,0.05,random,1,
+random_19,random,items 2% cluster interval,5,25,200,"[1, 80]",random,item,proportion,0.02,,cluster,0.25,interval
+random_18,random,items 2% random,5,25,200,"[1, 80]",random,item,proportion,0.02,,random,1,
+maritime_12,maritime,boxes 0.05 hypergeometric random,5,25,700,"[1, 80]",random,box,hypergeometric,,0.05,random,1,
+maritime_11,maritime,boxes 0.05 hypergeometric convenience,5,25,700,"[1, 80]",random,box,hypergeometric,,0.05,convenience,1,
+maritime_02,maritime,boxes 2% random,5,25,700,"[1, 80]",random,box,proportion,0.02,,random,1,
+maritime_01,maritime,boxes 2% convenience,5,25,700,"[1, 80]",random,box,proportion,0.02,,convenience,1,
+maritime_39,maritime,items 0.05 hypergeometric cluster interval,5,25,700,"[1, 80]",random,item,hypergeometric,,0.05,cluster,0.25,interval
+maritime_38,maritime,items 0.05 hypergeometric random,5,25,700,"[1, 80]",random,item,hypergeometric,,0.05,random,1,
+maritime_19,maritime,items 2% cluster interval,5,25,700,"[1, 80]",random,item,proportion,0.02,,cluster,0.25,interval
+maritime_18,maritime,items 2% random,5,25,700,"[1, 80]",random,item,proportion,0.02,,random,1,
+contamination5_12,contamination5,boxes 0.05 hypergeometric random,5,25,200,"[4, 80]",random,box,hypergeometric,,0.05,random,1,
+contamination5_11,contamination5,boxes 0.05 hypergeometric convenience,5,25,200,"[4, 80]",random,box,hypergeometric,,0.05,convenience,1,
+contamination5_02,contamination5,boxes 2% random,5,25,200,"[4, 80]",random,box,proportion,0.02,,random,1,
+contamination5_01,contamination5,boxes 2% convenience,5,25,200,"[4, 80]",random,box,proportion,0.02,,convenience,1,
+contamination5_39,contamination5,items 0.05 hypergeometric cluster interval,5,25,200,"[4, 80]",random,item,hypergeometric,,0.05,cluster,0.25,interval
+contamination5_38,contamination5,items 0.05 hypergeometric random,5,25,200,"[4, 80]",random,item,hypergeometric,,0.05,random,1,
+contamination5_19,contamination5,items 2% cluster interval,5,25,200,"[4, 80]",random,item,proportion,0.02,,cluster,0.25,interval
+contamination5_18,contamination5,items 2% random,5,25,200,"[4, 80]",random,item,proportion,0.02,,random,1,

@@ -27,7 +27,7 @@ the following wrapper script included in the repository:
 ### Download using a web browser
 
 To download sample synthetic database records (F280)
-by clicking [this link](https://ncsu-landscape-dynamics.github.io/pathways-simulation/synthetic_records.csv).
+by clicking [this link](https://ncsu-landscape-dynamics.github.io/popsborder/synthetic_records.csv).
 
 ### Download using command line
 
@@ -35,7 +35,7 @@ Alternatively, in a Linux command line (or in an equivalent environment),
 you can execute (assuming you have `wget` installed):
 
 ```
-wget https://ncsu-landscape-dynamics.github.io/pathways-simulation/synthetic_records.csv
+wget https://ncsu-landscape-dynamics.github.io/popsborder/synthetic_records.csv
 ls synthetic_records.csv
 ```
 
