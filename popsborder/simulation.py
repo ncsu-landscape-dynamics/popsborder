@@ -27,7 +27,7 @@ import sys
 import types
 import random
 import numpy as np
-
+from pathlib import Path
 
 from .consignments import get_consignment_generator, get_contaminant_function
 from .inspections import (
@@ -397,6 +397,15 @@ def load_configuration(filename):
 
     The parameter can be a string or a path object (path-like object).
     """
+    filename_str = str(filename)
+    if "::" in filename_str:
+        filename, info = filename_str.rsplit("::", maxsplit=1)
+        info = table_info_from_text(info)
+        filename = Path(filename)
+    else:
+        filename = Path(filename)
+        info = table_info_from_text("")
+
     if str(filename).endswith(".json"):
         import json  # pylint: disable=import-outside-toplevel
 
@@ -407,5 +416,88 @@ def load_configuration(filename):
         if hasattr(yaml, "full_load"):
             return yaml.full_load(open(filename))
         return yaml.load(open(filename))  # pylint: disable=no-value-for-parameter
+    elif filename.suffix.lower() == ".csv":
+        return load_config_table(
+            filename,
+            sheet=info.sheet,
+            key_column=info.key_column,
+            value_column=info.value_column,
+        )
     else:
         sys.exit("Unknown file extension (file: {})".format(filename))
+
+
+def table_info_from_text(text):
+    info = types.SimpleNamespace(sheet=None, key_column=None, value_column=None)
+    if not text:
+        return info
+    items = text.split(",")
+    for item in items:
+        key = None
+        value = item
+        for separator in ["=", ":", ": "]:
+            if separator in item:
+                key, value = item.split(separator, maxsplit=1)
+                break
+        if not key:
+            info.key_column = item
+        elif key in ["sheet", "key_column", "value_column"]:
+            setattr(info, key, value)
+        else:
+            raise ValueError(f"Unknown key '{key}' in table info specification")
+    return info
+
+
+def load_config_table(filename, sheet=None, key_column=None, value_column=None):
+    """Load a CSV file into a list of dictionaries
+
+    Values which can be converted into int or float are converted. Cells which can be
+    parsed as JSON, will be loaded into Python data structures (dicts, lists, etc.).
+
+    A whole file is read and loaded into memory unlike with the ``csv.reader()``
+    function.
+    """
+    # pylint: disable=import-outside-toplevel
+    table = {}
+
+    from .scenarios import record_to_nested_dictionary, text_to_value
+
+    # Read spreadsheet formats
+    if Path(filename).suffix.lower() != ".csv":
+        import openpyxl
+
+        try:
+            workbook = openpyxl.load_workbook(filename, read_only=True)
+            sheet = workbook.active
+            # Get header.
+            header = [cell.value for cell in sheet[1]]
+            # Read rows excluding the header.
+            for old_row in sheet.iter_rows(min_row=2):
+                new_row = {}
+                for key, cell in zip(header, old_row):
+                    new_row[key] = text_to_value(cell.value)
+                table.append(new_row)
+        finally:
+            # Read-only mode requires an explicit close and
+            # the workbook object is not a context manager.
+            workbook.close()
+        return table
+
+    # Read as CSV
+    with open(filename) as file:
+        import csv
+
+        if key_column is None:
+            key_column = 0
+        else:
+            key_column = int(key_column) - 1
+        if value_column is None:
+            value_column = key_column + 1
+        else:
+            value_column = int(value_column) - 1
+        for row in csv.reader(file):
+            key = row[key_column]
+            value = text_to_value(row[value_column])
+            table[key] = value
+
+    return record_to_nested_dictionary(table)
