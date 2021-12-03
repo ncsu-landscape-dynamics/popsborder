@@ -21,27 +21,26 @@
 .. codeauthor:: Kellyn P. Montgomery <kellynmontgomery gmail com>
 """
 
-from __future__ import print_function, division
-
+import random
 import sys
 import types
-import random
-import numpy as np
-from pathlib import Path
 from collections.abc import Iterable, Mapping
+from pathlib import Path
+
+import numpy as np
 
 from .consignments import get_consignment_generator, get_contaminant_function
 from .inspections import (
+    consignment_contamination_rate,
     get_inspection_needed_function,
     get_sample_function,
     inspect,
     is_consignment_contaminated,
-    consignment_contamination_rate,
 )
 from .outputs import (
     Form280,
-    PrintReporter,
     MuteReporter,
+    PrintReporter,
     SuccessRates,
     pretty_consignment,
 )

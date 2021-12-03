@@ -1,8 +1,8 @@
 """Test configuration loading functions"""
 
 from popsborder.simulation import (
-    load_configuration,
     dict_config_to_table,
+    load_configuration,
     print_table_config,
 )
 
