@@ -412,11 +412,11 @@ def load_configuration(filename, sheet=None, key_column=None, value_column=None)
         info = table_info_from_text("")
     filename = Path(filename)
     if sheet:
-        info.sheet=sheet
+        info.sheet = sheet
     if key_column:
-        info.key_column=key_column
+        info.key_column = key_column
     if value_column:
-        info.value_column=value_column
+        info.value_column = value_column
 
     if str(filename).endswith(".json"):
         import json  # pylint: disable=import-outside-toplevel
@@ -440,7 +440,9 @@ def load_configuration(filename, sheet=None, key_column=None, value_column=None)
 
 
 def table_info_from_text(text, sheet=None, key_column=None, value_column=None):
-    info = types.SimpleNamespace(sheet=sheet, key_column=key_column, value_column=value_column)
+    info = types.SimpleNamespace(
+        sheet=sheet, key_column=key_column, value_column=value_column
+    )
     if not text:
         return info
     items = text.split(",")
@@ -475,7 +477,7 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
     from .scenarios import record_to_nested_dictionary, text_to_value
 
     # Read spreadsheet formats
-    if Path(filename).suffix.lower() != ".csv":
+    if Path(filename).suffix.lower() not in [".csv", ".ods"]:
         import openpyxl
         from openpyxl.utils import column_index_from_string
 
@@ -494,6 +496,7 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
             except ValueError:
                 value_column = column_index_from_string(value_column) - 1
 
+        workbook = None
         try:
             workbook = openpyxl.load_workbook(filename, read_only=True)
             sheet = workbook.active
@@ -505,8 +508,29 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
         finally:
             # Read-only mode requires an explicit close and
             # the workbook object is not a context manager.
-            workbook.close()
+            if workbook:
+                workbook.close()
         return record_to_nested_dictionary(table)
+
+    if Path(filename).suffix.lower() == ".ods":
+        import pandas
+        sheet = sheet if sheet else 0
+        if key_column is None:
+            key_column = 0
+        else:
+            try:
+                key_column = int(key_column) - 1
+            except ValueError:
+                pass
+        if value_column is None:
+            value_column = 1
+        else:
+            try:
+                value_column = int(value_column) - 1
+            except ValueError:
+                pass
+        data = pandas.read_excel(Path(filename), sheet_name=sheet, header=None, usecols=[key_column, value_column])
+        print(data)
 
     # Read as CSV
     with open(filename) as file:
