@@ -80,10 +80,9 @@ def test_user_friendly_config_load(datadir):
 
 
 def test_dict_config_to_table(datadir):
+    """Check that we can convert to table with dict rows and back"""
     config_yml = load_configuration(datadir / "small_config.yml")
     table = dict_config_to_table(config_yml)
-    # for item in table:
-    #     item[0] = "/".join(item[0])
     print_table_config(table)
     config_table = load_configuration(table)
     assert config_table == config_yml

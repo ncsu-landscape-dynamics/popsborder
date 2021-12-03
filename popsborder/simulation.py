@@ -28,6 +28,7 @@ import types
 import random
 import numpy as np
 from pathlib import Path
+from collections.abc import Iterable, Mapping
 
 from .consignments import get_consignment_generator, get_contaminant_function
 from .inspections import (
@@ -404,8 +405,6 @@ def load_configuration(filename, sheet=None, key_column=None, value_column=None)
     The same information can be passed directly as function parameters.
     If both are provided, function parameters take precedence.
     """
-    from collections.abc import Iterable
-
     if isinstance(filename, Iterable) and not isinstance(filename, str):
         from .scenarios import record_to_nested_dictionary
 
@@ -447,6 +446,19 @@ def load_configuration(filename, sheet=None, key_column=None, value_column=None)
 
 
 def table_info_from_text(text, sheet=None, key_column=None, value_column=None):
+    """Convert comma-separated list of key-value pairs to info about table
+
+    Items are separated by comma. Key and value can be separated by
+    `=` or `:` and also by `: ` and ` = ` because spaces surrounding
+    key and value are removed.
+
+    If there is no key-value pair, the whole value is used as a
+    value for key_column.
+
+    Function parameters are used as default values.
+
+    Accepted keys are 'sheet', 'key_column', and 'value_column'.
+    """
     info = types.SimpleNamespace(
         sheet=sheet, key_column=key_column, value_column=value_column
     )
@@ -455,10 +467,11 @@ def table_info_from_text(text, sheet=None, key_column=None, value_column=None):
     items = text.split(",")
     for item in items:
         key = None
-        value = item
-        for separator in ["=", ":", ": "]:
+        for separator in ["=", ":"]:
             if separator in item:
                 key, value = item.split(separator, maxsplit=1)
+                key = key.strip()
+                value = value.strip()
                 break
         if not key:
             info.key_column = item
@@ -580,11 +593,9 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
 
 
 def add_dict_config_to_table(table, value, keys=None):
-    import collections
-
     if keys is None:
         keys = []
-    if isinstance(value, collections.abc.Mapping):
+    if isinstance(value, Mapping):
         for nested_key, nested_value in value.items():
             new_keys = keys.copy()
             new_keys.append(nested_key)
@@ -600,10 +611,8 @@ def dict_config_to_table(value):
 
 
 def print_table_config(config, file=None):
-    import collections
-
     for key, value in config.items():
-        if isinstance(value, collections.abc.Iterable) and not isinstance(value, str):
+        if isinstance(value, Iterable) and not isinstance(value, str):
             import json
 
             value = json.dumps(value)
