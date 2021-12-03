@@ -389,22 +389,34 @@ def load_configuration_yaml_from_text(text):
     return yaml.load(text)  # pylint: disable=no-value-for-parameter
 
 
-def load_configuration(filename):
+def load_configuration(filename, sheet=None, key_column=None, value_column=None):
     """Get the configuration from a JSON or YAML file
 
     The format is decided based on the file extension.
     It uses full_load() (FullLoader) to read YAML.
 
     The parameter can be a string or a path object (path-like object).
+
+    If the *filename* contains `::`, anything after the last `::` is considered
+    parameters determining where in the spreadsheet or table are the relevant
+    columns. The format is multiple key-value pairs with key and value separated by
+    `=`, `:`, or `: ` and individual keys separated by `,`.
+    The same information can be passed directly as function parameters.
+    If both are provided, function parameters take precedence.
     """
     filename_str = str(filename)
     if "::" in filename_str:
         filename, info = filename_str.rsplit("::", maxsplit=1)
         info = table_info_from_text(info)
-        filename = Path(filename)
     else:
-        filename = Path(filename)
         info = table_info_from_text("")
+    filename = Path(filename)
+    if sheet:
+        info.sheet=sheet
+    if key_column:
+        info.key_column=key_column
+    if value_column:
+        info.value_column=value_column
 
     if str(filename).endswith(".json"):
         import json  # pylint: disable=import-outside-toplevel
@@ -416,7 +428,7 @@ def load_configuration(filename):
         if hasattr(yaml, "full_load"):
             return yaml.full_load(open(filename))
         return yaml.load(open(filename))  # pylint: disable=no-value-for-parameter
-    elif filename.suffix.lower() == ".csv":
+    elif filename.suffix.lower() in [".csv", ".xlsx", ".ods"]:
         return load_config_table(
             filename,
             sheet=info.sheet,
@@ -427,8 +439,8 @@ def load_configuration(filename):
         sys.exit("Unknown file extension (file: {})".format(filename))
 
 
-def table_info_from_text(text):
-    info = types.SimpleNamespace(sheet=None, key_column=None, value_column=None)
+def table_info_from_text(text, sheet=None, key_column=None, value_column=None):
+    info = types.SimpleNamespace(sheet=sheet, key_column=key_column, value_column=value_column)
     if not text:
         return info
     items = text.split(",")
@@ -465,23 +477,36 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
     # Read spreadsheet formats
     if Path(filename).suffix.lower() != ".csv":
         import openpyxl
+        from openpyxl.utils import column_index_from_string
+
+        if key_column is None:
+            key_column = 0
+        else:
+            try:
+                key_column = int(key_column) - 1
+            except ValueError:
+                key_column = column_index_from_string(key_column) - 1
+        if value_column is None:
+            value_column = key_column + 1
+        else:
+            try:
+                value_column = int(value_column) - 1
+            except ValueError:
+                value_column = column_index_from_string(value_column) - 1
 
         try:
             workbook = openpyxl.load_workbook(filename, read_only=True)
             sheet = workbook.active
-            # Get header.
-            header = [cell.value for cell in sheet[1]]
             # Read rows excluding the header.
-            for old_row in sheet.iter_rows(min_row=2):
-                new_row = {}
-                for key, cell in zip(header, old_row):
-                    new_row[key] = text_to_value(cell.value)
-                table.append(new_row)
+            for row in sheet.iter_rows(values_only=True):
+                key = row[key_column]
+                value = text_to_value(row[value_column])
+                table[key] = value
         finally:
             # Read-only mode requires an explicit close and
             # the workbook object is not a context manager.
             workbook.close()
-        return table
+        return record_to_nested_dictionary(table)
 
     # Read as CSV
     with open(filename) as file:
