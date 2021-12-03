@@ -45,7 +45,7 @@ def test_sheet_access(datadir):
     config_yml = load_configuration(datadir / "small_config.yml")
     config_xlsx = load_configuration(
         datadir / "small_config.xlsx",
-        sheet="config_version_1",
+        sheet="Config Version 1",
         key_column="A",
         value_column="B"
     )

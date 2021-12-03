@@ -499,7 +499,10 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
         workbook = None
         try:
             workbook = openpyxl.load_workbook(filename, read_only=True)
-            sheet = workbook.active
+            if sheet:
+                sheet = workbook[sheet]
+            else:
+                sheet = workbook.active
             # Read rows excluding the header.
             for row in sheet.iter_rows(values_only=True):
                 key = row[key_column]
