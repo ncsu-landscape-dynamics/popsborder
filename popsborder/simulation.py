@@ -551,7 +551,12 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
                 value_column = int(value_column) - 1
             except ValueError:
                 pass
-        data = pandas.read_excel(Path(filename), sheet_name=sheet, header=None, usecols=[key_column, value_column])
+        data = pandas.read_excel(
+            Path(filename),
+            sheet_name=sheet,
+            header=None,
+            usecols=[key_column, value_column],
+        )
         print(data)
 
     # Read as CSV
