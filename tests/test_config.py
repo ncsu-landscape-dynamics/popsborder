@@ -11,10 +11,10 @@ def test_small_configs_are_same(datadir):
     """Check that configurations loaded from different sources are the same"""
     config_yml = load_configuration(datadir / "small_config.yml")
     config_csv = load_configuration(datadir / "small_config.csv")
-    # config_ods = load_configuration(datadir / "small_config.ods")
+    config_ods = load_configuration(datadir / "small_config.ods")
     config_xlsx = load_configuration(datadir / "small_config.xlsx")
     assert config_csv == config_yml
-    # assert config_ods == config_yml
+    assert config_ods == config_yml
     assert config_xlsx == config_yml
 
 

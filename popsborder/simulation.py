@@ -570,7 +570,11 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
             header=None,
             usecols=[key_column, value_column],
         )
-        print(data)
+        table = {}
+        for row in data.itertuples():
+            if row[1]:
+                table[row[1]] = text_to_value(row[2])
+        return record_to_nested_dictionary(table)
 
     # Read as CSV
     with open(filename) as file:
