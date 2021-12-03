@@ -496,27 +496,39 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
             except ValueError:
                 value_column = column_index_from_string(value_column) - 1
 
-        workbook = None
-        try:
-            workbook = openpyxl.load_workbook(filename, read_only=True)
-            if sheet:
-                sheet = workbook[sheet]
-            else:
-                sheet = workbook.active
-            # Read rows excluding the header.
-            for row in sheet.iter_rows(values_only=True):
-                key = row[key_column]
-                value = text_to_value(row[value_column])
-                table[key] = value
-        finally:
-            # Read-only mode requires an explicit close and
-            # the workbook object is not a context manager.
-            if workbook:
-                workbook.close()
-        return record_to_nested_dictionary(table)
+        import warnings
+
+        with warnings.catch_warnings():
+            # We want to use validation functions in the spreadsheet,
+            # but it does not matter whether they are supported by the reader here.
+            warnings.filterwarnings(
+                "ignore", message="Data Validation extension is not supported"
+            )
+            workbook = None
+            try:
+                workbook = openpyxl.load_workbook(filename, read_only=True)
+                if sheet:
+                    sheet = workbook[sheet]
+                else:
+                    sheet = workbook.active
+                # Read rows excluding the header.
+                for row in sheet.iter_rows(values_only=True):
+                    key = row[key_column]
+                    if key:
+                        # Consider only rows with filled key to allow
+                        # for empty rows for formatting purposes.
+                        value = text_to_value(row[value_column])
+                        table[key] = value
+            finally:
+                # Read-only mode requires an explicit close and
+                # the workbook object is not a context manager.
+                if workbook:
+                    workbook.close()
+            return record_to_nested_dictionary(table)
 
     if Path(filename).suffix.lower() == ".ods":
         import pandas
+
         sheet = sheet if sheet else 0
         if key_column is None:
             key_column = 0

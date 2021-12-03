@@ -62,3 +62,14 @@ def test_default_columns(datadir):
 def test_large_config_load(datadir):
     """Check that a larger (complete) configuration loads from a table"""
     load_configuration(datadir / "large_config.xlsx")
+    load_configuration(datadir / "large_config.xlsx::value_column=C")
+    load_configuration(datadir / "large_config.xlsx::value_column=D")
+    load_configuration(datadir / "large_config.xlsx::value_column=E")
+
+
+def test_user_friendly_config_load(datadir):
+    """Check that a larger (complete) configuration loads from a table"""
+    load_configuration(
+        datadir / "user_friendly_config.xlsx", key_column="D", value_column="B"
+    )
+
