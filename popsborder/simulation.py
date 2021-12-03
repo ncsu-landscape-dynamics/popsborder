@@ -404,6 +404,13 @@ def load_configuration(filename, sheet=None, key_column=None, value_column=None)
     The same information can be passed directly as function parameters.
     If both are provided, function parameters take precedence.
     """
+    from collections.abc import Iterable
+
+    if isinstance(filename, Iterable) and not isinstance(filename, str):
+        from .scenarios import record_to_nested_dictionary
+
+        return record_to_nested_dictionary(filename)
+
     filename_str = str(filename)
     if "::" in filename_str:
         filename, info = filename_str.rsplit("::", maxsplit=1)
@@ -565,3 +572,34 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
             table[key] = value
 
     return record_to_nested_dictionary(table)
+
+
+def add_dict_config_to_table(table, value, keys=None):
+    import collections
+
+    if keys is None:
+        keys = []
+    if isinstance(value, collections.abc.Mapping):
+        for nested_key, nested_value in value.items():
+            new_keys = keys.copy()
+            new_keys.append(nested_key)
+            add_dict_config_to_table(table, value=nested_value, keys=new_keys)
+    else:
+        table["/".join(keys)] = value
+
+
+def dict_config_to_table(value):
+    table = {}
+    add_dict_config_to_table(table, value)
+    return table
+
+
+def print_table_config(config, file=None):
+    import collections
+
+    for key, value in config.items():
+        if isinstance(value, collections.abc.Iterable) and not isinstance(value, str):
+            import json
+
+            value = json.dumps(value)
+        print(f"{key};{value}", file=file)
