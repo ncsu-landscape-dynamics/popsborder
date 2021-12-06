@@ -22,6 +22,7 @@
 """
 
 import random
+import math
 import sys
 import types
 from collections.abc import Iterable, Mapping
@@ -533,9 +534,17 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
                 # Read rows excluding the header.
                 for row in sheet.iter_rows(values_only=True):
                     key = row[key_column]
-                    if key:
+                    # All keys should be strings, so converst numbers to strings.
+                    # None needs to be empty string, not a string None.
+                    key = str(key) if key else ""
+                    # Allow for whitespace around the key.
+                    key = key.strip()
+                    if key and " " not in key:
                         # Consider only rows with filled key to allow
                         # for empty rows for formatting purposes.
+                        # Additionally, ignore rows where key cell contains
+                        # spaces (this allows for a header without threating
+                        # first row differently).
                         value = text_to_value(row[value_column])
                         table[key] = value
             finally:
@@ -563,34 +572,79 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
                 value_column = int(value_column) - 1
             except ValueError:
                 pass
+        if isinstance(key_column, int) and isinstance(value_column, int):
+            cols = [key_column, value_column]
+            if key_column < value_column:
+                key_column_index = 1
+                value_column_index = 2
+            else:
+                key_column_index = 2
+                value_column_index = 1
+        else:
+            cols = f"{key_column},{value_column}"
+            if (
+                len(key_column) == 1
+                and len(value_column) == 1
+                and ord(key_column) < ord(value_column)
+            ):
+                key_column_index = 1
+                value_column_index = 2
+            else:
+                key_column_index = 2
+                value_column_index = 1
         data = pandas.read_excel(
-            Path(filename),
-            sheet_name=sheet,
-            header=None,
-            usecols=[key_column, value_column],
+            Path(filename), sheet_name=sheet, header=None, usecols=cols
         )
         table = {}
         for row in data.itertuples():
-            if row[1]:
-                table[row[1]] = text_to_value(row[2])
+            key = row[key_column_index]
+            if key and not (isinstance(key, float) and math.isnan(key)):
+                key = str(key)
+            else:
+                key = ""
+            key = key.strip()
+            if key and " " not in key:
+                value = text_to_value(row[value_column_index])
+                if isinstance(value, float) and math.isnan(value):
+                    value = None
+                table[key] = value
         return record_to_nested_dictionary(table)
 
     # Read as CSV
     with open(filename) as file:
         import csv
 
+        try:
+            key_column = int(key_column)
+        except (TypeError, ValueError):
+            pass
+        try:
+            value_column = int(value_column)
+        except (TypeError, ValueError):
+            pass
+
         if key_column is None:
             key_column = 0
+        elif isinstance(key_column, str):
+            key_column = ord(key_column) - ord("A")
         else:
             key_column = int(key_column) - 1
         if value_column is None:
             value_column = key_column + 1
+        elif isinstance(value_column, str):
+            value_column = ord(value_column) - ord("A")
         else:
             value_column = int(value_column) - 1
         for row in csv.reader(file):
             key = row[key_column]
-            value = text_to_value(row[value_column])
-            table[key] = value
+            # All keys should be strings, so converst numbers to strings.
+            # None needs to be empty string, not a string None.
+            key = str(key) if key else ""
+            # Allow for whitespace around the key.
+            key = key.strip()
+            if key and " " not in key:
+                value = text_to_value(row[value_column])
+                table[key] = value
 
     return record_to_nested_dictionary(table)
 

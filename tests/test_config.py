@@ -18,7 +18,7 @@ def test_small_configs_are_same(datadir):
     assert config_xlsx == config_yml
 
 
-def test_number_indexing_columns(datadir):
+def test_number_indexing_columns_xlsx(datadir):
     """Check that columns can be indexed using 1-based numerical indices"""
     config_yml = load_configuration(datadir / "small_config.yml")
     config_xlsx = load_configuration(
@@ -27,13 +27,49 @@ def test_number_indexing_columns(datadir):
     assert config_xlsx == config_yml
 
 
-def test_letter_indexing_columns(datadir):
+def test_number_indexing_columns_ods(datadir):
+    """Check that columns can be indexed using 1-based numerical indices"""
+    config_yml = load_configuration(datadir / "small_config.yml")
+    config_ods = load_configuration(
+        datadir / "small_config.xlsx::key_column=1,value_column=2"
+    )
+    assert config_ods == config_yml
+
+
+def test_number_indexing_columns_csv(datadir):
+    """Check that columns can be indexed using 1-based numerical indices"""
+    config_yml = load_configuration(datadir / "small_config.yml")
+    config_csv = load_configuration(
+        datadir / "small_config.csv::key_column=1,value_column=2"
+    )
+    assert config_csv == config_yml
+
+
+def test_letter_indexing_columns_xlsx(datadir):
     """Check that columns can be indexed using letter indices"""
     config_yml = load_configuration(datadir / "small_config.yml")
     config_xlsx = load_configuration(
         datadir / "small_config.xlsx::key_column=A,value_column=B"
     )
     assert config_xlsx == config_yml
+
+
+def test_letter_indexing_columns_ods(datadir):
+    """Check that columns can be indexed using letter indices"""
+    config_yml = load_configuration(datadir / "small_config.yml")
+    config_ods = load_configuration(
+        datadir / "small_config.ods::key_column=A,value_column=B"
+    )
+    assert config_ods == config_yml
+
+
+def test_letter_indexing_columns_csv(datadir):
+    """Check that columns can be indexed using letter indices"""
+    config_yml = load_configuration(datadir / "small_config.yml")
+    config_csv = load_configuration(
+        datadir / "small_config.csv::key_column=A,value_column=B"
+    )
+    assert config_csv == config_yml
 
 
 def test_indexing_columns_in_parameters_overrides(datadir):
@@ -73,10 +109,22 @@ def test_large_config_load(datadir):
 
 
 def test_user_friendly_config_load(datadir):
-    """Check that a larger (complete) configuration loads from a table"""
-    load_configuration(
+    """Check that a full user-friendly configuration loads from a table"""
+    config_xlsx = load_configuration(
         datadir / "user_friendly_config.xlsx", key_column="D", value_column="B"
     )
+    config_ods = load_configuration(
+        datadir / "user_friendly_config.ods", key_column="D", value_column="B"
+    )
+    config_csv = load_configuration(
+        datadir / "user_friendly_config.csv", key_column="D", value_column="B"
+    )
+    num_top_level_keys = 3
+    assert len(config_xlsx) == num_top_level_keys
+    assert len(config_ods) == num_top_level_keys
+    assert len(config_csv) == num_top_level_keys
+    assert config_xlsx == config_ods
+    assert config_xlsx == config_csv
 
 
 def test_dict_config_to_table(datadir):
