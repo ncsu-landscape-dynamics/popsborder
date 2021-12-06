@@ -71,7 +71,12 @@ def record_to_nested_dictionary(record):
     """Convert dictionary with key/subkey/subsubkey keys into a nested dictionary"""
     out = {}
     for path, value in record.items():
-        keys = path.split("/")
+        try:
+            keys = path.split("/")
+        except AttributeError as error:
+            raise ValueError(
+                f"Record items need to be strings, not {path} ({type(path).__name__})"
+            ) from error
         update_nested_dict_by_item(out, keys, value)
     return out
 
