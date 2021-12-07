@@ -21,8 +21,8 @@
 """
 
 import copy
-import math
 import json
+import math
 import sys
 import types
 from collections.abc import Iterable, Mapping
