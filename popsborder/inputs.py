@@ -234,41 +234,25 @@ def load_config_table(filename, sheet=None, key_column=None, value_column=None):
     return load_config_csv(filename, key_column=key_column, value_column=value_column)
 
 
-def load_config_csv(filename, key_column=None, value_column=None):
-    table = {}
-    # Read as CSV
-    with open(filename) as file:
-        # pylint: disable=import-outside-toplevel
-        import csv
+def column_from_string(arg, default, fallback):
+    """Return zero-based column index created from a column specification.
 
+    Values convertable to integer are converted and considered to be one-based
+    column index and thus further converted to zero-based index.
+
+    For values not convertable to integer, fallback function is called and its
+    result is returned. This allows for a backend-specific column conversion function
+    to be used to resolve the complex cases.
+
+    For None and empty string, the default value is returned.
+    """
+    if not arg:
+        return default
+    else:
         try:
-            key_column = int(key_column)
-        except (TypeError, ValueError):
-            pass
-        try:
-            value_column = int(value_column)
-        except (TypeError, ValueError):
-            pass
-
-        if key_column is None:
-            key_column = 0
-        elif isinstance(key_column, str):
-            key_column = ord(key_column) - ord("A")
-        else:
-            key_column = int(key_column) - 1
-        if value_column is None:
-            value_column = key_column + 1
-        elif isinstance(value_column, str):
-            value_column = ord(value_column) - ord("A")
-        else:
-            value_column = int(value_column) - 1
-        for row in csv.reader(file):
-            key = validate_key(row[key_column])
-            if key:
-                value = text_to_value(row[value_column])
-                table[key] = value
-
-    return record_to_nested_dictionary(table)
+            return int(arg) - 1
+        except ValueError:
+            return fallback(arg)
 
 
 def validate_key(arg):
@@ -302,14 +286,47 @@ def validate_key(arg):
     return str(arg)
 
 
+def load_config_csv(filename, key_column=None, value_column=None):
+    """Read configuration from a CSV table.
+
+    The key_column and value_column parameters can be one-based column indices or
+    spreadsheet-like column letters in range A-Z.
+
+    Rows without keys or with invalid keys are ignored. See :func:`validate_key` for details.
+
+    Values which can be converted from string to other types are converted automatically.
+    See :func:`text_to_value` for details.
+    """
+    table = {}
+    with open(filename) as file:
+        # pylint: disable=import-outside-toplevel
+        import csv
+
+        key_column = column_from_string(
+            key_column, default=0, fallback=lambda x: ord(x) - ord("A")
+        )
+        value_column = column_from_string(
+            value_column, default=key_column + 1, fallback=lambda x: ord(x) - ord("A")
+        )
+
+        for row in csv.reader(file):
+            key = validate_key(row[key_column])
+            if key:
+                value = text_to_value(row[value_column])
+                table[key] = value
+
+    return record_to_nested_dictionary(table)
+
+
 def load_config_xlsx(filename, sheet=None, key_column=None, value_column=None):
-    """Load a CSV file into a list of dictionaries
+    """Read configuration from a XLSX table.
 
-    Values which can be converted into int or float are converted. Cells which can be
-    parsed as JSON, will be loaded into Python data structures (dicts, lists, etc.).
+    The sheet parameter is name of the sheet within the given spreadsheet file.
 
-    A whole file is read and loaded into memory unlike with the ``csv.reader()``
-    function.
+    The key_column and value_column parameters can be one-based column indices or
+    spreadsheet-like column letters.
+
+    See :func:`load_config_csv` for handling of keys and values.
     """
     table = {}
 
@@ -317,17 +334,14 @@ def load_config_xlsx(filename, sheet=None, key_column=None, value_column=None):
     import openpyxl
     from openpyxl.utils import column_index_from_string
 
-    def column_from_string(arg, default):
-        if arg is None:
-            return default
-        else:
-            try:
-                return int(arg) - 1
-            except ValueError:
-                return column_index_from_string(arg) - 1
-
-    key_column = column_from_string(key_column, default=0)
-    value_column = column_from_string(value_column, default=key_column + 1)
+    key_column = column_from_string(
+        key_column, default=0, fallback=lambda x: column_index_from_string(x) - 1
+    )
+    value_column = column_from_string(
+        value_column,
+        default=key_column + 1,
+        fallback=lambda x: column_index_from_string(x) - 1,
+    )
 
     import warnings
 
@@ -364,13 +378,17 @@ def load_config_xlsx(filename, sheet=None, key_column=None, value_column=None):
 
 
 def load_config_ods(filename, sheet=None, key_column=None, value_column=None):
-    """Load a CSV file into a list of dictionaries
+    """Read configuration from a ODS table.
 
-    Values which can be converted into int or float are converted. Cells which can be
-    parsed as JSON, will be loaded into Python data structures (dicts, lists, etc.).
+    The sheet parameter is name of the sheet within the given spreadsheet file.
 
-    A whole file is read and loaded into memory unlike with the ``csv.reader()``
-    function.
+    The key_column and value_column parameters can be one-based column indices or
+    spreadsheet-like column letters. If the value column comes before the key
+    (parameter name) column in the file, only columns in the range A-Z are supported
+    when specified using letters (specifying using one-based indices works
+    in any case).
+
+    See :func:`load_config_csv` for handling of keys and values.
     """
     table = {}
 
@@ -379,39 +397,34 @@ def load_config_ods(filename, sheet=None, key_column=None, value_column=None):
 
     sheet = sheet if sheet else 0
 
-    def column_from_string(arg, default):
-        if arg is None:
-            return default
-        else:
-            try:
-                return int(arg) - 1
-            except ValueError:
-                return arg
+    key_column = column_from_string(key_column, default=0, fallback=lambda x: x)
+    value_column = column_from_string(value_column, default=1, fallback=lambda x: x)
 
-    key_column = column_from_string(key_column, default=0)
-    value_column = column_from_string(value_column, default=1)
-
+    # The columns are always returned in the order as in the table, not in
+    # the order specified in the parameter, so we need to know the relative order
+    # of the two columns.
+    flip_order = False
+    # Assuming both are of the same type.
     if isinstance(key_column, int) and isinstance(value_column, int):
         cols = [key_column, value_column]
-        if key_column < value_column:
-            key_column_index = 1
-            value_column_index = 2
-        else:
-            key_column_index = 2
-            value_column_index = 1
+        if key_column > value_column:
+            flip_order = True
     else:
         cols = f"{key_column},{value_column}"
-        # TODO: Defaults to flipped order for multi-letter column (flip it).
+        # Multi-letter columns which are in opposite order are not handled.
         if (
             len(key_column) == 1
             and len(value_column) == 1
-            and ord(key_column) < ord(value_column)
+            and ord(key_column) > ord(value_column)
         ):
-            key_column_index = 1
-            value_column_index = 2
-        else:
-            key_column_index = 2
-            value_column_index = 1
+            flip_order = True
+
+    if flip_order:
+        key_column_index = 2
+        value_column_index = 1
+    else:
+        key_column_index = 1
+        value_column_index = 2
 
     data = pandas.read_excel(
         Path(filename), sheet_name=sheet, header=None, usecols=cols
@@ -428,6 +441,10 @@ def load_config_ods(filename, sheet=None, key_column=None, value_column=None):
 
 
 def add_dict_config_to_table(table, value, keys=None):
+    """Add a nested dictionary to a table represented by a mapping
+
+    This is meant for internal use, if possible, use :func:`dict_config_to_table`.
+    """
     if keys is None:
         keys = []
     if isinstance(value, Mapping):
@@ -440,16 +457,22 @@ def add_dict_config_to_table(table, value, keys=None):
 
 
 def dict_config_to_table(value):
+    """Convert a nested dictionary to a table represented by a mapping"""
     table = {}
     add_dict_config_to_table(table, value)
     return table
 
 
 def print_table_config(config, file=None):
+    """Print a table represented by a mapping
+
+    Generates key-value pairs separated by a pipe.
+    It does not quote or espace the separator in values.
+    """
     for key, value in config.items():
         if isinstance(value, Iterable) and not isinstance(value, str):
             value = json.dumps(value)
-        print(f"{key};{value}", file=file)
+        print(f"{key}|{value}", file=file)
 
 
 def load_scenario_table(filename):
