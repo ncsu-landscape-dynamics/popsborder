@@ -1,5 +1,7 @@
 """Test configuration loading functions"""
 
+import pytest
+
 from popsborder.inputs import (
     dict_config_to_table,
     load_configuration,
@@ -7,85 +9,50 @@ from popsborder.inputs import (
 )
 
 
-def test_small_configs_are_same(datadir):
-    """Check that configurations loaded from different sources are the same"""
+@pytest.mark.parametrize("file_format", ["csv", "xlsx", "ods"])
+def test_small_configs_are_same(datadir, file_format):
+    """Check that configurations loaded from tables are the same as YAML"""
     config_yml = load_configuration(datadir / "small_config.yml")
-    config_csv = load_configuration(datadir / "small_config.csv")
-    config_ods = load_configuration(datadir / "small_config.ods")
-    config_xlsx = load_configuration(datadir / "small_config.xlsx")
+    config_csv = load_configuration(datadir / f"small_config.{file_format}")
     assert config_csv == config_yml
-    assert config_ods == config_yml
-    assert config_xlsx == config_yml
 
 
-def test_number_indexing_columns_xlsx(datadir):
+@pytest.mark.parametrize("file_format", ["csv", "xlsx", "ods"])
+def test_number_indexing_columns_xlsx(datadir, file_format):
     """Check that columns can be indexed using 1-based numerical indices"""
     config_yml = load_configuration(datadir / "small_config.yml")
     config_xlsx = load_configuration(
-        datadir / "small_config.xlsx::key_column=1,value_column=2"
+        datadir / f"small_config.{file_format}::key_column=1,value_column=2"
     )
     assert config_xlsx == config_yml
 
 
-def test_number_indexing_columns_ods(datadir):
-    """Check that columns can be indexed using 1-based numerical indices"""
-    config_yml = load_configuration(datadir / "small_config.yml")
-    config_ods = load_configuration(
-        datadir / "small_config.xlsx::key_column=1,value_column=2"
-    )
-    assert config_ods == config_yml
-
-
-def test_number_indexing_columns_csv(datadir):
-    """Check that columns can be indexed using 1-based numerical indices"""
-    config_yml = load_configuration(datadir / "small_config.yml")
-    config_csv = load_configuration(
-        datadir / "small_config.csv::key_column=1,value_column=2"
-    )
-    assert config_csv == config_yml
-
-
-def test_letter_indexing_columns_xlsx(datadir):
+@pytest.mark.parametrize("file_format", ["csv", "xlsx", "ods"])
+def test_letter_indexing_columns_xlsx(datadir, file_format):
     """Check that columns can be indexed using letter indices"""
     config_yml = load_configuration(datadir / "small_config.yml")
     config_xlsx = load_configuration(
-        datadir / "small_config.xlsx::key_column=A,value_column=B"
+        datadir / f"small_config.{file_format}::key_column=A,value_column=B"
     )
     assert config_xlsx == config_yml
 
 
-def test_letter_indexing_columns_ods(datadir):
-    """Check that columns can be indexed using letter indices"""
-    config_yml = load_configuration(datadir / "small_config.yml")
-    config_ods = load_configuration(
-        datadir / "small_config.ods::key_column=A,value_column=B"
-    )
-    assert config_ods == config_yml
-
-
-def test_letter_indexing_columns_csv(datadir):
-    """Check that columns can be indexed using letter indices"""
-    config_yml = load_configuration(datadir / "small_config.yml")
-    config_csv = load_configuration(
-        datadir / "small_config.csv::key_column=A,value_column=B"
-    )
-    assert config_csv == config_yml
-
-
-def test_indexing_columns_in_parameters_overrides(datadir):
+@pytest.mark.parametrize("file_format", ["csv", "xlsx", "ods"])
+def test_indexing_columns_in_parameters_overrides(datadir, file_format):
     """Check that columns indices from parameters override those from filename suffix"""
     config_yml = load_configuration(datadir / "small_config.yml")
     config_xlsx = load_configuration(
-        datadir / "small_config.xlsx::key_column=A,value_column=A", value_column="B"
+        datadir / f"small_config.{file_format}::key_column=A,value_column=A", value_column="B"
     )
     assert config_xlsx == config_yml
 
 
-def test_sheet_access(datadir):
+@pytest.mark.parametrize("file_format", ["xlsx", "ods"])
+def test_sheet_access(datadir, file_format):
     """Check that a sheet can be access by name"""
     config_yml = load_configuration(datadir / "small_config.yml")
     config_xlsx = load_configuration(
-        datadir / "small_config.xlsx",
+        datadir / f"small_config.{file_format}",
         sheet="Config Version 1",
         key_column="A",
         value_column="B",
@@ -93,38 +60,33 @@ def test_sheet_access(datadir):
     assert config_xlsx == config_yml
 
 
-def test_default_columns(datadir):
+@pytest.mark.parametrize("file_format", ["csv", "xlsx", "ods"])
+def test_default_columns(datadir, file_format):
     """Check that default columns are correctly used"""
     config_yml = load_configuration(datadir / "small_config.yml")
-    config_xlsx = load_configuration(datadir / "small_config.xlsx")
+    config_xlsx = load_configuration(datadir / f"small_config.{file_format}")
     assert config_xlsx == config_yml
 
 
-def test_large_config_load(datadir):
-    """Check that a larger (complete) configuration loads from a table"""
-    load_configuration(datadir / "large_config.xlsx")
-    load_configuration(datadir / "large_config.xlsx::value_column=C")
-    load_configuration(datadir / "large_config.xlsx::value_column=D")
-    load_configuration(datadir / "large_config.xlsx::value_column=E")
+@pytest.mark.parametrize("column", ["D", "E", 6])
+def test_large_config_load(datadir, column):
+    """Check that a larger, somewhat complete, configuration loads from a table"""
+    load_configuration(datadir / f"large_config.xlsx::value_column={column}")
 
 
-def test_user_friendly_config_load(datadir):
+@pytest.mark.parametrize("file_format", ["xlsx", "ods"])
+def test_user_friendly_config_load(datadir, file_format):
     """Check that a full user-friendly configuration loads from a table"""
-    config_xlsx = load_configuration(
-        datadir / "user_friendly_config.xlsx", key_column="D", value_column="B"
-    )
-    config_ods = load_configuration(
-        datadir / "user_friendly_config.ods", key_column="D", value_column="B"
-    )
     config_csv = load_configuration(
         datadir / "user_friendly_config.csv", key_column="D", value_column="B"
     )
+    config_other = load_configuration(
+        datadir / f"user_friendly_config.{file_format}", key_column="D", value_column="B"
+    )
     num_top_level_keys = 3
-    assert len(config_xlsx) == num_top_level_keys
-    assert len(config_ods) == num_top_level_keys
     assert len(config_csv) == num_top_level_keys
-    assert config_xlsx == config_ods
-    assert config_xlsx == config_csv
+    assert len(config_other) == num_top_level_keys
+    assert config_other == config_csv
 
 
 def test_dict_config_to_table(datadir):
