@@ -58,9 +58,10 @@ def update_nested_dict_by_dict(dictionary, update):
     """Recursively update nested dictionary by anther nested dictionary"""
     for key, value in update.items():
         if isinstance(value, Mapping):
-            update_nested_dict_by_dict(dictionary.get(key, {}), value)
+            dictionary[key] = update_nested_dict_by_dict(dictionary.get(key, {}), value)
         else:
             dictionary[key] = value
+    return dictionary
 
 
 def update_nested_dict_by_item(dictionary, keys, value):
