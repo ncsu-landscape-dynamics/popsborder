@@ -21,5 +21,5 @@ setuptools.setup(
         "Topic :: Scientific/Engineering",
     ],
     python_requires=">=3.5",
-    install_requires=["numpy", "scipy", "pandas", "PyYAML", "openpyxl"],
+    install_requires=["numpy", "scipy", "pandas", "PyYAML", "openpyxl", "odfpy"],
 )
