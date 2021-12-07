@@ -292,10 +292,11 @@ def load_config_csv(filename, key_column=None, value_column=None):
     The key_column and value_column parameters can be one-based column indices or
     spreadsheet-like column letters in range A-Z.
 
-    Rows without keys or with invalid keys are ignored. See :func:`validate_key` for details.
+    Rows without keys or with invalid keys are ignored. See :func:`validate_key`
+    for details.
 
-    Values which can be converted from string to other types are converted automatically.
-    See :func:`text_to_value` for details.
+    Values which can be converted from string to other types are converted
+    automatically. See :func:`text_to_value` for details.
     """
     table = {}
     with open(filename) as file:
