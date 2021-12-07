@@ -5,17 +5,24 @@
 The Python code runs with Python 3. (Python 2.7 is not supported.)
 
 The configuration is provided in a file which is specified as a command line
-parameter. The configuration format is JSON (extension `.json`) or YAML
-(extensions `.yml` or `.yaml`). The Python `json` package is part of
-the Python standard library while the `yaml` package needs to be
-installed (as of Python 3.8).
+parameter. The configuration format is YAML (extensions `.yml` or `.yaml`),
+ JSON (extension `.json`), XLSX (`.xlsx`), ODS (`.ods`), or CSV (`.csv`).
+The Python *json* and *csv* packages are part of the Python standard library,
+while the *`*PyYAML* package needs to be installed to support YAML,
+*openpyxl* to support XLSX, and *Pandas* together with *odfpy* to support ODS
+(all are included as dependencies when the install the *popsborder* package is
+installed).
 
-Unless you install the package or modify Python path, you will need to
+If you do not install the package or modify Python path, you will need to
 run in from the directory with the *popsborder* package, i.e., the root
 directory of the repository.
-
 If you install the package using *pip*, *pip* will take of the
 dependencies and it will work in any directory. 
+
+For spreadsheet (tabular) formats, you need specify `sheet`, `key_column`,
+and `value_column` together with the file name in the `--config-file`
+separated by `::` from the file name as key-value pairs
+where key and value are separated by `=` and individual keys are separated by `,`.
 
 ## Example
 

@@ -136,7 +136,7 @@ def load_configuration(filename, sheet=None, key_column=None, value_column=None)
     If the *filename* contains `::`, anything after the last `::` is considered
     parameters determining where in the spreadsheet or table are the relevant
     columns. The format is multiple key-value pairs with key and value separated by
-    `=`, `:`, or `: ` and individual keys separated by `,`.
+    `=`, `:`, or `: ` and individual pairs separated by `,`.
     The same information can be passed directly as function parameters.
     If both are provided, function parameters take precedence.
     """
