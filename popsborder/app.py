@@ -27,7 +27,8 @@ from __future__ import print_function, division
 
 import argparse
 
-from .simulation import run_simulation, load_configuration
+from .inputs import load_configuration
+from .simulation import run_simulation
 from .outputs import print_totals_as_text
 
 USAGE = """Usage:

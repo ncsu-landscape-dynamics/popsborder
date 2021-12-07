@@ -1,5 +1,5 @@
-from popsborder.scenarios import run_scenarios, load_scenario_table
-from popsborder.simulation import load_configuration
+from popsborder.scenarios import run_scenarios
+from popsborder.inputs import load_configuration, load_scenario_table
 from popsborder.outputs import save_scenario_result_to_pandas
 
 
