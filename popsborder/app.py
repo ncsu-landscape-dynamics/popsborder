@@ -65,8 +65,8 @@ def get_executable_name():
         return "python -m {}".format(__spec__.name.partition(".")[0])
 
 
-def main():
-    """Process command line parameters and run the simulation"""
+def create_parser():
+    """Create command line argument parser object"""
     parser = argparse.ArgumentParser(
         description="Pathway simulation of contaminated consignments",
         formatter_class=CustomHelpFormatter,
@@ -130,6 +130,11 @@ def main():
         default=argparse.SUPPRESS,
         help="Show this help message and exit",
     )
+
+
+def main():
+    """Process command line parameters and run the simulation"""
+    parser = create_parser()
     args = parser.parse_args()
 
     config = load_configuration(args.config_file)
