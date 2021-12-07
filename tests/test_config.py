@@ -42,7 +42,8 @@ def test_indexing_columns_in_parameters_overrides(datadir, file_format):
     """Check that columns indices from parameters override those from filename suffix"""
     config_yml = load_configuration(datadir / "small_config.yml")
     config_xlsx = load_configuration(
-        datadir / f"small_config.{file_format}::key_column=A,value_column=A", value_column="B"
+        datadir / f"small_config.{file_format}::key_column=A,value_column=A",
+        value_column="B",
     )
     assert config_xlsx == config_yml
 
@@ -81,7 +82,9 @@ def test_user_friendly_config_load(datadir, file_format):
         datadir / "user_friendly_config.csv", key_column="D", value_column="B"
     )
     config_other = load_configuration(
-        datadir / f"user_friendly_config.{file_format}", key_column="D", value_column="B"
+        datadir / f"user_friendly_config.{file_format}",
+        key_column="D",
+        value_column="B",
     )
     num_top_level_keys = 3
     assert len(config_csv) == num_top_level_keys
