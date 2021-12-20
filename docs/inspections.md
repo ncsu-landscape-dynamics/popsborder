@@ -24,8 +24,10 @@ inspection:
 ```
 
 The value of `within_box_proportion` can be set to any value greater
-than 0 and less than or equal to 1. By default, `within_box_proportion = 1` meaning all items within a box can be inspected. If
-`within_box_proportion < 1`, only the first `n = within_box_proportion * items_per_box` items in each box will be inspected.
+than 0 and less than or equal to 1. By default, `within_box_proportion = 1`
+meaning all items within a box can be inspected. If `within_box_proportion < 1`,
+only the first `n = within_box_proportion * items_per_box` items in each box
+will be inspected.
 
 ## Tolerance level
 
@@ -115,15 +117,15 @@ inspection:
   fixed_n: 10
 ```
 
-The number of units to be inspected can be any integer set by `fixed_n`.
-If `unit = "items"`, the sample size will be set to the minimum of two
-values: `fixed_n` and the maximum number of inspectable items based on
-`within_box_proportion` (`max_items = within_box_proportion * items_per_box * num_boxes`). If `unit = "boxes"`, the sample size will
-be set to `fixed_n` if `min_boxes <= fixed_n <= num_boxes`. If `fixed_n`
-is less than the minimum number of boxes to inspect, number of boxes to
-inspect will be set to `min_boxes`. If `fixed_n` exceeds the number of
-boxes in the consignment, number of boxes to inspect will be set to
-`num_boxes`.
+The number of units to be inspected can be any integer set by `fixed_n`. If
+`unit = "items"`, the sample size will be set to the minimum of two values:
+`fixed_n` and the maximum number of inspectable items based on
+`within_box_proportion` (`max_items = within_box_proportion * items_per_box * num_boxes`).
+If `unit = "boxes"`, the sample size will be set to `fixed_n` if
+`min_boxes <= fixed_n <= num_boxes`. If `fixed_n` is less than the minimum
+number of boxes to inspect, number of boxes to inspect will be set to
+`min_boxes`. If `fixed_n` exceeds the number of boxes in the consignment, number
+of boxes to inspect will be set to `num_boxes`.
 
 ## Selection strategy
 
