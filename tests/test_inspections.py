@@ -1,9 +1,10 @@
 """Test inspection functions directly"""
 
 import pytest
+from popsborder.inputs import load_configuration_yaml_from_text
 from popsborder.consignments import get_consignment_generator
 from popsborder.inspections import get_inspection_needed_function, inspect_always
-from popsborder.simulation import load_configuration_yaml_from_text, random_seed
+from popsborder.simulation import random_seed
 
 BASE_CONSIGNMENT_CONFIG = """\
 consignment:

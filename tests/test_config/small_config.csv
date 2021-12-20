@@ -1,0 +1,14 @@
+consignment/generation_method,parameter_based
+consignment/parameter_based/ports,"[""NY JFK CBP"", ""FL Miami Air CBP"", ""HI Honolulu CBP""]"
+contamination/contamination_unit,item
+contamination/contamination_rate/distribution,beta
+contamination/contamination_rate/value,0.01
+contamination/contamination_rate/parameters,"[0.0194628, 2.7609372]"
+contamination/arrangement,random
+inspection/unit,boxes
+inspection/within_box_proportion,1
+inspection/tolerance_level,0.005
+inspection/sample_strategy,hypergeometric
+inspection/hypergeometric/detection_level,0.1
+inspection/hypergeometric/confidence_level,0.95
+inspection/selection_strategy,random

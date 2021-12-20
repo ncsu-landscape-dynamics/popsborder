@@ -21,26 +21,23 @@
 .. codeauthor:: Kellyn P. Montgomery <kellynmontgomery gmail com>
 """
 
-from __future__ import print_function, division
-
-import sys
-import types
 import random
-import numpy as np
+import types
 
+import numpy as np
 
 from .consignments import get_consignment_generator, get_contaminant_function
 from .inspections import (
+    consignment_contamination_rate,
     get_inspection_needed_function,
     get_sample_function,
     inspect,
     is_consignment_contaminated,
-    consignment_contamination_rate,
 )
 from .outputs import (
     Form280,
-    PrintReporter,
     MuteReporter,
+    PrintReporter,
     SuccessRates,
     pretty_consignment,
 )
@@ -378,34 +375,3 @@ def run_simulation(
         return details, totals
     else:
         return totals
-
-
-def load_configuration_yaml_from_text(text):
-    """Return configuration dictionary from YAML in a string"""
-    import yaml  # pylint: disable=import-outside-toplevel
-
-    if hasattr(yaml, "full_load"):
-        return yaml.full_load(text)
-    return yaml.load(text)  # pylint: disable=no-value-for-parameter
-
-
-def load_configuration(filename):
-    """Get the configuration from a JSON or YAML file
-
-    The format is decided based on the file extension.
-    It uses full_load() (FullLoader) to read YAML.
-
-    The parameter can be a string or a path object (path-like object).
-    """
-    if str(filename).endswith(".json"):
-        import json  # pylint: disable=import-outside-toplevel
-
-        return json.load(open(filename))
-    elif str(filename).endswith(".yaml") or str(filename).endswith(".yml"):
-        import yaml  # pylint: disable=import-outside-toplevel
-
-        if hasattr(yaml, "full_load"):
-            return yaml.full_load(open(filename))
-        return yaml.load(open(filename))  # pylint: disable=no-value-for-parameter
-    else:
-        sys.exit("Unknown file extension (file: {})".format(filename))
