@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="PoPS Border",
-    version="0.9.0",
+    name="popsborder",
+    version="1.0.0.dev",
     author="Vaclav Petras, Kellyn P. Montgomery",
     author_email="vpetras@ncsu.edu",
     description="Simulation of contaminated consignment and their inspections",
@@ -21,5 +21,5 @@ setuptools.setup(
         "Topic :: Scientific/Engineering",
     ],
     python_requires=">=3.5",
-    install_requires=["numpy", "scipy", "pandas", "PyYAML"],
+    install_requires=["numpy", "scipy", "pandas", "PyYAML", "openpyxl", "odfpy"],
 )

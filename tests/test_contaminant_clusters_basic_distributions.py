@@ -1,7 +1,8 @@
 import numpy as np
 import datetime
 
-from popsborder.simulation import random_seed, load_configuration_yaml_from_text
+from popsborder.inputs import load_configuration_yaml_from_text
+from popsborder.simulation import random_seed
 from popsborder.consignments import add_contaminant_clusters, Consignment, Box
 
 CONTINUOUS_CONFIG = """\

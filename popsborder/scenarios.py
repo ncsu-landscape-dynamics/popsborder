@@ -20,66 +20,8 @@
 .. codeauthor:: Vaclav Petras <wenzeslaus gmail com>
 """
 
-import copy
-import collections.abc
-
 from .simulation import run_simulation
-
-
-def update_nested_dict_by_dict(dictionary, update):
-    """Recursively update nested dictionary by anther nested dictionary"""
-    for key, value in update.items():
-        if isinstance(value, collections.abc.Mapping):
-            update_nested_dict_by_dict(dictionary.get(key, {}), value)
-        else:
-            dictionary[key] = value
-
-
-def update_nested_dict_by_item(dictionary, keys, value):
-    """Update nested dictionary by a nested keys-value pair
-
-    An item is a list of keys to navigate the nested dictionary and a value to place
-    in the given position.
-
-    When a key can be represented as an int, it is used as a list index.
-    List must already exists in the given size or the only index used must be 0.
-
-    Floating point keys are not supported.
-    """
-    if len(keys) == 1:
-        key = keys[0]
-        try:
-            key = int(key)
-        except ValueError:
-            pass
-        dictionary[key] = value
-    else:
-        if keys[0] not in dictionary:
-            try:
-                # Test if the next key is an integer and thus index in a list.
-                int(keys[1])
-                # In case it is a list, we require keys are items are filled in order.
-                dictionary[keys[0]] = [None]
-            except ValueError:
-                dictionary[keys[0]] = {}
-        update_nested_dict_by_item(dictionary[keys[0]], keys[1:], value)
-
-
-def record_to_nested_dictionary(record):
-    """Convert dictionary with key/subkey/subsubkey keys into a nested dictionary"""
-    out = {}
-    for path, value in record.items():
-        keys = path.split("/")
-        update_nested_dict_by_item(out, keys, value)
-    return out
-
-
-def update_config(config, record):
-    """Update config dictionary by a dictionary with key/subkey/subsubkey keys"""
-    config = copy.deepcopy(config)
-    update = record_to_nested_dictionary(record)
-    update_nested_dict_by_dict(config, update)
-    return config
+from .inputs import update_config
 
 
 def run_scenarios(
@@ -127,37 +69,3 @@ def run_scenarios(
             # The result is simulation totals.
             results.append((result, scenario_config))
     return results
-
-
-def load_scenario_table(filename):
-    """Load a CSV file into a list of dictionaries
-
-    Values which can be converted into int or float are converted. Cells which can be
-    parsed as JSON, will be loaded into Python data structures (dicts, lists, etc.).
-
-    A whole file is read and loaded into memory unlike with the ``csv.reader()``
-    function.
-    """
-    # pylint: disable=import-outside-toplevel
-    import csv
-    import json
-
-    table = []
-    with open(filename) as file:
-        for row in csv.DictReader(file):
-            for key, value in row.items():
-                try:
-                    value = int(value)
-                    row[key] = value
-                except ValueError:
-                    try:
-                        value = float(value)
-                        row[key] = value
-                    except ValueError:
-                        try:
-                            value = json.loads(value)
-                            row[key] = value
-                        except json.JSONDecodeError:
-                            pass
-            table.append(row)
-    return table

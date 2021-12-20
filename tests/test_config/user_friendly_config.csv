@@ -1,0 +1,51 @@
+Name,Value,Value type,Parameter keys
+Consignment parameters,,,
+items per box - default,,"Non-zero, positive integer",consignment/items_per_box/default
+items per box - air default,,"Non-zero, positive integer",consignment/items_per_box/air/default
+items per box - maritime default,,"Non-zero, positive integer",consignment/items_per_box/marine/default
+consignment generation method,,Pick from list,consignment/generation_method
+Parameter based:,,,
+minimum number of boxes,,"Non-zero, positive integer",consignment/parameter_based/boxes/min
+maximim number of boxes,,"Non-zero, positive integer",consignment/parameter_based/boxes/max
+origins,,"Comma separated list of ISO3 codes, e.g. ""CAN"", ""DEU"", ""CHN"", ""JPN"", ""MEX"", ""ITA""",consignment/parameter_based/origins
+commodities,,"Comma separated list of commodities, e.g. ""Hyacinthus"", ""Rosa"", ""Gerbera"", ""Aegilops""",consignment/parameter_based/commodity
+ports,,"Comma separated list of ports of entry e.g. ""NY JFK CBP"", ""FL Miami Air CBP"", ""HI Honolulu CBP"", ""AZ Phoenix CBP""",consignment/parameter_based/ports
+Input file:,,,
+File type,,Pick from list,consignment/input_file/file_type
+File name,,"Name of CSV file with inspection records, e.g. ""AQIM_sample.csv""",consignment/input_file/file_name
+,,,
+,,,
+Contamination parameters,,,
+contamination unit,,Pick from list,contamination/contamination_unit
+distribution,,Pick from list,contamination/contamination_rate/distribution
+Fixed value:,,,
+value,,"Positive, decimal (0, 1.0). Only used with fixed_value contamination.",contamination/contamination_rate/value
+Beta distribution:,,,
+shape (α),,"Positive, decimal (0, inf). Only used with beta distribution contamination.",contamination/contamination_rate/parameters
+shape (β),,"Positive, decimal (0, inf). Only used with beta distribution contamination.",contamination/contamination_rate/parameters
+arrangement,,Pick from list,contamination/arrangement
+Clustered arrangement:,,,
+contaminated units per cluster,,"Positive, non-zero integer. Only used with clustered arrangement.",contamination/clustered/contaminated_units_per_cluster
+cluster distribution,,Pick from list. Only used with cluster arrangement.,contamination/clustered/distribution
+cluster width (num of items),,"Positive, non-zero integer. Only used with random cluster distribution.",contamination/clustered/random/cluster_item_width
+Random box:,,,
+probability,,"Positive, decimal (0, 1.0). Only used with random_box contamination.",contamination/random_box/probability
+ratio,,"Positive, decimal (0, 1.0). Only used with random_box contamination.",contamination/random_box/ratio
+,,,
+Inspection parameters,,,
+inspection unit,,Pick from list,inspection/unit
+proportion of box to inspect,,"Positive, decimal (0, 1.0).",inspection/within_box_pct
+tolerance level,,"Positive, decimal (0, 1.0).",inspection/tolerance_level
+minimum boxes to inspect,,"Positive integer (0, inf)",inspection/min_boxes
+sample size method,,Pick from list,inspection/sample_strategy
+Proportion method:,,,
+value,,"Positive, decimal (0, 1.0).",inspection/proportion/proportion
+Hypergeometric method:,,,
+detection level,,"Positive, decimal (0, 1.0).",inspection/hypergeometric/detection_level
+confidence level,,"Positive, decimal (0, 1.0).",inspection/hypergeometric/confidence_level
+Fixed number method:,,,
+value,,"Positive integer (0, inf)",inspection/fixed_n
+selection method,,Pick from list,inspection/selection_strategy
+Cluster selection:,,,
+cluster selection method,,Pick from list,inspection/cluster/cluster_selection
+interval,,"Positive integer (0, inf)",inspection/cluster/interval
