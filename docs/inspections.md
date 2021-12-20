@@ -187,17 +187,17 @@ In this case, the sample size is calculated using the hypergeometric
 approach based on the total number of items in the consignment and the
 items to be inspected are selected using the cluster approach.
 
-Let's say the computed sample size (`n_units_to_inspect`) is 200 items.
-The following steps are used to determine which items to inspect. First,
-the `within_box_proportion` value is used to determine how many clusters
-(i.e., boxes) are needed to get to the sample size. The number of items
-inspected per box is `within_box_proportion` _ `items_per_box` (200 _
-0.25 = 50), so only 50 items would be inspected per box. The number of
-boxes that need to be opened to get to the sample size is
-`n_units_to_inspect` / `inspect_per_box` (200 / 50 = 4), so 4 boxes need
-to be opened. Once the number of boxes needed is determined, those boxes
-are then selected from the consignment randomly since `cluster_unit = "random"` and the first 25% of items are inspected convenience style,
-i.e., first _n_ or tailgate.
+Let's say the computed sample size (`n_units_to_inspect`) is 200 items. The
+following steps are used to determine which items to inspect. First, the
+`within_box_proportion` value is used to determine how many clusters (i.e.,
+boxes) are needed to get to the sample size. The number of items inspected per
+box is `within_box_proportion * items_per_box` (`200 * 0.25 = 50`), so only 50
+items would be inspected per box. The number of boxes that need to be opened to
+get to the sample size is `n_units_to_inspect / inspect_per_box`
+(`200 / 50 = 4`), so 4 boxes need to be opened. Once the number of boxes needed
+is determined, those boxes are then selected from the consignment randomly since
+`cluster_unit = "random"` and the first 25% of items are inspected convenience
+style, i.e., first _n_ or tailgate.
 
 The cluster selection strategy could be useful when using the
 hypergeometric sample strategy with items as the inspection unit. An

@@ -61,7 +61,7 @@ contamination:
 
 The contaminant arrangement within the consignment can be determined by:
 
-```
+```yaml
 contamination:
   arrangement: random
 ```
