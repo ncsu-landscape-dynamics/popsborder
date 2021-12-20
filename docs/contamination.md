@@ -1,6 +1,7 @@
 # Contaminant configuration
 
 ## Contamination unit
+
 The unit used for contaminating a consignment can be determined by:
 
 ```yaml
@@ -32,8 +33,8 @@ contamination:
   contamination_rate:
     distribution: beta
     parameters:
-    - 4
-    - 60
+      - 4
+      - 60
 ```
 
 The possible values for `distribution` include `beta` and `fixed_value`.
@@ -80,8 +81,8 @@ uniform randomly selected from the total number of units and contaminated.
 If using `arrangement` = `clustered`, the configuration is as follows:
 
 ```yaml
-  clustered:
-    contaminated_units_per_cluster: 200
+clustered:
+  contaminated_units_per_cluster: 200
 ```
 
 The number of contaminated units (items or boxes depending on
@@ -139,8 +140,8 @@ are contaminated. With `first`, only the first item in the box will be contamina
 `random` in-box arrangement will place contaminants in a box using uniform random
 distribution. The number of contaminants to be placed is determined using the
 distribution configured using the `contamination_rate` key which takes meaning
-*contamination rate within a box* instead of its usual meaning *contamination rate
-within a consignment*. In that case, the configuration may look like this:
+_contamination rate within a box_ instead of its usual meaning _contamination rate
+within a consignment_. In that case, the configuration may look like this:
 
 ```yaml
 contamination:

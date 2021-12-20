@@ -4,16 +4,16 @@
 
 The Python code runs with Python 3. (Python 2.7 is not supported.)
 
-The Python *json* and *csv* packages are part of the Python standard library,
-while the *PyYAML* package needs to be installed to support YAML,
-*openpyxl* to support XLSX, and *Pandas* together with *odfpy* to support ODS
-(all are included as dependencies when the install the *popsborder* package is
+The Python _json_ and _csv_ packages are part of the Python standard library,
+while the _PyYAML_ package needs to be installed to support YAML,
+_openpyxl_ to support XLSX, and _Pandas_ together with _odfpy_ to support ODS
+(all are included as dependencies when the install the _popsborder_ package is
 installed).
 
 If you do not install the package or modify Python path, you will need to
-run in from the directory with the *popsborder* package, i.e., the root
+run in from the directory with the _popsborder_ package, i.e., the root
 directory of the repository.
-If you install the package using *pip*, *pip* will take of the
+If you install the package using _pip_, _pip_ will take of the
 dependencies and it will work in any directory.
 
 ## Running
@@ -56,7 +56,6 @@ python -m popsborder --num-consignments 100 --config-file "config.xlsx::sheet=Sh
 
 For a sheet with spaces in the name as in the example above, simply quote the
 whole command-line argument as you would quote spaces in a file name.
-
 
 ## Command line options
 
