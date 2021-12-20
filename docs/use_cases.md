@@ -37,16 +37,16 @@ each containing between 1 and 50 boxes. We run the simulation with
 different contamination rates and compare slippage rates.
 
 | Contaminated boxes | Missed |
-| ------------------ | ------ |
-| 90%                |  1%    |
-| 80%                |  4%    |
-| 70%                |  9%    |
-| 60%                | 16%    |
-| 50%                | 24%    |
-| 40%                | 34%    |
-| 30%                | 47%    |
-| 20%                | 61%    |
-| 10%                | 77%    |
+| ------------------ | -----: |
+| 90%                |     1% |
+| 80%                |     4% |
+| 70%                |     9% |
+| 60%                |    16% |
+| 50%                |    24% |
+| 40%                |    34% |
+| 30%                |    47% |
+| 20%                |    61% |
+| 10%                |    77% |
 
 ## Will we intercept a newly emerging pest from a specific pathway?
 
