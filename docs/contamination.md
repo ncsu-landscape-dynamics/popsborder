@@ -11,7 +11,7 @@ contamination:
 The possible values for `contamination_unit` include `items` and `boxes`. If
 `contamination_unit` = items, the contamination rate (described below) is applied to
 the total number of items in the consignment and individual items are contaminated
-using the specified contaminant arrangement method (described below). 
+using the specified contaminant arrangement method (described below).
 
 Alternatively, if `contamination_unit` = boxes, the contamination rate is
 applied to the total number of boxes in the consignment. The number of boxes to
@@ -43,7 +43,7 @@ is used to draw a random contamination rate for every consignment. If using the 
 distribution, two shape parameter values are required to define the desired beta
 distribution of contamination rates. An contamination rate mean and standard
 deviation can be used to determine the beta distribution shape parameters if
-desired using this calculator: https://www.desmos.com/calculator/kx83qio7yl.
+desired using this calculator: <https://www.desmos.com/calculator/kx83qio7yl>.
 
 If `distribution` = `fixed_value`, a constant contamination rate is used for every
 consignment (rather than a random value based on a beta distribution). When using a

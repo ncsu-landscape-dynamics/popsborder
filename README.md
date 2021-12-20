@@ -70,7 +70,7 @@ The dependencies of this package will be installed into the virtual environment
 created by *pipenv*. Download this repository (e.g., as ZIP and unpack it).
 In the directory with the code with *pipenv* installed, run:
 
-```
+```v
 pipenv install
 ```
 
@@ -86,7 +86,7 @@ you open a pull request.
 
 ### Install everything using pipenv
 
-```
+```sh
 pipenv install --dev
 ```
 
@@ -94,7 +94,7 @@ pipenv install --dev
 
 Install the following packages:
 
-```
+```sh
 flake8 pylint black pytest pytest-datadir
 ```
 
@@ -105,7 +105,7 @@ environment.
 
 To run these from command line use:
 
-```
+```sh
 flake8 .
 pylint popsborder
 black .

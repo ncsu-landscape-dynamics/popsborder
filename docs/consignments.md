@@ -129,13 +129,14 @@ Consignments in the simulation can be based on real F280 records. In that case,
 a CSV file needs to be specified using the `file_name` key.
 
 The CSV is expected to have the following columns:
- * QUANTITY which will be used as number of items,
- * PATHWAY which is used to determine the `items_per_box` value (case
-   insensitive),
- * REPORT_DT is used for date,
- * COMMODITY as the flower (commodity type),
- * ORIGIN_NM as origin, and
- * LOCATION as port (where consignment was received).
+
+* QUANTITY which will be used as number of items,
+* PATHWAY which is used to determine the `items_per_box` value (case
+  insensitive),
+* REPORT_DT is used for date,
+* COMMODITY as the flower (commodity type),
+* ORIGIN_NM as origin, and
+* LOCATION as port (where consignment was received).
 
 The CSV file should be comma-separated (`,`) using double quote for text fields
 (`"`). The path is absolute or relative to the place where the Python program is
@@ -148,16 +149,17 @@ Consignments in the simulation can also be based on AQIM inspection records. In
 that case, a CSV file needs to be specified using the `file_name` key.
 
 The CSV is expected to have the following columns:
- * UNIT which is used to specify the unit (must be items or boxes) used in
-   QUANTITY.
- * QUANTITY which is used as number of items or number of boxes depending on
-   UNIT specified,
- * CARGO_FORM which is used to determine the `items_per_box` value similar to
-   PATHWAY in F280 (case insensitive),
- * CALENDAR_YR is used for date (YYYY only),
- * COMMODITY_LIST is used as the flower (commodity type),
- * ORIGIN as origin, and
- * LOCATION as port of entry (where consignment was received).
+
+* UNIT which is used to specify the unit (must be items or boxes) used in
+ QUANTITY.
+* QUANTITY which is used as number of items or number of boxes depending on
+ UNIT specified,
+* CARGO_FORM which is used to determine the `items_per_box` value similar to
+ PATHWAY in F280 (case insensitive),
+* CALENDAR_YR is used for date (YYYY only),
+* COMMODITY_LIST is used as the flower (commodity type),
+* ORIGIN as origin, and
+* LOCATION as port of entry (where consignment was received).
 
 The CSV file should be comma-separated (`,`) using double quote for text fields
 (`"`). The path is absolute or relative to the place where the Python program is

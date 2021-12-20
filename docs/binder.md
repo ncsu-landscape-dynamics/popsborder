@@ -50,7 +50,7 @@ convenient for you. Here are the three choices:
 ## Lifetime of the environment
 
 Every time you use the link (the *launch binder* button) a new
-environment is created for you. 
+environment is created for you.
 
 After some time of inactivity, the notebook's kernel (a program running
 in the cloud making the Python code work) will shut down. If that's the
