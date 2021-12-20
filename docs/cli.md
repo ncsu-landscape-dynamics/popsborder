@@ -32,7 +32,7 @@ where key and value are separated by `=` and individual keys are separated by `,
 
 Direct run of the simulation with 1000 consignments repeated 20 times:
 
-```
+```sh
 python -m popsborder --num-simulations 20 --num-consignments 1000 --config-file config.yml
 ```
 
@@ -62,7 +62,7 @@ whole command-line argument as you would quote spaces in a file name.
 
 Get all command line options for the simulation by running:
 
-```
+```sh
 python -m popsborder --help
 ```
 
@@ -73,7 +73,7 @@ runs of the simulation with predefined values
 covering both success rate in detection of contaminants and generation of F280
 records:
 
-```
+```sh
 ./examples/bash/bash_examples.sh
 ```
 

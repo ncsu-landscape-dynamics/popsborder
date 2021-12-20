@@ -3,7 +3,7 @@
 ## Inspection unit
 The inspection unit can be determined by:
 
-```
+```yaml
 inspection:
   unit: items
 ```
@@ -16,7 +16,7 @@ sample size based on number of boxes in the consignment.
 The proportion of items within a box to be inspected can be determined
 by:
 
-```
+```yaml
 inspection:
   within_box_proportion: 1
 ```
@@ -30,7 +30,7 @@ items_per_box` items in each box will be inspected.
 ## Tolerance level
 The contamination tolerance level can be determined by:
 
-```
+```yaml
 inspection:
   tolerance_level: 0
 ```
@@ -49,7 +49,7 @@ consignments with contamination rates above the tolerance level
 ## Sample strategy
 The sample strategy can be determined by:
 
-```
+```yaml
 inspection:
   sample_strategy: proportion
 ```
@@ -65,7 +65,7 @@ sampling a specified number of units, and `all` for sampling all units.
 
 The settings for `proportion` are:
 
-```
+```yaml
 inspection:
   proportion:
       value: 0.02
@@ -82,7 +82,7 @@ The proportion value is set by `proportion` and the minimum number of
 
 The settings for `hypergeometric` are:
 
-```
+```yaml
 inspection:
   hypergeometric:
       detection_level: 0.05
@@ -96,17 +96,18 @@ minimum number of boxes to be inspected is set by `min_boxes`. The
 sample size is calculated using a hypergeometric distribution (sampling
 without replacement) as described in (Fosgate, 2009). The equation used
 to compute the sample size is:
-  
+
 ```math
 n=(1-(alpha)^1/D*N)(N-(D*N-1/2))
 ```
+
 where alpha is 1 - `confidence_level`, D is `detection_level`, and N is
 `num_units`.
 
 ### Fixed *n* strategy
 The settings for `fixed_n` are:
 
-```
+```yaml
 inspection:
   fixed_n: 10
 ```
@@ -125,7 +126,7 @@ boxes in the consignment, number of boxes to inspect will be set to
 ## Selection strategy
 The unit selection strategy can be determined by:
 
-```
+```yaml
 inspection:
   selection_strategy: random
 ```
@@ -148,7 +149,7 @@ cannot be used with the highest inspection unit (e.g., `unit =
 
 The settings for `cluster` are:
 
-``` 
+```yaml
 inspection:
   within_box_proportion: 0.1
   cluster: 
@@ -166,15 +167,15 @@ The proportion of items to inspect within each cluster unit is set by
 
 A simple example using the following configuration: 
 
-``` 
-consignment: 
+```yaml
+consignment:
   items_per_box:
-    default: 200 
-inspection: 
-  unit: item 
-  within_box_proportion: 0.25 
-  sample_strategy: hypergeometric 
-  selection_strategy: cluter 
+    default: 200
+inspection:
+  unit: item
+  within_box_proportion: 0.25
+  sample_strategy: hypergeometric
+  selection_strategy: cluter
   cluster: 
     cluster_selection: random
 ```
@@ -236,7 +237,7 @@ is applied to consignments which have flowers specified in `flowers` and
 which have less then `max_boxes`. The program parameters can be
 specified like this:
 
-```
+```yaml
 release_programs:
   naive_cfrp:
     flowers:

@@ -5,7 +5,7 @@
 Pretty printing of individual consignments and items can be enabled by `--pretty`
 in the command line with output like this:
 
-```
+```text
 ━━ Consignment ━━ Boxes: 3 ━━ Items: 30 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🐛 ✿ ✿ ✿ ✿ ✿ ✿ 🐛 ✿ ✿ | ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ 🐛 | ✿ ✿ 🐛 ✿ ✿ ✿ ✿ ✿ ✿ 🐛
 ━━ Consignment ━━ Boxes: 2 ━━ Items: 20 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -16,7 +16,7 @@ Th above is the default output (equivalent with `--pretty=boxes`). Separation of
 individual boxes can be disabled using `--pretty=items` where the only unit
 shown graphically are the items. Possible output looks like this:
 
-```
+```text
 ━━ Consignment ━━ Boxes: 3 ━━ Items: 30 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🐛 ✿ ✿ 🐛 ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ 🐛
 ━━ Consignment ━━ Boxes: 2 ━━ Items: 20 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -26,7 +26,7 @@ shown graphically are the items. Possible output looks like this:
 Finally, option `--pretty=boxes_only` focuses just on the boxes and does not
 show individual items:
 
-```
+```text
 ── Consignment ── Boxes: 6 ── Items: 60 ───────────────────────────────────
 🐛 🐛 ✿ ✿ ✿ 🐛
 ── Consignment ── Boxes: 4 ── Items: 40 ───────────────────────────────────
@@ -35,7 +35,7 @@ show individual items:
 
 This can be further configured using `pretty` key in the configuration file:
 
-```
+```yaml
 pretty:
   flower: o
   bug: x
@@ -51,7 +51,7 @@ meaning in YAML.
 
 The output with the settings above will look like:
 
-```
+```text
 -- Consignment -- Boxes: 4 -- Items: 40 -----------------------------------
 xooooooooo|ooooooxooo|oooooooooo|xoooooooox
 -- Consignment -- Boxes: 6 -- Items: 60 -----------------------------------
@@ -66,7 +66,7 @@ return an object with arrays of items (binary values representing contaminated o
 not) and the item indexes inspected. If multiple simulation iterations
 are being used, the details from the first simulation will be used.
 
-```
+```python
 num_consignments = 10
 results, details = run_scenarios(
     config=config,

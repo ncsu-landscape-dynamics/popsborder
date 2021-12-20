@@ -2,7 +2,8 @@
 
 ## Contamination unit
 The unit used for contaminating a consignment can be determined by:
-```
+
+```yaml
 contamination:
   contamination_unit: items
 ```
@@ -23,8 +24,10 @@ the contamination rate is 0.15, the number of boxes to contaminate is 1.5. One
 full box and the first half of one box will be contaminated.
 
 ## Contamination rate
+
 The contamination rate can be determined by:
-```
+
+```yaml
 contamination:
   contamination_rate:
     distribution: beta
@@ -32,6 +35,7 @@ contamination:
     - 4
     - 60
 ```
+
 The possible values for `distribution` include `beta` and `fixed_value`.
 
 If `distribution` = `beta`, a beta probability distribution of contamination rates
@@ -45,7 +49,7 @@ If `distribution` = `fixed_value`, a constant contamination rate is used for eve
 consignment (rather than a random value based on a beta distribution). When using a
 fixed value, the desired value must specified as follows:
 
-```
+```yaml
 contamination:
   contamination_rate:
     distribution: fixed_value
@@ -53,6 +57,7 @@ contamination:
 ```
 
 ## Contaminant arrangement
+
 The contaminant arrangement within the consignment can be determined by:
 
 ```
@@ -65,14 +70,16 @@ for one or more contaminant clusters within items of the consignment, and `rando
 one or more random boxes being contaminated.
 
 ### Random arrangement
+
 The `random` arrangement does not have any further configuration. The computed
 number of items or boxes (based on the contamination rate described above) are
 uniform randomly selected from the total number of units and contaminated.
 
 ### Clustered arrangement
+
 If using `arrangement` = `clustered`, the configuration is as follows:
 
-```
+```yaml
   clustered:
     contaminated_units_per_cluster: 200
 ```
@@ -88,7 +95,7 @@ If `contamination_unit` = `boxes`, no additional parameters are used.
 If `contamination_unit` = `items`, a `distribution` should also be specified.
 The configuration is as follows:
 
-```
+```yaml
   clustered:
     contaminated_units_per_cluster: 200
     distribution: random
@@ -112,9 +119,10 @@ are divided into strata large enough for one cluster and strata to contaminate
 are selected uniform randomly.
 
 ### Random box
+
 The settings for `random_box` is:
 
-```
+```yaml
 contamination:
   random_box:
     probability: 0.2
@@ -134,7 +142,7 @@ distribution configured using the `contamination_rate` key which takes meaning
 *contamination rate within a box* instead of its usual meaning *contamination rate
 within a consignment*. In that case, the configuration may look like this:
 
-```
+```yaml
 contamination:
   contamination_rate:
     distribution: beta
