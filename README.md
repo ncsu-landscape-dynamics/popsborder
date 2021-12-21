@@ -16,22 +16,22 @@ The simulation is using the following model to understand the system:
 f(x) -> y
 ```
 
-where *x* represents all shipments with all information about them
-such as the level of infestation, *f* is a sampling function,
+where _x_ represents all shipments with all information about them
+such as the level of infestation, _f_ is a sampling function,
 i.e. import procedure used at the port,
-and *y* represents the resulting record in the database.
+and _y_ represents the resulting record in the database.
 
-Since the simulation is generating *x*, we can compute:
+Since the simulation is generating _x_, we can compute:
 
 ```math
 r = g(y) / g(x)
 ```
 
-where *x* and *y* are defined in the same way as above,
-*g* is a function giving level of infestation in each set
+where _x_ and _y_ are defined in the same way as above,
+_g_ is a function giving level of infestation in each set
 (e.g. number of shipments with a pest),
-and *r* is the success rate in detecting infestation
-using the function *f* from above.
+and _r_ is the success rate in detecting infestation
+using the function _f_ from above.
 
 ## Use cases
 
@@ -65,12 +65,12 @@ pages are good ones to start with.
 
 ## Install
 
-Besides Python, you will need *pipenv* which is usually installed using *pip*.
+Besides Python, you will need _pipenv_ which is usually installed using _pip_.
 The dependencies of this package will be installed into the virtual environment
-created by *pipenv*. Download this repository (e.g., as ZIP and unpack it).
-In the directory with the code with *pipenv* installed, run:
+created by _pipenv_. Download this repository (e.g., as ZIP and unpack it).
+In the directory with the code with _pipenv_ installed, run:
 
-```
+```sh
 pipenv install
 ```
 
@@ -86,7 +86,7 @@ you open a pull request.
 
 ### Install everything using pipenv
 
-```
+```sh
 pipenv install --dev
 ```
 
@@ -94,18 +94,18 @@ pipenv install --dev
 
 Install the following packages:
 
-```
+```sh
 flake8 pylint black pytest pytest-datadir
 ```
 
-Install these using *pip* or *conda* possibly into a (virtual)
+Install these using _pip_ or _conda_ possibly into a (virtual)
 environment.
 
 ### Run tests
 
 To run these from command line use:
 
-```
+```sh
 flake8 .
 pylint popsborder
 black .
@@ -117,19 +117,19 @@ pytest tests/
 We store computed notebooks as they serve as documentation and
 examples.
 After modification, notebooks should be recomputed, e.g., by
-*Restart kernel and run all cells* to ensure that the notebook runs
+_Restart kernel and run all cells_ to ensure that the notebook runs
 with the cells executed in order and that there are minimal changes
 to the notebook (e.g., executed cell numbers).
 
 The standard `git diff` is not particularly useful for `.ipynb` files,
 especially for computed ones, but the rendered file can be viewed in PR
-and *nbdiff* in command line can show a human-readable difference.
+and _nbdiff_ in command line can show a human-readable difference.
 
 ## Authors
 
-* Vaclav Petras, NCSU Center for Geospatial Analytics
-* Kellyn P. Montgomery, NCSU Center for Geospatial Analytics
-* Anna Petrasova, NCSU Center for Geospatial Analytics
+- Vaclav Petras, NCSU Center for Geospatial Analytics
+- Kellyn P. Montgomery, NCSU Center for Geospatial Analytics
+- Anna Petrasova, NCSU Center for Geospatial Analytics
 
 ## License
 

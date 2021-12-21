@@ -25,7 +25,6 @@ In XLSX, ODS, and CSV, the hierarchy of keys is specified using forward slashes
 (`key/subkey/subsubkey`), for example, in a CSV file, the above configuration is
 represented as:
 
-
 ```csv
 consignment/generation_method,parameter_based
 ```

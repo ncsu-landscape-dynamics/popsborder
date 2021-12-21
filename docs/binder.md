@@ -33,15 +33,15 @@ To preserve the file for later use, you need to download it.
 There are three ways how to do it. You can use whatever is most
 convenient for you. Here are the three choices:
 
-* There is a *Download* button in the top toolbar of the notebook.
+- There is a _Download_ button in the top toolbar of the notebook.
 
-* You can use File Browser on the left. Right click on the notebook file,
-  and pick *Download*. If you are contributing the notebook file into
+- You can use File Browser on the left. Right click on the notebook file,
+  and pick _Download_. If you are contributing the notebook file into
   this repository, you need to use this option because it produces a
   nicely formatted file (however, there is no different in content or
   what you see once you display the notebook).
 
-* Next to the *Download* button there are "cloud download" and
+- Next to the _Download_ button there are "cloud download" and
   "cloud upload" icons. You can use those to save the notebook into your
   browser storage (on you computer) rather as a regular file on your disk.
   This option is handy for quickly getting the file saved (and then
@@ -49,14 +49,14 @@ convenient for you. Here are the three choices:
 
 ## Lifetime of the environment
 
-Every time you use the link (the *launch binder* button) a new
-environment is created for you. 
+Every time you use the link (the _launch binder_ button) a new
+environment is created for you.
 
 After some time of inactivity, the notebook's kernel (a program running
 in the cloud making the Python code work) will shut down. If that's the
-case, the notebook will show *No Kernel!* in the top right corner.
+case, the notebook will show _No Kernel!_ in the top right corner.
 To fix that, restart the kernel from menu using:
-*Kernel* > *Restart kernel*.
+_Kernel_ > _Restart kernel_.
 
 After even more time of inactivity the whole environment shuts down.
 There is no way to restore it. To avoid any surprises, it is good to
