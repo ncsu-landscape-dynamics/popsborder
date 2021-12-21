@@ -23,13 +23,12 @@
 .. codeauthor:: Kellyn P. Montgomery <kellynmontgomery gmail com>
 """
 
-from __future__ import print_function, division
-
 import argparse
 
-from .inputs import load_configuration
-from .simulation import run_simulation
+from .inputs import load_configuration, load_scenario_table
 from .outputs import print_totals_as_text
+from .scenarios import run_scenarios
+from .simulation import run_simulation
 
 USAGE = """Usage:
   {} <number of simulations> <number of consignments> <config file>
@@ -89,6 +88,9 @@ def create_parser():
         help="Number of simulations to run",
     )
     optional.add_argument(
+        "--scenarios-file", type=str, required=False, help="Path to scenarios file"
+    )
+    optional.add_argument(
         "--seed", type=int, required=False, help="Seed for random generator"
     )
     output_group = parser.add_argument_group("Output (optional)")
@@ -130,6 +132,7 @@ def create_parser():
         default=argparse.SUPPRESS,
         help="Show this help message and exit",
     )
+    return parser
 
 
 def main():
@@ -139,19 +142,19 @@ def main():
 
     config = load_configuration(args.config_file)
     detailed = args.detailed
-    if detailed:
-        details, totals = run_simulation(
+    if args.scenarios_file:
+        scenario_table = load_scenario_table(args.scenarios_file)
+        result = run_scenarios(
             config=config,
+            scenario_table=scenario_table,
+            seed=args.seed,
             num_simulations=args.num_simulations,
             num_consignments=args.num_consignments,
-            seed=args.seed,
-            output_f280_file=args.output_file,
-            verbose=args.verbose,
-            pretty=args.pretty,
             detailed=args.detailed,
         )
+        print(result)
     else:
-        totals = run_simulation(
+        result = run_simulation(
             config=config,
             num_simulations=args.num_simulations,
             num_consignments=args.num_consignments,
@@ -161,10 +164,14 @@ def main():
             pretty=args.pretty,
             detailed=args.detailed,
         )
-    print_totals_as_text(args.num_consignments, config, totals)
-    if detailed:
-        print("Items by box: {}".format(details[0]))
-        print("Indexes inspected: {}".format(details[1]))
+        if detailed:
+            details, totals = result
+        else:
+            totals = result
+        print_totals_as_text(args.num_consignments, config, totals)
+        if detailed:
+            print("Items by box: {}".format(details[0]))
+            print("Indexes inspected: {}".format(details[1]))
 
 
 if __name__ == "__main__":
