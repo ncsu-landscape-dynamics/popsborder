@@ -1,13 +1,13 @@
 consignment:
   origins:
-  - Netherlands
-  - Mexico
+    - Netherlands
+    - Mexico
   flowers:
-  - Hyacinthus
-  - Rosa
+    - Hyacinthus
+    - Rosa
   ports:
-  - NY JFK CBP
-  - FL Miami Air CBP
+    - NY JFK CBP
+    - FL Miami Air CBP
   boxes:
     min: 1
     max: 3000
@@ -19,8 +19,8 @@ contamination:
     distribution: beta
     value: 0.05
     parameters:
-    - 1
-    - 8
+      - 1
+      - 8
   arrangement: clustered
   clustered:
     contaminated_units_per_cluster: 200
