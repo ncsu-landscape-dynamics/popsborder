@@ -1,10 +1,11 @@
-"""Test inspection functions directly"""
+"""Test functions for skipping inspections directly"""
 
 import pytest
-from popsborder.inputs import load_configuration_yaml_from_text
+
 from popsborder.consignments import get_consignment_generator
-from popsborder.inspections import get_inspection_needed_function, inspect_always
+from popsborder.inputs import load_configuration_yaml_from_text
 from popsborder.simulation import random_seed
+from popsborder.skipping import get_inspection_needed_function, inspect_always
 
 BASE_CONSIGNMENT_CONFIG = """\
 consignment:
@@ -63,6 +64,7 @@ def test_naive_cfrp():
     )
     # The following assumes what is the default returned by the get function,
     # i.e., it relies on its internals, not the interface.
+    # pylint: disable=comparison-with-callable
     assert is_needed_function != inspect_always
     for seed in range(10):
         # We run with different, but fixed seeded so we can know which seed fails.

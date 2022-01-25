@@ -23,7 +23,6 @@
 
 from __future__ import print_function, division
 
-import functools
 import math
 import random
 import types
@@ -571,47 +570,6 @@ def get_sample_function(config):
     else:
         raise RuntimeError(f"Unknown sample strategy: {sample_strategy}")
     return sample
-
-
-def is_flower_of_the_day(cfrp, flower, date):
-    """Return True if the flower is FoTD based on naive criteria"""
-    i = date.day % len(cfrp)
-    if flower == cfrp[i]:
-        return True
-    return False
-
-
-def naive_cfrp(config, consignment, date):
-    """Decided if the consignment should be expected based on CFRP and size"""
-    # returns 2 bools: should_inspect, CFRP applied
-    flower = consignment.flower
-    cfrp = config["flowers"]
-    max_boxes = config["max_boxes"]
-    # we have flowers in the CFRP, flower is in CFRP, and not too big consignment
-    if cfrp and flower in cfrp and consignment.num_boxes <= max_boxes:
-        if is_flower_of_the_day(cfrp, flower, date):
-            return True, "naive_cfrp"  # is FotD, inspect
-        return False, "naive_cfrp"  # not FotD, release
-    return True, None  # not in CFRP or large, inspect
-
-
-def inspect_always(consignment, date):  # pylint: disable=unused-argument
-    """Inspect always"""
-    return True, None
-
-
-def get_inspection_needed_function(config):
-    """Based on config, return function to determine is inspection is needed."""
-    if "release_programs" in config:
-        for name in sorted(config["release_programs"].keys()):
-            # Notably, this does not support multiple programs at once.
-            # We simply return whatever is the first program alphabetically
-            # or raise exception if there is an unknown program name.
-            if name == "naive_cfrp":
-                return functools.partial(naive_cfrp, config["release_programs"][name])
-            else:
-                raise RuntimeError(f"Unknown release program: {name}")
-    return inspect_always
 
 
 def is_consignment_contaminated(consignment):
