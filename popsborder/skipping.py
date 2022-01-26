@@ -22,6 +22,8 @@
 
 import functools
 
+from .inputs import load_cfrp_schedule
+
 
 def get_inspection_needed_function(config):
     """Based on config, return function to determine if inspection is needed.
@@ -85,20 +87,15 @@ class CutFlowerReleaseProgram:
     """
 
     def __init__(self, config, schedule=None):
-        self._config = config
-        self._program_name = self._config.get("name", "cfrp")
+        self._program_name = config.get("name", "cfrp")
         if schedule:
             self._schedule = schedule
         else:
-            self._schedule = self._load_schedule()
-
-    def _load_schedule(self):
-        """Load schedule from file based on configuration"""
-        # TODO: Maybe a year-month-day=>list of flowers dictionary is better.
-        # TODO: On the other hand, flowers=>dates dictionary could be used also
-        # as a list of eligible flowers.
-        # with open(self._config["schedule"])
-        return {}
+            schedule_config = config["schedule"]
+            self._schedule = load_cfrp_schedule(
+                schedule_config["file_name"],
+                date_format=schedule_config.get("date_format"),
+            )
 
     def __call__(self, consignment, date):
         """Decide if the consignment should be inspected based on CFRP"""

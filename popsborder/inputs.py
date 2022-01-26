@@ -519,3 +519,41 @@ def load_scenario_table(filename):
                 row[key] = text_to_value(value)
             table.append(row)
     return table
+
+
+def load_cfrp_schedule(filename, date_format=None):
+    """Load cut flower release program (CFRP) schedule
+
+    Supports one CSV file with all combinations of date, origin, and commodity (flower)
+    row by row with columns date, origin_nm, and commodity (caseinsensitive).
+    Duplicate records don't appear in the resulting data structure.
+
+    The values in the date column are parsed according to *date_format*.
+
+    Returns a dictionary with keys being tuples of commodity and origin and values
+    being a set of dates.
+    """
+    if not date_format:
+        date_format = "%Y-%m-%d"
+    schedule = {}
+    # Read as CSV
+    with open(filename) as file:
+        # Import file- or format-specific items only when need.
+        # pylint: disable=import-outside-toplevel
+        import csv
+        from datetime import datetime
+
+        for row in csv.DictReader(file):
+            for key, value in row.items():
+                if key.lower() == "date":
+                    date = datetime.strptime(value, date_format).date()
+                elif key.lower() == "origin_nm":
+                    origin = value
+                elif key.lower() == "commodity":
+                    commodity = value
+            combo = (commodity, origin)
+            if combo not in schedule:
+                # Using set to ensure we have no duplicate dates.
+                schedule[combo] = set()
+            schedule[combo].add(date)
+    return schedule
