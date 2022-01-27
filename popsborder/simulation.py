@@ -26,7 +26,8 @@ import types
 
 import numpy as np
 
-from .consignments import get_consignment_generator, get_contaminant_function
+from .consignments import get_consignment_generator
+from .contamination import get_contaminant_function
 from .inspections import (
     consignment_contamination_rate,
     get_inspection_needed_function,
