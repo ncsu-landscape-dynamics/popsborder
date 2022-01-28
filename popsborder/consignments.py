@@ -119,6 +119,11 @@ class Consignment(collections.UserDict):
     def __getattr__(self, name):
         return self.name
 
+    @property
+    def commodity(self):
+        """Convenient (or transitional) alias for flower"""
+        return self.flower
+
     def count_contaminated(self):
         """Count contaminated items in box."""
         return np.count_nonzero(self.items)

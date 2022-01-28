@@ -27,6 +27,8 @@ import random
 import numpy as np
 from scipy import stats
 
+from .inputs import update_nested_dict_by_dict
+
 
 # This function is not used or working, consider updating or removing.
 def add_contaminant_to_random_box(config, consignment, contamination_rate=None):
@@ -382,32 +384,107 @@ def add_contaminant_clusters(config, consignment):
         raise RuntimeError(f"Unknown contamination unit: {contamination_unit}")
 
 
-def get_contaminant_function(config):
-    """Get function for adding contaminant to a consignment based on configuration"""
-    arrangement = config["contamination"]["arrangement"]
+def get_contamination_config_for_consignment(config, consignment):
+    contaminated_consignments = config.get("consignments")
+    if contaminated_consignments:
+        for item in contaminated_consignments:
+            commodity = item.get("commodity")
+            origin = item.get("origin")
+            if (
+                (
+                    commodity
+                    and origin
+                    and commodity == consignment.commodity
+                    and origin == consignment.origin
+                )
+                or (commodity and not origin and commodity == consignment.commodity)
+                or (origin and not commodity and origin == consignment.origin)
+            ):
+                probability = item.get("probability")
+                if probability is None or random.random() < probability:
+                    consignment_specific_config = item.get("contamination")
+                    print("X Special for", consignment, consignment_specific_config)
+                    if not consignment_specific_config:
+                        # If missing or empty, use the global one.
+                        print("Default for", consignment)
+                        consignment_specific_config = config.copy()
+                        del consignment_specific_config["consignments"]
+                    elif item.get("use_contamination_defaults"):
+                        print("Updating for", consignment, consignment_specific_config)
+                        default_values = config.copy()
+                        del default_values["consignments"]
+                        update_nested_dict_by_dict(
+                            default_values, consignment_specific_config
+                        )
+                        consignment_specific_config = default_values
+                    print("Special for", consignment, consignment_specific_config)
+                    return consignment_specific_config
+                else:
+                    print("None for", consignment)
+                    return None
+    print("No consignment-specific info", consignment)
+    return config.copy()
+
+
+def create_contaminant_function(config):
+    """Create a function based on the contamination config
+
+    An arrangement key must be provided to specify which function should be used.
+    """
+    arrangement = config.get("arrangement")
     if arrangement == "random_box":
 
         def add_contaminant_function(consignment):
             return add_contaminant_to_random_box(
-                config=config["contamination"]["random_box"],
+                config=config["random_box"],
                 consignment=consignment,
-                contamination_rate=config["contamination"]["contamination_rate"],
+                contamination_rate=config["contamination_rate"],
             )
 
     elif arrangement == "random":
 
         def add_contaminant_function(consignment):
             return add_contaminant_uniform_random(
-                config=config["contamination"], consignment=consignment
+                config=config, consignment=consignment
             )
 
     elif arrangement == "clustered":
 
         def add_contaminant_function(consignment):
-            return add_contaminant_clusters(
-                config=config["contamination"], consignment=consignment
-            )
+            return add_contaminant_clusters(config=config, consignment=consignment)
 
+    elif arrangement is None:
+        raise RuntimeError("Contaminant arrangement must be set")
     else:
         raise RuntimeError(f"Unknown contaminant arrangement: {arrangement}")
     return add_contaminant_function
+
+
+def get_contaminant_function(config):
+    """Get function for adding contaminant to a consignment based on configuration"""
+    if "consignments" in config["contamination"]:
+        # If there is config for individual consignments, we define a new function
+        # which first picks the right config based on its consignment parameter, then
+        # creates an add contaminant function based on this config, and then it calls
+        # the function with the consignment.
+
+        def add_contaminant_function(consignment):
+            """Picks config for the consignment and then call the specific function"""
+            consignment_specific_config = get_contamination_config_for_consignment(
+                config["contamination"], consignment
+            )
+            if not consignment_specific_config:
+                # Do not contaminate this consignment.
+                # No modification to the existing consignment provided as a parameter
+                # and returning None (as all the add contaiminant functions do).
+                return None
+            contaminant_function = create_contaminant_function(
+                consignment_specific_config
+            )
+            return contaminant_function(consignment)
+
+        return add_contaminant_function
+
+    # If there is config for individual consignments, we just create the function with
+    # the default settings.
+    return create_contaminant_function(config["contamination"])
