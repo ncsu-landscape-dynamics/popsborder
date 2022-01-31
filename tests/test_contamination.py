@@ -25,6 +25,9 @@ contamination:
       use_contamination_defaults: true
       contamination:
         contamination_unit: box
+    - commodity: Sedum
+      origin: Colombia
+      port: FL Miami Air CBP
   contamination_unit: item
   arrangement: random
 """
@@ -44,6 +47,24 @@ def simple_consignment(flower, origin):
         port="FL Miami Air CBP",
         origin=origin,
     )
+
+
+def test_consignment_matches_contamination_rule():
+    main_config = load_configuration_yaml_from_text(CONFIG)
+    consignment = simple_consignment(flower="Sedum", origin="Colombia")
+    config = get_contamination_config_for_consignment(
+        main_config["contamination"], consignment
+    )
+    assert config == {"contamination_unit": "item", "arrangement": "random"}
+
+
+def test_consignment_with_no_contamination():
+    main_config = load_configuration_yaml_from_text(CONFIG)
+    consignment = simple_consignment(flower="Rosa", origin="Colombia")
+    config = get_contamination_config_for_consignment(
+        main_config["contamination"], consignment
+    )
+    assert config is None
 
 
 def test_contamination_config_for_consignment_no_default():

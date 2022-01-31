@@ -386,44 +386,50 @@ def add_contaminant_clusters(config, consignment):
 
 def get_contamination_config_for_consignment(config, consignment):
     contaminated_consignments = config.get("consignments")
-    if contaminated_consignments:
-        for item in contaminated_consignments:
-            commodity = item.get("commodity")
-            origin = item.get("origin")
-            if (
-                (
-                    commodity
-                    and origin
-                    and commodity == consignment.commodity
-                    and origin == consignment.origin
-                )
-                or (commodity and not origin and commodity == consignment.commodity)
-                or (origin and not commodity and origin == consignment.origin)
-            ):
-                probability = item.get("probability")
-                if probability is None or random.random() < probability:
-                    consignment_specific_config = item.get("contamination")
-                    print("X Special for", consignment, consignment_specific_config)
-                    if not consignment_specific_config:
-                        # If missing or empty, use the global one.
-                        print("Default for", consignment)
-                        consignment_specific_config = config.copy()
-                        del consignment_specific_config["consignments"]
-                    elif item.get("use_contamination_defaults"):
-                        print("Updating for", consignment, consignment_specific_config)
-                        default_values = config.copy()
-                        del default_values["consignments"]
-                        update_nested_dict_by_dict(
-                            default_values, consignment_specific_config
-                        )
-                        consignment_specific_config = default_values
-                    print("Special for", consignment, consignment_specific_config)
-                    return consignment_specific_config
-                else:
-                    print("None for", consignment)
-                    return None
-    print("No consignment-specific info", consignment)
-    return config.copy()
+    if not contaminated_consignments:
+        # No consignment-specific info, all consignments use the same config.
+        return config.copy()
+    # Consignment-specific input provided, create the right config for the consignment
+    # if the consignment is configured to be contaminated.
+    for item in contaminated_consignments:
+        # Commodity properties used for selection default to None.
+        commodity = item.get("commodity")
+        origin = item.get("origin")
+        port = item.get("port")
+        # All the properties needs to match, but if the property value is not
+        # provided in configuration, we count it as match so that consignment
+        # can be selected using only one property.
+        if (
+            (not commodity or commodity == consignment.commodity)
+            and (not origin or origin == consignment.origin)
+            and (not port or port == consignment.port)
+        ):
+            # The consignment matches the selection rule. Now test if we should
+            # contaminate this specific consignment.
+            probability = item.get("probability")
+            if probability is None or random.random() < probability:
+                # This specific consignment should contaminated.
+                consignment_specific_config = item.get("contamination")
+                if not consignment_specific_config:
+                    # If missing or empty, use the global/default one.
+                    consignment_specific_config = config.copy()
+                    del consignment_specific_config["consignments"]
+                elif item.get("use_contamination_defaults"):
+                    # There is specifc config, but the global/main contamination
+                    # config should be used as the bases for the consignment-specific
+                    # config.
+                    default_values = config.copy()
+                    del default_values["consignments"]
+                    update_nested_dict_by_dict(
+                        default_values, consignment_specific_config
+                    )
+                    consignment_specific_config = default_values
+                return consignment_specific_config
+            else:
+                # Only the first consignment rule is matched.
+                break
+    # Consignment not selected for contamination based on selection rules.
+    return None
 
 
 def create_contaminant_function(config):
