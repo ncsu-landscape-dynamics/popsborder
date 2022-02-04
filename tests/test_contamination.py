@@ -50,6 +50,7 @@ def simple_consignment(flower, origin):
 
 
 def test_consignment_matches_contamination_rule():
+    """Check that consignment is selected based on a rule"""
     main_config = load_configuration_yaml_from_text(CONFIG)
     consignment = simple_consignment(flower="Sedum", origin="Colombia")
     config = get_contamination_config_for_consignment(
@@ -59,6 +60,7 @@ def test_consignment_matches_contamination_rule():
 
 
 def test_consignment_with_no_contamination():
+    """Check that consignment is not selected based on a rule"""
     main_config = load_configuration_yaml_from_text(CONFIG)
     consignment = simple_consignment(flower="Rosa", origin="Colombia")
     config = get_contamination_config_for_consignment(
@@ -68,6 +70,7 @@ def test_consignment_with_no_contamination():
 
 
 def test_contamination_config_for_consignment_no_default():
+    """Check that consignment has only its unique config (defaults not requested)"""
     main_config = load_configuration_yaml_from_text(CONFIG)
     consignment = simple_consignment(flower="Liatris", origin="Netherlands")
     config = get_contamination_config_for_consignment(
@@ -77,6 +80,7 @@ def test_contamination_config_for_consignment_no_default():
 
 
 def test_contamination_config_for_consignment_implicit_default():
+    """Check that consignment inherits the top-level config"""
     main_config = load_configuration_yaml_from_text(CONFIG)
     consignment = simple_consignment(flower="Hyacinthus", origin="Israel")
     config = get_contamination_config_for_consignment(
@@ -86,6 +90,7 @@ def test_contamination_config_for_consignment_implicit_default():
 
 
 def test_contamination_config_for_consignment_no_default_explicitly():
+    """Check that consignment has only its unique config (defaults disabled)"""
     main_config = load_configuration_yaml_from_text(CONFIG)
     consignment = simple_consignment(flower="Rose", origin="Netherlands")
     config = get_contamination_config_for_consignment(
@@ -95,6 +100,7 @@ def test_contamination_config_for_consignment_no_default_explicitly():
 
 
 def test_contamination_config_for_consignment_with_default():
+    """Check that consignment has has combination of defaults and its own config"""
     main_config = load_configuration_yaml_from_text(CONFIG)
     consignment = simple_consignment(flower="Rose", origin="Mexico")
     config = get_contamination_config_for_consignment(
