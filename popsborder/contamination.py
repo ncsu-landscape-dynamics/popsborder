@@ -384,7 +384,49 @@ def add_contaminant_clusters(config, consignment):
         raise RuntimeError(f"Unknown contamination unit: {contamination_unit}")
 
 
+def consignment_matches_selection_rule(rule, consignment):
+    """Return True if the *consignment* matches the selection *rule*."""
+    # Commodity properties used for selection default to None.
+    commodity = rule.get("commodity")
+    origin = rule.get("origin")
+    port = rule.get("port")
+    # All the properties needs to match, but if the property value is not
+    # provided in configuration, we count it as match so that consignment
+    # can be selected using only one property.
+    return ((not commodity or commodity == consignment.commodity)
+        and (not origin or origin == consignment.origin)
+        and (not port or port == consignment.port))
+
+
 def get_contamination_config_for_consignment(config, consignment):
+    """Get contamination configuration for specific consignment
+
+    If the *config* contains consignment-specific settings under
+    the consignments key, contamination configuration is selected
+    based on the specified rules. If the consignment properties match
+    the selection rules or if it passes the probability challenge,
+    consignment-specific configuration is returned.
+
+    If there is contamination key associated with the consignment settings,
+    the associated value is returned as the consignment-specific configuration.
+    If there is also a use_contamination_defaults key with value set to true,
+    the top-level contamination configuration is used as the basis for the
+    consignment-specific configuration and the values under the contamination key
+    are used to modify or enhance the top-level config.
+
+    If there is no contamination key, the consignment-specific configuration is the
+    top-level contamination configuration.
+
+    If the consignment properties do not match
+    the selection rules or if it does not pass the probability challenge,
+    None is returned.
+
+    If the *config* does not contain consignment-specific settings under
+    the consignments key, the function always returns a the provided
+    *config*.
+
+    In all cases, a copy the config dictionary is returned.
+    """
     contaminated_consignments = config.get("consignments")
     if not contaminated_consignments:
         # No consignment-specific info, all consignments use the same config.
@@ -392,18 +434,7 @@ def get_contamination_config_for_consignment(config, consignment):
     # Consignment-specific input provided, create the right config for the consignment
     # if the consignment is configured to be contaminated.
     for item in contaminated_consignments:
-        # Commodity properties used for selection default to None.
-        commodity = item.get("commodity")
-        origin = item.get("origin")
-        port = item.get("port")
-        # All the properties needs to match, but if the property value is not
-        # provided in configuration, we count it as match so that consignment
-        # can be selected using only one property.
-        if (
-            (not commodity or commodity == consignment.commodity)
-            and (not origin or origin == consignment.origin)
-            and (not port or port == consignment.port)
-        ):
+        if consignment_matches_selection_rule(rule=item, consignment=consignment):
             # The consignment matches the selection rule. Now test if we should
             # contaminate this specific consignment.
             probability = item.get("probability")
@@ -424,6 +455,10 @@ def get_contamination_config_for_consignment(config, consignment):
                         default_values, consignment_specific_config
                     )
                     consignment_specific_config = default_values
+                else:
+                    # In all other cases, we return a copy, so let's do for the
+                    # straightforward case too.
+                    consignment_specific_config = consignment_specific_config.copy()
                 return consignment_specific_config
             else:
                 # Only the first consignment rule is matched.
