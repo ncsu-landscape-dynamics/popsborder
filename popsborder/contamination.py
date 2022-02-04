@@ -23,6 +23,7 @@
 
 import math
 import random
+from datetime import datetime
 
 import numpy as np
 from scipy import stats
@@ -393,11 +394,26 @@ def consignment_matches_selection_rule(rule, consignment):
     # All the properties needs to match, but if the property value is not
     # provided in configuration, we count it as match so that consignment
     # can be selected using only one property.
-    return (
+    selected = (
         (not commodity or commodity == consignment.commodity)
         and (not origin or origin == consignment.origin)
         and (not port or port == consignment.port)
     )
+    if not selected:
+        return False
+    start_date = rule.get("start_date")
+    if start_date:
+        start_date = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date = rule.get("end_date")
+    if end_date:
+        end_date = datetime.strptime(end_date, "%Y-%m-%d")
+    if not start_date and not end_date:
+        return True
+    elif start_date and consignment.date < start_date:
+        return False
+    elif end_date and consignment.date > end_date:
+        return False
+    return True
 
 
 def get_contamination_config_for_consignment(config, consignment):
