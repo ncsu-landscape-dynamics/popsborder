@@ -402,10 +402,11 @@ def consignment_matches_selection_rule(rule, consignment):
     if not selected:
         return False
     start_date = rule.get("start_date")
-    if start_date:
-        start_date = datetime.strptime(start_date, "%Y-%m-%d")
     end_date = rule.get("end_date")
-    if end_date:
+    # YAML converts to date, but JSON and other load config methods do not.
+    if start_date and isinstance(start_date, str):
+        start_date = datetime.strptime(start_date, "%Y-%m-%d")
+    if end_date and isinstance(end_date, str):
         end_date = datetime.strptime(end_date, "%Y-%m-%d")
     if not start_date and not end_date:
         return True
