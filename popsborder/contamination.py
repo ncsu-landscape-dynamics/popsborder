@@ -393,9 +393,11 @@ def consignment_matches_selection_rule(rule, consignment):
     # All the properties needs to match, but if the property value is not
     # provided in configuration, we count it as match so that consignment
     # can be selected using only one property.
-    return ((not commodity or commodity == consignment.commodity)
+    return (
+        (not commodity or commodity == consignment.commodity)
         and (not origin or origin == consignment.origin)
-        and (not port or port == consignment.port))
+        and (not port or port == consignment.port)
+    )
 
 
 def get_contamination_config_for_consignment(config, consignment):
