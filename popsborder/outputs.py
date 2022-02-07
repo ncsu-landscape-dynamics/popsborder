@@ -37,7 +37,7 @@ if not hasattr(weakref, "finalize"):
 
 
 def pretty_content(array, config=None):
-    """Return string with array content nicelly visualized as unicode text
+    """Return string with array content nicely visualized as unicode text
 
     Values evaluating to False are replaced with a flower, others with a bug.
     """
@@ -66,8 +66,8 @@ def pretty_header(
 ):  # pylint: disable=unused-argument
     """Return header for a consignment
 
-    Basic info about the consignment is included and the remainining space
-    in a terminal window is filled with horizonal box characters.
+    Basic info about the consignment is included and the remaining space
+    in a terminal window is filled with horizontal box characters.
     (The assumption is that this will be printed in the terminal.)
     """
     config = config if config else {}
