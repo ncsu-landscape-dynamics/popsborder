@@ -86,11 +86,11 @@ def pretty_header(
     else:
         horizontal = line
     header = (
-        "{horizontal}{horizontal} Consignment"
-        " {horizontal}{horizontal}"
-        " Boxes: {consignment[num_boxes]} {horizontal}{horizontal}"
-        " Items: {consignment[num_items]} "
-    ).format(**locals())
+        f"{horizontal}{horizontal} Consignment"
+        f" {horizontal}{horizontal}"
+        f" Boxes: {consignment.num_boxes} {horizontal}{horizontal}"
+        f" Items: {consignment.num_items} "
+    )
     if size > len(header):
         size = size - len(header)
     else:
@@ -267,10 +267,8 @@ class Form280(object):
             )
         elif self.print_to_stdout:
             print(
-                "F280: {date:%Y-%m-%d} | {consignment[port]} | {consignment[origin]}"
-                " | {consignment[flower]} | {disposition_code}".format(
-                    consignment, **locals()
-                )
+                f"F280: {date:%Y-%m-%d} | {consignment.port} | {consignment.origin}"
+                f" | {consignment.flower} | {disposition_code}"
             )
 
 
