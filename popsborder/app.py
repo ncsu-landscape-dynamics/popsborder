@@ -43,7 +43,7 @@ class CustomHelpFormatter(argparse.RawTextHelpFormatter):
         """Add usage text"""
         if prefix is None:
             prefix = "Usage: "
-        return super(CustomHelpFormatter, self).add_usage(
+        return super().add_usage(
             usage, actions, groups, prefix
         )
 
