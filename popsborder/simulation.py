@@ -1,5 +1,5 @@
 # Simulation of contaminated consignments and their inspections
-# Copyright (C) 2018-2021 Vaclav Petras and others (see below)
+# Copyright (C) 2018-2022 Vaclav Petras and others (see below)
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -169,7 +169,7 @@ def simulation(
         missing = 100 * float(success_rates.false_negative) / (num_contaminated)
         false_neg = success_rates.false_negative
         if verbose:
-            print("Missing {0:.0f}% of contaminated consignments.".format(missing))
+            print("Missing {missing:.0f}% of contaminated consignments.")
     else:
         # we didn't miss anything
         missing = 0

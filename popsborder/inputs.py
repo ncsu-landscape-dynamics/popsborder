@@ -1,5 +1,5 @@
 # Simulation of contaminated consignments and their inspections
-# Copyright (C) 2018-2021 Vaclav Petras and others (see below)
+# Copyright (C) 2018-2022 Vaclav Petras and others (see below)
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -173,7 +173,7 @@ def load_configuration(filename, sheet=None, key_column=None, value_column=None)
             value_column=info.value_column,
         )
     else:
-        sys.exit("Unknown file extension (file: {})".format(filename))
+        sys.exit("Unknown file extension (file: {filename})")
 
 
 def table_info_from_text(text, sheet=None, key_column=None, value_column=None):
