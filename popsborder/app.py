@@ -62,7 +62,8 @@ def get_executable_name():
     if globals().get("__spec__") is None:
         return None
     else:
-        return "python -m {}".format(__spec__.name.partition(".")[0])
+        name = __spec__.name.partition(".")[0]
+        return f"python -m {name}"
 
 
 def main():
@@ -158,8 +159,8 @@ def main():
         )
     print_totals_as_text(args.num_consignments, config, totals)
     if detailed:
-        print("Items by box: {}".format(details[0]))
-        print("Indexes inspected: {}".format(details[1]))
+        print(f"Items by box: {details[0]}")
+        print(f"Indexes inspected: {details[1]}")
 
 
 if __name__ == "__main__":

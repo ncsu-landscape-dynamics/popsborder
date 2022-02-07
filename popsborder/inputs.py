@@ -173,7 +173,7 @@ def load_configuration(filename, sheet=None, key_column=None, value_column=None)
             value_column=info.value_column,
         )
     else:
-        sys.exit("Unknown file extension (file: {})".format(filename))
+        sys.exit("Unknown file extension (file: {filename})")
 
 
 def table_info_from_text(text, sheet=None, key_column=None, value_column=None):

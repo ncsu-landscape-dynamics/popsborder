@@ -169,7 +169,7 @@ def simulation(
         missing = 100 * float(success_rates.false_negative) / (num_contaminated)
         false_neg = success_rates.false_negative
         if verbose:
-            print("Missing {0:.0f}% of contaminated consignments.".format(missing))
+            print("Missing {missing:.0f}% of contaminated consignments.")
     else:
         # we didn't miss anything
         missing = 0
