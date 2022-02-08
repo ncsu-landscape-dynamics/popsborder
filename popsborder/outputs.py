@@ -21,14 +21,12 @@
 .. codeauthor:: Kellyn P. Montgomery <kellynmontgomery gmail com>
 """
 
-from __future__ import print_function, division
-
-import shutil
-import weakref
 import csv
-import types
-from functools import reduce
 import operator
+import shutil
+import types
+import weakref
+from functools import reduce
 
 from .inspections import count_contaminated_boxes
 

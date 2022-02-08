@@ -1,7 +1,7 @@
 import pytest
+
 from popsborder.inputs import load_configuration_yaml_from_text
 from popsborder.simulation import run_simulation
-
 
 CONFIG = """\
 consignment:
