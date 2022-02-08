@@ -21,15 +21,13 @@
 .. codeauthor:: Kellyn P. Montgomery <kellynmontgomery gmail com>
 """
 
-from __future__ import print_function, division
-
 import functools
 import math
 import random
 import types
 import weakref
-import numpy as np
 
+import numpy as np
 
 if not hasattr(weakref, "finalize"):
     from backports import weakref  # pylint: disable=import-error

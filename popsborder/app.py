@@ -23,13 +23,11 @@
 .. codeauthor:: Kellyn P. Montgomery <kellynmontgomery gmail com>
 """
 
-from __future__ import print_function, division
-
 import argparse
 
 from .inputs import load_configuration
-from .simulation import run_simulation
 from .outputs import print_totals_as_text
+from .simulation import run_simulation
 
 USAGE = """Usage:
   {} <number of simulations> <number of consignments> <config file>

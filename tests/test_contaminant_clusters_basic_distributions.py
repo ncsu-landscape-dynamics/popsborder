@@ -1,5 +1,6 @@
-import numpy as np
 import datetime
+
+import numpy as np
 
 from popsborder.consignments import Box, Consignment
 from popsborder.contamination import add_contaminant_clusters
