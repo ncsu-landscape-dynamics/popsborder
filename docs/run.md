@@ -62,7 +62,7 @@ be saved to a file using Python and processed elsewhere.
 
 Example scripts and (Jupyter) notebooks are included in the code repository. The
 notebooks are extremely useful for visualization of the simulation outcomes. You
-can try the notebooks online without any instalation using [Binder](binder.md).
+can try the notebooks online without any installation using [Binder](binder.md).
 
 ---
 

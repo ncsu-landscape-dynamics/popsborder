@@ -369,7 +369,7 @@ def add_contaminant_clusters(config, consignment):
     """Add contaminant clusters to consignment
 
     Item (separately or in boxes) with contaminat in *consignment* evaluate
-    to True after runing this function.
+    to True after running this function.
     This function does not touch the not items not selected for contamination.
     However, they are expected to be zero.
     """
