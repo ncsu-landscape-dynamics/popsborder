@@ -204,7 +204,7 @@ class F280ConsignmentGenerator:
         except StopIteration:
             raise RuntimeError(
                 "More consignments requested than number of records in provided F280"
-            )
+            ) from None
 
         num_items = int(record["QUANTITY"])
         items = np.zeros(num_items, dtype=np.int64)
@@ -215,8 +215,7 @@ class F280ConsignmentGenerator:
 
         # rounding up to keep the max per box and have enough boxes
         num_boxes = int(math.ceil(num_items / float(items_per_box)))
-        if num_boxes < 1:
-            num_boxes = 1
+        num_boxes = max(num_boxes, 1)
         boxes = []
         for i in range(num_boxes):
             lower = i * items_per_box
@@ -255,7 +254,7 @@ class AQIMConsignmentGenerator:
         except StopIteration:
             raise RuntimeError(
                 "More consignments requested than number of records in AQIM data"
-            )
+            ) from None
         pathway = record["CARGO_FORM"]
         items_per_box = self.items_per_box
         items_per_box = get_items_per_box(items_per_box, pathway)
@@ -274,8 +273,7 @@ class AQIMConsignmentGenerator:
 
         # rounding up to keep the max per box and have enough boxes
         num_boxes = int(math.ceil(num_items / float(items_per_box)))
-        if num_boxes < 1:
-            num_boxes = 1
+        num_boxes = max(num_boxes, 1)
         boxes = []
         for i in range(num_boxes):
             lower = i * items_per_box

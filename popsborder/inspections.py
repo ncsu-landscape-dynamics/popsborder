@@ -264,8 +264,7 @@ def compute_n_clusters_to_inspect(config, consignment, n_items_to_inspect):
             inspect_per_box = math.ceil(n_items_to_inspect / max_boxes)
             # If not enough boxes to achieve sample size, inspect all items
             # and increase n_boxes_to_inspect as needed.
-            if inspect_per_box > items_per_box:
-                inspect_per_box = items_per_box
+            inspect_per_box = min(inspect_per_box, items_per_box)
             n_boxes_to_inspect = math.ceil(n_items_to_inspect / inspect_per_box)
     else:
         raise RuntimeError(f"Unknown cluster selection method: {cluster_selection}")
