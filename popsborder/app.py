@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Simulation of contaminated consignments and their inspections
-# Copyright (C) 2018-2021 Vaclav Petras and others (see below)
+# Copyright (C) 2018-2022 Vaclav Petras and others (see below)
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,13 +23,11 @@
 .. codeauthor:: Kellyn P. Montgomery <kellynmontgomery gmail com>
 """
 
-from __future__ import print_function, division
-
 import argparse
 
 from .inputs import load_configuration
-from .simulation import run_simulation
 from .outputs import print_totals_as_text
+from .simulation import run_simulation
 
 USAGE = """Usage:
   {} <number of simulations> <number of consignments> <config file>
@@ -43,9 +41,7 @@ class CustomHelpFormatter(argparse.RawTextHelpFormatter):
         """Add usage text"""
         if prefix is None:
             prefix = "Usage: "
-        return super(CustomHelpFormatter, self).add_usage(
-            usage, actions, groups, prefix
-        )
+        return super().add_usage(usage, actions, groups, prefix)
 
 
 def get_executable_name():
@@ -62,7 +58,8 @@ def get_executable_name():
     if globals().get("__spec__") is None:
         return None
     else:
-        return "python -m {}".format(__spec__.name.partition(".")[0])
+        name = __spec__.name.partition(".")[0]
+        return f"python -m {name}"
 
 
 def main():
@@ -158,8 +155,8 @@ def main():
         )
     print_totals_as_text(args.num_consignments, config, totals)
     if detailed:
-        print("Items by box: {}".format(details[0]))
-        print("Indexes inspected: {}".format(details[1]))
+        print(f"Items by box: {details[0]}")
+        print(f"Indexes inspected: {details[1]}")
 
 
 if __name__ == "__main__":

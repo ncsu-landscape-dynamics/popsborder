@@ -6,7 +6,7 @@ types of results it can give, and other use cases.
 ## What is the approximate contamination rate of a set of inspected consignments?
 
 Given known inspection protocols (sample size and selection method) and
-records containing the inpsection outcomes, what is the approxiamte
+records containing the inspection outcomes, what is the approximate
 contamination rate of the inspected consignments? By simulating
 inspections using the same protocol and calibrating the contamination
 parameters so that the simulated inspection outcomes match the actual

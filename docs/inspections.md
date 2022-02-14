@@ -38,7 +38,7 @@ inspection:
   tolerance_level: 0
 ```
 
-The simulation provides a count of the number of missed consigments with
+The simulation provides a count of the number of missed consignments with
 contamination rates below the specified `tolerance_level`, which can be
 any value between 0 and 1. The resulting count can be used to adjust the
 number of missed contaminated consignments when evaluating inspection
@@ -144,11 +144,11 @@ selecting units to inspect using a uniform random distribution,
 for selecting boxes for partial inspection. The `cluster` selection
 strategy is valid only for the `item` inspection unit.
 
-### Cluster stratgey
+### Cluster strategy
 
 The cluster selection strategy is used when `inspection_unit="item"` to
 divide the sample size into clusters that can be selected from boxes
-chosen either randomly (`cluster_selection="random"`) or at a syitematic
+chosen either randomly (`cluster_selection="random"`) or at a systematic
 interval (`cluster_selection="interval"`). This selection strategy
 cannot be used with the highest inspection unit (e.g., `unit = "boxes"`).
 

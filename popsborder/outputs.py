@@ -1,5 +1,5 @@
 # Simulation of contaminated consignments and their inspections
-# Copyright (C) 2018-2021 Vaclav Petras and others (see below)
+# Copyright (C) 2018-2022 Vaclav Petras and others (see below)
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,14 +21,12 @@
 .. codeauthor:: Kellyn P. Montgomery <kellynmontgomery gmail com>
 """
 
-from __future__ import print_function, division
-
-import shutil
-import weakref
 import csv
-import types
-from functools import reduce
 import operator
+import shutil
+import types
+import weakref
+from functools import reduce
 
 from .inspections import count_contaminated_boxes
 
@@ -37,7 +35,7 @@ if not hasattr(weakref, "finalize"):
 
 
 def pretty_content(array, config=None):
-    """Return string with array content nicelly visualized as unicode text
+    """Return string with array content nicely visualized as unicode text
 
     Values evaluating to False are replaced with a flower, others with a bug.
     """
@@ -66,8 +64,8 @@ def pretty_header(
 ):  # pylint: disable=unused-argument
     """Return header for a consignment
 
-    Basic info about the consignment is included and the remainining space
-    in a terminal window is filled with horizonal box characters.
+    Basic info about the consignment is included and the remaining space
+    in a terminal window is filled with horizontal box characters.
     (The assumption is that this will be printed in the terminal.)
     """
     config = config if config else {}
@@ -86,17 +84,17 @@ def pretty_header(
     else:
         horizontal = line
     header = (
-        "{horizontal}{horizontal} Consignment"
-        " {horizontal}{horizontal}"
-        " Boxes: {consignment[num_boxes]} {horizontal}{horizontal}"
-        " Items: {consignment[num_items]} "
-    ).format(**locals())
+        f"{horizontal}{horizontal} Consignment"
+        f" {horizontal}{horizontal}"
+        f" Boxes: {consignment.num_boxes} {horizontal}{horizontal}"
+        f" Items: {consignment.num_items} "
+    )
     if size > len(header):
         size = size - len(header)
     else:
         size = 0
     rule = horizontal * size  # pylint: disable=possibly-unused-variable
-    return "{header}{rule}".format(**locals())
+    return f"{header}{rule}"
 
 
 def pretty_consignment_items(consignment, config=None):
@@ -105,7 +103,7 @@ def pretty_consignment_items(consignment, config=None):
     # pylint: disable=possibly-unused-variable
     header = pretty_header(consignment, config=config)
     body = pretty_content(consignment["items"], config=config)
-    return "{header}\n{body}".format(**locals())
+    return f"{header}\n{body}"
 
 
 def pretty_consignment_boxes(consignment, config=None):
@@ -116,7 +114,7 @@ def pretty_consignment_boxes(consignment, config=None):
     if line == "pipe":
         line = "|"
     if spaces:
-        separator = " {} ".format(line)
+        separator = f" {line} "
     else:
         separator = line
     # pylint: disable=possibly-unused-variable
@@ -124,7 +122,7 @@ def pretty_consignment_boxes(consignment, config=None):
     body = separator.join(
         [pretty_content(box.items, config=config) for box in consignment["boxes"]]
     )
-    return "{header}\n{body}".format(**locals())
+    return f"{header}\n{body}"
 
 
 def pretty_consignment_boxes_only(consignment, config=None):
@@ -134,7 +132,7 @@ def pretty_consignment_boxes_only(consignment, config=None):
     line = config.get("horizontal_line", "light")
     header = pretty_header(consignment, line=line, config=config)
     body = pretty_content(consignment["boxes"], config=config)
-    return "{header}\n{body}".format(**locals())
+    return f"{header}\n{body}"
 
 
 def pretty_consignment(consignment, style, config=None):
@@ -151,9 +149,7 @@ def pretty_consignment(consignment, style, config=None):
         return pretty_consignment_items(consignment, config=config)
     else:
         raise ValueError(
-            "Unknown style value for pretty printing of consignments: {pretty}".format(
-                **locals()
-            )
+            f"Unknown style value for pretty printing of consignments: {style}"
         )
 
 
@@ -170,9 +166,8 @@ class PrintReporter(object):
 
     def false_negative(self, consignment):
         print(
-            "Inspection failed, missed {} boxes with contaminants [FN]".format(
-                count_contaminated_boxes(consignment)
-            )
+            f"Inspection failed, missed {count_contaminated_boxes(consignment)} "
+            "boxes with contaminants [FN]"
         )
 
 
@@ -270,10 +265,8 @@ class Form280(object):
             )
         elif self.print_to_stdout:
             print(
-                "F280: {date:%Y-%m-%d} | {consignment[port]} | {consignment[origin]}"
-                " | {consignment[flower]} | {disposition_code}".format(
-                    consignment, **locals()
-                )
+                f"F280: {date:%Y-%m-%d} | {consignment.port} | {consignment.origin}"
+                f" | {consignment.flower} | {disposition_code}"
             )
 
 
@@ -400,103 +393,72 @@ def print_totals_as_text(num_consignments, config, totals):
     print("\n")
     print("Simulation parameters:")
     print("----------------------------------------------------------")
+    print(f"consignments:\n\t Number consignments simulated: {num_consignments:,.0f}")
     print(
-        "consignments:\n\t Number consignments simulated: "
-        "{num_consignments:,.0f}".format(**locals())
+        "\t Avg. number of boxes per consignment: "
+        f"{round(totals.num_boxes / num_consignments):,d}"
     )
     print(
-        "\t Avg. number of boxes per consignment: {:,d}".format(
-            round(totals.num_boxes / num_consignments)
-        )
-    )
-    print(
-        "\t Avg. number of items per consignment: {:,d}".format(
-            round(totals.num_items / num_consignments)
-        )
+        "\t Avg. number of items per consignment: "
+        f"{round(totals.num_items / num_consignments):,d}"
     )
 
     print(
-        "contamination:\n\t unit: {sim_params.contamination_unit}\n\t type: "
-        "{sim_params.contamination_type}".format(**locals())
+        f"contamination:\n\t unit: {sim_params.contamination_unit}\n\t type: "
+        f"{sim_params.contamination_type}"
     )
     if sim_params.contamination_type == "fixed_value":
-        print(
-            "\t\t contamination rate: {sim_params.contamination_param}".format(
-                **locals()
-            )
-        )
+        print(f"\t\t contamination rate: {sim_params.contamination_param}")
     elif sim_params.contamination_type == "beta":
         print(
             "\t\t contamination distribution parameters: "
-            "{sim_params.contamination_param}".format(**locals())
+            f"{sim_params.contamination_param}"
         )
-    print(
-        "\t contaminant arrangement: {sim_params.contaminant_arrangement}".format(
-            **locals()
-        )
-    )
+    print(f"\t contaminant arrangement: {sim_params.contaminant_arrangement}")
     if sim_params.contaminant_arrangement == "clustered":
         if sim_params.contamination_unit in ["box", "boxes"]:
             print(
                 "\t\t maximum contaminated boxes per cluster: "
-                "{sim_params.contaminated_units_per_cluster:,} boxes".format(**locals())
+                f"{sim_params.contaminated_units_per_cluster:,} boxes"
             )
         if sim_params.contamination_unit in ["item", "items"]:
             print(
                 "\t\t maximum contaminated items per cluster: "
-                "{sim_params.contaminated_units_per_cluster:,} items".format(**locals())
+                f"{sim_params.contaminated_units_per_cluster:,} items"
             )
-            print(
-                "\t\t cluster distribution: "
-                "{sim_params.contaminant_distribution}".format(**locals())
-            )
+            print(f"\t\t cluster distribution: {sim_params.contaminant_distribution}")
             if sim_params.contaminant_distribution == "random":
-                print(
-                    "\t\t cluster width: "
-                    "{sim_params.cluster_item_width:,} items".format(**locals())
-                )
+                print(f"\t\t cluster width: {sim_params.cluster_item_width:,} items")
 
     print(
-        "inspection:\n\t unit: {sim_params.inspection_unit}\n\t sample strategy: "
-        "{sim_params.sample_strategy}".format(**locals())
+        f"inspection:\n\t unit: {sim_params.inspection_unit}\n\t sample strategy: "
+        f"{sim_params.sample_strategy}"
     )
     if sim_params.sample_strategy == "proportion":
-        print("\t\t value: {sim_params.sample_params}".format(**locals()))
+        print(f"\t\t value: {sim_params.sample_params}")
     elif sim_params.sample_strategy == "hypergeometric":
-        print("\t\t detection level: {sim_params.sample_params}".format(**locals()))
+        print(f"\t\t detection level: {sim_params.sample_params}")
     elif sim_params.sample_strategy == "fixed_n":
-        print("\t\t sample size: {sim_params.sample_params}".format(**locals()))
-    print("\t selection strategy: {sim_params.selection_strategy}".format(**locals()))
+        print(f"\t\t sample size: {sim_params.sample_params}")
+    print(f"\t selection strategy: {sim_params.selection_strategy}")
     if sim_params.selection_strategy == "cluster":
-        print(
-            "\t\t box selection strategy: {sim_params.selection_param_1}".format(
-                **locals()
-            )
-        )
+        print(f"\t\t box selection strategy: {sim_params.selection_param_1}")
         if sim_params.selection_param_1 == "interval":
-            print(
-                "\t\t box selection interval: {sim_params.selection_param_2}".format(
-                    **locals()
-                )
-            )
+            print(f"\t\t box selection interval: {sim_params.selection_param_2}")
     if (
         sim_params.inspection_unit in ["box", "boxes"]
         or sim_params.selection_strategy == "cluster"
     ):
         print(
             "\t minimum proportion of items inspected within box: "
-            "{sim_params.within_box_proportion}".format(**locals())
+            f"{sim_params.within_box_proportion}"
         )
-    print("\t tolerance level: {sim_params.tolerance_level}".format(**locals()))
+    print(f"\t tolerance level: {sim_params.tolerance_level}")
     print("\n")
 
     print("Simulation results: (averaged across all simulation runs)")
     print("----------------------------------------------------------")
-    print(
-        "Avg. % contaminated consignments slipped: {totals.missing:.2f}%".format(
-            **locals()
-        )
-    )
+    print(f"Avg. % contaminated consignments slipped: {totals.missing:.2f}%")
     if totals.false_neg + totals.intercepted:
         adj_avg_slipped = (
             (totals.false_neg - totals.missed_within_tolerance)
@@ -508,59 +470,52 @@ def print_totals_as_text(num_consignments, config, totals):
 
     print(
         "Adjusted avg. % contaminated consignments slipped (excluding slipped "
-        "consignments with contamination rates below tolerance level): {:.2f}%".format(
-            adj_avg_slipped
-        )
+        "consignments with contamination rates below tolerance level): "
+        f"{adj_avg_slipped:.2f}%"
     )
-    print("Avg. num. consignments slipped: {totals.false_neg:,.0f}".format(**locals()))
+    print(f"Avg. num. consignments slipped: {totals.false_neg:,.0f}")
     print(
         "Avg. num. slipped consignments within tolerance "
-        "level: {totals.missed_within_tolerance:,.0f}".format(**locals())
+        f"level: {totals.missed_within_tolerance:,.0f}"
     )
-    print(
-        "Avg. num. consignments intercepted: {totals.intercepted:,.0f}".format(
-            **locals()
-        )
-    )
+    print(f"Avg. num. consignments intercepted: {totals.intercepted:,.0f}")
     print(
         "Total number of slipped contaminants: "
-        "{totals.total_missed_contaminants:,.0f}".format(**locals())
+        f"{totals.total_missed_contaminants:,.0f}"
     )
     print(
         "Total number of intercepted contaminants: "
-        "{totals.total_intercepted_contaminants:,.0f}".format(**locals())
+        f"{totals.total_intercepted_contaminants:,.0f}"
     )
     print("Contamination rate:")
-    print("\tOverall avg: {totals.true_contamination_rate:.3f}".format(**locals()))
+    print(f"\tOverall avg: {totals.true_contamination_rate:.3f}")
     if totals.max_missed_contamination_rate is not None:
         print(
             "\tSlipped consignments avg.: "
-            "{totals.avg_missed_contamination_rate:.3f}\n"
+            f"{totals.avg_missed_contamination_rate:.3f}\n"
             "\tSlipped consignments max.: "
-            "{totals.max_missed_contamination_rate:.3f}".format(**locals())
+            f"{totals.max_missed_contamination_rate:.3f}"
         )
     if totals.max_intercepted_contamination_rate is not None:
         print(
             "\tIntercepted consignments avg.: "
-            "{totals.avg_intercepted_contamination_rate:.3f}\n"
+            f"{totals.avg_intercepted_contamination_rate:.3f}\n"
             "\tIntercepted consignments max.: "
-            "{totals.max_intercepted_contamination_rate:.3f}".format(**locals())
+            f"{totals.max_intercepted_contamination_rate:.3f}"
         )
     print(
         "Avg. number of boxes opened per consignment:\n\t to completion: "
-        "{totals.avg_boxes_opened_completion:,.0f}\n"
-        "\t to detection: {totals.avg_boxes_opened_detection:,.0f}".format(**locals())
+        f"{totals.avg_boxes_opened_completion:,.0f}\n"
+        f"\t to detection: {totals.avg_boxes_opened_detection:,.0f}"
     )
     print(
         "Avg. number of items inspected per consignment:\n\t to completion: "
-        "{totals.avg_items_inspected_completion:,.0f}\n"
-        "\t to detection: {totals.avg_items_inspected_detection:,.0f}".format(
-            **locals()
-        )
+        f"{totals.avg_items_inspected_completion:,.0f}\n"
+        f"\t to detection: {totals.avg_items_inspected_detection:,.0f}"
     )
     print(
         "Avg. % contaminated items unreported if sample ends at detection: "
-        "{totals.pct_contaminant_unreported_if_detection:.2f}%".format(**locals())
+        f"{totals.pct_contaminant_unreported_if_detection:.2f}%"
     )
 
 
