@@ -96,11 +96,14 @@ class CutFlowerReleaseProgram:
                 schedule_config["file_name"],
                 date_format=schedule_config.get("date_format"),
             )
+        self._ports = config.get("ports")
 
     def __call__(self, consignment, date):
         """Decide if the consignment should be inspected based on CFRP"""
         # returns 2 bools: should_inspect, CFRP applied
         # we have flowers in the CFRP, flower is in CFRP
+        if self._ports and consignment.port not in self._ports:
+            return True, None  # inspect, not in CFRP
         dates_for_flower = self._schedule.get((consignment.flower, consignment.origin))
         if dates_for_flower:
             if date in dates_for_flower:

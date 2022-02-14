@@ -66,7 +66,7 @@ SCHEDULE = {
 }
 
 
-def simple_consignment(flower, origin, date):
+def simple_consignment(flower, origin, date, port="FL Miami Air CBP"):
     """Get consignment with some default values"""
     return Consignment(
         flower=flower,
@@ -77,7 +77,7 @@ def simple_consignment(flower, origin, date):
         date=date,
         boxes=[],
         pathway="airport",
-        port="FL Miami Air CBP",
+        port=port,
         origin=origin,
     )
 
@@ -178,6 +178,62 @@ def test_cfrp_inspect_flower_and_country_not_in_program():
     cfrp = CutFlowerReleaseProgram({}, schedule=SCHEDULE)
     consignment = simple_consignment(
         flower="Zantedeschia", origin="Mexico", date=datetime.date(2017, 1, 1)
+    )
+    inspect, program_name = cfrp(consignment, consignment.date)
+    assert inspect
+    assert program_name is None
+
+
+def test_cfrp_port_in_program_and_flower_of_the_day():
+    """Check inspection is requested for flower of the day in participating port"""
+    cfrp = CutFlowerReleaseProgram(
+        {"ports": ["NY JFK CBP", "FL Miami Air CBP"]}, schedule=SCHEDULE
+    )
+    consignment = simple_consignment(
+        flower="Liatris",
+        origin="Ecuador",
+        date=datetime.date(2017, 1, 1),
+        port="NY JFK CBP",
+    )
+    inspect, program_name = cfrp(consignment, consignment.date)
+    assert inspect
+    assert program_name == "cfrp"
+
+
+def test_cfrp_port_not_in_program_but_flower_of_the_day():
+    """Check inspection is requested for the right reason: FotD but non-CFRP port.
+
+    The flower would be inspected in CFRP if the consignment would be in another port.
+    """
+    cfrp = CutFlowerReleaseProgram(
+        {"ports": ["NY JFK CBP", "FL Miami Air CBP"]}, schedule=SCHEDULE
+    )
+    consignment = simple_consignment(
+        flower="Liatris",
+        origin="Ecuador",
+        date=datetime.date(2017, 1, 1),
+        port="HI Honolulu CBP",
+    )
+    inspect, program_name = cfrp(consignment, consignment.date)
+    assert inspect
+    assert program_name is None
+
+
+def test_cfrp_port_not_in_program_but_flower_country_in_program():
+    """Check inspection is requested because of non-CFRP port.
+
+    The flower would be not be inspected under CFRP
+    if the consignment would be in another port.
+    """
+    cfrp = CutFlowerReleaseProgram(
+        {"ports": ["NY JFK CBP", "FL Miami Air CBP"]}, schedule=SCHEDULE
+    )
+    # The flower should be in CFRP and not inspected if in another port.
+    consignment = simple_consignment(
+        flower="Liatris",
+        origin="Ecuador",
+        date=datetime.date(2017, 1, 2),
+        port="HI Honolulu CBP",
     )
     inspect, program_name = cfrp(consignment, consignment.date)
     assert inspect
