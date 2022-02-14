@@ -99,14 +99,20 @@ class CutFlowerReleaseProgram:
         self._ports = config.get("ports")
 
     def __call__(self, consignment, date):
-        """Decide if the consignment should be inspected based on CFRP"""
-        # returns 2 bools: should_inspect, CFRP applied
-        # we have flowers in the CFRP, flower is in CFRP
+        """Decide if the consignment should be inspected based on CFRP
+
+        Returns a tuple which contains a boolean indicating whether or not the
+        consignment should be inspected and a string which is the name of the
+        program (default is 'cfrp') if it was applied. If the program was not
+        applied, None is returned.
+        """
+        # Check if we are in a participating port.
         if self._ports and consignment.port not in self._ports:
             return True, None  # inspect, not in CFRP
+        # Look up flower-origin combo is in the program.
         dates_for_flower = self._schedule.get((consignment.flower, consignment.origin))
         if dates_for_flower:
             if date in dates_for_flower:
-                return True, self._program_name  # is FotD, inspect
-            return False, self._program_name  # not FotD, release
-        return True, None  # not in CFRP, inspect
+                return True, self._program_name  # inspect, is FotD
+            return False, self._program_name  # release, in CFRP, but not FotD
+        return True, None  # inspect, not in CFRP
