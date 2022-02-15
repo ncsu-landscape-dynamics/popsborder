@@ -1,5 +1,55 @@
 # Inspection configuration
 
+Each consignment is inspected according to the rules under the `inspection` configuration key.
+Optionally, inspection of some consignments can be skipped using a release programs.
+
+## Skipping inspections
+
+Inspections can be skipped using release programs specified under the key `release_programs`.
+
+Two programs are supported: a naive variation of the Cut Flower Release Program
+and a full version of the _Cut Flower Release Program_.
+
+Only one program can be specified at a time.
+
+### Naive Cut Flower Release Program
+
+A prototype implementation of a simple theoretical release program
+modeled after the Cut Flower Release Program (CFRP) is included in the
+simulation as _Naive Cut Flower Release Program_ (`naive_cfrp`). When
+activated, only one kind of flowers is inspected each day (a day is
+based on the date which is a attribute of the consignment). The program
+is applied to consignments which have flowers specified in `flowers` and
+which have less then `max_boxes`. The program parameters can be
+specified like this:
+
+```yaml
+release_programs:
+  naive_cfrp:
+    flowers:
+      - Hyacinthus
+      - Gerbera
+      - Rosa
+      - Actinidia
+    max_boxes: 10  # do not apply to consignments larger than
+```
+
+### Cut Flower Release Program
+
+_Main article: [Cut Flower Release Program](cfrp.md)_
+
+A full _Cut Flower Release Program_ (`cfrp`) is included in the simulation
+and is driven primarily by a schedule which determines qualifying flowers
+(or generally, commodities) and _Flower of the Day_ (FotD), a flower to inspect
+on a given day. A minimal configuration looks like this:
+
+```yaml
+release_programs:
+  cfrp:
+    schedule:
+      file_name: schedule.csv
+```
+
 ## Inspection unit
 
 The inspection unit can be determined by:
@@ -230,28 +280,6 @@ regardless of contaminant detection.
 The number of contaminated units detected for each end strategy is
 compared to quantify the proportion of contaminants reported when the
 inspection is ended at detection.
-
-## Naive Cut Flower Release Program
-
-A prototype implementation of a simple theoretical release program
-modeled after the Cut Flower Release Program (CFRP) is included in the
-simulation as _Naive Cut Flower Release Program_ (`naive_cfrp`). When
-activated, only one kind of flowers is inspected each day (a day is
-based on the date which is a attribute of the consignment). The program
-is applied to consignments which have flowers specified in `flowers` and
-which have less then `max_boxes`. The program parameters can be
-specified like this:
-
-```yaml
-release_programs:
-  naive_cfrp:
-    flowers:
-      - Hyacinthus
-      - Gerbera
-      - Rosa
-      - Actinidia
-    max_boxes: 10 # do not apply to consignments larger than
-```
 
 ---
 
