@@ -46,6 +46,12 @@ def text_to_value(arg):
         try:
             return float(arg)
         except ValueError:
+            # Support Python-like booleans and all YAML booleans.
+            # We do not support old YAML booleans.
+            if arg == "True" or arg == "TRUE":
+                return True
+            if arg == "False" or arg == "FALSE":
+                return False
             try:
                 return json.loads(arg)
             except json.JSONDecodeError:

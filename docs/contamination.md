@@ -154,6 +154,159 @@ contamination:
     in_box_arrangement: all
 ```
 
+## Consignment-specific contamination
+
+Contamination configuration can be different for different consignments.
+A key called `consignments` under `contamination` determines what consignments
+should be contaminated. If the key is present, only the consignments matching
+the specified rules are contaminated. If the key is not present, all
+consignments are contaminated and the same contamination settings is applied to all.
+
+### Rules for applying contamination
+
+Consignments which should be contaminated need to match the rules specified under
+`consignments` which is a list of rules. For example, to contaminate only Rose,
+the `commodity` key can be specified:
+
+```yaml
+contamination:
+  consignments:
+    - commodity: Rose
+```
+
+Multiple commodities can be specified:
+
+```yaml
+contamination:
+  consignments:
+    - commodity: Rose
+    - commodity: Sedum
+    - commodity: Tulipa
+```
+
+In this case, consignments which contain Rose, Sedum, and Tulipa will be contaminated.
+
+The consignments can be selected by `commodity`, `origin`, and `port`. All of the specified values
+need to match. For example, to contaminate only Rose from Colombia coming to FL Miami Air CBP,
+we can write:
+
+```yaml
+contamination:
+  consignments:
+    - commodity: Rose
+      origin: Colombia
+      port: FL Miami Air CBP
+```
+
+Although any combination is accepted as valid input, specifying overlapping rules may result in
+unexpected behavior. For example, in case you specify only `commodity` in one rule and `port`
+in another rule, it is hard to tell which rule is applied to which consignment. This is an issue
+when it is used in combination with different contamination settings for different consignments
+(see below).
+
+Contamination can also be limited to certain time period. For example, here we specify that Tulipa
+coming between September 29th, 2022 and November 15th, 2022 should be contaminated:
+
+```yaml
+contamination:
+  consignments:
+    - commodity: Tulipa
+      start_date: 2022-09-29
+      end_date: 2022-10-15
+```
+
+If only `start_date` is specified, all matching consignments at and after that date are contaminated.
+Similarly, `end_date` specifies last day when the consignments are contaminated even if no
+`start_date` was specified.
+
+### Setting consignment-specific parameters
+
+When all selected consignments should use the same contamination configuration,
+the `contamination` on the top-level is used, i.e., the contamination configuration is done
+exactly as if it would apply to all consignment and it is rules under `consignments` which limit
+to which consignment the contamination is applied.
+
+```yaml
+contamination:
+  consignments:
+    - commodity: Tulipa
+    - commodity: Rose
+      origin: Mexico
+    - commodity: Sedum
+  contamination_unit: item
+  arrangement: random
+```
+
+However, each of the consignment rules can have its own contamination under the key
+`contamination`, for example:
+
+```yaml
+contamination:
+  consignments:
+    - commodity: Tulipa
+      contamination:
+        arrangement: random_box
+        contamination_unit: box
+    - commodity: Rose
+      origin: Mexico
+      contamination:
+        arrangement: random
+        contamination_unit: box
+```
+
+This nested configuration can contain exactly the same as the top-level `contamination`
+except for the `consignments` key.
+
+If the nested `contamination` is present, the top-level `contamination` is ignored unless
+`use_contamination_defaults` is set to `true`. If `use_contamination_defaults: true` is set,
+then the top-level `contamination` is used to get default values which can be then optionally
+overwritten by values from the nested `contamination`.
+
+In the following example, both consignments with both Tulipa and Rose will be contaminated and
+will use values from the top-level `contamination` and at the same time, these values will be
+overwritten by the nested `contamination`. As a result, contamination configuration for Tulipa
+will have `arrangement: random_box` and `contamination_unit: item`, while contamination
+for Rose will have `arrangement: random` and `contamination_unit: box`.
+
+```yaml
+contamination:
+  consignments:
+    - commodity: Tulipa
+      use_contamination_defaults: true
+      contamination:
+        arrangement: random_box
+    - commodity: Rose
+      use_contamination_defaults: true
+      contamination:
+        contamination_unit: box
+  contamination_unit: item
+  arrangement: random
+```
+
+In summary, there are three different scenarios of usage of the top-level `contamination`.
+First, the top-level `contamination` is used implicitly when there is not nested `contamination`.
+Second, the top-level `contamination` is not used at all when the nested `contamination` is provided.
+And third, when the nested `contamination` is provided together with `use_contamination_defaults: true`,
+the values top-level `contamination` are used for parameters not provided in the nested `contamination`.
+The following example shows these three cases:
+
+```yaml
+contamination:
+  consignments:
+    - commodity: Sedum
+    - commodity: Tulipa
+      contamination:
+        arrangement: random_box
+        contamination_unit: box
+    - commodity: Rose
+      origin: Mexico
+      use_contamination_defaults: true
+      contamination:
+        contamination_unit: box
+  contamination_unit: item
+  arrangement: random
+```
+
 ---
 
 Next: [Inspections](inspections.md)
