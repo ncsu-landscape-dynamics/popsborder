@@ -30,11 +30,11 @@ from .consignments import get_consignment_generator
 from .contamination import get_contaminant_function
 from .inspections import (
     consignment_contamination_rate,
-    get_inspection_needed_function,
     get_sample_function,
     inspect,
     is_consignment_contaminated,
 )
+from .skipping import get_inspection_needed_function
 from .outputs import (
     Form280,
     MuteReporter,
