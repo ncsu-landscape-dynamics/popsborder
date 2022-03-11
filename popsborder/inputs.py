@@ -36,6 +36,8 @@ def text_to_value(arg):
     If conversion is not possible, the original text is returned.
     None is returned for both None and an empty string.
     """
+    # This is a short function with return statements only.
+    # pylint: disable=too-many-return-statements
     if not isinstance(arg, str):
         return arg
     if not arg:
@@ -46,6 +48,12 @@ def text_to_value(arg):
         try:
             return float(arg)
         except ValueError:
+            # Supports JSON booleans, Python-like booleans, and all YAML booleans.
+            # We do not support old YAML booleans.
+            if arg in ["true", "True", "TRUE"]:
+                return True
+            if arg in ["false", "False", "FALSE"]:
+                return False
             try:
                 return json.loads(arg)
             except json.JSONDecodeError:
