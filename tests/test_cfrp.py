@@ -1,4 +1,4 @@
-"""Test functions for skipping inspections directly"""
+"""Test functions for skipping with CFRP"""
 
 import datetime
 
