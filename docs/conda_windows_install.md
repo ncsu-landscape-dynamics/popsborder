@@ -12,7 +12,7 @@ Once installed, open Command Prompt and run the following lines, one at a time:
 conda create --name popsborder_env python=3.10 matplotlib seaborn git pip
 conda activate popsborder_env
 conda install -c conda-forge jupyterlab
-pip install git+git://github.com/ncsu-landscape-dynamics/popsborder
+pip install git+https://github.com/ncsu-landscape-dynamics/popsborder
 conda deactivate
 ```
 
