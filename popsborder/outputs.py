@@ -26,12 +26,10 @@ import operator
 import shutil
 import types
 import weakref
+from collections.abc import MutableMapping
 from functools import reduce
 
 from .inspections import count_contaminated_boxes
-
-if not hasattr(weakref, "finalize"):
-    from backports import weakref  # pylint: disable=import-error
 
 
 def pretty_content(array, config=None):
@@ -58,10 +56,7 @@ def pretty_content(array, config=None):
     return separator.join(pretty)
 
 
-# Pylint 2.4.4 does not see usage of a variables in a format string.
-def pretty_header(
-    consignment, line=None, config=None
-):  # pylint: disable=unused-argument
+def pretty_header(consignment, line=None, config=None):
     """Return header for a consignment
 
     Basic info about the consignment is included and the remaining space
@@ -100,7 +95,6 @@ def pretty_header(
 def pretty_consignment_items(consignment, config=None):
     """Pretty-print consignment focusing on individual items"""
     config = config if config else {}
-    # pylint: disable=possibly-unused-variable
     header = pretty_header(consignment, config=config)
     body = pretty_content(consignment["items"], config=config)
     return f"{header}\n{body}"
@@ -117,7 +111,6 @@ def pretty_consignment_boxes(consignment, config=None):
         separator = f" {line} "
     else:
         separator = line
-    # pylint: disable=possibly-unused-variable
     header = pretty_header(consignment, config=config)
     body = separator.join(
         [pretty_content(box.items, config=config) for box in consignment["boxes"]]
@@ -128,7 +121,6 @@ def pretty_consignment_boxes(consignment, config=None):
 def pretty_consignment_boxes_only(consignment, config=None):
     """Pretty-print consignment showing individual boxes"""
     config = config if config else {}
-    # pylint: disable=possibly-unused-variable
     line = config.get("horizontal_line", "light")
     header = pretty_header(consignment, line=line, config=config)
     body = pretty_content(consignment["boxes"], config=config)
@@ -524,6 +516,19 @@ def get_item_from_nested_dict(dictionary, keys):
     return reduce(operator.getitem, keys, dictionary)
 
 
+def _flatten_nested_dict_generator(dictionary, parent_key):
+    for key, value in dictionary.items():
+        new_key = f"{parent_key}/{key}" if parent_key else key
+        if isinstance(value, MutableMapping):
+            yield from flatten_nested_dict(value, new_key).items()
+        else:
+            yield new_key, value
+
+
+def flatten_nested_dict(dictionary, parent_key=None):
+    return dict(_flatten_nested_dict_generator(dictionary, parent_key))
+
+
 def save_scenario_result_to_table(filename, results, config_columns, result_columns):
     """Save selected values for a scenario results to CSV including configuration
 
@@ -554,7 +559,15 @@ def save_scenario_result_to_table(filename, results, config_columns, result_colu
             writer.writerow(row)
 
 
-def save_scenario_result_to_pandas(results, config_columns, result_columns):
+def save_simulation_result_to_pandas(
+    result, config, config_columns=None, result_columns=None
+):
+    return save_scenario_result_to_pandas(
+        [(result, config)], config_columns=config_columns, result_columns=result_columns
+    )
+
+
+def save_scenario_result_to_pandas(results, config_columns=None, result_columns=None):
     """Save selected values for a scenario to a pandas DataFrame.
 
     The results parameter is list of tuples which is output from the run_scenarios()
@@ -570,11 +583,19 @@ def save_scenario_result_to_pandas(results, config_columns, result_columns):
     rows = []
     for result, config in results:
         row = {}
-        for column in config_columns:
-            keys = column.split("/")
-            row[column] = get_item_from_nested_dict(config, keys)
-        for column in result_columns:
-            keys = column.split("/")
-            row[column] = get_item_from_nested_dict(result.__dict__, keys)
+        if config_columns:
+            for column in config_columns:
+                keys = column.split("/")
+                row[column] = get_item_from_nested_dict(config, keys)
+        elif config_columns is None:
+            row = flatten_nested_dict(config)
+        # When falsy, but not None, we assume it is an empty list and thus an
+        # explicit request for no config columns to be included.
+        if result_columns:
+            for column in result_columns:
+                keys = column.split("/")
+                row[column] = get_item_from_nested_dict(result.__dict__, keys)
+        else:
+            row.update(vars(result))
         rows.append(row)
     return pd.DataFrame.from_records(rows)
