@@ -526,6 +526,7 @@ def _flatten_nested_dict_generator(dictionary, parent_key):
 
 
 def flatten_nested_dict(dictionary, parent_key=None):
+    """Make a nested dictionary flat with key/subkey/subsubkey keys"""
     return dict(_flatten_nested_dict_generator(dictionary, parent_key))
 
 
@@ -560,8 +561,9 @@ def save_scenario_result_to_table(filename, results, config_columns, result_colu
 
 
 def save_simulation_result_to_pandas(
-    result, config, config_columns=None, result_columns=None
+    result, config=None, config_columns=None, result_columns=None
 ):
+    """Save result of one simulation to pandas DataFrame"""
     return save_scenario_result_to_pandas(
         [(result, config)], config_columns=config_columns, result_columns=result_columns
     )
@@ -583,14 +585,15 @@ def save_scenario_result_to_pandas(results, config_columns=None, result_columns=
     rows = []
     for result, config in results:
         row = {}
-        if config_columns:
-            for column in config_columns:
-                keys = column.split("/")
-                row[column] = get_item_from_nested_dict(config, keys)
-        elif config_columns is None:
-            row = flatten_nested_dict(config)
-        # When falsy, but not None, we assume it is an empty list and thus an
-        # explicit request for no config columns to be included.
+        if config:
+            if config_columns:
+                for column in config_columns:
+                    keys = column.split("/")
+                    row[column] = get_item_from_nested_dict(config, keys)
+            elif config_columns is None:
+                row = flatten_nested_dict(config)
+            # When falsy, but not None, we assume it is an empty list and thus an
+            # explicit request for no config columns to be included.
         if result_columns:
             for column in result_columns:
                 keys = column.split("/")
