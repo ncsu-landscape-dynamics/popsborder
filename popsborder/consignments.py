@@ -142,7 +142,7 @@ class ParameterConsignmentGenerator:
     """Generate a consignments based on configuration parameters"""
 
     def __init__(self, parameters, items_per_box, start_date):
-        """Set parameters for shipement generation
+        """Set parameters for consignment generation
 
         :param parameters: Consignment parameters
         :param ports: List of ports to choose from

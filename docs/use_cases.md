@@ -22,14 +22,14 @@ propagule pressure for quarantine-significant pest species.
 
 ## what are the trade offs between effort and effectiveness for various inspection protocols?
 
-For example, is the inspection success rate higher when we isnpect fewer
+For example, is the inspection success rate higher when we inspect fewer
 consignments using hypergeometric random sampling, or when we inspect
 all consignments using convenience sampling?
 
 ## How sensitive are the inspections to level of contamination?
 
 Given a specific inspection protocol, what level of contamination
-needs to be present in the consigments for us to detect it? Additionally,
+needs to be present in the consignments for us to detect it? Additionally,
 how much pest needs to be present to raise alarms?
 
 In the following example, we inspect two boxes of each consignment,
@@ -52,7 +52,7 @@ different contamination rates and compare slippage rates.
 
 Using a given inspection protocol, would we successfully intercept
 a newly emerging pest? In this case, we would modify the parameters
-that control how contamiantion in consignments from certain origin
+that control how contamination in consignments from certain origin
 countries are added based on another model projecting an emerging pest.
 
 ## Generate synthetic F280 records
