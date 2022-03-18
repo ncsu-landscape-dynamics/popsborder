@@ -99,3 +99,11 @@ def test_dict_config_to_table(datadir):
     print_table_config(table)
     config_table = load_configuration(table)
     assert config_table == config_yml
+
+
+def test_include_files(datadir):
+    config = load_configuration(datadir / "small_config_with_includes.yml")
+    print(config)
+    consignments = config["contamination"]["consignments"]
+    assert isinstance(consignments, list)
+    assert len(consignments) == 8

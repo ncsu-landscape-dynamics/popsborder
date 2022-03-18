@@ -133,7 +133,7 @@ def load_configuration_yaml_from_text(text):
     return yaml.load(text)  # pylint: disable=no-value-for-parameter
 
 
-def load_configuration(filename, sheet=None, key_column=None, value_column=None):
+def load_configuration_2(filename, sheet=None, key_column=None, value_column=None):
     """Get the configuration from a JSON or YAML file
 
     The format is decided based on the file extension.
@@ -182,6 +182,44 @@ def load_configuration(filename, sheet=None, key_column=None, value_column=None)
         )
     else:
         sys.exit("Unknown file extension (file: {filename})")
+
+
+def include_files(d: dict, base_file_name=None):
+    for key, value in d.items():
+        if isinstance(value, dict):
+            if len(value) == 1 and "include_file" in value:
+                value = value["include_file"]
+                nested_file = value["file_name"]
+                if base_file_name:
+                    parent = Path(base_file_name).parent
+                    nested_file = parent / nested_file
+                nested_sheet = value.get("sheet")
+                nested_key_column = value.get("key_column")
+                nested_value_column = value.get("value_column")
+                new_value = load_configuration_2(nested_file, sheet=nested_sheet, key_column=nested_key_column, value_column=nested_value_column)
+                d[key] = new_value
+            else:
+                include_files(value, base_file_name)
+
+
+def load_configuration(filename, sheet=None, key_column=None, value_column=None):
+    """Get the configuration from a JSON or YAML file
+
+    The format is decided based on the file extension.
+    It uses full_load() (FullLoader) to read YAML.
+
+    The parameter can be a string or a path object (path-like object).
+
+    If the *filename* contains `::`, anything after the last `::` is considered
+    parameters determining where in the spreadsheet or table are the relevant
+    columns. The format is multiple key-value pairs with key and value separated by
+    `=`, `:`, or `: ` and individual pairs separated by `,`.
+    The same information can be passed directly as function parameters.
+    If both are provided, function parameters take precedence.
+    """
+    config = load_configuration_2(filename, sheet=sheet, key_column=key_column, value_column=value_column)
+    include_files(config, base_file_name=filename)
+    return config
 
 
 def table_info_from_text(text, sheet=None, key_column=None, value_column=None):
