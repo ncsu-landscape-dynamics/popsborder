@@ -2,9 +2,7 @@
 
 import pytest
 
-from popsborder.inputs import (
-    text_to_value,
-)
+from popsborder.inputs import text_to_value
 
 
 def test_text_to_value_boolean_json_and_canonical_yaml():
@@ -52,13 +50,7 @@ def test_text_to_value_boolean_like_text_still_text(text):
 
 
 @pytest.mark.parametrize(
-    "value,expected",
-    [
-        ("0", 0),
-        ("1", 1),
-        ("1.", 1.0),
-        ("1.0", 1.0),
-    ],
+    "value,expected", [("0", 0), ("1", 1), ("1.", 1.0), ("1.0", 1.0)]
 )
 def test_text_to_value_boolean_like_value_still_value(value, expected):
     """Check that non-text boolean-like values have proper value and type"""

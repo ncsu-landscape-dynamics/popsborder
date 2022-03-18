@@ -128,11 +128,7 @@ def test_consignment_matches_contamination_rule_outside_of_date_interval(date):
 
 @pytest.mark.parametrize(
     "date",
-    [
-        datetime.date(2021, 1, 5),
-        datetime.date(2022, 1, 5),
-        datetime.date(2022, 4, 10),
-    ],
+    [datetime.date(2021, 1, 5), datetime.date(2022, 1, 5), datetime.date(2022, 4, 10)],
 )
 def test_consignment_matches_contamination_rule_before_end_date(date):
     """Check that consignment is selected based on a rule with end date"""
@@ -164,11 +160,7 @@ def test_consignment_matches_contamination_rule_after_start_date(date):
 
 @pytest.mark.parametrize(
     "date",
-    [
-        datetime.date(2022, 4, 11),
-        datetime.date(2022, 5, 5),
-        datetime.date(2022, 8, 19),
-    ],
+    [datetime.date(2022, 4, 11), datetime.date(2022, 5, 5), datetime.date(2022, 8, 19)],
 )
 def test_consignment_between_two_date_rules(date):
     """Check that consignment is not selected in presence of start and end date rules"""
