@@ -60,7 +60,7 @@ If you are not familiar with Binder, see
 
 Documentation is included in the [docs](docs/) directory.
 [command line interface](docs/cli.md)
-and [shipment configuration](docs/shipments.md)
+and [Consignment configuration](docs/consignments.md)
 pages are good ones to start with.
 
 ## Install
