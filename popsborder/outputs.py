@@ -250,7 +250,7 @@ class Form280(object):
         :param consignment: Consignment which was tested
         :param ok: True if the consignment was tested negative (no pest present)
         :param must_inspect: True if the consignment was selected for inspection
-        :param apllied_program: Identifier of the program applied or None
+        :param applied_program: Identifier of the program applied or None
         """
         disposition_code = self.disposition(ok, must_inspect, applied_program)
         if self.file:
@@ -286,7 +286,7 @@ class SuccessRates(object):
 
         :param checked_ok: True if no contaminant was found in consignment
         :param actually_ok: True if the consignment actually does not have contamination
-        :param shipmemt: The shipment itself (for reporting purposes)
+        :param consignment: The shipment itself (for reporting purposes)
         """
         if checked_ok and actually_ok:
             self.true_negative += 1
