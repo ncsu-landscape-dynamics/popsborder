@@ -1,5 +1,7 @@
 """Test fixed skip lot functionality"""
 
+import pytest
+
 from popsborder.consignments import Consignment, get_consignment_generator
 from popsborder.inputs import (
     load_configuration_yaml_from_text,
@@ -159,3 +161,28 @@ def test_inspect_not_in_program():
         inspect, program_name = program(consignment, consignment.date)
         assert inspect
         assert program_name == "Skip Lot"
+
+
+@pytest.mark.parametrize(["level", "fraction"], [(1, 1), (2, 0.5), (3, 0)])
+def test_never_inspect_in_program(level, fraction):
+    """Check inspection is requested when consignment is not in the program"""
+    program = FixedComplianceLevelSkipLot(
+        load_configuration_yaml_from_text(CONFIG)["release_programs"]["fixed_skip_lot"]
+    )
+    assert program.sampling_fraction_for_level(level) == fraction
+
+
+@pytest.mark.parametrize(
+    ["consignment", "level"],
+    [
+        (simple_consignment(flower="Hyacinthus", origin="Netherlands"), 2),
+        (simple_consignment(flower="Gerbera", origin="Mexico"), 3),
+        (simple_consignment(flower="Rosa", origin="Israel"), 1),
+    ],
+)
+def test_never_inspect_in_program(consignment, level):
+    """Check inspection is requested when consignment is not in the program"""
+    program = FixedComplianceLevelSkipLot(
+        load_configuration_yaml_from_text(CONFIG)["release_programs"]["fixed_skip_lot"]
+    )
+    assert program.compliance_level_for_consignment(consignment) == level
