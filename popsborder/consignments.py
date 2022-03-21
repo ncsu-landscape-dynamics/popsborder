@@ -110,7 +110,7 @@ class Consignment(collections.UserDict):
         self.items = items
         self.items_per_box = items_per_box
         self.num_boxes = num_boxes
-        self.date = date
+        self._date = date
         self.boxes = boxes
         self.origin = origin
         self.port = port
@@ -118,6 +118,14 @@ class Consignment(collections.UserDict):
 
     def __getattr__(self, name):
         return self.name
+
+    @property
+    def date(self):
+        """Date of consignment (arrival) as datetime.date object"""
+        # For datetime.datetime, returns just date, assumes datetime.date otherwise.
+        if hasattr(self._date, "date"):
+            return self._date.date()
+        return self._date
 
     @property
     def commodity(self):
