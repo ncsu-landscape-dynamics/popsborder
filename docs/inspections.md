@@ -12,6 +12,50 @@ and a full version of the _Cut Flower Release Program_.
 
 Only one program can be specified at a time.
 
+### Skip Lot Program
+
+List of compliance levels and their associated ratios of inspected consignments:
+
+```yaml
+release_programs:
+  fixed_skip_lot:
+    levels:
+      - name: 1
+        ratio_inspected: 1
+      - name: 2
+        ratio_inspected: 0.5
+      - name: 3
+        ratio_inspected: 0
+```
+
+List of consignment properties (attributes) which determine into
+which compliance level a consignment belongs to:
+
+```yaml
+    track:
+      - origin
+      - commodity
+```
+
+List which assigns values of tracked consignment properties to compliance levels:
+
+```yaml
+    consignment_records:
+      - origin: Netherlands
+        commodity: Hyacinthus
+        compliance_level: 2
+      - origin: Mexico
+        commodity: Gerbera
+        compliance_level: 3
+```
+
+Default compliance level when a consignment does not have a compliance level defined:
+
+```yaml
+    default_level: 1
+```
+
+
 ### Naive Cut Flower Release Program
 
 A prototype implementation of a simple theoretical release program
