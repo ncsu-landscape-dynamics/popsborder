@@ -48,11 +48,11 @@ release_programs:
       - commodity
     levels:
       - name: 1
-        ratio_inspected: 1
+        sampling_fraction: 1
       - name: 2
-        ratio_inspected: 0.5
+        sampling_fraction: 0.5
       - name: 3
-        ratio_inspected: 0
+        sampling_fraction: 0
     default_level: 1
     consignment_records:
       - origin: Netherlands

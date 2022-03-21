@@ -142,8 +142,8 @@ class FixedComplianceLevelSkipLot:
         for level in levels:
             if "name" not in level:
                 raise ValueError("Each level needs to have 'name'")
-            if "ratio_inspected" not in level:
-                raise ValueError("Each level needs to have 'ratio_inspected'")
+            if "sampling_fraction" not in level:
+                raise ValueError("Each level needs to have 'sampling_fraction'")
             self._levels[level["name"]] = level
 
         if consignment_records:
@@ -188,9 +188,9 @@ class FixedComplianceLevelSkipLot:
             return self._default_level
         return self._consignment_records[key]
 
-    def ratio_inspected_for_level(self, level):
+    def sampling_fraction_for_level(self, level):
         """Get ratio of items or boxes to inspect associated with a compliance level"""
-        return self._levels[level]["ratio_inspected"]
+        return self._levels[level]["sampling_fraction"]
 
     def __call__(self, consignment, date):
         """Decide whether the consignment should be inspected or not.
@@ -200,7 +200,7 @@ class FixedComplianceLevelSkipLot:
         compliance level).
         """
         level = self.compliance_level_for_consignment(consignment)
-        ratio_inspected = self.ratio_inspected_for_level(level)
-        if random.random() <= ratio_inspected:
+        sampling_fraction = self.sampling_fraction_for_level(level)
+        if random.random() <= sampling_fraction:
             return True, self._program_name
         return False, self._program_name
