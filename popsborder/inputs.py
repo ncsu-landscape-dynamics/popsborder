@@ -196,7 +196,21 @@ def include_files(d: dict, base_file_name=None):
                 nested_sheet = value.get("sheet")
                 nested_key_column = value.get("key_column")
                 nested_value_column = value.get("value_column")
-                new_value = load_configuration_2(nested_file, sheet=nested_sheet, key_column=nested_key_column, value_column=nested_value_column)
+                file_format = value.get("file_format")
+                if file_format == "list":
+                    values = load_scenario_table(
+                        nested_file,
+                    )
+                    new_value = []
+                    for item in values:
+                        new_value.append(record_to_nested_dictionary(item))
+                else:
+                    new_value = load_configuration_2(
+                        nested_file,
+                        sheet=nested_sheet,
+                        key_column=nested_key_column,
+                        value_column=nested_value_column,
+                    )
                 d[key] = new_value
             else:
                 include_files(value, base_file_name)
@@ -217,7 +231,9 @@ def load_configuration(filename, sheet=None, key_column=None, value_column=None)
     The same information can be passed directly as function parameters.
     If both are provided, function parameters take precedence.
     """
-    config = load_configuration_2(filename, sheet=sheet, key_column=key_column, value_column=value_column)
+    config = load_configuration_2(
+        filename, sheet=sheet, key_column=key_column, value_column=value_column
+    )
     include_files(config, base_file_name=filename)
     return config
 

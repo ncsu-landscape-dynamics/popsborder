@@ -107,3 +107,21 @@ def test_include_files(datadir):
     consignments = config["contamination"]["consignments"]
     assert isinstance(consignments, list)
     assert len(consignments) == 8
+
+
+def test_include_files_list(datadir):
+    config = load_configuration(datadir / "small_config_with_list_includes.yml")
+    print(config)
+    consignments = config["contamination"]["consignments"]
+    assert isinstance(consignments, list)
+    assert len(consignments) == 8
+    assert consignments[0] == {
+        "commodity": "Liatris",
+        "origin": "Netherlands",
+        "contamination": {"arrangement": "random_box"},
+    }
+    assert consignments[7] == {
+        "commodity": "Sedum",
+        "origin": "Colombia",
+        "contamination": {"arrangement": "random"},
+    }
