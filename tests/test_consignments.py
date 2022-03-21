@@ -23,6 +23,48 @@ def simple_consignment(flower="Tulipa", origin="Netherlands", date=None):
     )
 
 
+def test_consignment_attribute_access():
+    """Check that consignment supports attribute access"""
+    consignment = simple_consignment(origin="Mexico")
+    assert consignment.origin == "Mexico"
+
+
+def test_consignment_dict_access():
+    """Check that consignment supports dictionary-like (index) access"""
+    consignment = simple_consignment(origin="Mexico")
+    assert consignment["origin"] == "Mexico"
+
+
+def test_consignment_attribute_access_unknown():
+    """Check that consignment invalid attribute access raises exception"""
+    consignment = simple_consignment()
+    with pytest.raises(AttributeError) as error:
+        consignment.does_not_exist  # pylint: disable=pointless-statement
+    assert "does_not_exist" in str(error.value)
+
+
+def test_consignment_dict_access_unknown():
+    """Check that consignment invalid dictionary-like access raises exception"""
+    consignment = simple_consignment()
+    with pytest.raises(KeyError) as error:
+        consignment["does_not_exist"]  # pylint: disable=pointless-statement
+    assert "does_not_exist" in str(error.value)
+
+
+def test_consignment_has_attr():
+    """Check that consignment works with hasattr"""
+    consignment = simple_consignment()
+    assert hasattr(consignment, "origin")
+    assert not hasattr(consignment, "does_not_exist")
+
+
+def test_consignment_flower_commodity():
+    """Check that consignment supports both commodity and flower as names for access"""
+    consignment = simple_consignment(flower="Tulipa")
+    assert consignment.flower == "Tulipa"
+    assert consignment.commodity == "Tulipa"
+
+
 @pytest.mark.parametrize(
     "date",
     [

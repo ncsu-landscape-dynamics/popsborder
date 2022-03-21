@@ -59,8 +59,8 @@ class Box:
 class Consignment(collections.UserDict):
     """A consignment with all its properties and what it contains.
 
-    Access is through attributes (new style) or using a dictionary-like item access
-    (old style).
+    Access its properties (attributes) is through attribute syntax (new style) or
+    using a dictionary-like item access (old style).
     """
 
     # Inheriting from this library class is its intended use, so disable ancestors msg.
@@ -116,8 +116,15 @@ class Consignment(collections.UserDict):
         self.port = port
         self.pathway = pathway
 
+    def __hasattr__(self, name):
+        return name in self
+
     def __getattr__(self, name):
-        return self.name
+        if name not in self:
+            raise AttributeError(
+                f"'{self.__class__.__name__}' object has no attribute '{name}'"
+            )
+        return self[name]
 
     @property
     def date(self):
