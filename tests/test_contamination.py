@@ -5,7 +5,10 @@ import datetime
 import pytest
 
 from popsborder.consignments import Consignment
-from popsborder.contamination import get_contamination_config_for_consignment
+from popsborder.contamination import (
+    get_contamination_config_for_consignment,
+    get_contamination_rate,
+)
 from popsborder.inputs import load_configuration_yaml_from_text
 
 CONFIG = """\
@@ -210,3 +213,31 @@ def test_contamination_config_for_consignment_with_default():
         main_config["contamination"], consignment
     )
     assert config == {"contamination_unit": "box", "arrangement": "random"}
+
+
+CONTAMINATION_RATE_LIST = """\
+contamination:
+  contamination_rate:
+    distribution: beta
+    parameters:
+      - 4
+      - 60
+"""
+
+CONTAMINATION_RATE_DICT = """\
+contamination:
+  contamination_rate:
+    distribution: beta
+    parameters:
+      a: 4
+      b: 60
+"""
+
+
+@pytest.mark.parametrize("config", CONTAMINATION_RATE_LIST, CONTAMINATION_RATE_DICT)
+def test_contamination_rate_dict_config(config):
+    """Contamination rate function accepts list and mapping as params"""
+    config = load_configuration_yaml_from_text(config)
+    rate = get_contamination_rate(config["contamination"]["contamination_rate"])
+    assert rate >= 0
+    assert rate <= 1
