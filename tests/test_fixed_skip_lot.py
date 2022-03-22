@@ -121,7 +121,7 @@ def test_load_consignment_records(tmp_path):
 
 
 def test_sometimes_inspect_in_program():
-    """Check inspection is requested when consignment is not in the program"""
+    """Inspection is requested at least sometimes when consignment is in the program"""
     program = FixedComplianceLevelSkipLot(
         load_configuration_yaml_from_text(CONFIG)["release_programs"]["fixed_skip_lot"]
     )
@@ -136,7 +136,7 @@ def test_sometimes_inspect_in_program():
 
 
 def test_never_inspect_in_program():
-    """Check inspection is requested when consignment is not in the program"""
+    """Inspection is not requested when consignment is in a zero inspections level"""
     program = FixedComplianceLevelSkipLot(
         load_configuration_yaml_from_text(CONFIG)["release_programs"]["fixed_skip_lot"]
     )
@@ -164,8 +164,8 @@ def test_inspect_not_in_program():
 
 
 @pytest.mark.parametrize(["level", "fraction"], [(1, 1), (2, 0.5), (3, 0)])
-def test_never_inspect_in_program(level, fraction):
-    """Check inspection is requested when consignment is not in the program"""
+def test_fraction(level, fraction):
+    """Correct fraction is returned for a level"""
     program = FixedComplianceLevelSkipLot(
         load_configuration_yaml_from_text(CONFIG)["release_programs"]["fixed_skip_lot"]
     )
@@ -180,8 +180,8 @@ def test_never_inspect_in_program(level, fraction):
         (simple_consignment(flower="Rosa", origin="Israel"), 1),
     ],
 )
-def test_never_inspect_in_program(consignment, level):
-    """Check inspection is requested when consignment is not in the program"""
+def test_level(consignment, level):
+    """Correct level is returned for a shipment"""
     program = FixedComplianceLevelSkipLot(
         load_configuration_yaml_from_text(CONFIG)["release_programs"]["fixed_skip_lot"]
     )
