@@ -34,7 +34,6 @@ from .inspections import (
     inspect,
     is_consignment_contaminated,
 )
-from .skipping import get_inspection_needed_function
 from .outputs import (
     Form280,
     MuteReporter,
@@ -42,6 +41,7 @@ from .outputs import (
     SuccessRates,
     pretty_consignment,
 )
+from .skipping import get_inspection_needed_function
 
 
 def random_seed(seed):
