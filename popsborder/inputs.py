@@ -198,9 +198,7 @@ def include_files(d: dict, base_file_name=None):
                 nested_value_column = value.get("value_column")
                 file_format = value.get("file_format")
                 if file_format == "list":
-                    values = load_scenario_table(
-                        nested_file,
-                    )
+                    values = load_scenario_table(nested_file)
                     new_value = []
                     for item in values:
                         new_value.append(record_to_nested_dictionary(item))
