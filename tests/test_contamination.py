@@ -234,7 +234,7 @@ contamination:
 """
 
 
-@pytest.mark.parametrize("config", CONTAMINATION_RATE_LIST, CONTAMINATION_RATE_DICT)
+@pytest.mark.parametrize("config", [CONTAMINATION_RATE_LIST, CONTAMINATION_RATE_DICT])
 def test_contamination_rate_dict_config(config):
     """Contamination rate function accepts list and mapping as params"""
     config = load_configuration_yaml_from_text(config)
