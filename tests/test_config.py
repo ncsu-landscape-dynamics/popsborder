@@ -102,6 +102,7 @@ def test_dict_config_to_table(datadir):
 
 
 def test_include_files(datadir):
+    """Included YAML file with a list loads"""
     config = load_configuration(datadir / "small_config_with_includes.yml")
     consignments = config["contamination"]["consignments"]
     assert isinstance(consignments, list)
@@ -109,16 +110,17 @@ def test_include_files(datadir):
 
 
 def test_include_files_list(datadir):
+    """Included CSV file formatted as a list of items loads"""
     config = load_configuration(datadir / "small_config_with_list_includes.yml")
     consignments = config["contamination"]["consignments"]
     assert isinstance(consignments, list)
-    assert len(consignments) == 8
+    assert len(consignments) == 7
     assert consignments[0] == {
         "commodity": "Liatris",
         "origin": "Netherlands",
         "contamination": {"arrangement": "random_box"},
     }
-    assert consignments[7] == {
+    assert consignments[-1] == {
         "commodity": "Sedum",
         "origin": "Colombia",
         "contamination": {"arrangement": "random"},
