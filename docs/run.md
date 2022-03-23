@@ -87,6 +87,12 @@ contamination:
       file_name: consignments_list.yml
 ```
 
+The `include_file` item is the only item under the `consignments` item
+and what is in the included file will be placed as the value of the `consignments` item
+replacing the `include_file` item. The file being included can contain any
+other items like mapping (dictionaries) or lists. These items will be used as is
+as the new `consignments` value.
+
 The included `consignments_list.yml` file with the list of contamination settings
 for consignments can look like this:
 
