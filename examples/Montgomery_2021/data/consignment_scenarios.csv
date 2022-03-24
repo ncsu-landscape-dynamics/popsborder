@@ -8,10 +8,21 @@ consignment scenario 6,High,box hypergeometric 0.1,input_file,aqim_box_insp_unit
 consignment scenario 7,Low,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,box,beta,"[0.0727, 26.8544]",random,,,,boxes,hypergeometric,0.1,random,1
 consignment scenario 8,Mid,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,box,beta,"[0.0081, 2.9838]",random,,,,boxes,hypergeometric,0.1,random,1
 consignment scenario 9,High,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,box,beta,"[0.0029, 1.0742]",random,,,,boxes,hypergeometric,0.1,random,1
-consignment scenario 10,Small clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,box,beta,"[0.0091, 3.3769]",clustered,random,2,,boxes,hypergeometric,0.1,random,1
-consignment scenario 11,Large clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,box,beta,"[0.0091, 3.3769]",clustered,random,5,,boxes,hypergeometric,0.1,random,1
-consignment scenario 12,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,100,,boxes,hypergeometric,0.1,random,1
-consignment scenario 13,Large clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,random,400,400,boxes,hypergeometric,0.1,random,1
-consignment scenario 14,Small clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,random,25,25,boxes,hypergeometric,0.1,random,1
-consignment scenario 15,Random,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",random,,,,boxes,hypergeometric,0.1,random,1
-consignment scenario 16,Random,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,box,beta,"[0.0091, 3.3769]",random,,,,boxes,hypergeometric,0.1,random,1
+consignment scenario 10,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,25,25,boxes,hypergeometric,0.1,random,1
+consignment scenario 11,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,50,50,boxes,hypergeometric,0.1,random,1
+consignment scenario 12,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,75,75,boxes,hypergeometric,0.1,random,1
+consignment scenario 13,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,100,100,boxes,hypergeometric,0.1,random,1
+consignment scenario 14,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,125,125,boxes,hypergeometric,0.1,random,1
+consignment scenario 15,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,150,150,boxes,hypergeometric,0.1,random,1
+consignment scenario 16,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,175,175,boxes,hypergeometric,0.1,random,1
+consignment scenario 17,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,200,200,boxes,hypergeometric,0.1,random,1
+consignment scenario 18,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,225,225,boxes,hypergeometric,0.1,random,1
+consignment scenario 19,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,250,250,boxes,hypergeometric,0.1,random,1
+consignment scenario 20,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,275,275,boxes,hypergeometric,0.1,random,1
+consignment scenario 21,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,300,300,boxes,hypergeometric,0.1,random,1
+consignment scenario 22,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,325,325,boxes,hypergeometric,0.1,random,1
+consignment scenario 23,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,350,350,boxes,hypergeometric,0.1,random,1
+consignment scenario 24,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,375,375,boxes,hypergeometric,0.1,random,1
+consignment scenario 25,Continuous clusters,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",clustered,continuous,400,400,boxes,hypergeometric,0.1,random,1
+consignment scenario 26,Random items,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,item,beta,"[0.0091, 3.3769]",random,,,,boxes,hypergeometric,0.1,random,1
+consignment scenario 27,Random boxes,box hypergeometric 0.1,input_file,aqim_box_insp_unit.csv,,,200,box,beta,"[0.0091, 3.3769]",random,,,,boxes,hypergeometric,0.1,random,1
