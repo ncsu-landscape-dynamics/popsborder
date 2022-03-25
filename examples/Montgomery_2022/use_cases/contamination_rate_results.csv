@@ -1,0 +1,13 @@
+,scenario name,consignment name,inspection name,beta parameters,contaminant arrangement,cluster distribution,infested units per cluster,mean contamination rate,missed,intercepted,missed contaminants,intercepted contaminants,failure rate
+0,rate scenario 1 box,mean 0.0027 sd 0.0282 box,box hypergeometric 0.1 random,"[0.009, 3.3062]",random,,,0.0028,85.44,151.45,51050.2,494596.36,0.04571385451252641
+1,rate scenario 1 stem random,mean 0.0027 sd 0.0282 item random,box hypergeometric 0.1 random,"[0.009, 3.3062]",random,,,0.0027,26.22,207.22,300.69,530851.86,0.06254753999396317
+2,rate scenario 1 stem clustered random,mean 0.0027 sd 0.0282 item clustered random,box hypergeometric 0.1 random,"[0.009, 3.3062]",clustered,random,40.0,0.0027,65.37,165.72,12905.59,501225.23,0.05002112888620586
+3,rate scenario 1 stem clustered continuous,mean 0.0027 sd 0.0282 item clustered cont,box hypergeometric 0.1 random,"[0.009, 3.3062]",clustered,continuous,40.0,0.0027,66.15,169.04,12651.53,583531.88,0.051023241774826436
+4,rate scenario 2 box,mean 0.00188 sd 0.019 box,box hypergeometric 0.1 random,"[0.0098, 5.1882]",random,,,0.0019,91.19,149.34,63904.48,336585.82,0.04507696951403562
+5,rate scenario 2 stem random,mean 0.00188 sd 0.019 item random,box hypergeometric 0.1 random,"[0.0098, 5.1882]",random,,,0.0019,28.7,210.2,350.51,342886.61,0.0634470268638696
+6,rate scenario 2 stem clustered random,mean 0.00188 sd 0.019 item clustered random,box hypergeometric 0.1 random,"[0.0098, 5.1882]",clustered,random,40.0,0.0019,72.09,165.71,12266.43,372491.83,0.05001811047389074
+7,rate scenario 2 stem clustered continuous,mean 0.00188 sd 0.019 item clustered cont,box hypergeometric 0.1 random,"[0.0098, 5.1882]",clustered,continuous,40.0,0.0019,72.64,165.05,13284.49,324264.25,0.04981889526109267
+8,rate scenario 3 box,mean 0.001 sd 0.0095 box,box hypergeometric 0.1 random,"[0.0111, 11.0582]",random,,,0.001,101.7,141.02,48605.85,145856.45,0.04256565046785391
+9,rate scenario 3 stem random,mean 0.001 sd 0.0095 item random,box hypergeometric 0.1 random,"[0.0111, 11.0582]",random,,,0.001,31.85,212.13,312.63,237927.03,0.0640295804406882
+10,rate scenario 3 stem clustered random,mean 0.001 sd 0.0095 item clustered random,box hypergeometric 0.1 random,"[0.0111, 11.0582]",clustered,random,40.0,0.001,81.51,160.62,13574.46,183054.76,0.04848173860549351
+11,rate scenario 3 stem clustered continuous,mean 0.001 sd 0.0095 item clustered cont,box hypergeometric 0.1 random,"[0.0111, 11.0582]",clustered,continuous,40.0,0.001,81.44,159.05,12728.35,178128.37,0.048007847872019324
