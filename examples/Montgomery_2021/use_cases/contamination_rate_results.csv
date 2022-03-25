@@ -1,0 +1,13 @@
+,consignment name,inspection name,beta parameters,contaminant arrangement,cluster distribution,infested boxes per cluster,simulated contamination rate (mean),consignment failure rate
+0,mean 0.0027 sd 0.0282 box,box hypergeometric 0.1 random,"[0.0091, 3.3769]",random,,,0.0027,0.046
+1,mean 0.0027 sd 0.0282 item random,box hypergeometric 0.1 random,"[0.0091, 3.3769]",random,,,0.0027,0.0638
+2,mean 0.0027 sd 0.0282 item clustered random,box hypergeometric 0.1 random,"[0.0091, 3.3769]",clustered,random,40,0.0026,0.0505
+3,mean 0.0027 sd 0.0282 item clustered cont,box hypergeometric 0.1 random,"[0.0091, 3.3769]",clustered,continuous,40,0.0027,0.0512
+4,mean 0.00188 sd 0.019 box,box hypergeometric 0.1 random,"[0.0098, 5.1882]",random,,,0.0019,0.0451
+5,mean 0.00188 sd 0.019 item random,box hypergeometric 0.1 random,"[0.0098, 5.1882]",random,,,0.0019,0.0634
+6,mean 0.00188 sd 0.019 item clustered random,box hypergeometric 0.1 random,"[0.0098, 5.1882]",clustered,random,40,0.0019,0.05
+7,mean 0.00188 sd 0.019 item clustered cont,box hypergeometric 0.1 random,"[0.0098, 5.1882]",clustered,continuous,40,0.0019,0.0498
+8,mean 0.001 sd 0.0095 box,box hypergeometric 0.1 random,"[0.0111, 11.0582]",random,,,0.001,0.0426
+9,mean 0.001 sd 0.0095 item random,box hypergeometric 0.1 random,"[0.0111, 11.0582]",random,,,0.001,0.064
+10,mean 0.001 sd 0.0095 item clustered random,box hypergeometric 0.1 random,"[0.0111, 11.0582]",clustered,random,40,0.001,0.0485
+11,mean 0.001 sd 0.0095 item clustered cont,box hypergeometric 0.1 random,"[0.0111, 11.0582]",clustered,continuous,40,0.001,0.048
