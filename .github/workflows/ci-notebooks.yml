@@ -37,4 +37,3 @@ jobs:
           jupyter nbconvert --execute --to notebook --inplace examples/notebooks/contaminant_clustering.ipynb
           jupyter nbconvert --execute --to notebook --inplace examples/notebooks/prob_distributions.ipynb
           jupyter nbconvert --execute --to notebook --inplace examples/notebooks/scenario_plots.ipynb
-          jupyter nbconvert --execute --to notebook --inplace examples/Montgomery_2021/paper_example_plots.ipynb

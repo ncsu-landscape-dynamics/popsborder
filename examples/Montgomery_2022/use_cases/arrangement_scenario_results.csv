@@ -1,0 +1,19 @@
+,name,consignment name,items per box,contamination unit,contamination parameters,contaminant arrangement,cluster distribution,contaminated units per cluster,cluster width,avg contamination rate,avg missed contamination rate,avg intercepted contamination rate,avg boxes opened per inspection,pct box opened per simulation,avg items inspected per inspection,pct items inspected per simulation,missed contaminants,intercepted contaminants,interception rate,contaminated_consignments,% missed contaminants
+0,consignment scenario 10,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,25.0,25.0,0.0027,0.001,0.0507,18,6,3702,6,7064,552524,0.733,236,1.2624
+1,consignment scenario 11,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,50.0,50.0,0.0027,0.0018,0.0526,18,6,3702,6,15688,600061,0.7064,237,2.5479
+2,consignment scenario 12,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,75.0,75.0,0.0026,0.0021,0.0525,18,6,3702,6,19991,533027,0.6964,234,3.615
+3,consignment scenario 13,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,100.0,100.0,0.0027,0.0032,0.0556,18,6,3702,6,26409,521293,0.6656,235,4.8219
+4,consignment scenario 14,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,125.0,125.0,0.0027,0.0028,0.0539,18,6,3702,6,19867,533512,0.681,235,3.5901
+5,consignment scenario 15,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,150.0,150.0,0.0026,0.0033,0.0545,18,6,3702,6,29210,473413,0.6702,232,5.8116
+6,consignment scenario 16,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,175.0,175.0,0.0026,0.0033,0.0542,18,6,3702,6,26149,488133,0.6707,234,5.0846
+7,consignment scenario 17,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,200.0,200.0,0.0027,0.0051,0.0557,18,6,3702,6,50936,518845,0.6401,236,8.9397
+8,consignment scenario 18,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,225.0,225.0,0.0027,0.0038,0.0543,18,6,3702,6,33721,519313,0.6669,237,6.0976
+9,consignment scenario 19,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,250.0,250.0,0.0027,0.0036,0.0555,18,6,3702,6,35100,514811,0.6598,236,6.3829
+10,consignment scenario 20,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,275.0,275.0,0.0027,0.0037,0.0548,18,6,3702,6,34240,573484,0.6667,235,5.6342
+11,consignment scenario 21,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,300.0,300.0,0.0027,0.0043,0.0569,18,6,3702,6,40506,477923,0.6541,233,7.8132
+12,consignment scenario 22,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,325.0,325.0,0.0027,0.004,0.0552,18,6,3702,6,40977,453589,0.6603,234,8.2855
+13,consignment scenario 23,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,350.0,350.0,0.0027,0.0042,0.0559,18,6,3702,6,33754,518117,0.6559,235,6.1163
+14,consignment scenario 24,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,375.0,375.0,0.0026,0.004,0.0542,18,6,3702,6,38349,517816,0.6615,235,6.8954
+15,consignment scenario 25,Continuous clusters,200,item,"[0.0091, 3.3769]",clustered,continuous,400.0,400.0,0.0027,0.0055,0.0559,18,6,3702,6,53942,460991,0.6379,237,10.4756
+16,consignment scenario 26,Random items,200,item,"[0.0091, 3.3769]",random,,,,0.0027,0.0001,0.0427,18,6,3702,6,279,577577,0.887,238,0.0484
+17,consignment scenario 27,Random boxes,200,box,"[0.0091, 3.3769]",random,,,,0.0027,0.0056,0.056,18,6,3702,6,52643,495605,0.6379,238,9.6021
