@@ -283,4 +283,4 @@ inspection is ended at detection.
 
 ---
 
-Next: [Outputs](run.md)
+Next: [Run simulations](run.md)
