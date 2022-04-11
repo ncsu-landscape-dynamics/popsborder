@@ -1,0 +1,29 @@
+consignment:
+  generation_method: parameter_based
+  parameter_based:
+    ports:
+      - NY JFK CBP
+      - FL Miami Air CBP
+      - HI Honolulu CBP
+contamination:
+  consignments:
+    include_file:
+      file_name: consignments_list.csv
+      file_format: list
+  contamination_unit: item
+  contamination_rate:
+    distribution: beta
+    value: 0.01
+    parameters:
+      - 0.0194628
+      - 2.7609372
+  arrangement: random
+inspection:
+  unit: boxes
+  within_box_proportion: 1
+  tolerance_level: 0.005
+  sample_strategy: hypergeometric
+  hypergeometric:
+    detection_level: 0.1
+    confidence_level: 0.95
+  selection_strategy: random

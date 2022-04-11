@@ -1,0 +1,36 @@
+- commodity: Liatris
+  origin: Netherlands
+  contamination:
+    arrangement: random_box
+- commodity: Tulipa
+  origin: Netherlands
+  start_date: 2022-09-29
+  end_date: 2022-10-15
+  contamination:
+    arrangement: random_box
+    contamination_unit: box
+- commodity: Gerbera
+  origin: Netherlands
+  end_date: 2022-04-10
+  contamination:
+    arrangement: random_box
+- commodity: Gerbera
+  origin: Netherlands
+  start_date: 2022-08-20
+  contamination:
+    contamination_unit: item
+- commodity: Hyacinthus
+  origin: Israel
+- commodity: Rose
+  origin: Netherlands
+  use_contamination_defaults: false
+  contamination:
+    contamination_unit: box
+- commodity: Rose
+  origin: Mexico
+  use_contamination_defaults: true
+  contamination:
+    contamination_unit: box
+- commodity: Sedum
+  origin: Colombia
+  port: FL Miami Air CBP
