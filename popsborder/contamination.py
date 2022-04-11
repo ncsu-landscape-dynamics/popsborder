@@ -23,6 +23,7 @@
 
 import math
 import random
+from collections.abc import Mapping
 from datetime import datetime
 
 import numpy as np
@@ -75,20 +76,32 @@ def add_contaminant_to_random_box(config, consignment, contamination_rate=None):
                 np.put(box.items, indexes, 1)
 
 
+def get_contamination_rate(config):
+    """Get contamination rate.
+
+    Config is the ``contamination_rate`` dictionary.
+    """
+    distribution = config["distribution"]
+    if distribution == "fixed_value":
+        return config["value"]
+    if distribution == "beta":
+        parameters = config["parameters"]
+        if isinstance(parameters, Mapping):
+            param1 = parameters["a"]
+            param2 = parameters["b"]
+        else:
+            param1, param2 = parameters
+        return float(stats.beta.rvs(param1, param2, size=1))
+    raise RuntimeError(f"Unknown contamination rate distribution: {distribution}")
+
+
 def num_items_to_contaminate(config, num_items):
     """Return number of items to be contaminated
     Rounds up or down to nearest integer.
 
     Config is the ``contamination_rate`` dictionary.
     """
-    distribution = config["distribution"]
-    if distribution == "fixed_value":
-        contamination_rate = config["value"]
-    elif distribution == "beta":
-        param1, param2 = config["parameters"]
-        contamination_rate = float(stats.beta.rvs(param1, param2, size=1))
-    else:
-        raise RuntimeError(f"Unknown contamination rate distribution: {distribution}")
+    contamination_rate = get_contamination_rate(config)
     contaminated_items = round(num_items * contamination_rate)
     return contaminated_items
 
@@ -98,14 +111,7 @@ def num_boxes_to_contaminate(config, num_boxes):
 
     Config is the ``contamination_rate`` dictionary.
     """
-    distribution = config["distribution"]
-    if distribution == "fixed_value":
-        contamination_rate = config["value"]
-    elif distribution == "beta":
-        param1, param2 = config["parameters"]
-        contamination_rate = float(stats.beta.rvs(param1, param2, size=1))
-    else:
-        raise RuntimeError(f"Unknown contamination rate distribution: {distribution}")
+    contamination_rate = get_contamination_rate(config)
     contaminated_boxes = num_boxes * contamination_rate
     return contaminated_boxes
 

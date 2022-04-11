@@ -37,6 +37,26 @@ contamination:
       - 60
 ```
 
+The distribution parameters can also be specified as a mapping (dictionary) with
+`a` being the first parameter and `b` the second:
+
+```yaml
+contamination:
+  contamination_rate:
+    distribution: beta
+    parameters:
+      a: 4
+      b: 60
+```
+
+In tabular configuration, the above looks like:
+
+| Parameter key                                 | Value |
+| --------------------------------------------- | ----- |
+| contamination/contamination_rate/distribution | beta  |
+| contamination/contamination_rate/parameters/a | 4     |
+| contamination/contamination_rate/parameters/b | 60    |
+
 The possible values for `distribution` include `beta` and `fixed_value`.
 
 If `distribution` = `beta`, a beta probability distribution of contamination rates
