@@ -21,8 +21,9 @@
 """
 
 import functools
+import random
 
-from .inputs import load_cfrp_schedule
+from .inputs import load_cfrp_schedule, load_skip_lot_consignment_records
 
 
 def get_inspection_needed_function(config):
@@ -39,6 +40,8 @@ def get_inspection_needed_function(config):
             # or raise exception if there is an unknown program name.
             if name == "cfrp":
                 return CutFlowerReleaseProgram(config["release_programs"][name])
+            if name == "fixed_skip_lot":
+                return FixedComplianceLevelSkipLot(config["release_programs"][name])
             elif name == "naive_cfrp":
                 return functools.partial(
                     naive_cfrp, config["release_programs"][name], name
@@ -116,3 +119,88 @@ class CutFlowerReleaseProgram:
                 return True, self._program_name  # inspect, is FotD
             return False, self._program_name  # release, in CFRP, but not FotD
         return True, None  # inspect, not in CFRP
+
+
+class FixedComplianceLevelSkipLot:
+    """A skip lot program which uses predefined compliance levels for consignments"""
+
+    def __init__(self, config, consignment_records=None):
+        """Creates internal consignment records, levels, and defaults.
+
+        Consignment records are read from config under key 'consignment_records',
+        from a file linked in config under consignment_records/file_name,
+        or directly from the consignment_records parameter.
+        While the records in configuration are in a list, the parameter is a dictionary
+        with consignment property values as keys and compliance level names as values.
+        """
+        self._program_name = config.get("name", "fixed_skip_lot")
+        self._tracked_properties = config.get("track")
+        self._default_level = config.get("default_level")
+
+        levels = config.get("levels")
+        self._levels = {}
+        for level in levels:
+            if "name" not in level:
+                raise ValueError("Each level needs to have 'name'")
+            if "sampling_fraction" not in level:
+                raise ValueError("Each level needs to have 'sampling_fraction'")
+            self._levels[level["name"]] = level
+
+        if consignment_records:
+            self._consignment_records = consignment_records.copy()
+        else:
+            records_config = config["consignment_records"]
+            if "file_name" in records_config:
+                self._consignment_records = load_skip_lot_consignment_records(
+                    consignment_records["file_name"],
+                    tracked_properties=self._tracked_properties,
+                )
+            elif isinstance(records_config, list):
+                self._consignment_records = {}
+                for record in records_config:
+                    key = []
+                    for tracked_property in self._tracked_properties:
+                        key.append(record[tracked_property])
+                    self._consignment_records[tuple(key)] = record["compliance_level"]
+            else:
+                raise ValueError(
+                    "The 'consignment_records' config needs to be a list "
+                    "or contain 'file_name'"
+                )
+
+    def compliance_level_for_consignment(self, consignment):
+        """Get compliance level associated with a given consignment.
+
+        The level is selected based on consignment properties.
+        """
+        key = []
+        for name in self._tracked_properties:
+            try:
+                property_value = getattr(consignment, name)
+            except AttributeError as error:
+                raise ValueError(
+                    f"Consignment does not have a property '{name}'"
+                ) from error
+            key.append(property_value)
+        key = tuple(key)
+        if key not in self._consignment_records:
+            self._consignment_records[key] = self._default_level
+            return self._default_level
+        return self._consignment_records[key]
+
+    def sampling_fraction_for_level(self, level):
+        """Get ratio of items or boxes to inspect associated with a compliance level"""
+        return self._levels[level]["sampling_fraction"]
+
+    def __call__(self, consignment, date):
+        """Decide whether the consignment should be inspected or not.
+
+        Returns boolean (True for inspect) and this program name (always because it
+        is always applied even to unknown consignments because there is a default
+        compliance level).
+        """
+        level = self.compliance_level_for_consignment(consignment)
+        sampling_fraction = self.sampling_fraction_for_level(level)
+        if random.random() <= sampling_fraction:
+            return True, self._program_name
+        return False, self._program_name

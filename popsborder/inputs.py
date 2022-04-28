@@ -620,3 +620,26 @@ def load_cfrp_schedule(filename, date_format=None):
                 schedule[combo] = set()
             schedule[combo].add(date)
     return schedule
+
+
+def load_skip_lot_consignment_records(filename, tracked_properties):
+    """Load records associating consignment with skip lot compliance levels.
+
+    Only the *tracked_properties* are considered and are assumed to uniquely
+    distinguish consignment records with distinct compliance levels.
+    If the level can be converted to number, it is converted.
+    """
+    records = {}
+    # Read as CSV
+    with open(filename) as file:
+        # Import file- or format-specific items only when need.
+        # pylint: disable=import-outside-toplevel
+        import csv
+
+        for row in csv.DictReader(file):
+            combo = []
+            for tracked_property in tracked_properties:
+                combo.append(row[tracked_property])
+            level = row["compliance_level"]
+            records[tuple(combo)] = text_to_value(level)
+    return records
