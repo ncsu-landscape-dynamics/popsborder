@@ -125,7 +125,7 @@ The standard `git diff` is not particularly useful for `.ipynb` files,
 especially for computed ones, but the rendered file can be viewed in PR
 and _nbdiff_ in command line can show a human-readable difference.
 
-### Adding Conda Environment to Jupyter Notebook
+### Adding Conda Environments to Jupyter Notebook
 
  Conda allows you to create isolated environments with specific 
  versions of Python and its packages. This prevents conflicts between 
