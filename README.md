@@ -125,6 +125,52 @@ The standard `git diff` is not particularly useful for `.ipynb` files,
 especially for computed ones, but the rendered file can be viewed in PR
 and _nbdiff_ in command line can show a human-readable difference.
 
+### Adding Conda Environment to Jupyter Notebook
+
+ Conda allows you to create isolated environments with specific 
+ versions of Python and its packages. This prevents conflicts between 
+ different projects' dependencies.
+
+
+**Step 1: Create your conda environment.**
+Inside of your conda based command line use the following command
+`conda create --name firstEnv`
+firstEnv is the name of your environment. Change as needed.
+
+
+**Step 2: Activate your environment.**
+Using your newly created environment from the previous step, run
+`conda activate firstEnv`
+Now you have entered into your environment.
+
+
+**Step 3: Install any necessary packages for your environment.**
+Now you can install any package you need for your environment.
+Below is an example installation for pipenv, a dependency for
+popsborder.
+`conda install -c conda-forge pipenv`
+
+
+**Step 4: Setting up your conda environment on jupyter notebook.**
+Download ipykernel, a Python kernel that allows you to execute
+Python code within your botebooks.
+`conda install -c anaconda ipykernel`
+
+
+Next Run the following command replacing firstEnv with your
+environment name:
+`python -m ipykernel install --user --name=firstEnv`
+This installs a jupyter kernel in your environment allowing you to
+use your kernel in Jupyter Notebook.
+
+
+**Step 5: Open Jupyter Notebook.**
+Run from within your environment
+`jupyter notebook`
+This will open jupyter notebook in your default browser or provide
+a url in the terminal. You now have your environment linked to
+jupyter notebook.
+
 ## Authors
 
 - Vaclav Petras, NCSU Center for Geospatial Analytics
