@@ -145,9 +145,9 @@ def simulation(
             applied_program,
         )
         consignment_actually_ok = not is_consignment_contaminated(consignment)
-        success_rates.record_success_rate(
-            consignment_checked_ok, consignment_actually_ok, consignment
-        )
+        success_rates.record_and_add_effectiveness(
+            consignment_checked_ok, consignment_actually_ok, consignment,
+            config["inspection"]["effectiveness"], num_inspections)
         true_contamination_rate += consignment_contamination_rate(consignment)
         if not consignment_actually_ok:
             if consignment_checked_ok:

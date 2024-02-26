@@ -113,7 +113,8 @@ def pretty_consignment_boxes(consignment, config=None):
         separator = line
     header = pretty_header(consignment, config=config)
     body = separator.join(
-        [pretty_content(box.items, config=config) for box in consignment["boxes"]]
+        [pretty_content(box.items, config=config) for box in
+         consignment["boxes"]]
     )
     return f"{header}\n{body}"
 
@@ -156,10 +157,11 @@ class PrintReporter(object):
     def true_positive(self):
         print("Inspection worked, found contaminant [TP]")
 
-    def false_negative(self, consignment):
+    def false_negative(self, consignment, add_text=""):
         print(
-            f"Inspection failed, missed {count_contaminated_boxes(consignment)} "
-            "boxes with contaminants [FN]"
+            f"Inspection failed, missed "
+            f"{count_contaminated_boxes(consignment)} "
+            f"boxes with contaminants [FN] {add_text}"
         )
 
 
@@ -197,7 +199,8 @@ class Form280(object):
                 self._finalizer = weakref.finalize(self, self.file.close)
         self.codes = disposition_codes
         # selection and order of columns to output
-        columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY", "disposition"]
+        columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY",
+                   "disposition"]
 
         if self.file:
             self.writer = csv.writer(
@@ -221,13 +224,15 @@ class Form280(object):
         if applied_program in ["naive_cfrp"]:
             if must_inspect:
                 if ok:
-                    disposition = codes.get("cfrp_inspected_ok", "OK CFRP Inspected")
+                    disposition = codes.get("cfrp_inspected_ok",
+                                            "OK CFRP Inspected")
                 else:
                     disposition = codes.get(
                         "cfrp_inspected_pest", "Pest Found CFRP Inspected"
                     )
             else:
-                disposition = codes.get("cfrp_not_inspected", "CFRP Not Inspected")
+                disposition = codes.get("cfrp_not_inspected",
+                                        "CFRP Not Inspected")
         else:
             if ok:
                 disposition = codes.get("inspected_ok", "OK Inspected")
@@ -240,8 +245,10 @@ class Form280(object):
 
         :param date: Consignment or inspection date
         :param consignment: Consignment which was tested
-        :param ok: True if the consignment was tested negative (no pest present)
-        :param must_inspect: True if the consignment was selected for inspection
+        :param ok: True if the consignment was tested negative (no pest
+        present)
+        :param must_inspect: True if the consignment was selected for
+        inspection
         :param applied_program: Identifier of the program applied or None
         """
         disposition_code = self.disposition(ok, must_inspect, applied_program)
@@ -257,7 +264,8 @@ class Form280(object):
             )
         elif self.print_to_stdout:
             print(
-                f"F280: {date:%Y-%m-%d} | {consignment.port} | {consignment.origin}"
+                f"F280: {date:%Y-%m-%d} | {consignment.port} | "
+                f"{consignment.origin}"
                 f" | {consignment.flower} | {disposition_code}"
             )
 
@@ -277,7 +285,8 @@ class SuccessRates(object):
         """Record testing result for one consignment
 
         :param checked_ok: True if no contaminant was found in consignment
-        :param actually_ok: True if the consignment actually does not have contamination
+        :param actually_ok: True if the consignment actually does not have
+        contamination
         :param consignment: The shipment itself (for reporting purposes)
         """
         if checked_ok and actually_ok:
@@ -293,7 +302,71 @@ class SuccessRates(object):
         elif not checked_ok and actually_ok:
             raise RuntimeError(
                 "Inspection result is contaminated,"
-                " but actually the consignment is not contaminated (programmer error)"
+                " but actually the consignment is not contaminated ("
+                "programmer error)"
+            )
+
+    def make_an_error(self, num_inspections, effectiveness):
+        """Check if an error should be made.
+
+        :param num_inspections: Number of inspections
+        :param effectiveness: The desired effectiveness level from
+        configuration ["inspection"]["effectiveness"].
+
+        :return: make_error, cur_effectiveness
+        """
+
+        try:
+            detection_efforts = self.ok + self.true_positive
+            make_error = False
+            if num_inspections > 0:
+                cur_effectiveness = detection_efforts / num_inspections
+                if cur_effectiveness > effectiveness:
+                    make_error = True
+                return make_error, cur_effectiveness
+        except ZeroDivisionError:
+            print("Zero division error")
+
+    def record_and_add_effectiveness(self, checked_ok, actually_ok,
+                                     consignment, effectiveness,
+                                     num_inspections):
+        """Reduce inspection effectiveness by modifying success rates
+
+        Reducing true-positives and increasing false-negatives to identify
+        contaminated items as safe when current effectiveness is higher than
+        the desired effectiveness.
+
+        :param checked_ok: True if no contaminant was found in consignment
+        :param actually_ok: True if the consignment actually does not have
+        contamination
+        :param consignment: The shipment itself (for reporting purposes)
+        :param effectiveness: The desired effectiveness level
+        :param num_inspections: Number of inspections
+        """
+
+        make_error, cur_effectiveness = self.make_an_error(num_inspections,
+                                                           effectiveness)
+        if checked_ok and actually_ok:
+            self.true_negative += 1
+            self.ok += 1
+            self.reporter.true_negative()
+        elif not checked_ok and not actually_ok:
+            if make_error:
+                self.false_negative += 1
+                message = (f"---> Making an error: {cur_effectiveness:.2f} > "
+                           f"{effectiveness:.2f}")
+                self.reporter.false_negative(consignment, message)
+            else:
+                self.true_positive += 1
+                self.reporter.true_positive()
+        elif checked_ok and not actually_ok:
+            self.false_negative += 1
+            self.reporter.false_negative(consignment)
+        elif not checked_ok and actually_ok:
+            raise RuntimeError(
+                "Inspection result is contaminated,"
+                " but actually the consignment is not contaminated "
+                "(programmer error)"
             )
 
 
@@ -318,16 +391,20 @@ def config_to_simplified_simulation_params(config):
     )
 
     sim_params.tolerance_level = config["inspection"]["tolerance_level"]
-    sim_params.contamination_unit = config["contamination"]["contamination_unit"]
-    sim_params.contamination_type = config["contamination"]["contamination_rate"][
+    sim_params.contamination_unit = config["contamination"][
+        "contamination_unit"]
+    sim_params.contamination_type = \
+    config["contamination"]["contamination_rate"][
         "distribution"
     ]
     if sim_params.contamination_type == "fixed_value":
-        sim_params.contamination_param = config["contamination"]["contamination_rate"][
+        sim_params.contamination_param = \
+        config["contamination"]["contamination_rate"][
             "value"
         ]
     elif sim_params.contamination_type == "beta":
-        sim_params.contamination_param = config["contamination"]["contamination_rate"][
+        sim_params.contamination_param = \
+        config["contamination"]["contamination_rate"][
             "parameters"
         ]
     else:
@@ -337,10 +414,12 @@ def config_to_simplified_simulation_params(config):
         sim_params.contaminated_units_per_cluster = config["contamination"][
             "clustered"
         ]["contaminated_units_per_cluster"]
-        sim_params.contaminant_distribution = config["contamination"]["clustered"][
+        sim_params.contaminant_distribution = \
+        config["contamination"]["clustered"][
             "distribution"
         ]
-        sim_params.cluster_item_width = config["contamination"]["clustered"]["random"][
+        sim_params.cluster_item_width = \
+        config["contamination"]["clustered"]["random"][
             "cluster_item_width"
         ]
     else:
@@ -348,7 +427,8 @@ def config_to_simplified_simulation_params(config):
         sim_params.cluster_item_width = None
         sim_params.contaminant_distribution = None
     sim_params.inspection_unit = config["inspection"]["unit"]
-    sim_params.within_box_proportion = config["inspection"]["within_box_proportion"]
+    sim_params.within_box_proportion = config["inspection"][
+        "within_box_proportion"]
     sim_params.sample_strategy = config["inspection"]["sample_strategy"]
     if sim_params.sample_strategy == "proportion":
         sim_params.sample_params = config["inspection"]["proportion"]["value"]
@@ -366,7 +446,8 @@ def config_to_simplified_simulation_params(config):
             "cluster_selection"
         ]
         if sim_params.selection_param_1 == "interval":
-            sim_params.selection_param_2 = config["inspection"]["cluster"]["interval"]
+            sim_params.selection_param_2 = config["inspection"]["cluster"][
+                "interval"]
     else:
         sim_params.selection_param_1 = None
         sim_params.selection_param_2 = None
@@ -375,7 +456,8 @@ def config_to_simplified_simulation_params(config):
 
 def print_totals_as_text(num_consignments, config, totals):
     """Prints simulation result as text"""
-    # This is straightforward printing with simpler branches. Only few variables.
+    # This is straightforward printing with simpler branches. Only few
+    # variables.
     # pylint: disable=too-many-branches,too-many-statements
 
     sim_params = config_to_simplified_simulation_params(config)
@@ -385,7 +467,9 @@ def print_totals_as_text(num_consignments, config, totals):
     print("\n")
     print("Simulation parameters:")
     print("----------------------------------------------------------")
-    print(f"consignments:\n\t Number consignments simulated: {num_consignments:,.0f}")
+    print(
+        f"consignments:\n\t Number consignments simulated: "
+        f"{num_consignments:,.0f}")
     print(
         "\t Avg. number of boxes per consignment: "
         f"{round(totals.num_boxes / num_consignments):,d}"
@@ -418,12 +502,17 @@ def print_totals_as_text(num_consignments, config, totals):
                 "\t\t maximum contaminated items per cluster: "
                 f"{sim_params.contaminated_units_per_cluster:,} items"
             )
-            print(f"\t\t cluster distribution: {sim_params.contaminant_distribution}")
+            print(
+                f"\t\t cluster distribution: "
+                f"{sim_params.contaminant_distribution}")
             if sim_params.contaminant_distribution == "random":
-                print(f"\t\t cluster width: {sim_params.cluster_item_width:,} items")
+                print(
+                    f"\t\t cluster width: "
+                    f"{sim_params.cluster_item_width:,} items")
 
     print(
-        f"inspection:\n\t unit: {sim_params.inspection_unit}\n\t sample strategy: "
+        f"inspection:\n\t unit: {sim_params.inspection_unit}\n\t sample "
+        f"strategy: "
         f"{sim_params.sample_strategy}"
     )
     if sim_params.sample_strategy == "proportion":
@@ -436,10 +525,11 @@ def print_totals_as_text(num_consignments, config, totals):
     if sim_params.selection_strategy == "cluster":
         print(f"\t\t box selection strategy: {sim_params.selection_param_1}")
         if sim_params.selection_param_1 == "interval":
-            print(f"\t\t box selection interval: {sim_params.selection_param_2}")
+            print(
+                f"\t\t box selection interval: {sim_params.selection_param_2}")
     if (
-        sim_params.inspection_unit in ["box", "boxes"]
-        or sim_params.selection_strategy == "cluster"
+            sim_params.inspection_unit in ["box", "boxes"]
+            or sim_params.selection_strategy == "cluster"
     ):
         print(
             "\t minimum proportion of items inspected within box: "
@@ -453,9 +543,11 @@ def print_totals_as_text(num_consignments, config, totals):
     print(f"Avg. % contaminated consignments slipped: {totals.missing:.2f}%")
     if totals.false_neg + totals.intercepted:
         adj_avg_slipped = (
-            (totals.false_neg - totals.missed_within_tolerance)
-            / (totals.false_neg + totals.intercepted)
-        ) * 100
+                                  (
+                                              totals.false_neg -
+                                              totals.missed_within_tolerance)
+                                  / (totals.false_neg + totals.intercepted)
+                          ) * 100
     else:
         # For consignments with zero contamination
         adj_avg_slipped = 0
@@ -530,13 +622,17 @@ def flatten_nested_dict(dictionary, parent_key=None):
     return dict(_flatten_nested_dict_generator(dictionary, parent_key))
 
 
-def save_scenario_result_to_table(filename, results, config_columns, result_columns):
-    """Save selected values for a scenario results to CSV including configuration
+def save_scenario_result_to_table(filename, results, config_columns,
+                                  result_columns):
+    """Save selected values for a scenario results to CSV including
+    configuration
 
-    The results parameter is list of tuples which is output from the run_scenarios()
+    The results parameter is list of tuples which is output from the
+    run_scenarios()
     function.
 
-    Values from configuration or results are selected by columns parameters which are
+    Values from configuration or results are selected by columns parameters
+    which are
     in format key/subkey/subsubkey.
     """
     with open(filename, "w") as file:
@@ -561,21 +657,25 @@ def save_scenario_result_to_table(filename, results, config_columns, result_colu
 
 
 def save_simulation_result_to_pandas(
-    result, config=None, config_columns=None, result_columns=None
+        result, config=None, config_columns=None, result_columns=None
 ):
     """Save result of one simulation to pandas DataFrame"""
     return save_scenario_result_to_pandas(
-        [(result, config)], config_columns=config_columns, result_columns=result_columns
+        [(result, config)], config_columns=config_columns,
+        result_columns=result_columns
     )
 
 
-def save_scenario_result_to_pandas(results, config_columns=None, result_columns=None):
+def save_scenario_result_to_pandas(results, config_columns=None,
+                                   result_columns=None):
     """Save selected values for a scenario to a pandas DataFrame.
 
-    The results parameter is list of tuples which is output from the run_scenarios()
+    The results parameter is list of tuples which is output from the
+    run_scenarios()
     function.
 
-    Values from configuration or results are selected by columns parameters which are
+    Values from configuration or results are selected by columns parameters
+    which are
     in format key/subkey/subsubkey.
     """
     # We don't want a special dependency to fail import of this file
@@ -592,7 +692,8 @@ def save_scenario_result_to_pandas(results, config_columns=None, result_columns=
                     row[column] = get_item_from_nested_dict(config, keys)
             elif config_columns is None:
                 row = flatten_nested_dict(config)
-            # When falsy, but not None, we assume it is an empty list and thus an
+            # When falsy, but not None, we assume it is an empty list and
+            # thus an
             # explicit request for no config columns to be included.
         if result_columns:
             for column in result_columns:

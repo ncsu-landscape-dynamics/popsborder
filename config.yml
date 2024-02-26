@@ -96,3 +96,4 @@ inspection:
   cluster:
     cluster_selection: cluster
     interval: 5
+  effectiveness: 0.65
