@@ -239,7 +239,8 @@ def choose_strata_for_clusters(num_units, cluster_width, num_clusters):
     # Make sure there are enough strata for the number of clusters needed.
     if num_strata < num_clusters:
         raise ValueError(
-            """Cannot avoid overlapping clusters. Increase contaminated_units_per_cluster
+            """Cannot avoid overlapping clusters. Increase
+            contaminated_units_per_cluster
             or decrease cluster_item_width (if using item contamination_unit)"""
         )
     # If all strata are needed, all strata are selected for clusters

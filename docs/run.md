@@ -4,6 +4,10 @@ The two basic ways to run the simulation are a Python package and command line
 interface. Both interfaces take simulation parameters as a configuration file
 and several other user inputs as function arguments or command line arguments.
 
+For a quick start option, use the Jupyter notebook
+[run_from_xlsx.ipynb](run_from_xlsx.ipynb) with the provided Excel spreadsheet
+template to configure the simulation.
+
 ## Configuration
 
 The configuration file contains all parameters needed for a single simulation
