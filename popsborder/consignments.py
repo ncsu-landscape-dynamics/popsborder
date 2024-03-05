@@ -332,8 +332,8 @@ class VariablePackagingConsignmnentGenerator:
             raise RuntimeError(
                 "More consignments requested than number of records in shipment data"
             ) from None
-        items_per_box = record["items_per_box"]
-        unit = record["UNIT"]
+        items_per_box = int(record["ITEMS_PER_PACKAGE"])
+        unit = record["QUANTITY_UNIT"]
 
         # Generate items based on quantity in AQIM records. Quantity unit must be items.
         if unit in ["Stems", "Items"]:
@@ -356,7 +356,7 @@ class VariablePackagingConsignmnentGenerator:
 
         date = record["CALENDAR_YR"]
         return Consignment(
-            flower=record["COMMODITY_LIST"],
+            flower=record["COMMODITY"],
             num_items=num_items,
             items=items,
             items_per_box=items_per_box,
@@ -413,6 +413,6 @@ def get_consignment_generator(config):
         )
     else:
         raise RuntimeError(
-            f"Unknown consignment generation method: {generation_method}"
+            f"Unknown consignment generation method: {generation_method} or input file type: {config['input_file']['file_type']}"
         )
     return consignment_generator
