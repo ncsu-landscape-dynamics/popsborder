@@ -318,7 +318,9 @@ class AQIMConsignmentGenerator:
     
 
 class VariablePackagingConsignmnentGenerator:
-    """Generate a consignments based on existing shipment records where items per box is specified per record"""
+    """Generate a consignments based on existing shipment records where items per 
+    box is specified per record.
+    """
 
     def __init__(self, filename, separator=","):
         self.infile = open(filename)
@@ -335,7 +337,7 @@ class VariablePackagingConsignmnentGenerator:
         items_per_box = int(record["ITEMS_PER_PACKAGE"])
         unit = record["QUANTITY_UNIT"]
 
-        # Generate items based on quantity in AQIM records. Quantity unit must be items.
+        # Generate items based on quantity in records. Quantity unit must be stems/items.
         if unit in ["Stems", "Items"]:
             num_items = int(record["QUANTITY"])
         else:
@@ -413,6 +415,7 @@ def get_consignment_generator(config):
         )
     else:
         raise RuntimeError(
-            f"Unknown consignment generation method: {generation_method} or input file type: {config['input_file']['file_type']}"
+            f"Unknown consignment generation method: {generation_method} or "
+            f"input file type: {config['input_file']['file_type']}"
         )
     return consignment_generator
