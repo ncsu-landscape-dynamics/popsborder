@@ -1,501 +1,501 @@
-LOCATION,PATHWAY,ORIGIN,CALENDAR_YR,QUANTITY,QUANTITY_UNIT,ITEMS_PER_PACKAGE,pred_num_boxes,COMMODITY
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1,Items,1,1,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1,Items,1,1,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1,Items,1,1,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,3,Items,1,3,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Italy,2023,5,Items,1,5,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,10,Items,1,10,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Italy,2023,11,Items,1,11,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Japan,2023,20,Items,2,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Australia,2023,40,Items,3,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Indonesia,2023,65,Items,4,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,100,Items,5,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,100,Items,6,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Australia,2023,105,Items,8,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Japan,2023,120,Items,7,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,130,Items,7,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,186,Items,14,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Indonesia,2023,199,Items,15,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Japan,2023,200,Items,15,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,327,Items,24,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,390,Items,28,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,397,Items,21,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,United Kingdom of Great Britain and N. Ireland,2023,400,Items,22,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,400,Items,20,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,France,2023,430,Items,23,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,500,Items,36,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,600,Items,32,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,610,Items,44,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,660,Items,35,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,660,Items,33,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,698,Items,35,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,880,Items,52,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,945,Items,56,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,953,Items,48,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,1020,Items,54,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,1152,Items,68,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,1200,Items,71,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1260,Items,90,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,1329,Items,70,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,1380,Items,99,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1386,Items,99,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1400,Items,74,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,1430,Items,76,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1500,Items,100,15,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1512,Items,89,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,1550,Items,78,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1700,Items,85,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1750,Items,93,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,1800,Items,95,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1800,Items,95,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1800,Items,95,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,1925,Items,102,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,2046,Items,147,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,2160,Items,155,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,2350,Items,124,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,2472,Items,177,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,2490,Items,125,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,2500,Items,132,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,2675,Items,192,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,2700,Items,159,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,2750,Items,197,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,2850,Items,143,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,2898,Items,145,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,3000,Items,158,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,3024,Items,216,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Colombia,2023,3080,Items,220,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,3207,Items,214,15,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,3425,Items,245,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,3640,Items,260,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,3650,Items,261,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Singapore,2023,3650,Items,183,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,3675,Items,217,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,4032,Items,288,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,4040,Items,289,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,4140,Items,276,15,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,4320,Items,309,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,4365,Items,219,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,4489,Items,321,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,4536,Items,227,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,4537,Items,325,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,4800,Items,253,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,4800,Items,343,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,4975,Items,356,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,5000,Items,358,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,5000,Items,250,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,5250,Items,375,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,5329,Items,381,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,5480,Items,323,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,5500,Items,290,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,5600,Items,330,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,5933,Items,424,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,6080,Items,435,14,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,6450,Items,340,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,6510,Items,434,15,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,6552,Items,345,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,6600,Items,440,15,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,6800,Items,324,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,7075,Items,443,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,7100,Items,323,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,7100,Items,444,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,7200,Items,450,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,7200,Items,450,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,7206,Items,451,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,7375,Items,461,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,7662,Items,334,23,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,8000,Items,364,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,8000,Items,364,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,8100,Items,369,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,8330,Items,521,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,8400,Items,382,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,8442,Items,423,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,8700,Items,544,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,8797,Items,518,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,8800,Items,550,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Costa Rica,2023,8980,Items,529,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,9500,Items,594,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,United Kingdom of Great Britain and N. Ireland,2023,9500,Items,475,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,9600,Items,600,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,10195,Items,638,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,10624,Items,443,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,10700,Items,446,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,10900,Items,545,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,10920,Items,683,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,11000,Items,688,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,11000,Items,479,23,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,11025,Items,690,16,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,11160,Items,657,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,11691,Items,688,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,11735,Items,691,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Colombia,2023,11760,Items,692,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,11800,Items,492,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,12100,Items,505,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,12488,Items,735,17,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,12600,Items,525,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,12600,Items,525,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,12600,Items,504,25,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,13305,Items,740,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,13400,Items,745,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,13629,Items,758,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,13800,Items,552,25,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,13825,Items,769,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Spain,2023,14000,Items,560,25,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,14110,Items,784,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,14178,Items,788,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,14225,Items,791,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,14500,Items,580,25,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Italy,2023,14570,Items,583,25,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,14650,Items,814,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,14658,Items,815,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,15225,Items,846,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,15560,Items,865,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,15635,Items,869,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Taiwan,2023,15676,Items,603,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Ireland,2023,15700,Items,714,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,16170,Items,899,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,16500,Items,917,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,16840,Items,936,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,17400,Items,696,25,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,17504,Items,973,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Taiwan,2023,17888,Items,688,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,18494,Items,841,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,18540,Items,843,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,18620,Items,1035,18,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,18900,Items,995,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,19140,Items,798,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,19700,Items,758,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,19700,Items,758,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,19800,Items,762,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,19992,Items,1053,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,20000,Items,715,28,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,20000,Items,715,28,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,20100,Items,745,27,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Taiwan,2023,20525,Items,1081,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,20900,Items,1100,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Turkey,2023,20900,Items,775,27,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Taiwan,2023,21154,Items,1114,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Taiwan,2023,21163,Items,1114,19,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Singapore,2023,21695,Items,904,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,21935,Items,1097,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Malaysia,2023,22300,Items,892,25,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,22600,Items,780,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,22600,Items,780,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,22800,Items,1140,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,22865,Items,1144,20,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,23000,Items,885,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,23416,Items,781,30,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,24100,Items,804,30,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Singapore,2023,25240,Items,971,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Indonesia,2023,25560,Items,1218,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,26000,Items,897,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,26420,Items,1017,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,26900,Items,1281,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,27000,Items,932,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,27135,Items,905,30,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,27293,Items,1300,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,27600,Items,952,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,27600,Items,952,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,28000,Items,966,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,28200,Items,1085,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,28400,Items,980,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,28464,Items,1356,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,28600,Items,1362,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,28800,Items,994,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,29000,Items,1000,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,30065,Items,1432,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,30500,Items,1052,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,30800,Items,1063,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,30950,Items,1474,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Indonesia,2023,31215,Items,1487,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,31600,Items,1090,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,31800,Items,1097,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,31850,Items,1517,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Indonesia,2023,32220,Items,1535,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,32400,Items,1118,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,33102,Items,1577,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,33154,Items,1579,21,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,United Kingdom of Great Britain and N. Ireland,2023,34640,Items,1333,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,34800,Items,1160,30,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,35200,Items,1174,30,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,36388,Items,1654,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,36500,Items,1178,31,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,36500,Items,1178,31,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,36800,Items,1673,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,37255,Items,1694,22,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,37400,Items,1207,31,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,37846,Items,1577,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,38250,Items,1234,31,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,38300,Items,1236,31,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,38500,Items,1204,32,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,39000,Items,1219,32,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,39400,Items,1159,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,40008,Items,1177,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,40550,Items,1764,23,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,41400,Items,1255,33,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Turkey,2023,42000,Items,1273,33,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,42500,Items,1417,30,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,42800,Items,1297,33,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,42900,Items,1430,30,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,43463,Items,1811,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,43500,Items,1280,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,43600,Items,1283,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,43800,Items,1289,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,43995,Items,1834,24,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,44000,Items,1295,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,44300,Items,1303,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,44400,Items,1306,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,45100,Items,1327,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,45400,Items,1336,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,45700,Items,1345,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,46500,Items,1368,34,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,47985,Items,1920,25,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,48000,Items,1500,32,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,48400,Items,1383,35,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,48780,Items,1952,25,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,49600,Items,1378,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,49700,Items,1344,37,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,53000,Items,1473,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,53100,Items,1475,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,53300,Items,1481,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,53700,Items,1492,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,54100,Items,1503,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,54400,Items,1512,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,54400,Items,1512,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,55800,Items,1550,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,56955,Items,1499,38,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,57300,Items,2204,26,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,57600,Items,1600,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,59200,Items,1645,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,59900,Items,1664,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,60200,Items,1673,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,60800,Items,1689,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,61225,Items,1612,38,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,62100,Items,1725,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,62200,Items,1728,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,63900,Items,1775,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,64200,Items,1784,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,64200,Items,1784,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,64300,Items,1787,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,64900,Items,1803,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,66000,Items,1784,37,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,67000,Items,1764,38,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,67000,Items,1764,38,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,67700,Items,1782,38,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,71200,Items,1874,38,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,71800,Items,1890,38,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,73000,Items,1781,41,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,73000,Items,1781,41,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Sri Lanka,2023,73050,Items,2030,36,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,73300,Items,1788,41,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Spain,2023,74100,Items,1808,41,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,74150,Items,1809,41,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,75500,Items,1842,41,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,76500,Items,1866,41,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,77540,Items,2674,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,78155,Items,2695,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,78300,Items,1910,41,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,78995,Items,2724,29,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,80500,Items,1873,43,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,82400,Items,1873,44,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,84000,Items,1910,44,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Sri Lanka,2023,85320,Items,2133,40,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Sri Lanka,2023,86625,Items,2113,41,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,87000,Items,1892,46,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,87800,Items,1869,47,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,87900,Items,1871,47,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,88000,Items,1873,47,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,88050,Items,1874,47,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,88700,Items,1888,47,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,90900,Items,1935,47,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,94290,Items,2694,35,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,96163,Items,2748,35,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,97900,Items,1958,50,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,98500,Items,1970,50,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,102600,Items,1900,54,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,102800,Items,1904,54,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,103800,Items,1923,54,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,104000,Items,1926,54,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,104140,Items,2741,38,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,106300,Items,1969,54,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Turkey,2023,106500,Items,1973,54,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,106700,Items,1976,54,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,108000,Items,1964,55,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,108500,Items,1973,55,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,110300,Items,2006,55,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,111100,Items,2020,55,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,114170,Items,2855,40,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,118255,Items,2005,59,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,118873,Items,2123,56,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,119250,Items,2982,40,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,121100,Items,2125,57,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,122100,Items,2143,57,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,123700,Items,1964,63,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,123700,Items,1964,63,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,124985,Items,2778,45,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,125000,Items,1954,64,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,127512,Items,2772,46,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,128200,Items,1973,65,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,129300,Items,2811,46,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,129400,Items,1991,65,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,130420,Items,2249,58,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,137410,Items,2805,49,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,137900,Items,1999,69,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,138800,Items,1983,70,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,142000,Items,2000,71,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,144100,Items,2719,53,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,144200,Items,1923,75,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Turkey,2023,144750,Items,1930,75,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,145000,Items,1934,75,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,149100,Items,1937,77,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,149760,Items,2774,54,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,152425,Items,1980,77,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Spain,2023,154325,Items,1979,78,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,156200,Items,2003,78,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,156300,Items,2004,78,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,159511,Items,2901,55,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,159600,Items,2047,78,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,162600,Items,2033,80,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,163000,Items,2038,80,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,164175,Items,2881,57,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,170900,Items,2110,81,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,170925,Items,2111,81,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,176050,Items,2147,82,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,178437,Items,3077,58,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,181650,Items,3028,60,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,182850,Items,2152,85,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,186800,Items,2198,85,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,188200,Items,2164,87,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,188400,Items,2141,88,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,190500,Items,2141,89,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,194400,Items,2137,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,194600,Items,2139,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,196700,Items,2162,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,197500,Items,2171,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,197700,Items,2173,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,199000,Items,2187,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,203500,Items,2237,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,206500,Items,2270,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,207100,Items,2276,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,210000,Items,2308,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,210900,Items,2318,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,214200,Items,2354,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,214325,Items,2356,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,215900,Items,2373,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,216450,Items,3330,65,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,219400,Items,2411,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,219500,Items,2413,91,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,220800,Items,2400,92,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,221743,Items,2411,92,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,222900,Items,2423,92,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,228900,Items,2462,93,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,232752,Items,3474,67,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,234500,Items,2495,94,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,235724,Items,2508,94,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,237160,Items,3540,67,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,240600,Items,2481,97,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,245100,Items,2502,98,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,245400,Items,2505,98,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,250575,Items,2557,98,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,255900,Items,2612,98,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,255900,Items,2612,98,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,258500,Items,2612,99,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,261800,Items,2645,99,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,263000,Items,2657,99,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,272700,Items,2755,99,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,280000,Items,2829,99,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,284900,Items,2878,99,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,285300,Items,2882,99,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,286160,Items,2891,99,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,288900,Items,2861,101,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,290800,Items,2824,103,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,291400,Items,2802,104,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,292100,Items,2809,104,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,293200,Items,2820,104,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,295500,Items,2815,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,296700,Items,2826,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,303100,Items,2887,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,305900,Items,2914,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,305900,Items,2914,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,317300,Items,3022,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,319900,Items,3047,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,321250,Items,3060,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,321800,Items,3065,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,323125,Items,3078,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,334200,Items,3183,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,342300,Items,3260,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,345900,Items,3295,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,347650,Items,3311,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,350500,Items,3339,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,363800,Items,3465,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,365829,Items,3485,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,367275,Items,3498,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,374500,Items,3567,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,378500,Items,3605,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,378700,Items,3607,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,387700,Items,3693,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,392100,Items,3735,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,399825,Items,3808,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Costa Rica,2023,399900,Items,3809,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,417865,Items,3980,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,421600,Items,4016,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,425925,Items,4057,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,433125,Items,4125,105,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,442925,Items,4140,107,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Costa Rica,2023,451850,Items,4223,107,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,465700,Items,4122,113,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,478400,Items,4234,113,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,479600,Items,4245,113,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,487800,Items,4317,113,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,492525,Items,4321,114,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,493000,Items,4325,114,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,518900,Items,4361,119,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,525300,Items,4415,119,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Costa Rica,2023,527650,Items,4435,119,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,545600,Items,4510,121,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,546400,Items,4516,121,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,546700,Items,4519,121,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,553700,Items,4539,122,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,557000,Items,4566,122,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,567300,Items,4613,123,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,575400,Items,4679,123,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,576200,Items,4685,123,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,605625,Items,4845,125,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,625400,Items,4925,127,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,644100,Items,5033,128,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,655600,Items,5122,128,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Costa Rica,2023,663700,Items,5186,128,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,665600,Items,5200,128,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,711544,Items,5157,138,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,711800,Items,5158,138,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,712300,Items,5088,140,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,715700,Items,5041,142,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,777700,Items,5084,153,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,787300,Items,5146,153,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,832700,Items,5271,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,859625,Items,5441,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,876225,Items,5546,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,876500,Items,5548,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,878125,Items,5558,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,892200,Items,5647,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,893600,Items,5656,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,917115,Items,5805,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,952100,Items,6026,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,962800,Items,6094,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1004200,Items,6356,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1207900,Items,7645,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1229700,Items,7783,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1229700,Items,7783,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1258350,Items,7965,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1265950,Items,8013,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1270800,Items,8044,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1290550,Items,8169,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1343464,Items,8503,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1343500,Items,8504,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1424473,Items,9016,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1446100,Items,9153,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1462300,Items,9256,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1490546,Items,9434,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1519732,Items,9619,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1524700,Items,9650,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1619400,Items,10250,158,none
-Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1632538,Items,10333,158,none
+LOCATION,PATHWAY,ORIGIN,CALENDAR_YR,QUANTITY,QUANTITY_UNIT,ITEMS_PER_PACKAGE,COMMODITY
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1,Items,1,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1,Items,1,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1,Items,1,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,3,Items,1,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Italy,2023,5,Items,1,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,10,Items,1,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Italy,2023,11,Items,1,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Japan,2023,20,Items,2,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Australia,2023,40,Items,3,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Indonesia,2023,65,Items,4,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,100,Items,5,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,100,Items,6,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Australia,2023,105,Items,8,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Japan,2023,120,Items,7,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,130,Items,7,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,186,Items,14,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Indonesia,2023,199,Items,15,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Japan,2023,200,Items,15,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,327,Items,24,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,390,Items,28,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,397,Items,21,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,United Kingdom of Great Britain and N. Ireland,2023,400,Items,22,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,400,Items,20,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,France,2023,430,Items,23,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,500,Items,36,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,600,Items,32,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,610,Items,44,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,660,Items,35,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,660,Items,33,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,698,Items,35,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,880,Items,52,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,945,Items,56,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,953,Items,48,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,1020,Items,54,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,1152,Items,68,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,1200,Items,71,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1260,Items,90,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,1329,Items,70,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,1380,Items,99,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1386,Items,99,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1400,Items,74,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,1430,Items,76,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1500,Items,100,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1512,Items,89,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,1550,Items,78,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1700,Items,85,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,1750,Items,93,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,1800,Items,95,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1800,Items,95,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1800,Items,95,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,1925,Items,102,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,2046,Items,147,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,2160,Items,155,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,2350,Items,124,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,2472,Items,177,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,2490,Items,125,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,2500,Items,132,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,2675,Items,192,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,2700,Items,159,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,2750,Items,197,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,2850,Items,143,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,2898,Items,145,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,3000,Items,158,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,3024,Items,216,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Colombia,2023,3080,Items,220,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,3207,Items,214,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,3425,Items,245,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,3640,Items,260,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,3650,Items,261,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Singapore,2023,3650,Items,183,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,3675,Items,217,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,4032,Items,288,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,4040,Items,289,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,4140,Items,276,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,4320,Items,309,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,4365,Items,219,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,4489,Items,321,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,4536,Items,227,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,4537,Items,325,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,4800,Items,253,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,4800,Items,343,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,4975,Items,356,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,5000,Items,358,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,5000,Items,250,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,5250,Items,375,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,5329,Items,381,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,5480,Items,323,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,5500,Items,290,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,5600,Items,330,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,5933,Items,424,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,6080,Items,435,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,6450,Items,340,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,6510,Items,434,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,6552,Items,345,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,6600,Items,440,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,6800,Items,324,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,7075,Items,443,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,7100,Items,323,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,7100,Items,444,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,7200,Items,450,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,7200,Items,450,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,7206,Items,451,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,7375,Items,461,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,7662,Items,334,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,8000,Items,364,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,8000,Items,364,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,8100,Items,369,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,8330,Items,521,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,8400,Items,382,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,8442,Items,423,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,8700,Items,544,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,8797,Items,518,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,8800,Items,550,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Costa Rica,2023,8980,Items,529,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,9500,Items,594,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,United Kingdom of Great Britain and N. Ireland,2023,9500,Items,475,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,9600,Items,600,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,10195,Items,638,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,10624,Items,443,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,10700,Items,446,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,10900,Items,545,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,10920,Items,683,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,11000,Items,688,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,11000,Items,479,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,11025,Items,690,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,11160,Items,657,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,11691,Items,688,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,11735,Items,691,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Colombia,2023,11760,Items,692,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,11800,Items,492,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,12100,Items,505,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,12488,Items,735,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,12600,Items,525,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,12600,Items,525,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,12600,Items,504,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,13305,Items,740,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,13400,Items,745,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,13629,Items,758,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,13800,Items,552,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,13825,Items,769,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Spain,2023,14000,Items,560,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,14110,Items,784,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,14178,Items,788,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,14225,Items,791,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,14500,Items,580,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Italy,2023,14570,Items,583,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,14650,Items,814,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,14658,Items,815,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,15225,Items,846,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,15560,Items,865,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,15635,Items,869,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Taiwan,2023,15676,Items,603,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Ireland,2023,15700,Items,714,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,16170,Items,899,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,South Africa,2023,16500,Items,917,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,16840,Items,936,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,17400,Items,696,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,17504,Items,973,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Taiwan,2023,17888,Items,688,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,18494,Items,841,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,18540,Items,843,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,18620,Items,1035,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,18900,Items,995,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,19140,Items,798,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,19700,Items,758,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,19700,Items,758,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,19800,Items,762,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,19992,Items,1053,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,20000,Items,715,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,20000,Items,715,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,20100,Items,745,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Taiwan,2023,20525,Items,1081,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,20900,Items,1100,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Turkey,2023,20900,Items,775,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Taiwan,2023,21154,Items,1114,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Taiwan,2023,21163,Items,1114,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Singapore,2023,21695,Items,904,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,21935,Items,1097,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Malaysia,2023,22300,Items,892,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,22600,Items,780,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,22600,Items,780,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,22800,Items,1140,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,22865,Items,1144,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,23000,Items,885,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,23416,Items,781,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,24100,Items,804,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Singapore,2023,25240,Items,971,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Indonesia,2023,25560,Items,1218,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,26000,Items,897,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,26420,Items,1017,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,26900,Items,1281,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,27000,Items,932,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,27135,Items,905,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,27293,Items,1300,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,27600,Items,952,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,27600,Items,952,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,28000,Items,966,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,28200,Items,1085,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,28400,Items,980,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,28464,Items,1356,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,28600,Items,1362,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,28800,Items,994,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,29000,Items,1000,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,30065,Items,1432,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,30500,Items,1052,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,30800,Items,1063,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,30950,Items,1474,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Indonesia,2023,31215,Items,1487,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,31600,Items,1090,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,31800,Items,1097,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,31850,Items,1517,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Indonesia,2023,32220,Items,1535,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,32400,Items,1118,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,33102,Items,1577,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,33154,Items,1579,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,United Kingdom of Great Britain and N. Ireland,2023,34640,Items,1333,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,34800,Items,1160,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,35200,Items,1174,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Netherlands,2023,36388,Items,1654,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,36500,Items,1178,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,36500,Items,1178,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,36800,Items,1673,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,37255,Items,1694,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,37400,Items,1207,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,37846,Items,1577,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,38250,Items,1234,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,38300,Items,1236,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,38500,Items,1204,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,39000,Items,1219,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,39400,Items,1159,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,40008,Items,1177,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,40550,Items,1764,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,41400,Items,1255,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Turkey,2023,42000,Items,1273,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,42500,Items,1417,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,42800,Items,1297,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,42900,Items,1430,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Germany,2023,43463,Items,1811,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,43500,Items,1280,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,43600,Items,1283,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,43800,Items,1289,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,43995,Items,1834,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,44000,Items,1295,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,44300,Items,1303,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,44400,Items,1306,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,45100,Items,1327,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,45400,Items,1336,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,45700,Items,1345,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,46500,Items,1368,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Poland,2023,47985,Items,1920,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Thailand,2023,48000,Items,1500,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,48400,Items,1383,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,48780,Items,1952,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,49600,Items,1378,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,49700,Items,1344,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,53000,Items,1473,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,53100,Items,1475,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,53300,Items,1481,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,53700,Items,1492,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,54100,Items,1503,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Portugal,2023,54400,Items,1512,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,54400,Items,1512,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,55800,Items,1550,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,56955,Items,1499,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,57300,Items,2204,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,57600,Items,1600,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,59200,Items,1645,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,59900,Items,1664,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,60200,Items,1673,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,60800,Items,1689,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,61225,Items,1612,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,62100,Items,1725,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,62200,Items,1728,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,63900,Items,1775,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,64200,Items,1784,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,64200,Items,1784,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,64300,Items,1787,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,64900,Items,1803,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,66000,Items,1784,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,67000,Items,1764,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,67000,Items,1764,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,67700,Items,1782,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,71200,Items,1874,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,71800,Items,1890,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,73000,Items,1781,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,73000,Items,1781,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Sri Lanka,2023,73050,Items,2030,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,73300,Items,1788,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Spain,2023,74100,Items,1808,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Dominican Republic,2023,74150,Items,1809,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,75500,Items,1842,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,76500,Items,1866,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,77540,Items,2674,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,78155,Items,2695,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,78300,Items,1910,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,78995,Items,2724,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,80500,Items,1873,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,82400,Items,1873,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,84000,Items,1910,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Sri Lanka,2023,85320,Items,2133,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Sri Lanka,2023,86625,Items,2113,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,87000,Items,1892,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,87800,Items,1869,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,87900,Items,1871,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Brazil,2023,88000,Items,1873,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,88050,Items,1874,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,88700,Items,1888,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,90900,Items,1935,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,94290,Items,2694,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,96163,Items,2748,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,97900,Items,1958,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,98500,Items,1970,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,102600,Items,1900,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,102800,Items,1904,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,103800,Items,1923,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,104000,Items,1926,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,104140,Items,2741,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,106300,Items,1969,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Turkey,2023,106500,Items,1973,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,106700,Items,1976,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,108000,Items,1964,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,108500,Items,1973,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,110300,Items,2006,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,111100,Items,2020,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,114170,Items,2855,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,118255,Items,2005,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,118873,Items,2123,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,119250,Items,2982,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,121100,Items,2125,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,122100,Items,2143,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,123700,Items,1964,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,123700,Items,1964,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,124985,Items,2778,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,125000,Items,1954,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,127512,Items,2772,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,128200,Items,1973,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,129300,Items,2811,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,129400,Items,1991,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,130420,Items,2249,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,137410,Items,2805,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,137900,Items,1999,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,138800,Items,1983,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,142000,Items,2000,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,India,2023,144100,Items,2719,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,144200,Items,1923,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Turkey,2023,144750,Items,1930,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,145000,Items,1934,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,149100,Items,1937,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,149760,Items,2774,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,152425,Items,1980,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Spain,2023,154325,Items,1979,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,156200,Items,2003,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,156300,Items,2004,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,159511,Items,2901,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,159600,Items,2047,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,162600,Items,2033,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,163000,Items,2038,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Viet Nam,2023,164175,Items,2881,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,170900,Items,2110,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,170925,Items,2111,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,176050,Items,2147,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,178437,Items,3077,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,181650,Items,3028,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,182850,Items,2152,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,186800,Items,2198,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,188200,Items,2164,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,188400,Items,2141,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,190500,Items,2141,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,194400,Items,2137,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,194600,Items,2139,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,196700,Items,2162,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,197500,Items,2171,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,197700,Items,2173,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,199000,Items,2187,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,203500,Items,2237,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,206500,Items,2270,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,207100,Items,2276,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,210000,Items,2308,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,210900,Items,2318,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,214200,Items,2354,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,214325,Items,2356,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,215900,Items,2373,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,216450,Items,3330,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,219400,Items,2411,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,219500,Items,2413,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,220800,Items,2400,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,221743,Items,2411,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,222900,Items,2423,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,228900,Items,2462,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,232752,Items,3474,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,234500,Items,2495,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,235724,Items,2508,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,China,2023,237160,Items,3540,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,240600,Items,2481,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,245100,Items,2502,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,245400,Items,2505,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,250575,Items,2557,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,255900,Items,2612,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,255900,Items,2612,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,258500,Items,2612,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,261800,Items,2645,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,263000,Items,2657,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,272700,Items,2755,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,280000,Items,2829,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,284900,Items,2878,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,285300,Items,2882,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,286160,Items,2891,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,288900,Items,2861,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,290800,Items,2824,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,291400,Items,2802,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,292100,Items,2809,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,293200,Items,2820,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,295500,Items,2815,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,296700,Items,2826,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,303100,Items,2887,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,305900,Items,2914,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,305900,Items,2914,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,317300,Items,3022,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,319900,Items,3047,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,321250,Items,3060,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,321800,Items,3065,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,323125,Items,3078,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,334200,Items,3183,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,342300,Items,3260,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,345900,Items,3295,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,347650,Items,3311,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Mexico,2023,350500,Items,3339,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,363800,Items,3465,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,365829,Items,3485,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,367275,Items,3498,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,374500,Items,3567,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,378500,Items,3605,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,378700,Items,3607,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,387700,Items,3693,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,392100,Items,3735,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,399825,Items,3808,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Costa Rica,2023,399900,Items,3809,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,417865,Items,3980,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,421600,Items,4016,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,425925,Items,4057,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,433125,Items,4125,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,442925,Items,4140,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Costa Rica,2023,451850,Items,4223,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,465700,Items,4122,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,478400,Items,4234,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,479600,Items,4245,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,487800,Items,4317,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,492525,Items,4321,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,493000,Items,4325,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,518900,Items,4361,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,525300,Items,4415,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Costa Rica,2023,527650,Items,4435,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,545600,Items,4510,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,546400,Items,4516,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,546700,Items,4519,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,553700,Items,4539,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,557000,Items,4566,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,567300,Items,4613,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,575400,Items,4679,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,576200,Items,4685,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,605625,Items,4845,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,625400,Items,4925,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,644100,Items,5033,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Uganda,2023,655600,Items,5122,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Costa Rica,2023,663700,Items,5186,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,665600,Items,5200,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,711544,Items,5157,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,El Salvador,2023,711800,Items,5158,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,712300,Items,5088,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,715700,Items,5041,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,777700,Items,5084,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,787300,Items,5146,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,832700,Items,5271,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,859625,Items,5441,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,876225,Items,5546,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,876500,Items,5548,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,878125,Items,5558,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,892200,Items,5647,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,893600,Items,5656,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,917115,Items,5805,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,952100,Items,6026,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,962800,Items,6094,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1004200,Items,6356,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1207900,Items,7645,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1229700,Items,7783,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1229700,Items,7783,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1258350,Items,7965,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1265950,Items,8013,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1270800,Items,8044,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1290550,Items,8169,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1343464,Items,8503,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1343500,Items,8504,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1424473,Items,9016,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1446100,Items,9153,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1462300,Items,9256,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1490546,Items,9434,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1519732,Items,9619,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1524700,Items,9650,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Guatemala,2023,1619400,Items,10250,none
+Atlanta PIS,Airport - Aircraft - Cargo - PIS,Kenya,2023,1632538,Items,10333,none
