@@ -1,17 +1,12 @@
 """Test effectiveness"""
+
+import types
+
+import pytest
+
+from popsborder.effectiveness import validate_effectiveness, Inspector
 from popsborder.inputs import load_configuration_yaml_from_text
-from popsborder.consignments import get_consignment_generator
-from popsborder.contamination import get_contaminant_function
-from popsborder.inspections import (
-    get_sample_function,
-    inspect,
-    is_consignment_contaminated,
-)
-from popsborder.skipping import get_inspection_needed_function
-from popsborder.outputs import (
-    PrintReporter,
-    SuccessRates,
-)
+from popsborder.simulation import run_simulation
 
 CONFIG = """\
 consignment:
@@ -29,9 +24,9 @@ consignment:
     - FL Miami Air CBP
     boxes:
       min: 1
-      max: 50
+      max: 100
   items_per_box:
-    default: 10
+    default: 100
 contamination:
   contamination_unit: items
   contamination_rate:
@@ -59,47 +54,142 @@ inspection:
   cluster:
     cluster_selection: random
     interval: 3
-  effectiveness: 0.1  # This is the effectiveness of the inspection
 """
+
+ret = types.SimpleNamespace(
+    inspected_item_indexes=[],
+    boxes_opened_completion=0,
+    boxes_opened_detection=0,
+    items_inspected_completion=0,
+    items_inspected_detection=0,
+    contaminated_items_completion=0,
+    contaminated_items_detection=0,
+    contaminated_items_missed=0
+)
+
 config = load_configuration_yaml_from_text(CONFIG)
-consignment_generator = get_consignment_generator(config)
-add_contaminant = get_contaminant_function(config)
-is_inspection_needed = get_inspection_needed_function(config)
-sample = get_sample_function(config)
 num_consignments = 100
 detailed = False
-success_rates = SuccessRates(PrintReporter())
 
 
-def test_add_effectiveness(capsys):
-    num_inspections = 0
+def test_set_effectiveness_no_key():
+    """Test config has no effectiveness key"""
+    effectiveness = validate_effectiveness(config)
+    assert effectiveness is None
 
-    for unused_i in range(num_consignments):
-        consignment = consignment_generator.generate_consignment()
-        add_contaminant(consignment)
 
-        must_inspect, applied_program = is_inspection_needed(
-            consignment, consignment.date
-        )
-        if must_inspect:
-            n_units_to_inspect = sample(consignment)
-            ret = inspect(config, consignment, n_units_to_inspect, detailed)
-            consignment_checked_ok = ret.consignment_checked_ok
-            num_inspections += 1
-        else:
-            consignment_checked_ok = True  # assuming or hoping it's ok
+def test_set_effectiveness_out_of_range():
+    """Test effectiveness out of range"""
+    for val in [-1, 1.1, 2.5]:
+        config["inspection"]["effectiveness"] = val
+        effectiveness = validate_effectiveness(config)
+        assert effectiveness is None
 
-        consignment_actually_ok = not is_consignment_contaminated(consignment)
-        success_rates.record_and_add_effectiveness(
-            consignment_checked_ok, consignment_actually_ok, consignment,
-            config["inspection"]["effectiveness"], num_inspections)
 
-        capture = capsys.readouterr()
-        make_error, cur_effectiveness = success_rates.make_an_error(
-            num_inspections, config["inspection"]["effectiveness"])
+def test_set_effectiveness_in_range():
+    """Test effectiveness in range"""
+    for val in [0, 0.5, 1]:
+        config["inspection"]["effectiveness"] = val
+        effectiveness = validate_effectiveness(config)
+        assert effectiveness == val
 
-        if not consignment_actually_ok and not consignment_checked_ok:
-            message = (f"---> Making an error: {cur_effectiveness:.2f} > "
-                       f"{config['inspection']['effectiveness']:.2f}")
-            print_out = capture.out.split("[FN] ")[1].replace("\n", "")
-            assert message in print_out
+
+class TestInspector:
+    """Test Inspector class"""
+
+    @pytest.fixture()
+    def setup(self):
+        effectiveness = 0.9
+        inspector = Inspector(effectiveness)
+        yield inspector
+
+    def test_generate_false_negative_item(self, setup):
+        """Test generate_false_negative_item method"""
+        item = setup.generate_false_negative_item()
+        assert item in [0, 1]
+
+    def test_possibly_good_work(self, setup):
+        """Test effectiveness of inspector's work. 90% of the time, the inspector
+        detects the contaminated item. The inspector misses the contaminated item
+        """
+        count = 0
+        for _ in range(10):
+            inspection = setup.possibly_good_work()
+            assert inspection in [True, False]
+            if not inspection:
+                count += 1
+        print(f"Missed inspection: {count}")
+        assert count <= 1
+
+
+class TestEffectiveness:
+    """There are two types of inspection methodologies:
+    1) counting contaminated items in the first contaminated box
+        * the unit is a boxes or items with a "cluster" selection strategy
+        * inspection_effectiveness is calculated. It should be close enough to
+        effectiveness in the configuration file.
+    2) counting the first contaminated item.
+        * the unit is item with other than "cluster" selection strategy
+        * inspection_effectiveness is 0 since only count first contaminated item. For
+        this, the number of items missed before detection is calculated. Simulation
+        result is average of how many missed contaminated items before first
+        contaminated item is detected.
+    """
+
+    @pytest.fixture()
+    def setup(self):
+        min_boxes = 30
+        max_boxes = 150
+        # config = load_configuration_yaml_from_text(CONFIG)
+        config["consignment"]["parameter_based"]["boxes"]["min"] = min_boxes
+        config["consignment"]["parameter_based"]["boxes"]["max"] = max_boxes
+        config["inspection"]["effectiveness"] = 0.9
+        yield config
+
+    def test_effectiveness_unit_box(self, setup):
+        """Test effectiveness with inspection method boxes."""
+        for seed in range(10):
+            result = run_simulation(
+                config=config, num_simulations=3, num_consignments=100, seed=seed
+            )
+            print(result.inspection_effectiveness)
+            pct_effectiveness = (result.inspection_effectiveness + 0.5) / 100
+            assert 0 <= result.inspection_effectiveness <= 100
+            assert 0.88 <= pct_effectiveness <= 0.92
+
+    def test_effectiveness_unit_items_random(self, setup):
+        """Test effectiveness with inspection method items with random selection
+        strategy.
+        """
+        config["inspection"]["unit"] = "items"
+        for seed in range(10):
+            result = run_simulation(
+                config=config, num_simulations=3, num_consignments=100, seed=seed
+            )
+            print(result.avg_items_missed_bf_detection)
+            assert result.inspection_effectiveness == 0
+            assert result.avg_items_missed_bf_detection >= 0
+
+    def test_effectiveness_unit_items_cluster(self, setup):
+        """Test effectiveness with inspection method items with cluster selection
+        strategy.
+        """
+        config["inspection"]["unit"] = "items"
+        config["inspection"]["selection_strategy"] = "cluster"
+        for seed in range(10):
+            result = run_simulation(
+                config=config, num_simulations=3, num_consignments=100, seed=seed
+            )
+            pct_effectiveness = (result.inspection_effectiveness + 0.5) / 100
+            assert 0 <= result.inspection_effectiveness <= 100
+            assert 0.88 <= pct_effectiveness <= 0.92
+
+    def test_effectiveness_none(self, setup):
+        """Test effectiveness not set in the configuration file."""
+        del config["inspection"]["effectiveness"]
+        for seed in range(10):
+            result = run_simulation(
+                config=config, num_simulations=3, num_consignments=100, seed=seed
+            )
+            assert result.inspection_effectiveness == 100
+            assert result.avg_items_missed_bf_detection == 0

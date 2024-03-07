@@ -72,10 +72,12 @@ def main():
     )
     basic = parser.add_argument_group("Simulation parameters (required)")
     basic.add_argument(
-        "--num-consignments", type=int, required=True, help="Number of consignments"
+        "--num-consignments", type=int, required=True,
+        help="Number of consignments"
     )
     basic.add_argument(
-        "--config-file", type=str, required=True, help="Path to configuration file"
+        "--config-file", type=str, required=True,
+        help="Path to configuration file"
     )
     optional = parser.add_argument_group("Running simulations (optional)")
     optional.add_argument(
@@ -90,7 +92,8 @@ def main():
     )
     output_group = parser.add_argument_group("Output (optional)")
     output_group.add_argument(
-        "--output-file", type=str, required=False, help="Path to output F280 csv file"
+        "--output-file", type=str, required=False,
+        help="Path to output F280 csv file"
     )
     pretty_choices = (
         ("boxes", "Show boxes with individual items (default)"),
@@ -104,8 +107,8 @@ def main():
         nargs="?",  # value is optional
         choices=[i[0] for i in pretty_choices],
         help=(
-            "Show pretty unicode output for each consignment\n"
-            + "\n".join(["\n    ".join(i) for i in pretty_choices])
+                "Show pretty unicode output for each consignment\n"
+                + "\n".join(["\n    ".join(i) for i in pretty_choices])
         ),
     )
     output_group.add_argument(
@@ -131,6 +134,7 @@ def main():
 
     config = load_configuration(args.config_file)
     detailed = args.detailed
+
     if detailed:
         details, totals = run_simulation(
             config=config,
