@@ -27,6 +27,8 @@ import types
 
 import numpy as np
 
+from .effectiveness import validate_effectiveness, Inspector
+
 
 def inspect_first(consignment):
     """Inspect only the first box in the consignment"""
@@ -61,7 +63,8 @@ def inspect_first_n(num_boxes, consignment):
 
 
 def sample_proportion(config, consignment):
-    """Set sample size to sample units from consignment using proportion strategy.
+    """Set sample size to sample units from consignment using proportion
+    strategy.
     Return number of units to inspect.
 
     :param config: Configuration to be used595
@@ -105,7 +108,8 @@ def compute_hypergeometric(detection_level, confidence_level, population_size):
 
 
 def sample_hypergeometric(config, consignment):
-    """Set sample size to sample units from consignment using hypergeometric/detection
+    """Set sample size to sample units from consignment using
+    hypergeometric/detection
     level strategy. Return number of units to inspect.
 
     :param config: Configuration to be used
@@ -165,7 +169,8 @@ def sample_n(config, consignment):
         max_items = compute_max_inspectable_items(
             num_items, items_per_box, within_box_proportion
         )
-        # Check if max number of items that can be inspected is less than fixed number.
+        # Check if max number of items that can be inspected is less than
+        # fixed number.
         n_units_to_inspect = min(max_items, fixed_n)
     elif unit in ["box", "boxes"]:
         n_units_to_inspect = fixed_n
@@ -175,16 +180,19 @@ def sample_n(config, consignment):
 
 
 def convert_items_to_boxes_fixed_proportion(config, consignment, n_items_to_inspect):
-    """Convert number of items to inspect to number of boxes to inspect based on
+    """Convert number of items to inspect to number of boxes to inspect
+    based on
     the number of items per box and the proportion of items to inspect per box
     specified in the config. Adjust number of boxes to inspect to be at least
-    the minimum number of boxes to inspect specified in the config and at most the
+    the minimum number of boxes to inspect specified in the config and at
+    most the
     total number of boxes in the consignment.
     Return number of boxes to inspect.
 
     :param config: Configuration to be used
     :param consignment: Consignment to be inspected
-    :param n_items_to_inspect: Number of items to inspect defined in sample functions.
+    :param n_items_to_inspect: Number of items to inspect defined in sample
+    functions.
     """
     items_per_box = consignment.items_per_box
     within_box_proportion = config["inspection"]["within_box_proportion"]
@@ -199,15 +207,19 @@ def convert_items_to_boxes_fixed_proportion(config, consignment, n_items_to_insp
 
 
 def compute_n_clusters_to_inspect(config, consignment, n_items_to_inspect):
-    """Compute number of cluster units (boxes) that need to be opened to achieve item
-    sample size when using the cluster selection strategy. Use config within box
-    proportion if possible or compute minimum number of items to inspect per box
+    """Compute number of cluster units (boxes) that need to be opened to
+    achieve item
+    sample size when using the cluster selection strategy. Use config within
+    box
+    proportion if possible or compute minimum number of items to inspect per
+    box
     required to achieve item sample size.
     Return number of boxes to inspect and number of items to inspect per box.
 
     :param config: Configuration to be used
     :param consignment: Consignment to be inspected
-    :param n_items_to_inspect: Number of items to inspect defined by sample functions.
+    :param n_items_to_inspect: Number of items to inspect defined by sample
+    functions.
     """
     cluster_selection = config["inspection"]["cluster"]["cluster_selection"]
     items_per_box = consignment.items_per_box
@@ -228,8 +240,10 @@ def compute_n_clusters_to_inspect(config, consignment, n_items_to_inspect):
             # If not, divide sample size across number of boxes to get number
             # of items to inspect per box.
             print(
-                "Warning: Within box proportion is too low to achieve sample size. "
-                "Automatically increasing within box proportion to achieve sample size."
+                "Warning: Within box proportion is too low to achieve sample "
+                "size. "
+                "Automatically increasing within box proportion to achieve "
+                "sample size."
             )
             inspect_per_box = math.ceil(n_items_to_inspect / num_boxes)
             n_boxes_to_inspect = math.ceil(n_items_to_inspect / inspect_per_box)
@@ -250,8 +264,10 @@ def compute_n_clusters_to_inspect(config, consignment, n_items_to_inspect):
         # items to inspect per box.
         else:
             print(
-                "Warning: Within box proportion is too low and/or interval is too "
-                "high to achieve sample size. Automatically increasing within box "
+                "Warning: Within box proportion is too low and/or interval "
+                "is too "
+                "high to achieve sample size. Automatically increasing "
+                "within box "
                 "proportion to achieve sample size."
             )
             inspect_per_box = math.ceil(n_items_to_inspect / max_boxes)
@@ -270,8 +286,10 @@ def compute_n_clusters_to_inspect(config, consignment, n_items_to_inspect):
 
 
 def compute_max_inspectable_items(num_items, items_per_box, within_box_proportion):
-    """Compute maximum number of items that can be inspected in a consignment based
-    on within box proportion. If within box proportion is less than 1 (partial box
+    """Compute maximum number of items that can be inspected in a
+    consignment based
+    on within box proportion. If within box proportion is less than 1 (
+    partial box
     inspections), then maximum number of items that can be inspected will be
     less than the total number of items in the consignment.
 
@@ -297,7 +315,8 @@ def select_random_indexes(unit, consignment, n_units_to_inspect):
 
     :param unit: Unit to be used for inspection (box or item)
     :param consignment: Consignment to be inspected
-    :param n_units_to_inspect: Number of units to inspect defined in sample functions.
+    :param n_units_to_inspect: Number of units to inspect defined in sample
+    functions.
     """
     if unit in ["item", "items"]:
         indexes_to_inspect = random.sample(
@@ -319,7 +338,8 @@ def select_cluster_indexes(config, consignment, n_units_to_inspect):
 
     :param config: Configuration to be used
     :param consignment: Consignment to be inspected
-    :param n_units_to_inspect: Number of units to inspect defined in sample functions.
+    :param n_units_to_inspect: Number of units to inspect defined in sample
+    functions.
     """
     unit = config["inspection"]["unit"]
     cluster_selection = config["inspection"]["cluster"]["cluster_selection"]
@@ -339,7 +359,8 @@ def select_cluster_indexes(config, consignment, n_units_to_inspect):
                 compute_n_clusters_to_inspect(config, consignment, n_units_to_inspect)
             )[0]
             max_boxes = max(1, round(consignment.num_boxes / interval))
-            # Check to see if interval is small enough to achieve n_boxes_to_inspect
+            # Check to see if interval is small enough to achieve
+            # n_boxes_to_inspect
             # If not, decrease interval.
             if n_boxes_to_inspect > max_boxes:
                 interval = round(consignment.num_boxes / n_boxes_to_inspect)
@@ -367,7 +388,8 @@ def select_units_to_inspect(config, consignment, n_units_to_inspect):
 
     :param config: Configuration to be used
     :param consignment: Consignment to be inspected
-    :param n_units_to_inspect: Number of units to inspect defined in sample functions.
+    :param n_units_to_inspect: Number of units to inspect defined in sample
+    functions.
     """
     unit = config["inspection"]["unit"]
     selection_strategy = config["inspection"]["selection_strategy"]
@@ -390,13 +412,16 @@ def select_units_to_inspect(config, consignment, n_units_to_inspect):
 
 
 def inspect(config, consignment, n_units_to_inspect, detailed):
-    """Inspect selected units using both end strategies (to detection, to completion)
-    Return number of boxes opened, items inspected, and contaminated items found for
+    """Inspect selected units using both end strategies (to detection,
+    to completion)
+    Return number of boxes opened, items inspected, and contaminated items
+    found for
     each end strategy.
 
     :param config: Configuration to be used
     :param consignment: Consignment to be inspected
-    :param n_units_to_inspect: Number of units to inspect defined by sample functions.
+    :param n_units_to_inspect: Number of units to inspect defined by sample
+    functions.
     """
     # Disabling warnings, possible future TODO is splitting this function.
     # pylint: disable=too-many-locals,too-many-statements
@@ -410,7 +435,13 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
         config, consignment, n_units_to_inspect
     )
 
-    # Inspect selected boxes, count opened boxes, inspected items, and contaminated
+    # --- Effectiveness ---
+    effectiveness = validate_effectiveness(config)
+    inspector = Inspector(effectiveness)  # Spawn inspector
+    # ---
+
+    # Inspect selected boxes, count opened boxes, inspected items,
+    # and contaminated
     # items to detection and completion
     ret = types.SimpleNamespace(
         inspected_item_indexes=[],
@@ -420,6 +451,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
         items_inspected_detection=0,
         contaminated_items_completion=0,
         contaminated_items_detection=0,
+        contaminated_items_missed=0,
     )
 
     if unit in ["item", "items"]:
@@ -431,15 +463,16 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                 compute_n_clusters_to_inspect(config, consignment, n_units_to_inspect)
             )[1]
             ret.boxes_opened_completion = len(indexes_to_inspect)
+
             items_inspected = 0
             # Loop through selected box indexes (random or interval selection)
             for box_index in indexes_to_inspect:
                 if not detected:
                     ret.boxes_opened_detection += 1
                 sample_remainder = n_units_to_inspect - items_inspected
-                # If sample_remainder is less than inspect_per_box, set inspect_per_box
-                # to sample_remainder to avoid inspecting more items than computed
-                # sample size.
+                # If sample_remainder is less than inspect_per_box,
+                # set inspect_per_box to sample_remainder to avoid inspecting more items
+                # than computed sample size.
                 if sample_remainder < inspect_per_box:
                     inspect_per_box = sample_remainder
                 # In each box, loop through first n items (n = inspect_per_box)
@@ -454,27 +487,38 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     ret.items_inspected_completion += 1
                     if not detected:
                         ret.items_inspected_detection += 1
+
                     if item:
                         # Count all contaminated items in sample, regardless of
                         # detected variable
                         ret.contaminated_items_completion += 1
+                        # Effectiveness
+                        result = inspector.possibly_good_work()
                         if not detected:
-                            # Count contaminated items in box if not yet detected
-                            ret.contaminated_items_detection += 1
+                            if result:
+                                ret.contaminated_items_detection += 1
+                            else:
+                                ret.contaminated_items_missed += 1
+
                 if ret.contaminated_items_detection > 0:
-                    # Update detected variable if contaminated items found in box
+                    # Update detected variable if contaminated items found
+                    # in box
                     detected = True
                 items_inspected += inspect_per_box
             # assert (
             #     ret.items_inspected_completion == n_units_to_inspect
-            # ), """Check if number of items is evenly divisible by items per box.
+            # ), """Check if number of items is evenly divisible by items
+            # per box.
             # Partial boxes not supported when using cluster selection."""
         else:  # All other item selection strategies inspected the same way
-            # Empty lists to hold opened boxes indexes, will be duplicates bc box index
+            # Empty lists to hold opened boxes indexes, will be duplicates
+            # bc box index
             # computed per inspected item
             boxes_opened_completion = []
             boxes_opened_detection = []
-            # Loop through items in sorted index list (sorted in index functions)
+
+            # Loop through items in sorted index list (sorted in index
+            # functions)
             # Inspection progresses through indexes in ascending order
             for item_index in indexes_to_inspect:
                 if detailed:
@@ -491,9 +535,14 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                 if consignment.items[item_index]:
                     # Count every contaminated item in sample
                     ret.contaminated_items_completion += 1
+                    # Effectiveness
+                    result = inspector.possibly_good_work()
                     if not detected:
-                        ret.contaminated_items_detection += 1
-                        detected = True
+                        if result:
+                            ret.contaminated_items_detection += 1
+                            detected = True
+                        else:
+                            ret.contaminated_items_missed += 1
                 # Should be only 1 contaminated item if to detection
                 if detected:
                     assert ret.contaminated_items_detection == 1
@@ -502,12 +551,14 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
             ret.boxes_opened_completion = len(set(boxes_opened_completion))
             ret.boxes_opened_detection = len(set(boxes_opened_detection))
     elif unit in ["box", "boxes"]:
-        # Partial box inspections allowed to reduce number of items inspected if desired
+        # Partial box inspections allowed to reduce number of items
+        # inspected if desired
         within_box_proportion = config["inspection"]["within_box_proportion"]
         inspect_per_box = int(math.ceil(within_box_proportion * items_per_box))
         detected = False
         ret.boxes_opened_completion = n_units_to_inspect
         ret.items_inspected_completion = n_units_to_inspect * inspect_per_box
+
         for box_index in indexes_to_inspect:
             if not detected:
                 ret.boxes_opened_detection += 1
@@ -523,12 +574,17 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                 if not detected:
                     ret.items_inspected_detection += 1
                 if item:
-                    # Count every contaminated item in sample
+                    # Count all contaminated items in sample, regardless of
+                    # detected variable
                     ret.contaminated_items_completion += 1
-                    # If first contaminated box inspected,
-                    # count contaminated items in box
+                    # Effectiveness
+                    result = inspector.possibly_good_work()
                     if not detected:
-                        ret.contaminated_items_detection += 1
+                        if result:
+                            ret.contaminated_items_detection += 1
+                        else:
+                            ret.contaminated_items_missed += 1
+
             # If box contained contaminated items, changed detected variable
             if ret.contaminated_items_detection > 0:
                 detected = True
