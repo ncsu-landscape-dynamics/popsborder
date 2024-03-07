@@ -239,8 +239,9 @@ def choose_strata_for_clusters(num_units, cluster_width, num_clusters):
     # Make sure there are enough strata for the number of clusters needed.
     if num_strata < num_clusters:
         raise ValueError(
-            "Cannot avoid overlapping clusters. Increase contaminated_units_per_cluster"
-            " or decrease cluster_item_width (if using item contamination_unit)"
+            """Cannot avoid overlapping clusters. Increase 
+            contaminated_units_per_cluster
+            or decrease cluster_item_width (if using item contamination_unit)"""
         )
     # If all strata are needed, all strata are selected for clusters
     if num_clusters == num_strata:
@@ -350,12 +351,9 @@ def add_contaminant_clusters_to_items(config, consignment):
             cluster_width = min(
                 cluster_item_width, (consignment.num_items - cluster_start)
             )
-            msg = (
-                "Not enough items available to contaminate in selected cluster "
-                "stratum."
-            )
-            assert cluster_width >= cluster_size, msg
-
+            assert (
+                    cluster_width >= cluster_size
+            ), "Not enough items available to contaminate in selected cluster stratum."
             cluster = np.random.choice(cluster_width, cluster_size, replace=False)
             cluster += cluster_start
             cluster_indexes.extend(list(cluster))
@@ -380,7 +378,7 @@ def add_contaminant_clusters_to_items(config, consignment):
 def add_contaminant_clusters(config, consignment):
     """Add contaminant clusters to consignment
 
-    Item (separately or in boxes) with contaminate in *consignment* evaluate
+    Item (separately or in boxes) with contaminat in *consignment* evaluate
     to True after running this function.
     This function does not touch the not items not selected for contamination.
     However, they are expected to be zero.

@@ -1,0 +1,5 @@
+name,inspection/sample_strategy,inspection/hypergeometric/detection_level
+hypergeometric 0.01,hypergeometric,0.01
+hypergeometric 0.05,hypergeometric,0.05
+hypergeometric 0.1,hypergeometric,0.1
+proportion 0.02,proportion,
