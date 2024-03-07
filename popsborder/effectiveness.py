@@ -10,6 +10,7 @@ def validate_effectiveness(config, verbose=False):
     effectiveness set by user.
 
     :param config: Configuration file
+    :param verbose: Print the message if True
     """
     try:
         if isinstance(config, dict):
