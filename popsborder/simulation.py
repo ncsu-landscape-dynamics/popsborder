@@ -89,7 +89,6 @@ def simulation(
     total_items_inspected_detection = 0
     total_contaminated_items_completion = 0
     total_contaminated_items_detection = 0
-    total_contaminated_items_missed = 0
     true_contamination_rate = 0
     intercepted_contamination_rate = []
     missed_contamination_rate = []
@@ -131,7 +130,6 @@ def simulation(
             total_items_inspected_detection += ret.items_inspected_detection
             total_contaminated_items_completion += ret.contaminated_items_completion
             total_contaminated_items_detection += ret.contaminated_items_detection
-            total_contaminated_items_missed += ret.contaminated_items_missed
             if detailed:
                 inspected_item_details.append(ret.inspected_item_indexes)
         else:
@@ -240,8 +238,6 @@ def simulation(
         true_positive_present=true_positive_present,
         total_intercepted_contaminants=total_intercepted_contaminants,
         total_missed_contaminants=total_missed_contaminants,
-        total_contaminated_items_missed=total_contaminated_items_missed,
-        total_contaminated_items_detection=total_contaminated_items_detection,
     )
     if detailed:
         simulation_results.details = [item_details, inspected_item_details]
@@ -294,10 +290,6 @@ def run_simulation(
         true_positive_present=0,
         total_intercepted_contaminants=0,
         total_missed_contaminants=0,
-        total_consignment_items_missed=0,
-        total_consignments_items_detection=0,
-        inspection_effectiveness=0,  # TODO: remove the following line
-        avg_items_missed_bf_detection=0,  # TODO: remove the following line
     )
 
     for i in range(num_simulations):
@@ -344,28 +336,7 @@ def run_simulation(
         totals.false_negative_present += result.false_negative_present
         totals.true_positive_present += result.true_positive_present
         totals.total_intercepted_contaminants += result.total_intercepted_contaminants
-
-        # TODO: If not necessary, remove the following condition
         totals.total_missed_contaminants += result.total_missed_contaminants
-        totals.total_consignment_items_missed += result.total_contaminated_items_missed
-        if (
-            config["inspection"]["unit"] in ["item", "items"]
-            and config["inspection"]["selection_strategy"] != "cluster"
-        ):
-            totals.avg_items_missed_bf_detection += (
-                result.total_contaminated_items_missed
-            )
-        else:
-            totals.inspection_effectiveness += (
-                result.total_contaminated_items_detection
-                / (
-                    result.total_contaminated_items_detection
-                    + result.total_contaminated_items_missed
-                )
-                * 100
-            )
-        # End -------------------------------------------------------------------------
-
     # make these relative (reusing the variables)
     totals.missing /= float(num_simulations)
     totals.false_neg /= float(num_simulations)
@@ -396,14 +367,6 @@ def run_simulation(
     else:
         totals.max_intercepted_contamination_rate = None
         totals.avg_intercepted_contamination_rate = None
-
-    # TODO: If not necessary, remove the following condition
-    if totals.inspection_effectiveness > 0:
-        totals.inspection_effectiveness /= float(num_simulations)
-    if totals.avg_items_missed_bf_detection > 0:
-        totals.avg_items_missed_bf_detection /= float(num_simulations)
-    # End -------------------------------------------------------------------------
-
     totals.total_intercepted_contaminants /= float(num_simulations)
     totals.total_missed_contaminants /= float(num_simulations)
 
