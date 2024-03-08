@@ -27,7 +27,7 @@ import types
 
 import numpy as np
 
-from .effectiveness import validate_effectiveness, Inspector
+from .effectiveness import validate_effectiveness
 
 
 def inspect_first(consignment):
@@ -435,10 +435,10 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
         config, consignment, n_units_to_inspect
     )
 
-    # --- Effectiveness ---
+    # TODO Effectiveness config validation should be done in the main. Validation can be
+    #  avoided by adding default values to the config such as "effectiveness" = 1 under
+    #  "inspection".
     effectiveness = validate_effectiveness(config)
-    inspector = Inspector(effectiveness)  # Spawn inspector
-    # ---
 
     # Inspect selected boxes, count opened boxes, inspected items,
     # and contaminated
@@ -477,7 +477,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     inspect_per_box = sample_remainder
                 # In each box, loop through first n items (n = inspect_per_box)
                 for item_in_box_index, item in enumerate(
-                    (consignment.boxes[box_index]).items[0:inspect_per_box]
+                        (consignment.boxes[box_index]).items[0:inspect_per_box]
                 ):
                     if detailed:
                         item_index = consignment.item_in_box_to_item_index(
@@ -488,17 +488,13 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     if not detected:
                         ret.items_inspected_detection += 1
 
-                    if item:
+                    if item and random.random() < effectiveness:
                         # Count all contaminated items in sample, regardless of
                         # detected variable
                         ret.contaminated_items_completion += 1
-                        # Effectiveness
-                        result = inspector.possibly_good_work()
                         if not detected:
-                            if result:
-                                ret.contaminated_items_detection += 1
-                            else:
-                                ret.contaminated_items_missed += 1
+                            # Count contaminated items in box if not yet detected
+                            ret.contaminated_items_detection += 1
 
                 if ret.contaminated_items_detection > 0:
                     # Update detected variable if contaminated items found
@@ -532,17 +528,12 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     boxes_opened_detection.append(
                         math.floor(item_index / items_per_box)
                     )
-                if consignment.items[item_index]:
+                if consignment.items[item_index] and random.random() < effectiveness:
                     # Count every contaminated item in sample
                     ret.contaminated_items_completion += 1
-                    # Effectiveness
-                    result = inspector.possibly_good_work()
                     if not detected:
-                        if result:
-                            ret.contaminated_items_detection += 1
-                            detected = True
-                        else:
-                            ret.contaminated_items_missed += 1
+                        ret.contaminated_items_detection += 1
+                        detected = True
                 # Should be only 1 contaminated item if to detection
                 if detected:
                     assert ret.contaminated_items_detection == 1
@@ -564,7 +555,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                 ret.boxes_opened_detection += 1
             # In each box, loop through first n items (n = inspect_per_box)
             for item_in_box_index, item in enumerate(
-                (consignment.boxes[box_index]).items[0:inspect_per_box]
+                    (consignment.boxes[box_index]).items[0:inspect_per_box]
             ):
                 if detailed:
                     item_index = consignment.item_in_box_to_item_index(
@@ -573,17 +564,13 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     ret.inspected_item_indexes.append(item_index)
                 if not detected:
                     ret.items_inspected_detection += 1
-                if item:
-                    # Count all contaminated items in sample, regardless of
-                    # detected variable
+                if item and random.random() < effectiveness:
+                    # Count every contaminated item in sample
                     ret.contaminated_items_completion += 1
-                    # Effectiveness
-                    result = inspector.possibly_good_work()
+                    # If first contaminated box inspected,
+                    # count contaminated items in box
                     if not detected:
-                        if result:
-                            ret.contaminated_items_detection += 1
-                        else:
-                            ret.contaminated_items_missed += 1
+                        ret.contaminated_items_detection += 1
 
             # If box contained contaminated items, changed detected variable
             if ret.contaminated_items_detection > 0:
