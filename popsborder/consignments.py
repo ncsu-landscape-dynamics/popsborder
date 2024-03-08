@@ -315,10 +315,10 @@ class AQIMConsignmentGenerator:
             port=record["LOCATION"],
             pathway=pathway,
         )
-    
+
 
 class VariablePackagingConsignmnentGenerator:
-    """Generate a consignments based on existing shipment records where items per 
+    """Generate a consignments based on existing shipment records where items per
     box is specified per record.
     """
 
@@ -337,7 +337,8 @@ class VariablePackagingConsignmnentGenerator:
         items_per_box = int(record["ITEMS_PER_PACKAGE"])
         unit = record["QUANTITY_UNIT"]
 
-        # Generate items based on quantity in records. Quantity unit must be stems/items.
+        # Generate items based on quantity in records.
+        # Quantity unit must be stems/items.
         if unit in ["Stems", "Items"]:
             num_items = int(record["QUANTITY"])
         else:
