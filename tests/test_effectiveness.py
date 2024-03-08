@@ -64,7 +64,7 @@ ret = types.SimpleNamespace(
     items_inspected_detection=0,
     contaminated_items_completion=0,
     contaminated_items_detection=0,
-    contaminated_items_missed=0
+    contaminated_items_missed=0,
 )
 
 config = load_configuration_yaml_from_text(CONFIG)
