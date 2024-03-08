@@ -106,10 +106,8 @@ def main():
         const="boxes",  # default behavior for pretty
         nargs="?",  # value is optional
         choices=[i[0] for i in pretty_choices],
-        help=(
-                "Show pretty unicode output for each consignment\n"
-                + "\n".join(["\n    ".join(i) for i in pretty_choices])
-        ),
+        help=("Show pretty unicode output for each consignment\n"
+              + "\n".join(["\n    ".join(i) for i in pretty_choices])),
     )
     output_group.add_argument(
         "-v",
