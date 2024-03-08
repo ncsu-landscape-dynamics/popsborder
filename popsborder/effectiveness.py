@@ -34,8 +34,5 @@ def validate_effectiveness(config, verbose=False):
                 effectiveness = config["inspection"]["effectiveness"]
             else:
                 if verbose:
-                    print(
-                        "Effectiveness out of range: it should be between "
-                        "0 and 1."
-                    )
+                    print("Effectiveness out of range: it should be between 0 and 1.")
     return effectiveness
