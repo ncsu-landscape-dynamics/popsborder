@@ -435,9 +435,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
         config, consignment, n_units_to_inspect
     )
 
-    # TODO Effectiveness config validation should be done in the main. Validation can be
-    #  avoided by adding default values to the config such as "effectiveness" = 1 under
-    #  "inspection".
+    # TODO May not be needing this if default effectiveness is added to config.
     effectiveness = validate_effectiveness(config)
 
     # Inspect selected boxes, count opened boxes, inspected items,
