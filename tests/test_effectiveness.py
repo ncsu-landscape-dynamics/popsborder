@@ -4,7 +4,7 @@ import types
 
 import pytest
 
-from popsborder.effectiveness import validate_effectiveness, Inspector
+from popsborder.effectiveness import validate_effectiveness
 from popsborder.inputs import load_configuration_yaml_from_text
 from popsborder.simulation import run_simulation
 
@@ -75,7 +75,7 @@ detailed = False
 def test_set_effectiveness_no_key():
     """Test config has no effectiveness key"""
     effectiveness = validate_effectiveness(config)
-    assert effectiveness is None
+    assert effectiveness == 1
 
 
 def test_set_effectiveness_out_of_range():
@@ -83,7 +83,7 @@ def test_set_effectiveness_out_of_range():
     for val in [-1, 1.1, 2.5]:
         config["inspection"]["effectiveness"] = val
         effectiveness = validate_effectiveness(config)
-        assert effectiveness is None
+        assert effectiveness == 1
 
 
 def test_set_effectiveness_in_range():
@@ -92,34 +92,6 @@ def test_set_effectiveness_in_range():
         config["inspection"]["effectiveness"] = val
         effectiveness = validate_effectiveness(config)
         assert effectiveness == val
-
-
-class TestInspector:
-    """Test Inspector class"""
-
-    @pytest.fixture()
-    def setup(self):
-        effectiveness = 0.9
-        inspector = Inspector(effectiveness)
-        yield inspector
-
-    def test_generate_false_negative_item(self, setup):
-        """Test generate_false_negative_item method"""
-        item = setup.generate_false_negative_item()
-        assert item in [0, 1]
-
-    def test_possibly_good_work(self, setup):
-        """Test effectiveness of inspector's work. 90% of the time, the inspector
-        detects the contaminated item. The inspector misses the contaminated item
-        """
-        count = 0
-        for _ in range(10):
-            inspection = setup.possibly_good_work()
-            assert inspection in [True, False]
-            if not inspection:
-                count += 1
-        print(f"Missed inspection: {count}")
-        assert count <= 1
 
 
 class TestEffectiveness:
@@ -152,10 +124,7 @@ class TestEffectiveness:
             result = run_simulation(
                 config=config, num_simulations=3, num_consignments=100, seed=seed
             )
-            print(result.inspection_effectiveness)
-            pct_effectiveness = (result.inspection_effectiveness + 0.5) / 100
-            assert 0 <= result.inspection_effectiveness <= 100
-            assert 0.88 <= pct_effectiveness <= 0.92
+        assert result.pct_contaminant_unreported_if_detection > 0
 
     def test_effectiveness_unit_items_random(self, setup):
         """Test effectiveness with inspection method items with random selection
@@ -166,9 +135,7 @@ class TestEffectiveness:
             result = run_simulation(
                 config=config, num_simulations=3, num_consignments=100, seed=seed
             )
-            print(result.avg_items_missed_bf_detection)
-            assert result.inspection_effectiveness == 0
-            assert result.avg_items_missed_bf_detection >= 0
+        assert result.pct_contaminant_unreported_if_detection > 0
 
     def test_effectiveness_unit_items_cluster(self, setup):
         """Test effectiveness with inspection method items with cluster selection
@@ -180,9 +147,7 @@ class TestEffectiveness:
             result = run_simulation(
                 config=config, num_simulations=3, num_consignments=100, seed=seed
             )
-            pct_effectiveness = (result.inspection_effectiveness + 0.5) / 100
-            assert 0 <= result.inspection_effectiveness <= 100
-            assert 0.88 <= pct_effectiveness <= 0.92
+        assert result.pct_contaminant_unreported_if_detection > 0
 
     def test_effectiveness_none(self, setup):
         """Test effectiveness not set in the configuration file."""
@@ -191,5 +156,4 @@ class TestEffectiveness:
             result = run_simulation(
                 config=config, num_simulations=3, num_consignments=100, seed=seed
             )
-            assert result.inspection_effectiveness == 100
-            assert result.avg_items_missed_bf_detection == 0
+        assert result.pct_contaminant_unreported_if_detection > 0
