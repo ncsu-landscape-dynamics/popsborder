@@ -317,6 +317,61 @@ class AQIMConsignmentGenerator:
         )
 
 
+class VariablePackagingConsignmnentGenerator:
+    """Generate a consignments based on existing shipment records where items per
+    box is specified per record.
+    """
+
+    def __init__(self, filename, separator=","):
+        self.infile = open(filename)
+        self.reader = csv.DictReader(self.infile, delimiter=separator)
+
+    def generate_consignment(self):
+        """Generate a new consignment"""
+        try:
+            record = next(self.reader)
+        except StopIteration:
+            raise RuntimeError(
+                "More consignments requested than number of records in shipment data"
+            ) from None
+        items_per_box = int(record["ITEMS_PER_PACKAGE"])
+        unit = record["QUANTITY_UNIT"]
+
+        # Generate items based on quantity in records.
+        # Quantity unit must be stems/items.
+        if unit in ["Stems", "Items"]:
+            num_items = int(record["QUANTITY"])
+        else:
+            raise RuntimeError(f"Unsupported quantity unit: {unit}")
+
+        items = np.zeros(num_items, dtype=np.int64)
+
+        # rounding up to keep the max per box and have enough boxes
+        num_boxes = int(math.ceil(num_items / float(items_per_box)))
+        num_boxes = max(num_boxes, 1)
+        boxes = []
+        for i in range(num_boxes):
+            lower = i * items_per_box
+            # slicing does not go over the size even if our last box is smaller
+            upper = (i + 1) * items_per_box
+            boxes.append(Box(items[lower:upper]))
+        assert sum([box.num_items for box in boxes]) == num_items
+
+        date = record["CALENDAR_YR"]
+        return Consignment(
+            flower=record["COMMODITY"],
+            num_items=num_items,
+            items=items,
+            items_per_box=items_per_box,
+            num_boxes=num_boxes,
+            date=date,
+            boxes=boxes,
+            origin=record["ORIGIN"],
+            port=record["LOCATION"],
+            pathway=record["PATHWAY"],
+        )
+
+
 def get_items_per_box(items_per_box, pathway):
     """Based on config and pathway, return number of items per box."""
     if pathway.lower() == "airport" and "air" in items_per_box:
@@ -346,6 +401,12 @@ def get_consignment_generator(config):
             items_per_box=config["items_per_box"],
             filename=config["input_file"]["file_name"],
         )
+    elif (generation_method == "input_file") and (
+        config["input_file"]["file_type"] == "variable packaging"
+    ):
+        consignment_generator = VariablePackagingConsignmnentGenerator(
+            filename=config["input_file"]["file_name"],
+        )
     elif generation_method == "parameter_based":
         start_date = config.get("start_date", "2020-01-01")
         consignment_generator = ParameterConsignmentGenerator(
@@ -355,6 +416,7 @@ def get_consignment_generator(config):
         )
     else:
         raise RuntimeError(
-            f"Unknown consignment generation method: {generation_method}"
+            f"Unknown consignment generation method: {generation_method} or "
+            f"input file type: {config['input_file']['file_type']}"
         )
     return consignment_generator
