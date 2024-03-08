@@ -475,7 +475,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     inspect_per_box = sample_remainder
                 # In each box, loop through first n items (n = inspect_per_box)
                 for item_in_box_index, item in enumerate(
-                        (consignment.boxes[box_index]).items[0:inspect_per_box]
+                    (consignment.boxes[box_index]).items[0:inspect_per_box]
                 ):
                     if detailed:
                         item_index = consignment.item_in_box_to_item_index(
@@ -553,7 +553,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                 ret.boxes_opened_detection += 1
             # In each box, loop through first n items (n = inspect_per_box)
             for item_in_box_index, item in enumerate(
-                    (consignment.boxes[box_index]).items[0:inspect_per_box]
+                (consignment.boxes[box_index]).items[0:inspect_per_box]
             ):
                 if detailed:
                     item_index = consignment.item_in_box_to_item_index(
