@@ -134,7 +134,6 @@ def main():
 
     config = load_configuration(args.config_file)
     detailed = args.detailed
-
     if detailed:
         details, totals = run_simulation(
             config=config,
