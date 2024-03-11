@@ -27,6 +27,8 @@ import types
 
 import numpy as np
 
+from .inputs import get_validated_effectiveness
+
 
 def inspect_first(consignment):
     """Inspect only the first box in the consignment"""
@@ -410,6 +412,8 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
         config, consignment, n_units_to_inspect
     )
 
+    effectiveness = get_validated_effectiveness(config)
+
     # Inspect selected boxes, count opened boxes, inspected items, and contaminated
     # items to detection and completion
     ret = types.SimpleNamespace(
@@ -454,7 +458,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     ret.items_inspected_completion += 1
                     if not detected:
                         ret.items_inspected_detection += 1
-                    if item:
+                    if item and random.random() < effectiveness:
                         # Count all contaminated items in sample, regardless of
                         # detected variable
                         ret.contaminated_items_completion += 1
@@ -488,7 +492,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     boxes_opened_detection.append(
                         math.floor(item_index / items_per_box)
                     )
-                if consignment.items[item_index]:
+                if consignment.items[item_index] and random.random() < effectiveness:
                     # Count every contaminated item in sample
                     ret.contaminated_items_completion += 1
                     if not detected:
@@ -522,7 +526,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     ret.inspected_item_indexes.append(item_index)
                 if not detected:
                     ret.items_inspected_detection += 1
-                if item:
+                if item and random.random() < effectiveness:
                     # Count every contaminated item in sample
                     ret.contaminated_items_completion += 1
                     # If first contaminated box inspected,
