@@ -38,8 +38,8 @@ def pretty_content(array, config=None):
     Values evaluating to False are replaced with a flower, others with a bug.
     """
     config = config if config else {}
-    flower_sign = config.get("flower", "\N{BLACK FLORETTE}")
-    bug_sign = config.get("bug", "\N{BUG}")
+    flower_sign = config.get("flower", "\N{Black Florette}")
+    bug_sign = config.get("bug", "\N{Bug}")
     spaces = config.get("spaces", True)
     if spaces:
         separator = " "
@@ -71,9 +71,9 @@ def pretty_header(consignment, line=None, config=None):
         # We test None but not for "" to allow use of an empty string.
         line = config.get("horizontal_line", "heavy")
     if line.lower() == "heavy":
-        horizontal = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
+        horizontal = "\N{Box Drawings Heavy Horizontal}"
     elif line.lower() == "light":
-        horizontal = "\N{BOX DRAWINGS LIGHT HORIZONTAL}"
+        horizontal = "\N{Box Drawings Light Horizontal}"
     elif line == "space":
         horizontal = " "
     else:
@@ -130,9 +130,7 @@ def pretty_consignment_boxes_only(consignment, config=None):
 def pretty_consignment(consignment, style, config=None):
     """Pretty-print consignment in a given style
 
-    :param consignment: Consignment
     :param style: Style of pretty-printing (boxes, boxes_only, items)
-    :param config: Configuration
     """
     config = config if config else {}
     if style == "boxes":
@@ -152,20 +150,16 @@ class PrintReporter(object):
 
     # Reporter objects carry functions, but many not use any attributes.
     # pylint: disable=no-self-use,missing-function-docstring
-    @staticmethod
-    def true_negative():
+    def true_negative(self):
         print("Inspection worked, didn't miss anything (no contaminants) [TN]")
 
-    @staticmethod
-    def true_positive():
+    def true_positive(self):
         print("Inspection worked, found contaminant [TP]")
 
-    @staticmethod
-    def false_negative(consignment):
+    def false_negative(self, consignment):
         print(
-            "Inspection failed, missed "
-            f"{count_contaminated_boxes(consignment)} "
-            f"boxes with contaminants [FN]"
+            f"Inspection failed, missed {count_contaminated_boxes(consignment)} "
+            "boxes with contaminants [FN]"
         )
 
 
@@ -203,13 +197,7 @@ class Form280(object):
                 self._finalizer = weakref.finalize(self, self.file.close)
         self.codes = disposition_codes
         # selection and order of columns to output
-        columns = [
-            "REPORT_DT",
-            "LOCATION",
-            "ORIGIN_NM",
-            "COMMODITY",
-            "disposition",
-        ]
+        columns = ["REPORT_DT", "LOCATION", "ORIGIN_NM", "COMMODITY", "disposition"]
 
         if self.file:
             self.writer = csv.writer(
@@ -252,10 +240,8 @@ class Form280(object):
 
         :param date: Consignment or inspection date
         :param consignment: Consignment which was tested
-        :param ok: True if the consignment was tested negative (no pest
-        present)
-        :param must_inspect: True if the consignment was selected for
-        inspection
+        :param ok: True if the consignment was tested negative (no pest present)
+        :param must_inspect: True if the consignment was selected for inspection
         :param applied_program: Identifier of the program applied or None
         """
         disposition_code = self.disposition(ok, must_inspect, applied_program)
@@ -271,8 +257,7 @@ class Form280(object):
             )
         elif self.print_to_stdout:
             print(
-                f"F280: {date:%Y-%m-%d} | {consignment.port} | "
-                f"{consignment.origin}"
+                f"F280: {date:%Y-%m-%d} | {consignment.port} | {consignment.origin}"
                 f" | {consignment.flower} | {disposition_code}"
             )
 
@@ -292,8 +277,7 @@ class SuccessRates(object):
         """Record testing result for one consignment
 
         :param checked_ok: True if no contaminant was found in consignment
-        :param actually_ok: True if the consignment actually does not have
-        contamination
+        :param actually_ok: True if the consignment actually does not have contamination
         :param consignment: The shipment itself (for reporting purposes)
         """
         if checked_ok and actually_ok:
@@ -309,8 +293,7 @@ class SuccessRates(object):
         elif not checked_ok and actually_ok:
             raise RuntimeError(
                 "Inspection result is contaminated,"
-                " but actually the consignment is not contaminated ("
-                "programmer error)"
+                " but actually the consignment is not contaminated (programmer error)"
             )
 
 
@@ -392,8 +375,7 @@ def config_to_simplified_simulation_params(config):
 
 def print_totals_as_text(num_consignments, config, totals):
     """Prints simulation result as text"""
-    # This is straightforward printing with simpler branches. Only few
-    # variables.
+    # This is straightforward printing with simpler branches. Only few variables.
     # pylint: disable=too-many-branches,too-many-statements
 
     sim_params = config_to_simplified_simulation_params(config)
@@ -403,9 +385,7 @@ def print_totals_as_text(num_consignments, config, totals):
     print("\n")
     print("Simulation parameters:")
     print("----------------------------------------------------------")
-    print(
-        "consignments:\n\t Number consignments simulated: " f"{num_consignments:,.0f}"
-    )
+    print(f"consignments:\n\t Number consignments simulated: {num_consignments:,.0f}")
     print(
         "\t Avg. number of boxes per consignment: "
         f"{round(totals.num_boxes / num_consignments):,d}"
@@ -438,17 +418,12 @@ def print_totals_as_text(num_consignments, config, totals):
                 "\t\t maximum contaminated items per cluster: "
                 f"{sim_params.contaminated_units_per_cluster:,} items"
             )
-            print(
-                "\t\t cluster distribution: " f"{sim_params.contaminant_distribution}"
-            )
+            print(f"\t\t cluster distribution: {sim_params.contaminant_distribution}")
             if sim_params.contaminant_distribution == "random":
-                print(
-                    "\t\t cluster width: " "" f"{sim_params.cluster_item_width:,} items"
-                )
+                print(f"\t\t cluster width: {sim_params.cluster_item_width:,} items")
 
     print(
-        f"inspection:\n\t unit: {sim_params.inspection_unit}\n\t sample "
-        "strategy: "
+        f"inspection:\n\t unit: {sim_params.inspection_unit}\n\t sample strategy: "
         f"{sim_params.sample_strategy}"
     )
     if sim_params.sample_strategy == "proportion":
@@ -461,7 +436,7 @@ def print_totals_as_text(num_consignments, config, totals):
     if sim_params.selection_strategy == "cluster":
         print(f"\t\t box selection strategy: {sim_params.selection_param_1}")
         if sim_params.selection_param_1 == "interval":
-            print(f"\t\t box selection interval: " f"{sim_params.selection_param_2}")
+            print(f"\t\t box selection interval: {sim_params.selection_param_2}")
     if (
         sim_params.inspection_unit in ["box", "boxes"]
         or sim_params.selection_strategy == "cluster"
@@ -478,9 +453,9 @@ def print_totals_as_text(num_consignments, config, totals):
     print(f"Avg. % contaminated consignments slipped: {totals.missing:.2f}%")
     if totals.false_neg + totals.intercepted:
         adj_avg_slipped = (
-            (totals.false_neg - totals.missed_within_tolerance)
-            / (totals.false_neg + totals.intercepted)
-        ) * 100
+                              (totals.false_neg - totals.missed_within_tolerance)
+                              / (totals.false_neg + totals.intercepted)
+                          ) * 100
     else:
         # For consignments with zero contamination
         adj_avg_slipped = 0
@@ -556,15 +531,12 @@ def flatten_nested_dict(dictionary, parent_key=None):
 
 
 def save_scenario_result_to_table(filename, results, config_columns, result_columns):
-    """Save selected values for a scenario results to CSV including
-    configuration
+    """Save selected values for a scenario results to CSV including configuration
 
-    The results parameter is list of tuples which is output from the
-    run_scenarios()
+    The results parameter is list of tuples which is output from the run_scenarios()
     function.
 
-    Values from configuration or results are selected by columns parameters
-    which are
+    Values from configuration or results are selected by columns parameters which are
     in format key/subkey/subsubkey.
     """
     with open(filename, "w") as file:
@@ -593,21 +565,17 @@ def save_simulation_result_to_pandas(
 ):
     """Save result of one simulation to pandas DataFrame"""
     return save_scenario_result_to_pandas(
-        [(result, config)],
-        config_columns=config_columns,
-        result_columns=result_columns,
+        [(result, config)], config_columns=config_columns, result_columns=result_columns
     )
 
 
 def save_scenario_result_to_pandas(results, config_columns=None, result_columns=None):
     """Save selected values for a scenario to a pandas DataFrame.
 
-    The results parameter is list of tuples which is output from the
-    run_scenarios()
+    The results parameter is list of tuples which is output from the run_scenarios()
     function.
 
-    Values from configuration or results are selected by columns parameters
-    which are
+    Values from configuration or results are selected by columns parameters which are
     in format key/subkey/subsubkey.
     """
     # We don't want a special dependency to fail import of this file
@@ -624,8 +592,7 @@ def save_scenario_result_to_pandas(results, config_columns=None, result_columns=
                     row[column] = get_item_from_nested_dict(config, keys)
             elif config_columns is None:
                 row = flatten_nested_dict(config)
-            # When falsy, but not None, we assume it is an empty list and
-            # thus an
+            # When falsy, but not None, we assume it is an empty list and thus an
             # explicit request for no config columns to be included.
         if result_columns:
             for column in result_columns:
