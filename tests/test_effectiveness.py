@@ -4,7 +4,7 @@ import types
 
 import pytest
 
-from popsborder.effectiveness import validate_effectiveness
+from popsborder.inputs import get_validated_effectiveness
 from popsborder.inputs import load_configuration_yaml_from_text
 from popsborder.simulation import run_simulation
 
@@ -74,7 +74,7 @@ detailed = False
 
 def test_set_effectiveness_no_key():
     """Test config has no effectiveness key"""
-    effectiveness = validate_effectiveness(config)
+    effectiveness = get_validated_effectiveness(config)
     assert effectiveness == 1
 
 
@@ -82,7 +82,7 @@ def test_set_effectiveness_out_of_range():
     """Test effectiveness out of range"""
     for val in [-1, 1.1, 2.5]:
         config["inspection"]["effectiveness"] = val
-        effectiveness = validate_effectiveness(config)
+        effectiveness = get_validated_effectiveness(config)
         assert effectiveness == 1
 
 
@@ -90,7 +90,7 @@ def test_set_effectiveness_in_range():
     """Test effectiveness in range"""
     for val in [0, 0.5, 1]:
         config["inspection"]["effectiveness"] = val
-        effectiveness = validate_effectiveness(config)
+        effectiveness = get_validated_effectiveness(config)
         assert effectiveness == val
 
 
