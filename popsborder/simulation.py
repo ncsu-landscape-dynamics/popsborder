@@ -137,6 +137,11 @@ def simulation(
             total_num_boxes += consignment.num_boxes
             total_num_items += consignment.num_items
 
+        if hasattr(is_inspection_needed, "add_inspection_result"):
+            is_inspection_needed.add_inspection_result(
+                consignment, inspected=must_inspect, result=consignment_checked_ok
+            )
+
         form280.fill(
             consignment.date,
             consignment,
