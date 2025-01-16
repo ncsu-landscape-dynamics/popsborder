@@ -1,6 +1,7 @@
 import datetime
 
 import numpy as np
+import pytest
 
 from popsborder.consignments import Box, Consignment
 from popsborder.contamination import add_contaminant_clusters
@@ -72,5 +73,28 @@ def test_random_clusters():
     consignment = get_consignment(num_items)
     add_contaminant_clusters(config, consignment)
     contamination_rate = 0.12
+    contaminated_items = int(num_items * contamination_rate)
+    assert np.count_nonzero(consignment.items) == contaminated_items
+
+
+@pytest.mark.parametrize("contamination_rate", [0.0, 0.1, 0.2, 0.5, 0.8, 1.0])
+@pytest.mark.parametrize("clustering", [0.0, 0.2, 0.5, 0.8, 1.0])
+def test_add_contaminant_clusters_to_items_with_subset_clustering(contamination_rate, clustering):
+    """Test contaminant clusters with subset clustering"""
+    config_yaml = f"""
+    contamination:
+      contamination_rate:
+        distribution: fixed_value
+        value: {contamination_rate}
+      contamination_unit: item
+      arrangement: clustered
+      clustered:
+        distribution: subset
+        clustering: {clustering}
+    """
+    config = load_configuration_yaml_from_text(config_yaml)["contamination"]
+    num_items = 100
+    consignment = get_consignment(num_items)
+    add_contaminant_clusters(config, consignment)
     contaminated_items = int(num_items * contamination_rate)
     assert np.count_nonzero(consignment.items) == contaminated_items
