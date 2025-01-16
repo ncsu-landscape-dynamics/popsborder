@@ -7,13 +7,13 @@ verify_ssl = true
 pytest = "*"
 pylint = "*"
 flake8 = "*"
-black = "~=22.1"
+black = "*"
 pytest-datadir = "*"
 matplotlib = "*"
-seaborn = "==0.11.0"
+seaborn = "*"
 
 [packages]
 popsborder = {editable = true, path = "."}
 
 [requires]
-python_version = "3.8"
+python_version = "*"
