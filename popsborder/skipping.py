@@ -168,10 +168,10 @@ class FixedComplianceLevelSkipLot:
                     "or contain 'file_name'"
                 )
 
-    def compliance_level_for_consignment(self, consignment):
-        """Get compliance level associated with a given consignment.
+    def compute_record_key_for_consignment(self, consignment):
+        """Get compliance record key for the given given consignment.
 
-        The level is selected based on consignment properties.
+        The key is based on consignment's properties which are tracked properties.
         """
         key = []
         for name in self._tracked_properties:
@@ -182,7 +182,14 @@ class FixedComplianceLevelSkipLot:
                     f"Consignment does not have a property '{name}'"
                 ) from error
             key.append(property_value)
-        key = tuple(key)
+        return tuple(key)
+
+    def compliance_level_for_consignment(self, consignment):
+        """Get compliance level associated with a given consignment.
+
+        The level is selected based on consignment properties.
+        """
+        key = self.compute_record_key_for_consignment(consignment)
         if key not in self._consignment_records:
             self._consignment_records[key] = self._default_level
             return self._default_level
@@ -204,3 +211,15 @@ class FixedComplianceLevelSkipLot:
         if random.random() <= sampling_fraction:
             return True, self._program_name
         return False, self._program_name
+
+
+class DynamicComplianceLevelSkipLot(FixedComplianceLevelSkipLot):
+    """A skip lot program which dynamically adjusts compliance levels
+
+    Compliance is tracked by compliance group and compliance levels are adjusted based
+    on inspection results from previous inspections in the given group.
+    The consignment groups are based on tracked properties.
+    """
+
+    def add_inspection_result(self, consignment, inspected, result):
+        key = self.compute_record_key_for_consignment(consignment)
