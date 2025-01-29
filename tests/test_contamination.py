@@ -8,6 +8,7 @@ from popsborder.consignments import Consignment
 from popsborder.contamination import (
     get_contamination_config_for_consignment,
     get_contamination_rate,
+    num_items_to_contaminate,
 )
 from popsborder.inputs import load_configuration_yaml_from_text
 
