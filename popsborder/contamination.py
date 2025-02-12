@@ -356,9 +356,11 @@ def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment
             start_index = np.random.randint(0, consignment.num_items)
             if start_index + subset_size > consignment.num_items:
                 start_index2 = 0
-                end_index2= subset_size - (consignment.num_items - start_index)
+                end_index2 = subset_size - (consignment.num_items - start_index)
                 end_index = consignment.num_items
-                assert (end_index - start_index) + (end_index2 - start_index2) == subset_size
+                assert (end_index - start_index) + (
+                    end_index2 - start_index2
+                ) == subset_size
             else:
                 start_index2 = None
                 end_index = start_index + subset_size
@@ -369,12 +371,16 @@ def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment
             end_index = start_index + subset_size
             assert end_index - start_index == subset_size
         else:
-            raise ValueError("Cluster placement_adjustment must be one of "
-                "'cut', 'shift', or 'contain'")
+            raise ValueError(
+                "Cluster placement_adjustment must be one of "
+                "'cut', 'shift', or 'contain'"
+            )
 
     potential_indexes = np.arange(start_index, end_index)
     if start_index2 is not None and end_index2 is not None:
-        potential_indexes = np.concatenate((potential_indexes, np.arange(start_index2, end_index2)))
+        potential_indexes = np.concatenate(
+            (potential_indexes, np.arange(start_index2, end_index2))
+        )
     assert len(potential_indexes) == subset_size
     indexes = np.random.choice(
         potential_indexes,

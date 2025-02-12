@@ -248,6 +248,14 @@ def test_contamination_rate_dict_config(config):
 @pytest.mark.parametrize("num_items", range(95, 105))
 def test_num_items_to_contaminate(contamination_rate, num_items):
     """Test num_items_to_contaminate function with various rates and item counts"""
-    config = {"contamination_rate": {"value": contamination_rate, "distribution": "fixed_value"}}
+    config = {
+        "contamination_rate": {
+            "value": contamination_rate,
+            "distribution": "fixed_value",
+        }
+    }
     expected_contaminated_items = round(num_items * contamination_rate)
-    assert num_items_to_contaminate(config["contamination_rate"], num_items) == expected_contaminated_items
+    assert (
+        num_items_to_contaminate(config["contamination_rate"], num_items)
+        == expected_contaminated_items
+    )
