@@ -91,7 +91,7 @@ def get_contamination_rate(config):
             param2 = parameters["b"]
         else:
             param1, param2 = parameters
-        return float(stats.beta.rvs(param1, param2, size=1))
+        return float(stats.beta.rvs(param1, param2, size=1)[0])
     raise RuntimeError(f"Unknown contamination rate distribution: {distribution}")
 
 
