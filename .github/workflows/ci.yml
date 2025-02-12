@@ -58,7 +58,7 @@ jobs:
           pip install .
       - name: Check style with Black
         run: |
-          pip install black==25
+          pip install black=="25.*"
           black --check --diff .
 
   tests:
