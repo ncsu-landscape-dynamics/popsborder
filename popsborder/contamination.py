@@ -325,7 +325,10 @@ def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment
     cluster is then directly determined by the contamination rate.
     """
     clustering = config["clustered"]["clustering"]
-    placement_adjustment = config["clustered"]["placement_adjustment"]
+    if "placement_adjustment" in config["clustered"]:
+        placement_adjustment = config["clustered"]["placement_adjustment"]
+    else:
+        placement_adjustment = "split"
     num_of_contaminated_items = num_items_to_contaminate(
         config["contamination_rate"], consignment.num_items
     )
@@ -345,14 +348,15 @@ def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment
             middle = np.random.randint(0, consignment.num_items)
             start_index = max(0, middle - subset_size // 2)
             end_index = min(consignment.num_items, middle + subset_size // 2)
-            # print(consignment.num_items, end_index, start_index, end_index - start_index, subset_size)
             assert end_index - start_index <= subset_size
         elif placement_adjustment == "shift":
-            # Place (the middle of?) the cluster randomly anywhere, but then shift it as needed
+            # Place (the middle of?) the cluster randomly anywhere,
+            # but then shift it as needed.
             # start_index = consignment.num_items - subset_size
             pass
         elif placement_adjustment == "split":
-            # Place the beginning of the cluster anywhere, but put the overhang at the beginning.
+            # Place the beginning of the cluster anywhere,
+            # but put the overhang at the beginning.
             start_index = np.random.randint(0, consignment.num_items)
             if start_index + subset_size > consignment.num_items:
                 start_index2 = 0
@@ -373,7 +377,7 @@ def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment
         else:
             raise ValueError(
                 "Cluster placement_adjustment must be one of "
-                "'cut', 'shift', or 'contain'"
+                f"'cut', 'shift', or 'contain', not {placement_adjustment}"
             )
 
     potential_indexes = np.arange(start_index, end_index)
