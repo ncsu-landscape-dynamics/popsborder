@@ -38,8 +38,8 @@ def pretty_content(array, config=None):
     Values evaluating to False are replaced with a flower, others with a bug.
     """
     config = config if config else {}
-    flower_sign = config.get("flower", "\N{Black Florette}")
-    bug_sign = config.get("bug", "\N{Bug}")
+    flower_sign = config.get("flower", "\N{BLACK FLORETTE}")
+    bug_sign = config.get("bug", "\N{BUG}")
     spaces = config.get("spaces", True)
     if spaces:
         separator = " "
@@ -71,9 +71,9 @@ def pretty_header(consignment, line=None, config=None):
         # We test None but not for "" to allow use of an empty string.
         line = config.get("horizontal_line", "heavy")
     if line.lower() == "heavy":
-        horizontal = "\N{Box Drawings Heavy Horizontal}"
+        horizontal = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
     elif line.lower() == "light":
-        horizontal = "\N{Box Drawings Light Horizontal}"
+        horizontal = "\N{BOX DRAWINGS LIGHT HORIZONTAL}"
     elif line == "space":
         horizontal = " "
     else:
