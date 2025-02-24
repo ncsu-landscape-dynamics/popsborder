@@ -360,7 +360,7 @@ def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment
                 0, min(middle - subset_size // 2, consignment.num_items - subset_size)
             )
             end_index = start_index + subset_size
-            assert 0 <= start_index and end_index <= consignment.num_items
+            assert start_index >= 0 and end_index <= consignment.num_items
             assert end_index - start_index == subset_size
         elif placement_adjustment == "split":
             # Place the beginning of the cluster anywhere,
