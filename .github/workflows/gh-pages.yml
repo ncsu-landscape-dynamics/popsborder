@@ -9,7 +9,8 @@ on:
 jobs:
   build-deploy:
     permissions:
-        contents: write
+      id-token: write
+      pages: write
 
     runs-on: ubuntu-24.04
 
@@ -36,11 +37,11 @@ jobs:
           jupyter nbconvert --execute --to html scenario_plots.ipynb --output ../../artifacts/scenario_plots.html
       - name: Deploy if main
         if: github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./artifacts
+          publish_branch: gh-pages
           force_orphan: true
       - name: Upload artifact if not main
         if: github.ref != 'refs/heads/main'
