@@ -316,6 +316,99 @@ def add_contaminant_clusters_to_boxes(config, consignment):
     )
 
 
+def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment):
+    """Add contaminant clusters to items in a consignment
+
+    Clustering equal to 0 means all items in the consignment can be contaminated with
+    equal probability, i.e., the cluster spreads over the whole consignment. Clustering
+    equal to 1 means that all items in the cluster are contaminated. The size of the
+    cluster is then directly determined by the contamination rate.
+    """
+    # We have several methods and asserts here, but the code is fairly straightforward,
+    # so we disable volume related code quality checks.
+    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-statements
+    clustering = config["clustered"]["clustering"]
+    if "placement_adjustment" in config["clustered"]:
+        placement_adjustment = config["clustered"]["placement_adjustment"]
+    else:
+        placement_adjustment = "split"
+    num_of_contaminated_items = num_items_to_contaminate(
+        config["contamination_rate"], consignment.num_items
+    )
+    if num_of_contaminated_items == 0:
+        return
+    subset_size = round(consignment.num_items * (1 - clustering))
+    subset_size = max(subset_size, num_of_contaminated_items)
+    start_index2 = None
+    end_index2 = None
+    if subset_size == consignment.num_items:
+        start_index = 0
+        end_index = consignment.num_items
+    else:
+        if placement_adjustment == "cut":
+            # Place the cluster randomly anywhere, but cut it's size to fit.
+            middle = np.random.randint(0, consignment.num_items)
+            start_index = max(0, middle - subset_size // 2)
+            end_index = min(consignment.num_items, middle + subset_size // 2)
+            assert end_index - start_index <= subset_size
+        elif placement_adjustment == "shift":
+            # Place the middle of the cluster randomly anywhere,
+            # but then shift it as needed to ensure it fits.
+            middle = np.random.randint(0, consignment.num_items)
+            start_index = max(
+                0, min(middle - subset_size // 2, consignment.num_items - subset_size)
+            )
+            end_index = start_index + subset_size
+            assert start_index >= 0 and end_index <= consignment.num_items
+            assert end_index - start_index == subset_size
+        elif placement_adjustment == "split":
+            # Place the beginning of the cluster anywhere,
+            # but put the overhang at the beginning.
+            start_index = np.random.randint(0, consignment.num_items)
+            if start_index + subset_size > consignment.num_items:
+                start_index2 = 0
+                end_index2 = subset_size - (consignment.num_items - start_index)
+                end_index = consignment.num_items
+                assert (end_index - start_index) + (
+                    end_index2 - start_index2
+                ) == subset_size
+            else:
+                end_index = start_index + subset_size
+                assert end_index - start_index == subset_size
+        elif placement_adjustment == "contain":
+            # Place the cluster around the middle of the consignment,
+            # so that it always fits inside.
+            start_index = np.random.randint(0, consignment.num_items - subset_size + 1)
+            end_index = start_index + subset_size
+            assert end_index - start_index == subset_size
+        else:
+            raise ValueError(
+                "Cluster placement_adjustment must be one of "
+                f"'cut', 'shift', or 'contain', not {placement_adjustment}"
+            )
+
+    potential_indexes = np.arange(start_index, end_index)
+    if start_index2 is not None and end_index2 is not None:
+        potential_indexes = np.concatenate(
+            (potential_indexes, np.arange(start_index2, end_index2))
+        )
+    if placement_adjustment == "cut":
+        assert len(potential_indexes) <= subset_size
+        num_of_contaminated_items = min(
+            num_of_contaminated_items, len(potential_indexes)
+        )
+    else:
+        assert len(potential_indexes) == subset_size
+    indexes = np.random.choice(
+        potential_indexes,
+        num_of_contaminated_items,
+        replace=False,
+    )
+    consignment.items[indexes] = 1
+    assert np.count_nonzero(consignment.items) == num_of_contaminated_items
+
+
 def add_contaminant_clusters_to_items(config, consignment):
     """Add contaminant clusters to items in a consignment"""
     contaminated_units_per_cluster = config["clustered"][
@@ -385,9 +478,18 @@ def add_contaminant_clusters(config, consignment):
     """
     contamination_unit = config["contamination_unit"]
     if contamination_unit in ["box", "boxes"]:
+        if config["clustered"]["distribution"] == "subset":
+            raise RuntimeError(
+                "clustering distribution 'subset' is not supported for boxes"
+            )
         add_contaminant_clusters_to_boxes(config, consignment)
     elif contamination_unit in ["item", "items"]:
-        add_contaminant_clusters_to_items(config, consignment)
+        if config["clustered"]["distribution"] == "subset":
+            add_contaminant_clusters_to_items_with_subset_clustering(
+                config, consignment
+            )
+        else:
+            add_contaminant_clusters_to_items(config, consignment)
     else:
         raise RuntimeError(f"Unknown contamination unit: {contamination_unit}")
 
