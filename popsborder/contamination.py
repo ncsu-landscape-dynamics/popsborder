@@ -323,11 +323,9 @@ def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment
     equal probability, i.e., the cluster spreads over the whole consignment. Clustering
     equal to 1 means that all items in the cluster are contaminated. The size of the
     cluster is then directly determined by the contamination rate.
+    If the cluster would spread over the end of the consignment, we put the extra part
+    of the cluster at the beginning of the consignment.
     """
-    # We have several methods and asserts here, but the code is fairly straightforward,
-    # so we disable volume related code quality checks.
-    # pylint: disable=too-many-branches
-    # pylint: disable=too-many-statements
     clustering = config["clustered"]["clustering"]
     num_of_contaminated_items = num_items_to_contaminate(
         config["contamination_rate"], consignment.num_items

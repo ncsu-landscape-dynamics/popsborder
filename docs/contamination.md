@@ -101,6 +101,52 @@ uniform randomly selected from the total number of units and contaminated.
 If using `arrangement` = `clustered`, the configuration is as follows:
 
 ```yaml
+contamination:
+  arrangement: clustered
+```
+
+#### Simple-parameter clustering
+
+With cluster `distribution` set to `subset`, a subset of items will be selected
+for contamination. The size of the this subset is determined by the `clustering` value. A higher value results in a more pronounced cluster. A lower value
+results in a distribution of contaminated items that is close to a uniform
+random distribution of contaminated items. The size of the subset is also
+determined by the contamination rate. Higher contamination rates result in
+larger clusters. These clusters will also be more distinct or continuous,
+i.e., they will have fewer non-contaminated items in them. The number of
+contaminated items is always the same as if there were no clustering.
+
+```yaml
+clustered:
+  distribution: subset
+  clustering: 0.9
+```
+
+Note that a cluster that partially extends beyond the end of the consignment is
+split, and the part that extends beyond the end of the consignment is placed at
+the beginning of the consignment, as if the (one-dimensional) consignment was
+circular.
+
+Whole configuration of contamination may than look like this:
+
+```yaml
+contamination:
+  contamination_rate:
+    distribution: fixed_value
+    value: 0.3
+  contamination_unit: item
+  arrangement: clustered
+  clustered:
+    distribution: subset
+    clustering: 0.9
+```
+
+#### Multi-parameter clustering
+
+Multi-parameter clustering uses several parameters to create the clusters,
+starting with number of contaminated units per cluster:
+
+```yaml
 clustered:
   contaminated_units_per_cluster: 200
 ```
