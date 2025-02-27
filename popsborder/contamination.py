@@ -329,10 +329,6 @@ def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-statements
     clustering = config["clustered"]["clustering"]
-    if "placement_adjustment" in config["clustered"]:
-        placement_adjustment = config["clustered"]["placement_adjustment"]
-    else:
-        placement_adjustment = "split"
     num_of_contaminated_items = num_items_to_contaminate(
         config["contamination_rate"], consignment.num_items
     )
@@ -346,60 +342,26 @@ def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment
         start_index = 0
         end_index = consignment.num_items
     else:
-        if placement_adjustment == "cut":
-            # Place the cluster randomly anywhere, but cut it's size to fit.
-            middle = np.random.randint(0, consignment.num_items)
-            start_index = max(0, middle - subset_size // 2)
-            end_index = min(consignment.num_items, middle + subset_size // 2)
-            assert end_index - start_index <= subset_size
-        elif placement_adjustment == "shift":
-            # Place the middle of the cluster randomly anywhere,
-            # but then shift it as needed to ensure it fits.
-            middle = np.random.randint(0, consignment.num_items)
-            start_index = max(
-                0, min(middle - subset_size // 2, consignment.num_items - subset_size)
-            )
-            end_index = start_index + subset_size
-            assert start_index >= 0 and end_index <= consignment.num_items
-            assert end_index - start_index == subset_size
-        elif placement_adjustment == "split":
-            # Place the beginning of the cluster anywhere,
-            # but put the overhang at the beginning.
-            start_index = np.random.randint(0, consignment.num_items)
-            if start_index + subset_size > consignment.num_items:
-                start_index2 = 0
-                end_index2 = subset_size - (consignment.num_items - start_index)
-                end_index = consignment.num_items
-                assert (end_index - start_index) + (
-                    end_index2 - start_index2
-                ) == subset_size
-            else:
-                end_index = start_index + subset_size
-                assert end_index - start_index == subset_size
-        elif placement_adjustment == "contain":
-            # Place the cluster around the middle of the consignment,
-            # so that it always fits inside.
-            start_index = np.random.randint(0, consignment.num_items - subset_size + 1)
-            end_index = start_index + subset_size
-            assert end_index - start_index == subset_size
+        # Place the beginning of the cluster anywhere,
+        # but put the overhang at the beginning.
+        start_index = np.random.randint(0, consignment.num_items)
+        if start_index + subset_size > consignment.num_items:
+            start_index2 = 0
+            end_index2 = subset_size - (consignment.num_items - start_index)
+            end_index = consignment.num_items
+            assert (end_index - start_index) + (
+                end_index2 - start_index2
+            ) == subset_size
         else:
-            raise ValueError(
-                "Cluster placement_adjustment must be one of "
-                f"'cut', 'shift', or 'contain', not {placement_adjustment}"
-            )
+            end_index = start_index + subset_size
+            assert end_index - start_index == subset_size
 
     potential_indexes = np.arange(start_index, end_index)
     if start_index2 is not None and end_index2 is not None:
         potential_indexes = np.concatenate(
             (potential_indexes, np.arange(start_index2, end_index2))
         )
-    if placement_adjustment == "cut":
-        assert len(potential_indexes) <= subset_size
-        num_of_contaminated_items = min(
-            num_of_contaminated_items, len(potential_indexes)
-        )
-    else:
-        assert len(potential_indexes) == subset_size
+    assert len(potential_indexes) == subset_size
     indexes = np.random.choice(
         potential_indexes,
         num_of_contaminated_items,
