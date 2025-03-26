@@ -22,6 +22,7 @@
 
 import functools
 import random
+from collections import defaultdict
 
 from .inputs import load_cfrp_schedule, load_skip_lot_consignment_records
 
@@ -42,6 +43,8 @@ def get_inspection_needed_function(config):
                 return CutFlowerReleaseProgram(config["release_programs"][name])
             if name == "fixed_skip_lot":
                 return FixedComplianceLevelSkipLot(config["release_programs"][name])
+            if name == "dynamic_skip_lot":
+                return DynamicComplianceLevelSkipLot(config["release_programs"][name])
             elif name == "naive_cfrp":
                 return functools.partial(
                     naive_cfrp, config["release_programs"][name], name
@@ -213,7 +216,7 @@ class FixedComplianceLevelSkipLot:
         return False, self._program_name
 
 
-class DynamicComplianceLevelSkipLot(FixedComplianceLevelSkipLot):
+class DynamicComplianceLevelSkipLot:
     """A skip lot program which dynamically adjusts compliance levels
 
     Compliance is tracked by compliance group and compliance levels are adjusted based
@@ -221,5 +224,156 @@ class DynamicComplianceLevelSkipLot(FixedComplianceLevelSkipLot):
     The consignment groups are based on tracked properties.
     """
 
-    def add_inspection_result(self, consignment, inspected, result):
+    def __init__(self, config):
+        self._program_name = config.get("name", "dynamic_skip_lot")
+        self._tracked_properties = config.get("track")
+
+        levels = config.get("levels")
+        self._levels = []
+        for level in levels:
+            if "name" not in level:
+                raise ValueError("Each level needs to have 'name'")
+            if "sampling_fraction" not in level:
+                raise ValueError("Each level needs to have 'sampling_fraction'")
+            # Ordering is determined by order, not by name.
+            self._levels.append(level)
+        # We use one-based level numbers rather than zero-based indices.
+        self._min_level = 1
+        self._max_level = len(self._levels)
+        # Translate default level to level number if it is a level name.
+        self._default_level = config.get("default_level", 1)
+        for index, level in enumerate(self._levels):
+            if level["name"] == self._default_level:
+                self._default_level = index + 1
+                break
+
+        self._clearance_number = config.get("clearance_number")
+        # Min and max records needed for new clearance level evaluation.
+        self._min_records = self._clearance_number
+        self._max_records = self._clearance_number
+
+        # Quick restating can be defined by a boolean or by special clearance number.
+        self._quick_restate_clearance_number = config.get(
+            "quick_restate_clearance_number", None
+        )
+        self._quick_restating = (
+            self._quick_restate_clearance_number is not None
+            or config.get("quick_restating", False)
+        )
+        if self._quick_restating and self._quick_restate_clearance_number is None:
+            self._quick_restate_clearance_number = self._clearance_number
+            self._min_records = min(
+                self._clearance_number, self._quick_restate_clearance_number
+            )
+            self._max_records = max(
+                self._clearance_number, self._quick_restate_clearance_number
+            )
+
+        self._inspection_records = defaultdict(list)
+        self._compliance_levels = defaultdict(lambda: self._default_level)
+        self._previous_compliance_levels = {}
+
+    def compute_record_key_for_consignment(self, consignment):
+        """Get compliance record key for the given given consignment.
+
+        The key is based on consignment's properties which are tracked properties.
+        """
+        key = []
+        for name in self._tracked_properties:
+            try:
+                property_value = getattr(consignment, name)
+            except AttributeError as error:
+                raise ValueError(
+                    f"Consignment does not have a property '{name}'"
+                ) from error
+            key.append(property_value)
+        return tuple(key)
+
+    def add_inspection_result(self, consignment, inspected: bool, result: bool):
+        """
+        Update the compliance level of a consignment based on an inspection result.
+
+        Parameters:
+        consignment: Inspected consignment
+        inspected: True if the consignment was inspected, False otherwise
+        result: True if the consignment was compliant, False otherwise
+        """
         key = self.compute_record_key_for_consignment(consignment)
+        if not result:
+            self.reset_compliance_level(key)
+        self._inspection_records[key].append((inspected, result))
+        if len(self._inspection_records[key]) < self._min_records:
+            # Consider increasing compliance level only
+            # if we have enough compliant records.
+            return
+        num_inspected = 0
+        num_compliant = 0
+        for inspected, result in reversed(self._inspection_records[key]):
+            if inspected:
+                num_inspected += 1
+                if result:
+                    num_compliant += 1
+            if num_inspected == self._max_records:
+                # Look only at last N records.
+                break
+        if num_compliant == self._clearance_number:
+            # For large number of records, this would be the same as number of
+            # inspected, but for small number of records we didn't reach the
+            # clearance number of records yet.
+            self._inspection_records[key].clear()
+            self.increase_compliance_level(key)
+        if (
+            self._quick_restating
+            and num_compliant == self._quick_restate_clearance_number
+        ):
+            self.restore_compliance_level(key)
+
+    def increase_compliance_level(self, key):
+        """Increase compliance level for a given key."""
+        if self._compliance_levels[key] == self._max_level:
+            return
+        self._compliance_levels[key] += 1
+
+    def decrease_compliance_level(self, key):
+        """Decrease compliance level for a given key."""
+        if self._compliance_levels[key] == self._min_level:
+            return
+        self._compliance_levels[key] -= 1
+
+    def reset_compliance_level(self, key):
+    """Reset the compliance level for a given key to the default level."""
+        if self._quick_restating:
+            self._previous_compliance_levels[key] = self._compliance_levels[key]
+        self._compliance_levels[key] = self._default_level
+
+    def restore_compliance_level(self, key):
+        """Restore the compliance level for a given key to its previous value."""
+        if key in self._previous_compliance_levels:
+            self._compliance_levels[key] = self._previous_compliance_levels[key]
+
+    def compliance_level_for_consignment(self, consignment):
+        """Get compliance level associated with a given consignment.
+
+        The level is selected based on consignment properties.
+        """
+        key = self.compute_record_key_for_consignment(consignment)
+        if key not in self._compliance_levels:
+            return self._default_level
+        return self._compliance_levels[key]
+
+    def sampling_fraction_for_level(self, level):
+        """Get ratio of items or boxes to inspect associated with a compliance level"""
+        return self._levels[level - 1]["sampling_fraction"]
+
+    def __call__(self, consignment, date):
+        """Decide whether the consignment should be inspected or not.
+
+        Returns boolean (True for inspect) and this program name (always because it
+        is always applied even to unknown consignments because there is a default
+        compliance level).
+        """
+        level = self.compliance_level_for_consignment(consignment)
+        sampling_fraction = self.sampling_fraction_for_level(level)
+        if random.random() <= sampling_fraction:
+            return True, self._program_name
+        return False, self._program_name
