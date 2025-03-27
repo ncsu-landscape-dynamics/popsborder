@@ -69,7 +69,8 @@ release_programs:
     name: Dynamic Skip Lot
 ```
 
-Inspection results are tracked for consignments grouped based on tracked consignment properties specified as a list with `track`.
+Inspection results are tracked for consignments grouped based on tracked
+consignment properties specified as a list with `track`.
 
 ```yaml
 track:
@@ -79,7 +80,7 @@ track:
 
 Each group is assigned a level that determines the frequency of inspections.
 Each compliance level has an associated fraction of consignments to be inspected
-(`sampling_fraction`).
+(`sampling_fraction`). The `name` key for a level is optional.
 
 ```yaml
 levels:
@@ -93,13 +94,17 @@ levels:
     sampling_fraction: 0.1
 ```
 
-The order of the levels is important, as groups move through the levels from the first one in the list to the last one in the list. All groups start at the first level or a custom start level specified with `start_level`, which can refer to the level either by name or by a one-based index. The default start level is 1.
+The order of the levels is important, as groups move through the levels from the
+first one in the list to the last one in the list. All groups start at the first
+level or a custom start level specified with `start_level`, which can refer to
+the level either by name or by a one-based index. The default start level is 1.
 
 ```yaml
 start_level: Compliance Level 1
 ```
 
-To advance to a higher level, a group must reach a certain number of consecutive successful inspections, called the clearance number.
+To advance to a higher level, a group must reach a certain number of consecutive
+successful inspections, called the clearance number.
 
 ```yaml
 clearance_number: 10
@@ -115,7 +120,11 @@ if quick restating of the original level is enabled with `quick_restating`.
 quick_restating: true
 ```
 
-While the default clearance number is used for restating by default, an additional lower clearance number for restating can be specified with `quick_restate_clearance_number`. If `quick_restate_clearance_number` is provided, quick restating is automatically enabled even if `quick_restating` is not provided.
+While the default clearance number is used for restating by default, an
+additional lower clearance number for restating can be specified with
+`quick_restate_clearance_number`. If `quick_restate_clearance_number` is
+provided, quick restating is automatically enabled even if `quick_restating` is
+not provided.
 
 ```yaml
 quick_restate_clearance_number: 5
