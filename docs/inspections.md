@@ -12,7 +12,7 @@ and a full version of the _Cut Flower Release Program_.
 
 Only one program can be specified at a time.
 
-### Skip Lot Program
+### Fixed Skip Lot Program
 
 List of compliance levels and their associated ratios of inspected consignments:
 
@@ -55,6 +55,71 @@ Default compliance level when a consignment does not have a compliance level def
     default_level: 1
 ```
 
+### Dynamic Skip Lot Program
+
+In the dynamic skip lot program, consignment dynamically fall to compliance
+levels based on inspection results. The proportion of inspected consignments for
+the same combination of consignment properties dynamically changes based on
+previous simulation steps. The program is identified by the key
+`dynamic_skip_lot`. An optional name can be added and will appear in the output.
+
+```yaml
+release_programs:
+  dynamic_skip_lot:
+    name: Dynamic Skip Lot
+```
+
+Inspection results are tracked for consignments grouped based on tracked consignment properties specified as a list with `track`.
+
+```yaml
+track:
+  - origin
+  - commodity
+```
+
+Each group is assigned a level that determines the frequency of inspections.
+Each compliance level has an associated fraction of consignments to be inspected
+(`sampling_fraction`).
+
+```yaml
+levels:
+  - name: Compliance Level 1
+    sampling_fraction: 1
+  - name: Compliance Level 2
+    sampling_fraction: 0.5
+  - name: Compliance Level 3
+    sampling_fraction: 0.25
+  - name: Compliance Level 4
+    sampling_fraction: 0.1
+```
+
+The order of the levels is important, as groups move through the levels from the first one in the list to the last one in the list. All groups start at the first level or a custom start level specified with `start_level`, which can refer to the level either by name or by a one-based index. The default start level is 1.
+
+```yaml
+start_level: Compliance Level 1
+```
+
+To advance to a higher level, a group must reach a certain number of consecutive successful inspections, called the clearance number.
+
+```yaml
+clearance_number: 10
+```
+
+The tracking for the clearance number is reset after a group moves up a level.
+If a consignment fails an inspection, the level for the group it belongs to is
+reset to the start level. The consignment group can then move up the levels in
+the standard manner. The groups can quickly move back to the previous level
+if quick restating of the original level is enabled with `quick_restating`.
+
+```yaml
+quick_restating: true
+```
+
+While the default clearance number is used for restating by default, an additional lower clearance number for restating can be specified with `quick_restate_clearance_number`. If `quick_restate_clearance_number` is provided, quick restating is automatically enabled even if `quick_restating` is not provided.
+
+```yaml
+quick_restate_clearance_number: 5
+```
 
 ### Naive Cut Flower Release Program
 

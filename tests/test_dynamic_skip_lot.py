@@ -54,7 +54,7 @@ release_programs:
         sampling_fraction: 0.25
       - name: Compliance Level 4
         sampling_fraction: 0.1
-    default_level: Compliance Level 1
+    start_level: Compliance Level 1
     clearance_number: 10
 """
 
@@ -75,10 +75,9 @@ release_programs:
         sampling_fraction: 0.25
       - name: Compliance Level 4
         sampling_fraction: 0.1
-    default_level: Compliance Level 1
+    start_level: Compliance Level 1
     clearance_number: 10
     quick_restate_clearance_number: 5
-    non_compliant_consignments_tolerated: 0
 """
 
 

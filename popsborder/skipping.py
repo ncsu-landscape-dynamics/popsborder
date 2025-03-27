@@ -1,5 +1,5 @@
 # Simulation of contaminated consignments and their inspections
-# Copyright (C) 2018-2022 Vaclav Petras and others (see below)
+# Copyright (C) 2018-2025 Vaclav Petras and others (see below)
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -241,10 +241,10 @@ class DynamicComplianceLevelSkipLot:
         self._min_level = 1
         self._max_level = len(self._levels)
         # Translate default level to level number if it is a level name.
-        self._default_level = config.get("default_level", 1)
+        self._start_level = config.get("start_level", 1)
         for index, level in enumerate(self._levels):
-            if level["name"] == self._default_level:
-                self._default_level = index + 1
+            if level["name"] == self._start_level:
+                self._start_level = index + 1
                 break
 
         self._clearance_number = config.get("clearance_number")
@@ -256,10 +256,13 @@ class DynamicComplianceLevelSkipLot:
         self._quick_restate_clearance_number = config.get(
             "quick_restate_clearance_number", None
         )
+        self._quick_restating = config.get("quick_restating", None)
+        # Special clearance number implies quick restating when not explicitly
+        # specified, but explicit False disables quick restating.
         self._quick_restating = (
             self._quick_restate_clearance_number is not None
-            or config.get("quick_restating", False)
-        )
+            and self._quick_restating is None
+        ) or self._quick_restating
         if self._quick_restating and self._quick_restate_clearance_number is None:
             self._quick_restate_clearance_number = self._clearance_number
             self._min_records = min(
@@ -270,7 +273,7 @@ class DynamicComplianceLevelSkipLot:
             )
 
         self._inspection_records = defaultdict(list)
-        self._compliance_levels = defaultdict(lambda: self._default_level)
+        self._compliance_levels = defaultdict(lambda: self._start_level)
         self._previous_compliance_levels = {}
 
     def compute_record_key_for_consignment(self, consignment):
@@ -341,10 +344,10 @@ class DynamicComplianceLevelSkipLot:
         self._compliance_levels[key] -= 1
 
     def reset_compliance_level(self, key):
-    """Reset the compliance level for a given key to the default level."""
+        """Reset the compliance level for a given key to the default level."""
         if self._quick_restating:
             self._previous_compliance_levels[key] = self._compliance_levels[key]
-        self._compliance_levels[key] = self._default_level
+        self._compliance_levels[key] = self._start_level
 
     def restore_compliance_level(self, key):
         """Restore the compliance level for a given key to its previous value."""
@@ -358,7 +361,7 @@ class DynamicComplianceLevelSkipLot:
         """
         key = self.compute_record_key_for_consignment(consignment)
         if key not in self._compliance_levels:
-            return self._default_level
+            return self._start_level
         return self._compliance_levels[key]
 
     def sampling_fraction_for_level(self, level):
