@@ -231,8 +231,6 @@ class DynamicComplianceLevelSkipLot:
         levels = config.get("levels")
         self._levels = []
         for level in levels:
-            if "name" not in level:
-                raise ValueError("Each level needs to have 'name'")
             if "sampling_fraction" not in level:
                 raise ValueError("Each level needs to have 'sampling_fraction'")
             # Ordering is determined by order, not by name.
@@ -240,12 +238,15 @@ class DynamicComplianceLevelSkipLot:
         # We use one-based level numbers rather than zero-based indices.
         self._min_level = 1
         self._max_level = len(self._levels)
-        # Translate default level to level number if it is a level name.
-        self._start_level = config.get("start_level", 1)
-        for index, level in enumerate(self._levels):
-            if level["name"] == self._start_level:
-                self._start_level = index + 1
-                break
+
+        self._start_level = get_level_number_from_level_name(config.get("start_level", 1))
+        self._monitoring_level = config.get("monitoring_level")
+        self._decrease_levels = config.get("decrease_levels")
+        if self._monitoring_level is not None and self._decrease_levels is not None:
+            raise ValueError(
+                "Cannot specify both 'monitoring_level' and 'decrease_levels'"
+            )
+        self._monitoring_level = get_level_number_from_level_name(self._monitoring_level)
 
         self._clearance_number = config.get("clearance_number")
         # Min and max records needed for new clearance level evaluation.
@@ -292,6 +293,21 @@ class DynamicComplianceLevelSkipLot:
             key.append(property_value)
         return tuple(key)
 
+    def get_level_number_from_level_name(self, name):
+        """Translate level to level number if it is a level name.
+
+        If the name is not a matching level name, it is returned unchanged,
+        so it is safe to pass a level number. Level names can be numbers,
+        in that case, level number is still returned based on matching the name
+        (rather than considering it as a level number).
+        """
+        for index, level in enumerate(self._levels):
+            if "name" not in level:
+                continue
+            if level["name"] == name:
+                return index + 1
+        return name
+
     def add_inspection_result(self, consignment, inspected: bool, result: bool):
         """
         Update the compliance level of a consignment based on an inspection result.
@@ -303,7 +319,7 @@ class DynamicComplianceLevelSkipLot:
         """
         key = self.compute_record_key_for_consignment(consignment)
         if not result:
-            self.reset_compliance_level(key)
+            self.adjust_compliance_level_after_negative_result(key)
         self._inspection_records[key].append((inspected, result))
         if len(self._inspection_records[key]) < self._min_records:
             # Consider increasing compliance level only
@@ -337,17 +353,34 @@ class DynamicComplianceLevelSkipLot:
             return
         self._compliance_levels[key] += 1
 
+    def adjust_compliance_level_after_negative_result(self, key):
+        """Adjust compliance level after a negative inspection.
+
+        The exact adjustment depends on the configuration. If 'decrease_levels' is
+        set, the compliance level is decreased by that many levels. If
+        'monitoring_level' is set, the compliance level is reset to that level.
+        If neither is set, the compliance level is reset to the start level.
+        """
+        if self._decrease_levels:
+            for unused_i in range(self._decrease_levels):
+                self.decrease_compliance_level(key)
+        elif self._monitoring_level:
+            self.reset_compliance_level(key, self._monitoring_level)
+        else:
+            self.reset_compliance_level(key, self._start_level)
+
     def decrease_compliance_level(self, key):
         """Decrease compliance level for a given key."""
+        # TODO: Replace by max(self._min_level, self._compliance_levels[key] - num_levels)
         if self._compliance_levels[key] == self._min_level:
             return
         self._compliance_levels[key] -= 1
 
-    def reset_compliance_level(self, key):
-        """Reset the compliance level for a given key to the default level."""
+    def reset_compliance_level(self, key, level):
+        """Reset the compliance level for a given key to the start level."""
         if self._quick_restating:
             self._previous_compliance_levels[key] = self._compliance_levels[key]
-        self._compliance_levels[key] = self._start_level
+        self._compliance_levels[key] = level
 
     def restore_compliance_level(self, key):
         """Restore the compliance level for a given key to its previous value."""

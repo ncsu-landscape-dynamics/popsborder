@@ -80,6 +80,50 @@ release_programs:
     quick_restate_clearance_number: 5
 """
 
+MONITORING_CONFIG = """\
+release_programs:
+  dynamic_skip_lot:
+    name: Monitoring Level Test
+    track:
+      - origin
+      - commodity
+    levels:
+      - name: Compliance Level 1
+        sampling_fraction: 1
+      - name: Compliance Level 2
+        sampling_fraction: 0.5
+      - name: Compliance Level 3
+        sampling_fraction: 0.25
+      - name: Compliance Level 4
+        sampling_fraction: 0.1
+    start_level: Compliance Level 4
+    clearance_number: 10
+    monitoring_level: Compliance Level 2
+"""
+
+DECREASING_CONFIG = """\
+release_programs:
+  dynamic_skip_lot:
+    name: Dynamic Skip Lot with Decreasing Levels
+    track:
+      - origin
+      - commodity
+    levels:
+      - sampling_fraction: 1
+      - sampling_fraction: 0.5
+      - sampling_fraction: 0.25
+      - sampling_fraction: 0.125
+      - sampling_fraction: 0.0625
+      - sampling_fraction: 0.03125
+      - sampling_fraction: 0.015625
+      - sampling_fraction: 0.0078125
+      - sampling_fraction: 0.00390625
+      - sampling_fraction: 0.001953125
+    start_level: 3
+    clearance_number: 4
+    decrease_levels: 2
+"""
+
 
 def simple_consignment(flower, origin, date=None, port="FL Miami Air CBP"):
     """Get consignment with some default values"""
@@ -277,6 +321,109 @@ def test_inspect_and_record_quick_restating():
         program.add_inspection_result(consignment, inspect, result=True)
     # Previous compliance level should be restated.
     assert program.compliance_level_for_consignment(consignment) == 3
+
+
+def test_inspect_and_record_monitoring():
+    """Check that monitoring works"""
+    program = DynamicComplianceLevelSkipLot(
+        load_configuration_yaml_from_text(MONITORING_CONFIG)["release_programs"][
+            "dynamic_skip_lot"
+        ]
+    )
+    consignment = simple_consignment(flower="Rosa", origin="Netherlands")
+
+    # Now, we simulate compliant consignments, but not all will be inspected.
+    inspected = 0
+    not_inspected = 0
+    for seed in range(5):
+        random_seed(seed)
+        inspect, program_name = program(consignment, consignment.date)
+        inspected += int(inspect)
+        not_inspected += int(not inspect)
+        program.add_inspection_result(consignment, inspect, result=True)
+
+    assert (
+        not_inspected
+    ), "With the given seeds, we expect at least one inspection to be skipped"
+    assert (
+        program.compliance_level_for_consignment(consignment) == 4
+    ), "Starting level is the maximum"
+
+    # Now, we simulate a non-compliant consignment.
+    inspect, program_name = program(consignment, consignment.date)
+    program.add_inspection_result(consignment, inspect, result=False)
+    # Compliance level should drop to the monitoring level.
+    assert program.compliance_level_for_consignment(consignment) == 2
+
+    for seed in range(20):
+        random_seed(seed)
+        inspect, program_name = program(consignment, consignment.date)
+        program.add_inspection_result(consignment, inspect, result=True)
+    # Previous compliance level should be restated with the given seeds.
+    assert program.compliance_level_for_consignment(consignment) == 3
+
+
+def test_inspect_and_record_decreasing_levels():
+    """Check that decreasing levels work"""
+    program = DynamicComplianceLevelSkipLot(
+        load_configuration_yaml_from_text(DECREASING_CONFIG)["release_programs"][
+            "dynamic_skip_lot"
+        ]
+    )
+    consignment = simple_consignment(flower="Rosa", origin="Netherlands")
+
+    # Now, we simulate compliant consignments, but not all will be inspected.
+    inspected = 0
+    not_inspected = 0
+    for seed in range(40):
+        random_seed(seed)
+        inspect, program_name = program(consignment, consignment.date)
+        inspected += int(inspect)
+        not_inspected += int(not inspect)
+        program.add_inspection_result(consignment, inspect, result=True)
+
+    assert (
+        inspected
+    ), "With the given seeds, we expect at least one inspection to happen"
+    assert (
+        not_inspected
+    ), "With the given seeds, we expect at least one inspection to be skipped"
+    assert (
+        program.compliance_level_for_consignment(consignment) == 5
+    ), "With the given the seeds, we should move up a level"
+
+    # Now, we simulate a non-compliant consignment.
+    inspect, program_name = program(consignment, consignment.date)
+    program.add_inspection_result(consignment, inspect, result=False)
+    # Compliance level should drop down by decreasing_levels.
+    assert program.compliance_level_for_consignment(consignment) == 3
+
+    # Now, we simulate a non-compliant consignment.
+    inspect, program_name = program(consignment, consignment.date)
+    program.add_inspection_result(consignment, inspect, result=False)
+    # Compliance level should drop again.
+    assert program.compliance_level_for_consignment(consignment) == 1
+
+    # Now, we simulate a non-compliant consignment.
+    inspect, program_name = program(consignment, consignment.date)
+    program.add_inspection_result(consignment, inspect, result=False)
+    # Compliance level should not drop more than minimum.
+    assert program.compliance_level_for_consignment(consignment) == 1
+
+    for seed in range(5):
+        random_seed(seed)
+        inspect, program_name = program(consignment, consignment.date)
+        program.add_inspection_result(consignment, inspect, result=True)
+    # Increased level.
+    assert program.compliance_level_for_consignment(consignment) == 2
+
+    # 2,100 gets us to level 10, but we test overreaching the max level.
+    for seed in range(3_000):
+        random_seed(seed)
+        inspect, program_name = program(consignment, consignment.date)
+        program.add_inspection_result(consignment, inspect, result=True)
+    # Reaching maximum level.
+    assert program.compliance_level_for_consignment(consignment) == 10
 
 
 @pytest.mark.parametrize(["level", "fraction"], [(1, 1), (2, 0.5), (3, 0.25), (4, 0.1)])
