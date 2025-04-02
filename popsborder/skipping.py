@@ -239,14 +239,18 @@ class DynamicComplianceLevelSkipLot:
         self._min_level = 1
         self._max_level = len(self._levels)
 
-        self._start_level = get_level_number_from_level_name(config.get("start_level", 1))
+        self._start_level = self.get_level_number_from_level_name(
+            config.get("start_level", 1)
+        )
         self._monitoring_level = config.get("monitoring_level")
         self._decrease_levels = config.get("decrease_levels")
         if self._monitoring_level is not None and self._decrease_levels is not None:
             raise ValueError(
                 "Cannot specify both 'monitoring_level' and 'decrease_levels'"
             )
-        self._monitoring_level = get_level_number_from_level_name(self._monitoring_level)
+        self._monitoring_level = self.get_level_number_from_level_name(
+            self._monitoring_level
+        )
 
         self._clearance_number = config.get("clearance_number")
         # Min and max records needed for new clearance level evaluation.
