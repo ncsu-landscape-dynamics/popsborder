@@ -88,7 +88,7 @@ class CutFlowerReleaseProgram:
     """Cut Flower Release Program (CFRP)
 
     Constructs CFRP, esp. the schedule, from the configuration during initialization.
-    Objects can be called as functions to evalute if consignments should be inspected
+    Objects can be called as functions to evaluate if consignments should be inspected
     using this program.
     """
 
@@ -224,6 +224,9 @@ class DynamicComplianceLevelSkipLot:
     The consignment groups are based on tracked properties.
     """
 
+    # Given the configuration, we expect to have many attributes.
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(self, config):
         self._program_name = config.get("name", "dynamic_skip_lot")
         self._tracked_properties = config.get("track")
@@ -267,7 +270,7 @@ class DynamicComplianceLevelSkipLot:
         self._quick_restating = (
             self._quick_restate_clearance_number is not None
             and self._quick_restating is None
-        ) or self._quick_restating
+        ) or self._quick_restating  # pylint: disable=consider-using-ternary
         if self._quick_restating and self._quick_restate_clearance_number is None:
             self._quick_restate_clearance_number = self._clearance_number
             self._min_records = min(
@@ -331,10 +334,12 @@ class DynamicComplianceLevelSkipLot:
             return
         num_inspected = 0
         num_compliant = 0
-        for inspected, result in reversed(self._inspection_records[key]):
-            if inspected:
+        for recorded_inspected, recorded_result in reversed(
+            self._inspection_records[key]
+        ):
+            if recorded_inspected:
                 num_inspected += 1
-                if result:
+                if recorded_result:
                     num_compliant += 1
             if num_inspected == self._max_records:
                 # Look only at last N records.
@@ -366,19 +371,17 @@ class DynamicComplianceLevelSkipLot:
         If neither is set, the compliance level is reset to the start level.
         """
         if self._decrease_levels:
-            for unused_i in range(self._decrease_levels):
-                self.decrease_compliance_level(key)
+            self.decrease_compliance_level(key, num_levels=self._decrease_levels)
         elif self._monitoring_level:
             self.reset_compliance_level(key, self._monitoring_level)
         else:
             self.reset_compliance_level(key, self._start_level)
 
-    def decrease_compliance_level(self, key):
+    def decrease_compliance_level(self, key, num_levels=1):
         """Decrease compliance level for a given key."""
-        # TODO: Replace by max(self._min_level, self._compliance_levels[key] - num_levels)
-        if self._compliance_levels[key] == self._min_level:
-            return
-        self._compliance_levels[key] -= 1
+        self._compliance_levels[key] = max(
+            self._min_level, self._compliance_levels[key] - num_levels
+        )
 
     def reset_compliance_level(self, key, level):
         """Reset the compliance level for a given key to the start level."""
