@@ -105,21 +105,23 @@ contamination:
   arrangement: clustered
 ```
 
-#### Simple-parameter clustering
+#### Single-parameter clustering
 
-With cluster `distribution` set to `subset`, a subset of items will be selected
-for contamination. The size of the this subset is determined by the `clustering` value. A higher value results in a more pronounced cluster. A lower value
-results in a distribution of contaminated items that is close to a uniform
-random distribution of contaminated items. The size of the subset is also
-determined by the contamination rate. Higher contamination rates result in
-larger clusters. These clusters will also be more distinct or continuous,
-i.e., they will have fewer non-contaminated items in them. The number of
-contaminated items is always the same as if there were no clustering.
+With cluster `distribution` set to `single`, the items that can be contaminated
+are limited to a subset of the items. The size of the subset is determined by
+a single clustering value, which is an inverse proportion. A higher value
+results in a lower proportion (smaller subset) of the consignment being
+available for contamination and a more pronounced, denser infestation cluster.
+A clustering value of zero results in all items being available for
+contamination and a uniform random distribution of contaminated items across
+the whole consignment. The number of contaminated items within the cluster
+subset is determined by the contamination rate. The total number of
+contaminated items does not depend on the clustering value.
 
 ```yaml
 clustered:
-  distribution: subset
-  clustering: 0.9
+  distribution: single
+  value: 0.9
 ```
 
 Note that a cluster that partially extends beyond the end of the consignment is
@@ -127,7 +129,7 @@ split, and the part that extends beyond the end of the consignment is placed at
 the beginning of the consignment, as if the (one-dimensional) consignment was
 circular.
 
-Whole configuration of contamination may than look like this:
+Whole configuration of contamination may then look like this:
 
 ```yaml
 contamination:
@@ -137,8 +139,8 @@ contamination:
   contamination_unit: item
   arrangement: clustered
   clustered:
-    distribution: subset
-    clustering: 0.9
+    distribution: single
+    value: 0.9
 ```
 
 #### Multi-parameter clustering

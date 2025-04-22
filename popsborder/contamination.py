@@ -317,7 +317,7 @@ def add_contaminant_clusters_to_boxes(config, consignment):
 
 
 def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment):
-    """Add contaminant clusters to items in a consignment
+    """Add contaminant cluster to items in a consignment using a single parameter
 
     Clustering equal to 0 means all items in the consignment can be contaminated with
     equal probability, i.e., the cluster spreads over the whole consignment. Clustering
@@ -326,7 +326,7 @@ def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment
     If the cluster would spread over the end of the consignment, we put the extra part
     of the cluster at the beginning of the consignment.
     """
-    clustering = config["clustered"]["clustering"]
+    clustering = config["clustered"]["value"]
     num_of_contaminated_items = num_items_to_contaminate(
         config["contamination_rate"], consignment.num_items
     )
@@ -431,20 +431,20 @@ def add_contaminant_clusters_to_items(config, consignment):
 def add_contaminant_clusters(config, consignment):
     """Add contaminant clusters to consignment
 
-    Item (separately or in boxes) with contaminat in *consignment* evaluate
+    Item (separately or in boxes) with contaminant in *consignment* evaluate
     to True after running this function.
     This function does not touch the not items not selected for contamination.
     However, they are expected to be zero.
     """
     contamination_unit = config["contamination_unit"]
     if contamination_unit in ["box", "boxes"]:
-        if config["clustered"]["distribution"] == "subset":
+        if config["clustered"]["distribution"] == "single":
             raise RuntimeError(
-                "clustering distribution 'subset' is not supported for boxes"
+                "clustering distribution 'single' is not supported for boxes"
             )
         add_contaminant_clusters_to_boxes(config, consignment)
     elif contamination_unit in ["item", "items"]:
-        if config["clustered"]["distribution"] == "subset":
+        if config["clustered"]["distribution"] == "single":
             add_contaminant_clusters_to_items_with_subset_clustering(
                 config, consignment
             )
