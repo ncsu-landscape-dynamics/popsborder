@@ -267,10 +267,8 @@ class DynamicComplianceLevelSkipLot:
         self._quick_restating = config.get("quick_restating", None)
         # Special clearance number implies quick restating when not explicitly
         # specified, but explicit False disables quick restating.
-        self._quick_restating = (
-            self._quick_restate_clearance_number is not None
-            and self._quick_restating is None
-        ) or self._quick_restating  # pylint: disable=consider-using-ternary
+        if self._quick_restating is None:
+            self._quick_restating = self._quick_restate_clearance_number is not None
         if self._quick_restating and self._quick_restate_clearance_number is None:
             self._quick_restate_clearance_number = self._clearance_number
             self._min_records = min(
