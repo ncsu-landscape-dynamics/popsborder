@@ -83,7 +83,7 @@ def test_random_clusters():
 def test_add_contaminant_clusters_to_items_with_subset_clustering(
     num_items, contamination_rate, clustering
 ):
-    """Test contaminant clusters with subset clustering"""
+    """Test contaminant clusters with single-parameter subset clustering"""
     config_yaml = f"""
     contamination:
       contamination_rate:
@@ -92,8 +92,8 @@ def test_add_contaminant_clusters_to_items_with_subset_clustering(
       contamination_unit: item
       arrangement: clustered
       clustered:
-        distribution: subset
-        clustering: {clustering}
+        distribution: single
+        value: {clustering}
     """
     config = load_configuration_yaml_from_text(config_yaml)["contamination"]
     consignment = get_consignment(num_items)
