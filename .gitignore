@@ -130,3 +130,5 @@ dmypy.json
 
 # LibreOffice locks
 .~lock.*#
+
+.idea/
