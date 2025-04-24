@@ -1,7 +1,5 @@
 """Test effectiveness"""
 
-import types
-
 import pytest
 
 from popsborder.inputs import get_validated_effectiveness
