@@ -123,16 +123,21 @@ meaning all items within a box can be inspected. If `within_box_proportion < 1`,
 only the first `n = within_box_proportion * items_per_box` items in each box
 will be inspected.
 
-## Tolerance level
+## Effectiveness
 
-The contamination tolerance level can be determined by:
+Contaminated items can be either always be detected during the inspection,
+or only a certain percentage of them can be detected based on the
+effectiveness. The `effectiveness` is a value between 0 and 1.
+The following will cause 1 out of 10 contaminated items to pass undetected.
 
 ```yaml
 inspection:
-  tolerance_level: 0
+  effectiveness: 0.9
 ```
 
-The simulation provides a count of the number of missed consignments with
+## Tolerance level
+
+The simulation provides a count of the number of missed consignments (slippage) with
 contamination rates below the specified `tolerance_level`, which can be
 any value between 0 and 1. The resulting count can be used to adjust the
 number of missed contaminated consignments when evaluating inspection
@@ -141,7 +146,15 @@ of 500 contaminated consignments (20% slippage), but 80 of the missed
 consignments had a `contamination_rate` < `tolerance_level`, you may
 choose to adjust the inspection slippage rate to only include the 20
 consignments with contamination rates above the tolerance level
-(decreases to 4% slippage).
+(decreases to 4% slippage). Note that the tolerance level affects the reported
+statistics, but does not change the mechanics of the simulated inspections.
+
+The contamination tolerance level can be determined by:
+
+```yaml
+inspection:
+  tolerance_level: 0
+```
 
 ## Sample strategy
 
