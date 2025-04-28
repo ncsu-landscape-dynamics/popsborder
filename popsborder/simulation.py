@@ -102,7 +102,7 @@ def simulation(
     add_contaminant = get_contaminant_function(config)
     is_inspection_needed = get_inspection_needed_function(config)
     sample = get_sample_function(config)
-    tolerance_level = config["inspection"]["tolerance_level"]
+    tolerance_level = config["inspection"].get("tolerance_level", 0)
 
     for unused_i in range(num_consignments):
         consignment = consignment_generator.generate_consignment()
