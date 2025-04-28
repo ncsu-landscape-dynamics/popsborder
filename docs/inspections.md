@@ -348,7 +348,7 @@ inspection:
   unit: item
   within_box_proportion: 0.25
   sample_strategy: hypergeometric
-  selection_strategy: cluter
+  selection_strategy: cluster
   cluster:
     cluster_selection: random
 ```
