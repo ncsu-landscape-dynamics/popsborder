@@ -316,6 +316,59 @@ def add_contaminant_clusters_to_boxes(config, consignment):
     )
 
 
+def add_contaminant_clusters_to_items_with_subset_clustering(config, consignment):
+    """Add contaminant cluster to items in a consignment using a single parameter
+
+    Clustering equal to 0 means all items in the consignment can be contaminated with
+    equal probability, i.e., the cluster spreads over the whole consignment. Clustering
+    equal to 1 means that all items in the cluster are contaminated. The size of the
+    cluster is then directly determined by the contamination rate.
+    If the cluster would spread over the end of the consignment, we put the extra part
+    of the cluster at the beginning of the consignment.
+    """
+    clustering = config["clustered"]["value"]
+    num_of_contaminated_items = num_items_to_contaminate(
+        config["contamination_rate"], consignment.num_items
+    )
+    if num_of_contaminated_items == 0:
+        return
+    subset_size = round(consignment.num_items * (1 - clustering))
+    subset_size = max(subset_size, num_of_contaminated_items)
+    start_index2 = None
+    end_index2 = None
+    if subset_size == consignment.num_items:
+        start_index = 0
+        end_index = consignment.num_items
+    else:
+        # Place the beginning of the cluster anywhere,
+        # but put the overhang at the beginning.
+        start_index = np.random.randint(0, consignment.num_items)
+        if start_index + subset_size > consignment.num_items:
+            start_index2 = 0
+            end_index2 = subset_size - (consignment.num_items - start_index)
+            end_index = consignment.num_items
+            assert (end_index - start_index) + (
+                end_index2 - start_index2
+            ) == subset_size
+        else:
+            end_index = start_index + subset_size
+            assert end_index - start_index == subset_size
+
+    potential_indexes = np.arange(start_index, end_index)
+    if start_index2 is not None and end_index2 is not None:
+        potential_indexes = np.concatenate(
+            (potential_indexes, np.arange(start_index2, end_index2))
+        )
+    assert len(potential_indexes) == subset_size
+    indexes = np.random.choice(
+        potential_indexes,
+        num_of_contaminated_items,
+        replace=False,
+    )
+    consignment.items[indexes] = 1
+    assert np.count_nonzero(consignment.items) == num_of_contaminated_items
+
+
 def add_contaminant_clusters_to_items(config, consignment):
     """Add contaminant clusters to items in a consignment"""
     contaminated_units_per_cluster = config["clustered"][
@@ -378,16 +431,25 @@ def add_contaminant_clusters_to_items(config, consignment):
 def add_contaminant_clusters(config, consignment):
     """Add contaminant clusters to consignment
 
-    Item (separately or in boxes) with contaminat in *consignment* evaluate
+    Item (separately or in boxes) with contaminant in *consignment* evaluate
     to True after running this function.
     This function does not touch the not items not selected for contamination.
     However, they are expected to be zero.
     """
     contamination_unit = config["contamination_unit"]
     if contamination_unit in ["box", "boxes"]:
+        if config["clustered"]["distribution"] == "single":
+            raise RuntimeError(
+                "clustering distribution 'single' is not supported for boxes"
+            )
         add_contaminant_clusters_to_boxes(config, consignment)
     elif contamination_unit in ["item", "items"]:
-        add_contaminant_clusters_to_items(config, consignment)
+        if config["clustered"]["distribution"] == "single":
+            add_contaminant_clusters_to_items_with_subset_clustering(
+                config, consignment
+            )
+        else:
+            add_contaminant_clusters_to_items(config, consignment)
     else:
         raise RuntimeError(f"Unknown contamination unit: {contamination_unit}")
 

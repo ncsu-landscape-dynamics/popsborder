@@ -101,6 +101,54 @@ uniform randomly selected from the total number of units and contaminated.
 If using `arrangement` = `clustered`, the configuration is as follows:
 
 ```yaml
+contamination:
+  arrangement: clustered
+```
+
+#### Single-parameter clustering
+
+With cluster `distribution` set to `single`, the items that can be contaminated
+are limited to a subset of the items. The size of the subset is determined by
+a single clustering value, which is an inverse proportion. A higher value
+results in a lower proportion (smaller subset) of the consignment being
+available for contamination and a more pronounced, denser infestation cluster.
+A clustering value of zero results in all items being available for
+contamination and a uniform random distribution of contaminated items across
+the whole consignment. The number of contaminated items within the cluster
+subset is determined by the contamination rate. The total number of
+contaminated items does not depend on the clustering value.
+
+```yaml
+clustered:
+  distribution: single
+  value: 0.9
+```
+
+Note that a cluster that partially extends beyond the end of the consignment is
+split, and the part that extends beyond the end of the consignment is placed at
+the beginning of the consignment, as if the (one-dimensional) consignment was
+circular.
+
+Whole configuration of contamination may then look like this:
+
+```yaml
+contamination:
+  contamination_rate:
+    distribution: fixed_value
+    value: 0.3
+  contamination_unit: item
+  arrangement: clustered
+  clustered:
+    distribution: single
+    value: 0.9
+```
+
+#### Multi-parameter clustering
+
+Multi-parameter clustering uses several parameters to create the clusters,
+starting with number of contaminated units per cluster:
+
+```yaml
 clustered:
   contaminated_units_per_cluster: 200
 ```
