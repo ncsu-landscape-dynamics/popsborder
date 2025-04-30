@@ -645,17 +645,12 @@ def load_skip_lot_consignment_records(filename, tracked_properties):
     return records
 
 
-def get_validated_effectiveness(config, verbose=False):
+def get_validated_effectiveness(config):
     """Set the effectiveness of the inspector.
 
     :param config: Configuration file
-    :param verbose: Print the message if True
     """
-    if isinstance(config, dict):
-        if "effectiveness" in config["inspection"]:
-            if 0 <= config["inspection"]["effectiveness"] <= 1:
-                return config["inspection"]["effectiveness"]
-            else:
-                if verbose:
-                    print("Effectiveness out of range: it should be between 0 and 1.")
-    return 1
+    effectiveness = config["inspection"].get("effectiveness", 1)
+    if 0 <= effectiveness <= 1:
+        return effectiveness
+    raise ValueError("Effectiveness must be between 0 and 1")

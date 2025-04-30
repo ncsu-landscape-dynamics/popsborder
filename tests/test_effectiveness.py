@@ -1,12 +1,11 @@
 """Test effectiveness"""
 
-import types
-
 import pytest
 
 from popsborder.inputs import get_validated_effectiveness
 from popsborder.inputs import load_configuration_yaml_from_text
 from popsborder.simulation import run_simulation
+from popsborder.inspections import inspect_item
 
 CONFIG = """\
 consignment:
@@ -56,42 +55,39 @@ inspection:
     interval: 3
 """
 
-ret = types.SimpleNamespace(
-    inspected_item_indexes=[],
-    boxes_opened_completion=0,
-    boxes_opened_detection=0,
-    items_inspected_completion=0,
-    items_inspected_detection=0,
-    contaminated_items_completion=0,
-    contaminated_items_detection=0,
-    contaminated_items_missed=0,
-)
-
-config = load_configuration_yaml_from_text(CONFIG)
-num_consignments = 100
-detailed = False
-
 
 def test_set_effectiveness_no_key():
     """Test config has no effectiveness key"""
-    effectiveness = get_validated_effectiveness(config)
+    effectiveness = get_validated_effectiveness({"inspection": {}})
     assert effectiveness == 1
 
 
-def test_set_effectiveness_out_of_range():
+@pytest.mark.parametrize("effectiveness", [-1, 1.1, 2.5])
+def test_set_effectiveness_out_of_range(effectiveness):
     """Test effectiveness out of range"""
-    for val in [-1, 1.1, 2.5]:
-        config["inspection"]["effectiveness"] = val
-        effectiveness = get_validated_effectiveness(config)
-        assert effectiveness == 1
+    config = {"inspection": {}}
+    config["inspection"]["effectiveness"] = effectiveness
+    with pytest.raises(ValueError) as info:
+        get_validated_effectiveness(config)
+    assert "must be between" in str(info.value)
 
 
-def test_set_effectiveness_in_range():
+@pytest.mark.parametrize("effectiveness", [0, 0.5, 1])
+def test_set_effectiveness_in_range(effectiveness):
     """Test effectiveness in range"""
-    for val in [0, 0.5, 1]:
-        config["inspection"]["effectiveness"] = val
-        effectiveness = get_validated_effectiveness(config)
-        assert effectiveness == val
+    config = {"inspection": {}}
+    config["inspection"]["effectiveness"] = effectiveness
+    effectiveness = get_validated_effectiveness(config)
+    assert effectiveness == effectiveness
+
+
+def test_item_inspection():
+    """Test item inspection"""
+    num_contaminated = 0
+    for seed in range(10):
+        num_contaminated += inspect_item(1, 0.7)
+    # Expecting 60% of items to be contaminated with the given seeds.
+    assert num_contaminated > 0.6
 
 
 class TestEffectiveness:
@@ -108,36 +104,44 @@ class TestEffectiveness:
         contaminated item is detected.
     """
 
-    @pytest.fixture()
-    def setup(self):
+    num_consignments = 100
+
+    @pytest.fixture(scope="class")
+    def config(self):
         min_boxes = 30
         max_boxes = 150
-        # config = load_configuration_yaml_from_text(CONFIG)
+        config = load_configuration_yaml_from_text(CONFIG)
         config["consignment"]["parameter_based"]["boxes"]["min"] = min_boxes
         config["consignment"]["parameter_based"]["boxes"]["max"] = max_boxes
         config["inspection"]["effectiveness"] = 0.9
         yield config
 
-    def test_effectiveness_unit_box(self, setup):
+    def test_effectiveness_unit_box(self, config):
         """Test effectiveness with inspection method boxes."""
         for seed in range(10):
             result = run_simulation(
-                config=config, num_simulations=3, num_consignments=100, seed=seed
+                config=config,
+                num_simulations=3,
+                num_consignments=self.num_consignments,
+                seed=seed,
             )
         assert result.pct_contaminant_unreported_if_detection > 0
 
-    def test_effectiveness_unit_items_random(self, setup):
+    def test_effectiveness_unit_items_random(self, config):
         """Test effectiveness with inspection method items with random selection
         strategy.
         """
         config["inspection"]["unit"] = "items"
         for seed in range(10):
             result = run_simulation(
-                config=config, num_simulations=3, num_consignments=100, seed=seed
+                config=config,
+                num_simulations=3,
+                num_consignments=self.num_consignments,
+                seed=seed,
             )
         assert result.pct_contaminant_unreported_if_detection > 0
 
-    def test_effectiveness_unit_items_cluster(self, setup):
+    def test_effectiveness_unit_items_cluster(self, config):
         """Test effectiveness with inspection method items with cluster selection
         strategy.
         """
@@ -145,15 +149,21 @@ class TestEffectiveness:
         config["inspection"]["selection_strategy"] = "cluster"
         for seed in range(10):
             result = run_simulation(
-                config=config, num_simulations=3, num_consignments=100, seed=seed
+                config=config,
+                num_simulations=3,
+                num_consignments=self.num_consignments,
+                seed=seed,
             )
         assert result.pct_contaminant_unreported_if_detection > 0
 
-    def test_effectiveness_none(self, setup):
+    def test_effectiveness_none(self, config):
         """Test effectiveness not set in the configuration file."""
         del config["inspection"]["effectiveness"]
         for seed in range(10):
             result = run_simulation(
-                config=config, num_simulations=3, num_consignments=100, seed=seed
+                config=config,
+                num_simulations=3,
+                num_consignments=self.num_consignments,
+                seed=seed,
             )
         assert result.pct_contaminant_unreported_if_detection > 0
