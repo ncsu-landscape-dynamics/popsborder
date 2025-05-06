@@ -230,6 +230,11 @@ class DynamicComplianceLevelSkipLot:
     def __init__(self, config):
         self._program_name = config.get("name", "dynamic_skip_lot")
         self._tracked_properties = config.get("track")
+        if not self._tracked_properties:
+            raise ValueError(
+                "'track' for tracking consignment properties "
+                "needs to be a list with at least one element"
+            )
 
         levels = config.get("levels")
         self._levels = []
@@ -251,9 +256,18 @@ class DynamicComplianceLevelSkipLot:
             raise ValueError(
                 "Cannot specify both 'monitoring_level' and 'decrease_levels'"
             )
-        self._monitoring_level = self.get_level_number_from_level_name(
-            self._monitoring_level
-        )
+        if self._monitoring_level is not None:
+            self._monitoring_level = self.get_level_number_from_level_name(
+                self._monitoring_level
+            )
+        if self._decrease_levels is not None:
+            if isinstance(self._decrease_levels, bool):
+                self._decrease_levels = int(self._decrease_levels)
+            if not isinstance(self._decrease_levels, int):
+                raise ValueError(
+                    f"'decrease_levels' ({self._decrease_levels}) must be an integer "
+                    f"or boolean, not {type(self._decrease_levels)}"
+                )
 
         self._clearance_number = config.get("clearance_number")
         # Min and max records needed for new clearance level evaluation.
@@ -299,19 +313,24 @@ class DynamicComplianceLevelSkipLot:
         return tuple(key)
 
     def get_level_number_from_level_name(self, name):
-        """Translate level to level number if it is a level name.
+        """Convert a level name to a level number (1-based index).
 
-        If the name is not a matching level name, it is returned unchanged,
-        so it is safe to pass a level number. Level names can be numbers,
-        in that case, level number is still returned based on matching the name
-        (rather than considering it as a level number).
+        If the input is an integer, it is returned as-is, so it is safe to pass
+        a level number. If the input is a string, it must match one of the names
+        assigned to levels. ValueError is raised if no match is found.
+
+        Level names can be numbers and if they are passed as strings, the
+        corresponding level  number (1-based index) is still returned based on
+        matching the name (rather than considering it as a level number).
         """
+        if isinstance(name, int):
+            return name
         for index, level in enumerate(self._levels):
             if "name" not in level:
                 continue
             if level["name"] == name:
                 return index + 1
-        return name
+        raise ValueError(f"Unknown level name '{name}'")
 
     def add_inspection_result(self, consignment, inspected: bool, result: bool):
         """
@@ -371,9 +390,15 @@ class DynamicComplianceLevelSkipLot:
         if self._decrease_levels:
             self.decrease_compliance_level(key, num_levels=self._decrease_levels)
         elif self._monitoring_level:
-            self.reset_compliance_level(key, self._monitoring_level)
+            if self._compliance_levels[key] <= self._monitoring_level:
+                self.decrease_compliance_level(key, num_levels=1)
+            else:
+                self.reset_compliance_level(key, self._monitoring_level)
         else:
-            self.reset_compliance_level(key, self._start_level)
+            if self._compliance_levels[key] <= self._start_level:
+                self.decrease_compliance_level(key, num_levels=1)
+            else:
+                self.reset_compliance_level(key, self._start_level)
 
     def decrease_compliance_level(self, key, num_levels=1):
         """Decrease compliance level for a given key."""
@@ -412,6 +437,10 @@ class DynamicComplianceLevelSkipLot:
         Returns boolean (True for inspect) and this program name (always because it
         is always applied even to unknown consignments because there is a default
         compliance level).
+
+        Returns a tuple which contains a boolean indicating whether or not the
+        consignment should be inspected and a string which is the name of the
+        program.
         """
         level = self.compliance_level_for_consignment(consignment)
         sampling_fraction = self.sampling_fraction_for_level(level)
