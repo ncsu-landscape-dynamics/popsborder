@@ -1,5 +1,5 @@
 # Simulation of contaminated consignments and their inspections
-# Copyright (C) 2018-2022 Vaclav Petras and others (see below)
+# Copyright (C) 2018-2025 Vaclav Petras and others (see below)
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -102,7 +102,7 @@ def simulation(
     add_contaminant = get_contaminant_function(config)
     is_inspection_needed = get_inspection_needed_function(config)
     sample = get_sample_function(config)
-    tolerance_level = config["inspection"]["tolerance_level"]
+    tolerance_level = config["inspection"].get("tolerance_level", 0)
 
     for unused_i in range(num_consignments):
         consignment = consignment_generator.generate_consignment()
@@ -136,6 +136,11 @@ def simulation(
             consignment_checked_ok = True  # assuming or hoping it's ok
             total_num_boxes += consignment.num_boxes
             total_num_items += consignment.num_items
+
+        if hasattr(is_inspection_needed, "add_inspection_result"):
+            is_inspection_needed.add_inspection_result(
+                consignment, inspected=must_inspect, result=consignment_checked_ok
+            )
 
         form280.fill(
             consignment.date,
