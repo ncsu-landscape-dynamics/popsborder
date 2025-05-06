@@ -1,4 +1,4 @@
-name: Build and deploy GitHub Pages
+name: Build and deploy to GitHub Pages
 
 on:
   push:
@@ -30,18 +30,16 @@ jobs:
           cd examples/bash
           ./generate_synthetic_F280_dataset.sh ../../artifacts/synthetic_records.csv 1000
 
-      - name: Convert example notebook to HTML
+      - name: Convert example notebooks to HTML
         run: |
           cd examples/notebooks
           jupyter nbconvert --execute --to html basic_with_command_line.ipynb --output ../../artifacts/basic_with_command_line.html
           jupyter nbconvert --execute --to html scenario_plots.ipynb --output ../../artifacts/scenario_plots.html
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: gh-pages-content
           path: ./artifacts
-          retention-days: 4
 
   deploy:
     if: github.ref == 'refs/heads/main'
@@ -49,20 +47,12 @@ jobs:
     permissions:
       pages: write
       id-token: write
-
-    runs-on: ubuntu-24.04
-
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: gh-pages-content
-          path: ./artifacts
-
-      - name: Deploy to GH Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./artifacts
-          publish_branch: gh-pages
-          force_orphan: true
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
