@@ -391,6 +391,11 @@ def select_units_to_inspect(config, consignment, n_units_to_inspect):
     return indexes_to_inspect
 
 
+def inspect_item(item, effectiveness):
+    """Tests whether item is contaminated considering effectiveness"""
+    return item and random.random() < effectiveness
+
+
 def inspect(config, consignment, n_units_to_inspect, detailed):
     """Inspect selected units using both end strategies (to detection, to completion)
     Return number of boxes opened, items inspected, and contaminated items found for
@@ -458,7 +463,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     ret.items_inspected_completion += 1
                     if not detected:
                         ret.items_inspected_detection += 1
-                    if item and random.random() < effectiveness:
+                    if inspect_item(item, effectiveness):
                         # Count all contaminated items in sample, regardless of
                         # detected variable
                         ret.contaminated_items_completion += 1
@@ -492,7 +497,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     boxes_opened_detection.append(
                         math.floor(item_index / items_per_box)
                     )
-                if consignment.items[item_index] and random.random() < effectiveness:
+                if inspect_item(consignment.items[item_index], effectiveness):
                     # Count every contaminated item in sample
                     ret.contaminated_items_completion += 1
                     if not detected:
@@ -526,7 +531,7 @@ def inspect(config, consignment, n_units_to_inspect, detailed):
                     ret.inspected_item_indexes.append(item_index)
                 if not detected:
                     ret.items_inspected_detection += 1
-                if item and random.random() < effectiveness:
+                if inspect_item(item, effectiveness):
                     # Count every contaminated item in sample
                     ret.contaminated_items_completion += 1
                     # If first contaminated box inspected,
