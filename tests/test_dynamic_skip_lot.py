@@ -59,7 +59,7 @@ release_programs:
 """
 
 
-RESTATING_CONFIG = """\
+REINSTATING_CONFIG = """\
 release_programs:
   dynamic_skip_lot:
     name: Test Dynamic Skip Lot
@@ -77,7 +77,7 @@ release_programs:
         sampling_fraction: 0.1
     start_level: Compliance Level 1
     clearance_number: 10
-    quick_restate_clearance_number: 5
+    quick_reinstate_clearance_number: 5
 """
 
 MONITORING_CONFIG = """\
@@ -280,10 +280,10 @@ def test_inspect_and_record():
     ), "With the given seeds, compliance level should reach the maximum level"
 
 
-def test_inspect_and_record_quick_restating():
-    """Check that quick restating works"""
+def test_inspect_and_record_quick_reinstating():
+    """Check that quick reinstating works"""
     program = DynamicComplianceLevelSkipLot(
-        load_configuration_yaml_from_text(RESTATING_CONFIG)["release_programs"][
+        load_configuration_yaml_from_text(REINSTATING_CONFIG)["release_programs"][
             "dynamic_skip_lot"
         ]
     )
@@ -319,7 +319,7 @@ def test_inspect_and_record_quick_restating():
         random_seed(seed)
         inspect, program_name = program(consignment, consignment.date)
         program.add_inspection_result(consignment, inspect, result=True)
-    # Previous compliance level should be restated.
+    # Previous compliance level should be reinstated.
     assert program.compliance_level_for_consignment(consignment) == 3
 
 
@@ -359,7 +359,7 @@ def test_inspect_and_record_monitoring():
         random_seed(seed)
         inspect, program_name = program(consignment, consignment.date)
         program.add_inspection_result(consignment, inspect, result=True)
-    # Previous compliance level should be restated with the given seeds.
+    # Previous compliance level should be reinstated with the given seeds.
     assert program.compliance_level_for_consignment(consignment) == 3
 
 

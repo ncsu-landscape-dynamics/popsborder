@@ -274,22 +274,22 @@ class DynamicComplianceLevelSkipLot:
         self._min_records = self._clearance_number
         self._max_records = self._clearance_number
 
-        # Quick restating can be defined by a boolean or by special clearance number.
-        self._quick_restate_clearance_number = config.get(
-            "quick_restate_clearance_number", None
+        # Quick reinstating can be defined by a boolean or by special clearance number.
+        self._quick_reinstate_clearance_number = config.get(
+            "quick_reinstate_clearance_number", None
         )
-        self._quick_restating = config.get("quick_restating", None)
-        # Special clearance number implies quick restating when not explicitly
-        # specified, but explicit False disables quick restating.
-        if self._quick_restating is None:
-            self._quick_restating = self._quick_restate_clearance_number is not None
-        if self._quick_restating and self._quick_restate_clearance_number is None:
-            self._quick_restate_clearance_number = self._clearance_number
+        self._quick_reinstating = config.get("quick_reinstating", None)
+        # Special clearance number implies quick reinstating when not explicitly
+        # specified, but explicit False disables quick reinstating.
+        if self._quick_reinstating is None:
+            self._quick_reinstating = self._quick_reinstate_clearance_number is not None
+        if self._quick_reinstating and self._quick_reinstate_clearance_number is None:
+            self._quick_reinstate_clearance_number = self._clearance_number
             self._min_records = min(
-                self._clearance_number, self._quick_restate_clearance_number
+                self._clearance_number, self._quick_reinstate_clearance_number
             )
             self._max_records = max(
-                self._clearance_number, self._quick_restate_clearance_number
+                self._clearance_number, self._quick_reinstate_clearance_number
             )
 
         self._inspection_records = defaultdict(list)
@@ -368,8 +368,8 @@ class DynamicComplianceLevelSkipLot:
             self._inspection_records[key].clear()
             self.increase_compliance_level(key)
         if (
-            self._quick_restating
-            and num_compliant == self._quick_restate_clearance_number
+            self._quick_reinstating
+            and num_compliant == self._quick_reinstate_clearance_number
         ):
             self.restore_compliance_level(key)
 
@@ -408,7 +408,7 @@ class DynamicComplianceLevelSkipLot:
 
     def reset_compliance_level(self, key, level):
         """Reset the compliance level for a given key to the start level."""
-        if self._quick_restating:
+        if self._quick_reinstating:
             self._previous_compliance_levels[key] = self._compliance_levels[key]
         self._compliance_levels[key] = level
 

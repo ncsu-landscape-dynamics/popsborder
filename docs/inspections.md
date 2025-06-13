@@ -150,21 +150,21 @@ The compliance level is never decreased bellow the first level defined in
 `false`). If it is `true`, the decrease is done by one level.
 
 The groups can quickly move back to their original level before failing
-inspection if quick restating of the original level is enabled with
-`quick_restating`.
+inspection if quick reinstating of the original level is enabled with
+`quick_reinstating`.
 
 ```yaml
-quick_restating: true
+quick_reinstating: true
 ```
 
-While the `clearance_number` is used for restating by default, an
-additional lower clearance number for restating can be specified with
-`quick_restate_clearance_number`. If `quick_restate_clearance_number` is
-provided, quick restating is automatically enabled even if `quick_restating` is
+While the `clearance_number` is used for reinstating by default, an
+additional lower clearance number for reinstating can be specified with
+`quick_reinstate_clearance_number`. If `quick_reinstate_clearance_number` is
+provided, quick reinstating is automatically enabled even if `quick_reinstating` is
 not provided.
 
 ```yaml
-quick_restate_clearance_number: 5
+quick_reinstate_clearance_number: 5
 ```
 
 ### Naive Cut Flower Release Program
