@@ -1,5 +1,5 @@
 # Simulation of contaminated consignments and their inspections
-# Copyright (C) 2018-2022 Vaclav Petras and others (see below)
+# Copyright (C) 2018-2025 Vaclav Petras and others (see below)
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,6 +22,7 @@
 
 import functools
 import random
+from collections import defaultdict
 
 from .inputs import load_cfrp_schedule, load_skip_lot_consignment_records
 
@@ -42,6 +43,8 @@ def get_inspection_needed_function(config):
                 return CutFlowerReleaseProgram(config["release_programs"][name])
             if name == "fixed_skip_lot":
                 return FixedComplianceLevelSkipLot(config["release_programs"][name])
+            if name == "dynamic_skip_lot":
+                return DynamicComplianceLevelSkipLot(config["release_programs"][name])
             elif name == "naive_cfrp":
                 return functools.partial(
                     naive_cfrp, config["release_programs"][name], name
@@ -85,7 +88,7 @@ class CutFlowerReleaseProgram:
     """Cut Flower Release Program (CFRP)
 
     Constructs CFRP, esp. the schedule, from the configuration during initialization.
-    Objects can be called as functions to evalute if consignments should be inspected
+    Objects can be called as functions to evaluate if consignments should be inspected
     using this program.
     """
 
@@ -168,10 +171,10 @@ class FixedComplianceLevelSkipLot:
                     "or contain 'file_name'"
                 )
 
-    def compliance_level_for_consignment(self, consignment):
-        """Get compliance level associated with a given consignment.
+    def compute_record_key_for_consignment(self, consignment):
+        """Get compliance record key for the given given consignment.
 
-        The level is selected based on consignment properties.
+        The key is based on consignment's properties which are tracked properties.
         """
         key = []
         for name in self._tracked_properties:
@@ -182,7 +185,14 @@ class FixedComplianceLevelSkipLot:
                     f"Consignment does not have a property '{name}'"
                 ) from error
             key.append(property_value)
-        key = tuple(key)
+        return tuple(key)
+
+    def compliance_level_for_consignment(self, consignment):
+        """Get compliance level associated with a given consignment.
+
+        The level is selected based on consignment properties.
+        """
+        key = self.compute_record_key_for_consignment(consignment)
         if key not in self._consignment_records:
             self._consignment_records[key] = self._default_level
             return self._default_level
@@ -198,6 +208,239 @@ class FixedComplianceLevelSkipLot:
         Returns boolean (True for inspect) and this program name (always because it
         is always applied even to unknown consignments because there is a default
         compliance level).
+        """
+        level = self.compliance_level_for_consignment(consignment)
+        sampling_fraction = self.sampling_fraction_for_level(level)
+        if random.random() <= sampling_fraction:
+            return True, self._program_name
+        return False, self._program_name
+
+
+class DynamicComplianceLevelSkipLot:
+    """A skip lot program which dynamically adjusts compliance levels
+
+    Compliance is tracked by compliance group and compliance levels are adjusted based
+    on inspection results from previous inspections in the given group.
+    The consignment groups are based on tracked properties.
+    """
+
+    # Given the configuration, we expect to have many attributes.
+    # pylint: disable=too-many-instance-attributes
+
+    def __init__(self, config):
+        self._program_name = config.get("name", "dynamic_skip_lot")
+        self._tracked_properties = config.get("track")
+        if not self._tracked_properties:
+            raise ValueError(
+                "'track' for tracking consignment properties "
+                "needs to be a list with at least one element"
+            )
+
+        levels = config.get("levels")
+        self._levels = []
+        for level in levels:
+            if "sampling_fraction" not in level:
+                raise ValueError("Each level needs to have 'sampling_fraction'")
+            # Ordering is determined by order, not by name.
+            self._levels.append(level)
+        # We use one-based level numbers rather than zero-based indices.
+        self._min_level = 1
+        self._max_level = len(self._levels)
+
+        self._start_level = self.get_level_number_from_level_name(
+            config.get("start_level", 1)
+        )
+        self._monitoring_level = config.get("monitoring_level")
+        self._decrease_levels = config.get("decrease_levels")
+        if self._monitoring_level is not None and self._decrease_levels is not None:
+            raise ValueError(
+                "Cannot specify both 'monitoring_level' and 'decrease_levels'"
+            )
+        if self._monitoring_level is not None:
+            self._monitoring_level = self.get_level_number_from_level_name(
+                self._monitoring_level
+            )
+        if self._decrease_levels is not None:
+            if isinstance(self._decrease_levels, bool):
+                self._decrease_levels = int(self._decrease_levels)
+            if not isinstance(self._decrease_levels, int):
+                raise ValueError(
+                    f"'decrease_levels' ({self._decrease_levels}) must be an integer "
+                    f"or boolean, not {type(self._decrease_levels)}"
+                )
+
+        self._clearance_number = config.get("clearance_number")
+        # Min and max records needed for new clearance level evaluation.
+        self._min_records = self._clearance_number
+        self._max_records = self._clearance_number
+
+        # Quick reinstating can be defined by a boolean or by special clearance number.
+        self._quick_reinstate_clearance_number = config.get(
+            "quick_reinstate_clearance_number", None
+        )
+        self._quick_reinstating = config.get("quick_reinstating", None)
+        # Special clearance number implies quick reinstating when not explicitly
+        # specified, but explicit False disables quick reinstating.
+        if self._quick_reinstating is None:
+            self._quick_reinstating = self._quick_reinstate_clearance_number is not None
+        if self._quick_reinstating and self._quick_reinstate_clearance_number is None:
+            self._quick_reinstate_clearance_number = self._clearance_number
+            self._min_records = min(
+                self._clearance_number, self._quick_reinstate_clearance_number
+            )
+            self._max_records = max(
+                self._clearance_number, self._quick_reinstate_clearance_number
+            )
+
+        self._inspection_records = defaultdict(list)
+        self._compliance_levels = defaultdict(lambda: self._start_level)
+        self._previous_compliance_levels = {}
+
+    def compute_record_key_for_consignment(self, consignment):
+        """Get compliance record key for the given given consignment.
+
+        The key is based on consignment's properties which are tracked properties.
+        """
+        key = []
+        for name in self._tracked_properties:
+            try:
+                property_value = getattr(consignment, name)
+            except AttributeError as error:
+                raise ValueError(
+                    f"Consignment does not have a property '{name}'"
+                ) from error
+            key.append(property_value)
+        return tuple(key)
+
+    def get_level_number_from_level_name(self, name):
+        """Convert a level name to a level number (1-based index).
+
+        If the input is an integer, it is returned as-is, so it is safe to pass
+        a level number. If the input is a string, it must match one of the names
+        assigned to levels. ValueError is raised if no match is found.
+
+        Level names can be numbers and if they are passed as strings, the
+        corresponding level  number (1-based index) is still returned based on
+        matching the name (rather than considering it as a level number).
+        """
+        if isinstance(name, int):
+            return name
+        for index, level in enumerate(self._levels):
+            if "name" not in level:
+                continue
+            if level["name"] == name:
+                return index + 1
+        raise ValueError(f"Unknown level name '{name}'")
+
+    def add_inspection_result(self, consignment, inspected: bool, result: bool):
+        """
+        Update the compliance level of a consignment based on an inspection result.
+
+        Parameters:
+        consignment: Inspected consignment
+        inspected: True if the consignment was inspected, False otherwise
+        result: True if the consignment was compliant, False otherwise
+        """
+        key = self.compute_record_key_for_consignment(consignment)
+        if not result:
+            self.adjust_compliance_level_after_negative_result(key)
+        self._inspection_records[key].append((inspected, result))
+        if len(self._inspection_records[key]) < self._min_records:
+            # Consider increasing compliance level only
+            # if we have enough compliant records.
+            return
+        num_inspected = 0
+        num_compliant = 0
+        for recorded_inspected, recorded_result in reversed(
+            self._inspection_records[key]
+        ):
+            if recorded_inspected:
+                num_inspected += 1
+                if recorded_result:
+                    num_compliant += 1
+            if num_inspected == self._max_records:
+                # Look only at last N records.
+                break
+        if num_compliant == self._clearance_number:
+            # For large number of records, this would be the same as number of
+            # inspected, but for small number of records we didn't reach the
+            # clearance number of records yet.
+            self._inspection_records[key].clear()
+            self.increase_compliance_level(key)
+        if (
+            self._quick_reinstating
+            and num_compliant == self._quick_reinstate_clearance_number
+        ):
+            self.restore_compliance_level(key)
+
+    def increase_compliance_level(self, key):
+        """Increase compliance level for a given key."""
+        if self._compliance_levels[key] == self._max_level:
+            return
+        self._compliance_levels[key] += 1
+
+    def adjust_compliance_level_after_negative_result(self, key):
+        """Adjust compliance level after a negative inspection.
+
+        The exact adjustment depends on the configuration. If 'decrease_levels' is
+        set, the compliance level is decreased by that many levels. If
+        'monitoring_level' is set, the compliance level is reset to that level.
+        If neither is set, the compliance level is reset to the start level.
+        """
+        if self._decrease_levels:
+            self.decrease_compliance_level(key, num_levels=self._decrease_levels)
+        elif self._monitoring_level:
+            if self._compliance_levels[key] <= self._monitoring_level:
+                self.decrease_compliance_level(key, num_levels=1)
+            else:
+                self.reset_compliance_level(key, self._monitoring_level)
+        else:
+            if self._compliance_levels[key] <= self._start_level:
+                self.decrease_compliance_level(key, num_levels=1)
+            else:
+                self.reset_compliance_level(key, self._start_level)
+
+    def decrease_compliance_level(self, key, num_levels=1):
+        """Decrease compliance level for a given key."""
+        self._compliance_levels[key] = max(
+            self._min_level, self._compliance_levels[key] - num_levels
+        )
+
+    def reset_compliance_level(self, key, level):
+        """Reset the compliance level for a given key to the start level."""
+        if self._quick_reinstating:
+            self._previous_compliance_levels[key] = self._compliance_levels[key]
+        self._compliance_levels[key] = level
+
+    def restore_compliance_level(self, key):
+        """Restore the compliance level for a given key to its previous value."""
+        if key in self._previous_compliance_levels:
+            self._compliance_levels[key] = self._previous_compliance_levels[key]
+
+    def compliance_level_for_consignment(self, consignment):
+        """Get compliance level associated with a given consignment.
+
+        The level is selected based on consignment properties.
+        """
+        key = self.compute_record_key_for_consignment(consignment)
+        if key not in self._compliance_levels:
+            return self._start_level
+        return self._compliance_levels[key]
+
+    def sampling_fraction_for_level(self, level):
+        """Get ratio of items or boxes to inspect associated with a compliance level"""
+        return self._levels[level - 1]["sampling_fraction"]
+
+    def __call__(self, consignment, date):
+        """Decide whether the consignment should be inspected or not.
+
+        Returns boolean (True for inspect) and this program name (always because it
+        is always applied even to unknown consignments because there is a default
+        compliance level).
+
+        Returns a tuple which contains a boolean indicating whether or not the
+        consignment should be inspected and a string which is the name of the
+        program.
         """
         level = self.compliance_level_for_consignment(consignment)
         sampling_fraction = self.sampling_fraction_for_level(level)

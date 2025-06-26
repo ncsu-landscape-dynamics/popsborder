@@ -1,0 +1,8 @@
+name,release_programs/dynamic_skip_lot/start_level,release_programs/dynamic_skip_lot/clearance_number,release_programs/dynamic_skip_lot/quick_reinstating,release_programs/dynamic_skip_lot/quick_reinstate_clearance_number
+No reinstating (base start),Compliance Level 1,10,false,0
+Reinstating (base start),Compliance Level 1,10,true,5
+Challanging reinstating,Compliance Level 1,10,true,10
+No reinstating with compliant start,Compliance Level 2,10,false,0
+Reinstating with compliant start,Compliance Level 2,10,true,5
+Challanging reinstating with compliant start,Compliance Level 2,10,true,10
+High clearance number,Compliance Level 2,100,true,100

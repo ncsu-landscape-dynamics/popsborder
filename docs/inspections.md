@@ -12,7 +12,7 @@ and a full version of the _Cut Flower Release Program_.
 
 Only one program can be specified at a time.
 
-### Skip Lot Program
+### Fixed Skip Lot Program
 
 List of compliance levels and their associated ratios of inspected consignments:
 
@@ -55,6 +55,117 @@ Default compliance level when a consignment does not have a compliance level def
     default_level: 1
 ```
 
+### Dynamic Skip Lot Program
+
+In the dynamic skip lot program, consignment dynamically fall to compliance
+levels based on inspection results. The proportion of inspected consignments for
+the same combination of consignment properties dynamically changes based on
+previous simulation steps. The program is identified by the key
+`dynamic_skip_lot`. An optional name can be added and will appear in the output.
+
+```yaml
+release_programs:
+  dynamic_skip_lot:
+    name: Dynamic Skip Lot
+```
+
+Inspection results are tracked for consignments grouped based on tracked
+consignment one or more properties specified as a list with `track`.
+
+```yaml
+track:
+  - origin
+  - commodity
+```
+
+Each group is assigned a level that determines the frequency of inspections.
+Each compliance level has an associated fraction of consignments to be
+inspected (`sampling_fraction`). The `name` key for a level is optional,
+`sampling_fraction` is required. If names are provided, they need to be unique.
+
+```yaml
+levels:
+  - name: Compliance Level 1
+    sampling_fraction: 1
+  - name: Compliance Level 2
+    sampling_fraction: 0.5
+  - name: Compliance Level 3
+    sampling_fraction: 0.25
+  - name: Compliance Level 4
+    sampling_fraction: 0.1
+```
+
+A random number is generated for each consignment to determine whether to
+inspect. The number is compared to the `sampling_fraction` of the current
+compliance level to determine whether or not to inspect the particular
+consignment. On average, a `sampling fraction` of consignments are marked for
+inspection.
+
+The order of the levels is important, as groups move through the levels from the
+first one in the list to the last one in the list. All groups start at the first
+level or a custom start level specified with `start_level`, which can refer to
+the level either by name or by a one-based index (the default start level is 1).
+
+```yaml
+start_level: Compliance Level 1
+```
+
+To advance to a higher level, a group must reach a certain number of consecutive
+successful inspections, called the clearance number.
+
+```yaml
+clearance_number: 10
+```
+
+The tracking for the clearance number is reset after a group moves up a level.
+If a consignment fails an inspection, the level for the group it belongs to is
+reset to the start level. The consignment group can then move up the levels in
+the standard manner. If the group is already at or below the start level,
+its current level is decreased by one level.
+
+If `monitoring_level` is set, the group moves to the monitoring level instead
+of start level.  Just like `start_level`, `monitoring_level` can be set either
+by name or by a one-based index. Start level and monitoring_level can be
+combined together in any way, for example:
+
+```yaml
+start_level: Compliance Level 2
+monitoring_level: Compliance Level 4
+```
+
+If the group's current level is already at or lower than the monitoring level,
+and a consignment fails the inspection, its current level is decreased by one
+level just like when `start_level` is used and `monitoring_level` is not set.
+
+As an alternative to monitoring, a failed inspection will result in decreasing
+the compliance level for the group by one or any other number of levels
+specified by `decrease_levels`, for example:
+
+```yaml
+decrease_levels: 2
+```
+
+The compliance level is never decreased bellow the first level defined in
+`levels`. `decrease_levels` can be specified as integer or boolean (`true` or
+`false`). If it is `true`, the decrease is done by one level.
+
+The groups can quickly move back to their original level before failing
+inspection if quick reinstating of the original level is enabled with
+`quick_reinstating`.
+
+```yaml
+quick_reinstating: true
+```
+
+While the `clearance_number` is used for reinstating by default, an
+additional lower clearance number for reinstating can be specified with
+`quick_reinstate_clearance_number`. If `quick_reinstate_clearance_number` is
+provided, quick reinstating is automatically enabled even if `quick_reinstating` is
+not provided.
+
+```yaml
+quick_reinstate_clearance_number: 5
+```
 
 ### Naive Cut Flower Release Program
 
@@ -287,7 +398,7 @@ inspection:
   unit: item
   within_box_proportion: 0.25
   sample_strategy: hypergeometric
-  selection_strategy: cluter
+  selection_strategy: cluster
   cluster:
     cluster_selection: random
 ```
