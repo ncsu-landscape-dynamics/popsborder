@@ -20,6 +20,9 @@
 .. codeauthor:: Vaclav Petras <wenzeslaus gmail com>
 """
 
+import itertools
+from concurrent.futures import ProcessPoolExecutor, as_completed
+
 from .inputs import update_config
 from .simulation import run_simulation
 
@@ -69,3 +72,122 @@ def run_scenarios(
             # The result is simulation totals.
             results.append((result, scenario_config))
     return results
+
+
+def run_scenarios_parallel(
+    config,
+    scenario_table,
+    seed,
+    num_runs_per_submission,
+    num_submission_per_scenario,
+    num_consignments,
+    max_workers=None,
+):
+    """Run scenarios in parallel using concurrent.futures.
+
+    Parameters
+    ----------
+    config : nested dict
+        Basic configuration for each simulation.
+    scenario_table : list of dicts
+        Configurations specific for each scenario.
+    seed : int
+        Random seed base. Each scenario will derive its own seeds.
+    num_simulations : int
+        Number of simulations per scenario.
+    num_consignments : int
+        Number of consignments in each simulation.
+    max_workers : int, optional
+        Number of workers for parallel execution. Defaults to cpu_count().
+    """
+    results = []
+
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        future_to_scenario = {}
+        for record in scenario_table:
+            for computed_seed in range(
+                seed,
+                seed + (num_submission_per_scenario * num_runs_per_submission),
+                num_runs_per_submission,
+            ):
+                scenario_config = update_config(config, record)
+                future_to_scenario[
+                    executor.submit(
+                        run_simulation,
+                        config=scenario_config,
+                        num_simulations=num_runs_per_submission,
+                        num_consignments=num_consignments,
+                        seed=computed_seed,
+                        detailed=False,
+                        individual=True,
+                    )
+                ] = scenario_config
+
+        print(f"doing {len(future_to_scenario)} submissions...")
+        print(f"running {num_runs_per_submission * len(future_to_scenario)} simulations...")
+
+        # Collect results as they finish
+        for future in as_completed(future_to_scenario):
+            scenario_config = future_to_scenario[future]
+            try:
+                unused_totals, individual_results = future.result()
+                for result in individual_results:
+                    results.append((result, scenario_config))
+            except Exception as e:
+                print(f"Scenario {record['name']} failed: {e}")
+    return results
+
+
+def generate_scenarios(parameter_values, done=None):
+    """
+    Generate a list of scenario dictionaries with different parameter combinations.
+
+    Parameters
+    ----------
+    parameter_values : dict
+        Dictionary of parameter names mapping to lists of values.
+        Example:
+        {
+            "inspection/effectiveness": [0.5, 0.7, 0.9],
+            "contamination/contamination_rate/value": [0.01, 0.05, 0.1],
+            "contamination/clustered/value": [0.1, 0.3, 0.5],
+        }
+    done : pd.DataFrame or None
+        Previously completed scenarios (with matching parameter columns).
+
+    Returns
+    -------
+    scenarios : list of dict
+        Each dict represents a scenario.
+    found : int
+        Number of scenarios skipped because they were already in `done`.
+    """
+    scenarios = []
+    found = 0
+
+    keys = list(parameter_values.keys())
+    values = list(parameter_values.values())
+
+    # Precompute set of done combinations as tuples
+    done_combos = set()
+    if done is not None and not done.empty:
+        done_combos = set(tuple(row[k] for k in keys) for _, row in done.iterrows())
+
+    # Cartesian product over all parameter lists
+    for combo in itertools.product(*values):
+        scenario = dict(zip(keys, combo))
+
+        # Create a descriptive scenario name
+        scenario_name = "_".join(
+            f"{parameter}={value}" for parameter, value in scenario.items()
+        )
+        scenario["name"] = scenario_name
+
+        # Skip if already in 'done' (exact match across all params)
+        if tuple(combo) in done_combos:
+            found += 1
+            continue
+
+        scenarios.append(scenario)
+
+    return scenarios, found
