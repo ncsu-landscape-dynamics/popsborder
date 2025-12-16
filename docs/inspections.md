@@ -205,6 +205,19 @@ release_programs:
       file_name: schedule.csv
 ```
 
+## Effectiveness
+
+Contaminated items can be either always be detected during the inspection,
+or only a certain percentage of them can be detected based on the
+effectiveness. The `effectiveness` is a value between 0 and 1.
+The following will cause 1 out of 10 contaminated items on average to pass
+undetected.
+
+```yaml
+inspection:
+  effectiveness: 0.9
+```
+
 ## Inspection unit
 
 The inspection unit can be determined by:
@@ -234,18 +247,6 @@ meaning all items within a box can be inspected. If `within_box_proportion < 1`,
 only the first `n = within_box_proportion * items_per_box` items in each box
 will be inspected.
 
-## Effectiveness
-
-Contaminated items can be either always be detected during the inspection,
-or only a certain percentage of them can be detected based on the
-effectiveness. The `effectiveness` is a value between 0 and 1.
-The following will cause 1 out of 10 contaminated items to pass undetected.
-
-```yaml
-inspection:
-  effectiveness: 0.9
-```
-
 ## Tolerance level
 
 The simulation provides a count of the number of missed consignments (slippage) with
@@ -269,15 +270,15 @@ inspection:
 
 ## Sample strategy
 
-The sample strategy can be determined by:
+The sample strategy defines the method used to compute the number of
+units to inspect. The sample strategy can be determined by:
 
 ```yaml
 inspection:
   sample_strategy: proportion
 ```
 
-The sample strategy defines the method used to compute the number of
-units to inspect. The possible sample strategies include `proportion`
+The possible sample strategies include `proportion`
 for sampling a specified proportion of units, `hypergeometric` for
 sampling to detect a specified contamination level at a specified
 confidence level using the hypergeometric distribution, `fixed_n` for
@@ -289,6 +290,7 @@ The settings for `proportion` are:
 
 ```yaml
 inspection:
+  sample_strategy: proportion
   proportion:
     value: 0.02
     min_boxes: 1
@@ -306,6 +308,7 @@ The settings for `hypergeometric` are:
 
 ```yaml
 inspection:
+  sample_strategy: hypergeometric
   hypergeometric:
     detection_level: 0.05
     confidence_level: 0.95
@@ -332,6 +335,7 @@ The settings for `fixed_n` are:
 
 ```yaml
 inspection:
+  sample_strategy: fixed_n
   fixed_n: 10
 ```
 

@@ -72,9 +72,8 @@ consignment:
 
 The generator adds origin, flower (commodity type), and port (where consignment
 was received). These are randomly selected from the lists specified in the
-configuration. These values are not currently used, but may be used to configure
-other parameters in the future (e.g., variable contamination rates by origin or
-inspection efficacy by commodity).
+configuration. These values may be used to configure other simulation parameters
+(e.g., variable contamination rates by origin).
 
 ```yaml
 origins:
