@@ -34,8 +34,16 @@ def get_inspection_needed_function(config):
     consignment should be inspected. The second item is a string which is the name of
     the release program applied or None if no release program was applied.
     """
+    if "inspection" in config and "release_program" in config["inspection"]:
+        user_selected_program = True
+        selected_program_name = config["inspection"]["release_program"]
+    else:
+        user_selected_program = False
+        selected_program_name = None
     if "release_programs" in config:
         for name in sorted(config["release_programs"].keys()):
+            if user_selected_program and name != selected_program_name:
+                continue
             # Notably, this does not support multiple programs at once.
             # We simply return whatever is the first program alphabetically
             # or raise exception if there is an unknown program name.
