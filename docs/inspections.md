@@ -5,12 +5,32 @@ Optionally, inspection of some consignments can be skipped using a release progr
 
 ## Skipping inspections
 
-Inspections can be skipped using release programs specified under the key `release_programs`.
+Before an inspection occurs, a release programs, specified under the key `release_programs`,
+can be used to skip an inspection of a particular consignment.
 
-Two programs are supported: a naive variation of the Cut Flower Release Program
-and a full version of the _Cut Flower Release Program_.
+Several release programs including _Dynamic Skip Lot Program_
+and _Cut Flower Release Program_ are available, but only one program can be specified at a time.
 
-Only one program can be specified at a time.
+By default, first release program under `release_programs` is used. When name of a release program
+is provided as `release_program` under `inspection`, a release program with the matching name
+is used. The names are the same as the keys under `release_programs` (see below).
+For example, the Cut Flower Release Program (CFRP) would be explicitly enabled using:
+
+```yaml
+inspection:
+  release_program: cfrp
+release_programs:
+  cfrp:
+    schedule:
+      file_name: schedule.csv
+```
+
+If an empty value (`None` in Python, `null` in JSON) is provided
+as `release_program`, no release program is activated. Additionally,
+any name which is not present in the `release_programs` will avoid
+release program activation. For scenarios, the configuration may use
+`none` as the name to avoid release program activation, while still using
+a text (string) value rather than special empty value.
 
 ### Fixed Skip Lot Program
 
