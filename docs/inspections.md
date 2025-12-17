@@ -367,22 +367,40 @@ of boxes to inspect will be set to `num_boxes`.
 
 ## Selection strategy
 
-The unit selection strategy can be determined by:
+While the sample strategy determines _how many_ units to inspect, the
+selection strategy is used to determine _which_ units to select for
+inspection. The unit selection strategy can be determined by:
 
 ```yaml
 inspection:
   selection_strategy: random
 ```
 
-While the sample strategy determines _how many_ units to inspect, the
-selection strategy is used to determine _which_ units to select for
-inspection. The possible selection strategies include `random` for
+The possible selection strategies include `random` for
 selecting units to inspect using a uniform random distribution,
 `convenience` for selecting the first `n` units to inspect, or `cluster`
 for selecting boxes for partial inspection. The `cluster` selection
 strategy is valid only for the `item` inspection unit.
 
-### Cluster strategy
+### Random selection strategy
+
+The random selection strategy selects units to inspect using a uniform random
+distribution. Each unit in the consignment has an equal probability of being
+selected. This strategy requires more effort from inspectors but provides
+a higher quality, more representative sample of the consignment. Random
+selection is more robust when contaminants may be distributed non-uniformly
+throughout the consignment.
+
+### Convenience selection strategy
+
+The convenience selection strategy selects the first _n_ units to inspect.
+This approach requires less effort as inspectors only examine the most
+accessible items (e.g., items at the front of boxes or top of the consignment).
+However, convenience sampling may introduce bias if contaminants are not
+uniformly distributed, potentially resulting in higher slippage rates
+compared to random selection.
+
+### Cluster selection strategy
 
 The cluster selection strategy is used when `inspection_unit="item"` to
 divide the sample size into clusters that can be selected from boxes
