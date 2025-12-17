@@ -322,6 +322,8 @@ def run_simulation(
         if detailed and i == 0:
             # details are from first run of simulation only
             details = result.details
+        else:
+            details = None
         # totals are an average of all simulation runs
         totals.missing += result.missing
         totals.false_neg += result.false_neg
@@ -355,7 +357,9 @@ def run_simulation(
         totals.total_intercepted_contaminants += result.total_intercepted_contaminants
         totals.total_missed_contaminants += result.total_missed_contaminants
         totals.relative_missed_contaminants += result.relative_missed_contaminants
-        totals.relative_intercepted_contaminants += result.relative_intercepted_contaminants
+        totals.relative_intercepted_contaminants += (
+            result.relative_intercepted_contaminants
+        )
         totals.total_contaminants += result.total_contaminants
     # make these relative (reusing the variables)
     totals.missing /= float(num_simulations)
