@@ -1,0 +1,71 @@
+consignment:
+  start_date: 2025-01-01
+  consignments_per_day: 10
+  generation_method: parameter_based
+  items_per_box:
+    default: 200
+  parameter_based:
+    boxes:
+      min: 20
+      max: 100
+    origins:
+      - Netherlands
+    flowers:
+      - Hyacinthus
+      - Rosa
+      - Gerbera
+    ports:
+      - FL Miami Air CBP
+contamination:
+  contamination_unit: item
+  contamination_rate:
+    distribution: fixed_value
+  arrangement: clustered
+  clustered:
+    distribution: single
+  consignments:
+    - commodity: Hyacinthus
+    - commodity: Rosa
+      start_date: 2025-05-01
+      end_date: 2025-09-30
+    - commodity: Gerbera
+      start_date: 2025-05-01
+      end_date: 2025-09-30
+inspection:
+  unit: item
+  sample_strategy: hypergeometric
+  hypergeometric:
+    detection_level: 0.05
+    confidence_level: 0.95
+release_programs:
+  dynamic_skip_lot:
+    name: Dynamic Skip Lot
+    track:
+    - origin
+    - commodity
+    start_level: Compliance Level 1
+    clearance_number: 10
+    decrease_levels: 1
+    quick_reinstating: true
+    quick_reinstate_clearance_number: 5
+    levels:
+    - name: Compliance Level 1
+      sampling_fraction: 1
+    - name: Compliance Level 2
+      sampling_fraction: 0.5
+    - name: Compliance Level 3
+      sampling_fraction: 0.25
+    - name: Compliance Level 4
+      sampling_fraction: 0.125
+    - name: Compliance Level 5
+      sampling_fraction: 0.0625
+    - name: Compliance Level 6
+      sampling_fraction: 0.03125
+    - name: Compliance Level 7
+      sampling_fraction: 0.015625
+    - name: Compliance Level 8
+      sampling_fraction: 0.0078125
+    - name: Compliance Level 9
+      sampling_fraction: 0.00390625
+    - name: Compliance Level 10
+      sampling_fraction: 0.001953125
