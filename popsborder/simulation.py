@@ -247,9 +247,15 @@ def simulation(
         true_positive_present=true_positive_present,
         total_intercepted_contaminants=total_intercepted_contaminants,
         total_missed_contaminants=total_missed_contaminants,
-        relative_missed_contaminants=total_missed_contaminants / total_contaminants,
+        relative_missed_contaminants=(
+            total_missed_contaminants / total_contaminants
+            if total_contaminants
+            else 0  # Using 0 as in "no contaminants, so none missed"
+        ),
         relative_intercepted_contaminants=(
             total_intercepted_contaminants / total_contaminants
+            if total_contaminants
+            else 0  # Using 0 as in "no contaminants, so none intercepted"
         ),
         total_contaminants=total_contaminants,
     )
