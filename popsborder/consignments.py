@@ -156,7 +156,7 @@ class Consignment(collections.UserDict):
 class ParameterConsignmentGenerator:
     """Generate a consignments based on configuration parameters"""
 
-    def __init__(self, parameters, items_per_box, start_date):
+    def __init__(self, parameters, items_per_box, start_date, consignments_per_day):
         """Set parameters for consignment generation
 
         :param parameters: Consignment parameters
@@ -170,6 +170,8 @@ class ParameterConsignmentGenerator:
         if isinstance(start_date, str):
             start_date = datetime.strptime(start_date, "%Y-%m-%d")
         self.date = start_date
+        self.consignments_per_day = consignments_per_day
+        self.num_generated_in_day = 0
 
     def generate_consignment(self):
         """Generate a new consignment"""
@@ -191,9 +193,11 @@ class ParameterConsignmentGenerator:
             upper = (i + 1) * items_per_box
             boxes.append(Box(items[lower:upper]))
         self.num_generated += 1
+        self.num_generated_in_day += 1
         # two consignments every nth day
-        if self.num_generated % 3:
+        if self.num_generated_in_day == self.consignments_per_day:
             self.date += timedelta(days=1)
+            self.num_generated_in_day = 0
 
         return Consignment(
             flower=flower,
@@ -352,6 +356,7 @@ def get_consignment_generator(config):
             parameters=config["parameter_based"],
             items_per_box=config["items_per_box"],
             start_date=start_date,
+            consignments_per_day=config.get("consignments_per_day", 1),
         )
     else:
         raise RuntimeError(

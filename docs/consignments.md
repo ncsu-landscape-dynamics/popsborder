@@ -107,6 +107,10 @@ ports:
   - WA Blaine CBP
 ```
 
+The generator also adds a date to each consignment. Number of consignments
+generated per day, i.e., number of consignments after which a new day begins,
+is driven by `consignments_per_day` which defaults to 1.
+
 ## Create consignments to match an input file
 
 To use a file of inspection records, set the `generation_method` to `input_file`
