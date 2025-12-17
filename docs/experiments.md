@@ -45,13 +45,13 @@ First, we examine sensitivity to changes in contamination rate by sweeping throu
 
 Contaminant present for ⅔ of consignments only for 6 months of the year:
 
-![](experiments_contamination_sweep.png)
+![Plots showing behavior of six variables](experiments_contamination_sweep.png)
 
 From the plots of relative and absolute contaminants intercepted and missed (first and second columns), we can observe that employing the dynamic skip lot program gives similar results to always checking every consignment. The difference is negligible compared to the difference between convenience and random sampling of items within each consignment. On the other hand, the amount of work counted as the number of items inspected (third column) is always lower for the dynamic skip lot compared to not using any release program. The difference in the amount of work between convenience and random sampling is not reflected in the plots (random sampling involves selecting items at random from the whole consignment). Nevertheless, random sampling results in fewer items being inspected if sampling stops at the first contaminant detection (top right), except at low contamination rates, where it is more likely to detect contamination than convenience sampling, leading to more inspections and thus more items inspected. Sampling items in consignment to completion of the whole sample (bottom right) necessarily results in the same number of items being inspected between convenience and random sampling without any release program. With the skip lot release program, random sampling again leads to more detections, resulting in more inspections, which in turn increase the number of items inspected.
 
 Contaminant is always present for all consignments:
 
-![](experiments_contamination_sweep_no_contaminat_variations.png)
+![Plots showing that two and two scenarios always align](experiments_contamination_sweep_no_contaminat_variations.png)
 
 If contaminants are always present, the skip lot release program does not yield any difference in contaminants missed or intercepted (first and second columns), except for small contamination rates (\<2%). However, the release program affects the number of items inspected, especially at low contamination rates.
 
@@ -59,7 +59,7 @@ Now, we use a beta distribution for the contamination rate with parameters α \=
 
 We run simulations with effectiveness values between 10% to 100% influencing the effectiveness of each item check (for example, 50% effectiveness results in only every second contaminated item being detected), resulting in the following plots:
 
-![](experiments_clustering_sweep.png)
+![Different behavior between convenience and random sampling](experiments_clustering_sweep.png)
 
 In the plot, we observe that with effectiveness even as low as 30% (0.3), a skip lot release program combined with random sampling of items can intercept more contaminants than convenience sampling of items without a release program (top left), while requiring less work than not using a release program (third column). The number of inspected items to the first containment detection (top right) and the number of inspections (bottom right) have the same behavior as the number of items inspected when inspecting all items (not shown). Neither the number of inspected items nor the number of inspections captures the difference in the amount of work between convenience and random sampling. However, the plots show an additional difference in the amount of work, caused by a higher number of contaminants incorrectly classified as not contaminated during convenience sampling, resulting in less work but more missed contaminants (bottom row).
 
@@ -67,4 +67,4 @@ Last, we sweep through the clustering value, which determines how clustered or e
 
 When using random sampling within a consignment, the change in clustering does not affect the results (all random-sampling strategy lines are flat, with only stochastic variation). On the other hand, for the convenience sampling strategy, we observe a significant drop in intercepted contaminants (top left) and a corresponding increase in missed contaminants (bottom left).
 
-![](experiments_effectiveness_sweep.png)
+![Different values when dynamic skip lot is active](experiments_effectiveness_sweep.png)
