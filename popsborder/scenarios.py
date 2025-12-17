@@ -133,6 +133,8 @@ def run_scenarios_parallel(
                 unused_totals, individual_results = future.result()
                 for result in individual_results:
                     results.append((result, scenario_config))
+            # We want to capture any exception from the subprocess.
+            # pylint: disable=broad-except
             except Exception as error:
                 print(
                     f"Scenario {individual_results[0]['name']} failed: "
