@@ -1,10 +1,10 @@
-## Experiments, Uncertainty, and Sensitivity
+# Experiments, Uncertainty, and Sensitivity
 
 PoPS Border is a stochastic simulator that generates synthetic shipment data and applies inspection processes to the shipment data. The outputs of such simulations are inherently uncertain due to uncertainty in input parameters, the stochasticity of the simulation process, and choices in the scenarios explored.
 
 A single PoPS Border run produces a single outcome. Because the simulator is stochastic, each run is subject to probabilistic variation—for example, an inspection might have a 10% probability of missing a contaminated item. In this example, the simulated process misses a contaminated item approximately 1 in 10 simulation runs while detecting it in the remaining 9 runs. Pseudo-random number generators drive this stochasticity; reproducibility of results is ensured by fixing the random seed. Additional runs with the same or different seeds are used to account for input-parameter uncertainty and to explore scenarios.
 
-### Multiple Runs
+## Multiple Runs
 
 Rather than relying on a single run, analyses typically involve a collection of runs, i.e., a simulation experiment (or, more generally, a computational experiment). Such an experiment may include several types of runs:
 
@@ -19,7 +19,7 @@ When parameter sweeps (sensitivity scenarios) are included, one parameter is sys
 
 Evaluation scenarios represent the higher-level conditions and choices of interest, such as comparing inspection strategies, targeting methods, or contamination situations. These scenarios define the context in which replicates, uncertainty runs, and parameter sweeps are conducted, and ultimately frame the policy-relevant insights that the simulation provides.
 
-### Example Result
+## Example Result
 
 Outcomes of a simulation experiment can be visualized by plotting the central tendency (e.g., mean across replicates and uncertainty runs) for each sweep value as a line, with shaded bands representing the spread of outcomes (e.g., standard deviation). This approach aims to communicate both the influence of parameter variation and the stochastic uncertainty inherent in the simulation, while evaluating different scenarios.
 
@@ -27,7 +27,7 @@ The following figure shows six dependent variables (y-axis) for four evaluation 
 
 ![](experiments_example.png)
 
-### Creating a Simulation Experiment
+## Creating a Simulation Experiment
 
 First, we identify the different scenarios that we want to explore. For example, we might consider different ways inspections are performed, such as a scenario with no release program versus one with a dynamic skip lot program. Typically, there is more than one scenario, although we may be interested in only one. As part of creating the scenarios, we select specific values and the overall configuration. These scenarios fall under the type of runs called evaluation scenarios. While we could run the simulation once for each scenario in theory, in practice, we add additional parameters, which multiply the number of runs in an actual simulation experiment.
 
