@@ -87,6 +87,8 @@ def run_scenarios_parallel(
     :param num_consignments: Number of consignments in each simulation
     :param max_workers: Number of workers for parallel execution
     """
+    # Allowing for many local variables to keep this as one function.
+    # pylint: disable=too-many-locals
     results = []
     if max_workers:
         print(f"using {max_workers} workers")
@@ -133,7 +135,8 @@ def run_scenarios_parallel(
                     results.append((result, scenario_config))
             except Exception as error:
                 print(
-                    f"Scenario {record['name']} failed: {type(error).__name__}: {error}"
+                    f"Scenario {individual_results[0]['name']} failed: "
+                    f"{type(error).__name__}: {error}"
                 )
     return results
 
