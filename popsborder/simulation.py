@@ -94,6 +94,7 @@ def simulation(
     missed_contamination_rate = []
     total_intercepted_contaminants = 0
     total_missed_contaminants = 0
+    total_contaminants = 0
     if detailed:
         item_details = []
         inspected_item_details = []
@@ -157,6 +158,8 @@ def simulation(
         if not consignment_actually_ok:
             if consignment_checked_ok:
                 if consignment_contamination_rate(consignment) < tolerance_level:
+                    # Implemented as a discount to be applied later, so that the
+                    # base numbers are unaffected even with tolerance active.
                     missed_within_tolerance += 1
                 missed_contamination_rate.append(
                     consignment_contamination_rate(consignment)
@@ -167,6 +170,7 @@ def simulation(
                     consignment_contamination_rate(consignment)
                 )
                 total_intercepted_contaminants += consignment.count_contaminated()
+            total_contaminants += consignment.count_contaminated()
 
     num_contaminated = num_consignments - success_rates.ok
     if num_contaminated:
@@ -243,6 +247,17 @@ def simulation(
         true_positive_present=true_positive_present,
         total_intercepted_contaminants=total_intercepted_contaminants,
         total_missed_contaminants=total_missed_contaminants,
+        relative_missed_contaminants=(
+            total_missed_contaminants / total_contaminants
+            if total_contaminants
+            else 0  # Using 0 as in "no contaminants, so none missed"
+        ),
+        relative_intercepted_contaminants=(
+            total_intercepted_contaminants / total_contaminants
+            if total_contaminants
+            else 0  # Using 0 as in "no contaminants, so none intercepted"
+        ),
+        total_contaminants=total_contaminants,
     )
     if detailed:
         simulation_results.details = [item_details, inspected_item_details]
@@ -295,6 +310,9 @@ def run_simulation(
         true_positive_present=0,
         total_intercepted_contaminants=0,
         total_missed_contaminants=0,
+        relative_missed_contaminants=0,
+        relative_intercepted_contaminants=0,
+        total_contaminants=0,
     )
 
     for i in range(num_simulations):
@@ -310,6 +328,8 @@ def run_simulation(
         if detailed and i == 0:
             # details are from first run of simulation only
             details = result.details
+        else:
+            details = None
         # totals are an average of all simulation runs
         totals.missing += result.missing
         totals.false_neg += result.false_neg
@@ -342,6 +362,11 @@ def run_simulation(
         totals.true_positive_present += result.true_positive_present
         totals.total_intercepted_contaminants += result.total_intercepted_contaminants
         totals.total_missed_contaminants += result.total_missed_contaminants
+        totals.relative_missed_contaminants += result.relative_missed_contaminants
+        totals.relative_intercepted_contaminants += (
+            result.relative_intercepted_contaminants
+        )
+        totals.total_contaminants += result.total_contaminants
     # make these relative (reusing the variables)
     totals.missing /= float(num_simulations)
     totals.false_neg /= float(num_simulations)
@@ -374,6 +399,9 @@ def run_simulation(
         totals.avg_intercepted_contamination_rate = None
     totals.total_intercepted_contaminants /= float(num_simulations)
     totals.total_missed_contaminants /= float(num_simulations)
+    totals.relative_missed_contaminants /= float(num_simulations)
+    totals.relative_intercepted_contaminants /= float(num_simulations)
+    totals.total_contaminants /= float(num_simulations)
 
     if detailed:
         # details are items and inspected item from first simulation run only

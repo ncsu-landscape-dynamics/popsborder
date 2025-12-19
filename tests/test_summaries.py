@@ -11,7 +11,7 @@ from popsborder.scenarios import run_scenarios, run_simulation
 
 
 NUM_ITEMS_IN_CONFIG = 33
-NUM_ATTRIBUTES_IN_RESULT = 25
+NUM_ATTRIBUTES_IN_RESULT = 28
 
 
 @pytest.fixture(name="config")
