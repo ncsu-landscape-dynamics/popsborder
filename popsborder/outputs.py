@@ -513,7 +513,10 @@ def print_totals_as_text(num_consignments, config, totals):
 
 def get_item_from_nested_dict(dictionary, keys):
     """Get value from a nested dictionary by a nested keys-value pair"""
-    return reduce(operator.getitem, keys, dictionary)
+    try:
+        return reduce(operator.getitem, keys, dictionary)
+    except KeyError as error:
+        raise KeyError(f"For {'/'.join(keys)}: {error}") from error
 
 
 def _flatten_nested_dict_generator(dictionary, parent_key):

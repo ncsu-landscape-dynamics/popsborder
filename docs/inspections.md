@@ -5,12 +5,32 @@ Optionally, inspection of some consignments can be skipped using a release progr
 
 ## Skipping inspections
 
-Inspections can be skipped using release programs specified under the key `release_programs`.
+Before an inspection occurs, a release programs, specified under the key `release_programs`,
+can be used to skip an inspection of a particular consignment.
 
-Two programs are supported: a naive variation of the Cut Flower Release Program
-and a full version of the _Cut Flower Release Program_.
+Several release programs including _Dynamic Skip Lot Program_
+and _Cut Flower Release Program_ are available, but only one program can be specified at a time.
 
-Only one program can be specified at a time.
+By default, first release program under `release_programs` is used. When name of a release program
+is provided as `release_program` under `inspection`, a release program with the matching name
+is used. The names are the same as the keys under `release_programs` (see below).
+For example, the Cut Flower Release Program (CFRP) would be explicitly enabled using:
+
+```yaml
+inspection:
+  release_program: cfrp
+release_programs:
+  cfrp:
+    schedule:
+      file_name: schedule.csv
+```
+
+If an empty value (`None` in Python, `null` in JSON) is provided
+as `release_program`, no release program is activated. Additionally,
+any name which is not present in the `release_programs` will avoid
+release program activation. For scenarios, the configuration may use
+`none` as the name to avoid release program activation, while still using
+a text (string) value rather than special empty value.
 
 ### Fixed Skip Lot Program
 
@@ -205,6 +225,19 @@ release_programs:
       file_name: schedule.csv
 ```
 
+## Effectiveness
+
+Contaminated items can be either always be detected during the inspection,
+or only a certain percentage of them can be detected based on the
+effectiveness. The `effectiveness` is a value between 0 and 1.
+The following will cause 1 out of 10 contaminated items on average to pass
+undetected.
+
+```yaml
+inspection:
+  effectiveness: 0.9
+```
+
 ## Inspection unit
 
 The inspection unit can be determined by:
@@ -234,18 +267,6 @@ meaning all items within a box can be inspected. If `within_box_proportion < 1`,
 only the first `n = within_box_proportion * items_per_box` items in each box
 will be inspected.
 
-## Effectiveness
-
-Contaminated items can be either always be detected during the inspection,
-or only a certain percentage of them can be detected based on the
-effectiveness. The `effectiveness` is a value between 0 and 1.
-The following will cause 1 out of 10 contaminated items to pass undetected.
-
-```yaml
-inspection:
-  effectiveness: 0.9
-```
-
 ## Tolerance level
 
 The simulation provides a count of the number of missed consignments (slippage) with
@@ -269,15 +290,15 @@ inspection:
 
 ## Sample strategy
 
-The sample strategy can be determined by:
+The sample strategy defines the method used to compute the number of
+units to inspect. The sample strategy can be determined by:
 
 ```yaml
 inspection:
   sample_strategy: proportion
 ```
 
-The sample strategy defines the method used to compute the number of
-units to inspect. The possible sample strategies include `proportion`
+The possible sample strategies include `proportion`
 for sampling a specified proportion of units, `hypergeometric` for
 sampling to detect a specified contamination level at a specified
 confidence level using the hypergeometric distribution, `fixed_n` for
@@ -289,6 +310,7 @@ The settings for `proportion` are:
 
 ```yaml
 inspection:
+  sample_strategy: proportion
   proportion:
     value: 0.02
     min_boxes: 1
@@ -306,6 +328,7 @@ The settings for `hypergeometric` are:
 
 ```yaml
 inspection:
+  sample_strategy: hypergeometric
   hypergeometric:
     detection_level: 0.05
     confidence_level: 0.95
@@ -332,6 +355,7 @@ The settings for `fixed_n` are:
 
 ```yaml
 inspection:
+  sample_strategy: fixed_n
   fixed_n: 10
 ```
 
@@ -347,22 +371,40 @@ of boxes to inspect will be set to `num_boxes`.
 
 ## Selection strategy
 
-The unit selection strategy can be determined by:
+While the sample strategy determines _how many_ units to inspect, the
+selection strategy is used to determine _which_ units to select for
+inspection. The unit selection strategy can be determined by:
 
 ```yaml
 inspection:
   selection_strategy: random
 ```
 
-While the sample strategy determines _how many_ units to inspect, the
-selection strategy is used to determine _which_ units to select for
-inspection. The possible selection strategies include `random` for
+The possible selection strategies include `random` for
 selecting units to inspect using a uniform random distribution,
 `convenience` for selecting the first `n` units to inspect, or `cluster`
 for selecting boxes for partial inspection. The `cluster` selection
 strategy is valid only for the `item` inspection unit.
 
-### Cluster strategy
+### Random selection strategy
+
+The random selection strategy selects units to inspect using a uniform random
+distribution. Each unit in the consignment has an equal probability of being
+selected. This strategy requires more effort from inspectors but provides
+a higher quality, more representative sample of the consignment. Random
+selection is more robust when contaminants may be distributed non-uniformly
+throughout the consignment.
+
+### Convenience selection strategy
+
+The convenience selection strategy selects the first _n_ units to inspect.
+This approach requires less effort as inspectors only examine the most
+accessible items (e.g., items at the front of boxes or top of the consignment).
+However, convenience sampling may introduce bias if contaminants are not
+uniformly distributed, potentially resulting in higher slippage rates
+compared to random selection.
+
+### Cluster selection strategy
 
 The cluster selection strategy is used when `inspection_unit="item"` to
 divide the sample size into clusters that can be selected from boxes

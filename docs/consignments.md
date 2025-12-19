@@ -72,9 +72,8 @@ consignment:
 
 The generator adds origin, flower (commodity type), and port (where consignment
 was received). These are randomly selected from the lists specified in the
-configuration. These values are not currently used, but may be used to configure
-other parameters in the future (e.g., variable contamination rates by origin or
-inspection efficacy by commodity).
+configuration. These values may be used to configure other simulation parameters
+(e.g., variable contamination rates by origin).
 
 ```yaml
 origins:
@@ -107,6 +106,10 @@ ports:
   - TX Brownsville CBP
   - WA Blaine CBP
 ```
+
+The generator also adds a date to each consignment. Number of consignments
+generated per day, i.e., number of consignments after which a new day begins,
+is driven by `consignments_per_day` which defaults to 1.
 
 ## Create consignments to match an input file
 

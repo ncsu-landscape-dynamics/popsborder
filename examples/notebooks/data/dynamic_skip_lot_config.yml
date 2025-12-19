@@ -35,9 +35,6 @@ consignment:
       - WA Seattle Air CBP
       - TX Brownsville CBP
       - WA Blaine CBP
-  input_file:
-    file_type: AQIM
-    file_name: blank_aqim_for_testing.csv
 contamination:
   contamination_unit: box
   contamination_rate:
