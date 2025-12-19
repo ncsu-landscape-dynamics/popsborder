@@ -212,6 +212,7 @@ def simulation(
         pct_contaminant_unreported_if_detection = 0
 
     simulation_results = types.SimpleNamespace(
+        seed=seed,
         missing=missing,
         false_neg=false_neg,
         missed_within_tolerance=missed_within_tolerance,
@@ -274,6 +275,7 @@ def run_simulation(
     verbose=False,
     pretty=None,
     detailed=False,
+    individual=False,
 ):
     """Run the simulation function specified number of times
 
@@ -314,6 +316,8 @@ def run_simulation(
         relative_intercepted_contaminants=0,
         total_contaminants=0,
     )
+    if individual:
+        individual_results = []
 
     for i in range(num_simulations):
         result = simulation(
@@ -330,6 +334,8 @@ def run_simulation(
             details = result.details
         else:
             details = None
+        if individual:
+            individual_results.append(result)
         # totals are an average of all simulation runs
         totals.missing += result.missing
         totals.false_neg += result.false_neg
@@ -403,6 +409,11 @@ def run_simulation(
     totals.relative_intercepted_contaminants /= float(num_simulations)
     totals.total_contaminants /= float(num_simulations)
 
+    if individual:
+        if detailed:
+            return details, totals, individual_results
+        else:
+            return totals, individual_results
     if detailed:
         # details are items and inspected item from first simulation run only
         # totals are an average of all simulation runs
