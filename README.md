@@ -144,3 +144,8 @@ represent the views of USDA APHIS.
 Please note that this is a simulation and it needs to be calibrated
 to give any realistic or actionable results. Results presented here
 are examples for demonstration purposes only.
+
+
+## Graphic User Interface Development
+A graphic user interface has been developed for the use of PoPS border for which the installation
+and documentation can be found [GUI](gui/README.md).

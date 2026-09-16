@@ -1,0 +1,6 @@
+Compliance,Detection Level,Confidence Levels
+Tissue culture high,0.9,0.95
+High compliance,0.3,0.95
+Medium compliance,0.2,0.95
+Low compliance,0.15,0.95
+Poor compliance,0.1,0.95

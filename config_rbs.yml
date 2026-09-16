@@ -1,0 +1,115 @@
+inspection_process: RBS-PIS
+consignment:
+  generation_method: input_file
+  sample_units_per_inspection_unit:
+    default: 200
+    air:
+      default: 200
+    maritime:
+      default: 200
+  plants_per_item:
+    default: 5
+    air:
+      default: 5
+    maritime:
+      default: 5
+  rbs_parameter_based:
+    boxes:
+      min: 1
+      max: 100
+    origins:
+      - Netherlands
+      - Mexico
+      - Israel
+      - Japan
+      - New Zealand
+      - India
+      - Tanzania
+    material_types:
+      - Budwood/Graftwood (scion)
+      - Bulb, Corm, Rhizome, Tuberous Stem
+      - Meristem or Callus Tissue Culture (micropropagated/in vitro culture)
+      - Root cutting, crown, or clump, Tuberous Root
+      - Rooted Cutting (including air layer)
+      - Rooted Plant (including grafted)
+      - Unrooted Cutting
+      - Unrooted Plant
+    ports:
+      - Atlanta PIS
+      - Beltsville PIS
+      - Carolina PIS
+      - Guam PIS
+      - Honolulu PIS
+      - Houston PIS
+      - JFK PIS
+      - Linden PIS
+      - Los Angeles PIS
+      - Los Indios PIS
+      - Miami PIS
+      - Nogales PIS
+      - Orlando PIS
+      - San Diego PIS
+      - San Francisco PIS
+      - Seattle PIS
+  input_file:
+    file_type: PIS
+    file_name: slippage_data/Synthetic_PIS_SampleQuantity.csv
+contamination:
+  contamination_unit: sample_unit
+  contamination_rate:
+    distribution: beta_binomial
+    value: 0.0027
+    parameters:
+      # stems
+      #- 0.9998207923
+      #- 5578.1175514
+      # boxes
+      #- 0.942631386983
+      #- 273.264725126
+      # both
+      #- 0.243875716307
+      #- 223.427186223
+      # centered at 0.7%
+      - 0.0194628
+      - 2.7609372
+    beta_binomial_parameters:
+      default:
+          alpha: 0.0102
+          beta: 5.3839
+          theta: 10000
+          N_bar: 200
+          I: 1
+          J: 10
+          p: 0 # How clustered among the sampling units the contamination is 0 = completely random, 1 = "Fully Clustered"
+  arrangement: random
+  clustered:
+    percentage_plants_contaminated: .9
+    contaminated_units_per_cluster: 200
+    distribution: random
+    random:
+      cluster_item_width: 200
+  random_box:
+    probability: 0.2
+    ratio: 0.5
+inspection:
+  unit: sample_units  # Calculate sample units based on compliance
+  tolerance_level: 0.005
+  sample_strategy: rbs  # RBS uses compliance table for hypergeometric calculation
+  min_boxes: 0  # Let RBS determine box opening strategy
+  proportion:
+    value: 0.02
+  hypergeometric:
+    detection_level: 0.01  # 1% detection level
+    confidence_level: 0.80  # 80% confidence level
+  fixed_n: 10
+  selection_strategy: random  # Random selection of sample units
+  compliance_table:
+    file_name: compliance_lookup_final.pkl
+  rbs_calculator_grouping_variables:
+    default:
+      - Origin
+      - PM Type
+#    Miami:
+#      - Origin
+#      - PM Type
+#      - Producer

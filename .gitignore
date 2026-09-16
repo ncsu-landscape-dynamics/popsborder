@@ -132,3 +132,14 @@ dmypy.json
 .~lock.*#
 
 .idea/
+.vscode/
+old/
+output/
+development_files/slippage_data/
+tmp/
+Prediction_Model_Compliance_Tables/
+slippage_data/uploaded_pis_data.csv
+slippage_data/uploaded_rbs_data.csv
+
+# data file
+impact_data/

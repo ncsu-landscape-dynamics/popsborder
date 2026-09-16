@@ -298,7 +298,8 @@ inspection:
   sample_strategy: proportion
 ```
 
-The possible sample strategies include `proportion`
+The sample strategy defines the method used to compute the number of
+units to inspect. The possible sample strategies include `proportion`
 for sampling a specified proportion of units, `hypergeometric` for
 sampling to detect a specified contamination level at a specified
 confidence level using the hypergeometric distribution, `fixed_n` for
@@ -380,7 +381,9 @@ inspection:
   selection_strategy: random
 ```
 
-The possible selection strategies include `random` for
+While the sample strategy determines _how many_ units to inspect, the
+selection strategy is used to determine _which_ units to select for
+inspection. The possible selection strategies include `random` for
 selecting units to inspect using a uniform random distribution,
 `convenience` for selecting the first `n` units to inspect, or `cluster`
 for selecting boxes for partial inspection. The `cluster` selection
@@ -475,6 +478,86 @@ box. The cluster selection method does not ensure each item has an equal
 chance of being selected, but it provides a sort of compromise to spread
 the sample out across the consignment while still limiting the number of
 boxes opened and items inspected.
+
+## Inspection unit
+
+The unit within the inspection configuration determines the level at which sampling decisions are made. The
+configuration now supports additional RBS/PIS specific terminology:
+
+```yaml
+inspection:
+  unit: sample_units   # Use ``sample_units`` (alternatively ``boxes``) for sample‑unit based inspection
+```
+
+## Sample strategy
+
+The ``sample_strategy`` field defines how the number of units to inspect is
+computed. In addition to the existing strategies (e.g., `hypergeometric`), a new **risk‑based sampling**
+(`rbs`) strategy is available:
+
+```yaml
+inspection:
+  sample_strategy: rbs   # Risk‑based sampling using a compliance lookup table
+  compliance_table:
+    file_name: compliance_lookup_final.pkl   # Pickle file with detection/confidence levels per risk group
+  rbs_calculator_grouping_variables:
+    default: # Default risk unit grouping variables; will be used if not set of parameters are specified for the PIS station
+      - origin
+      - material_type
+    Miami: # Example of PIS specific risk unit grouping variables
+      - origin
+      - material_type
+      - producer
+```
+
+When ``sample_strategy`` is set to ``rbs`` the simulation reads the ``compliance_table``
+(pickle file) and, for each risk unit, obtains the detection level and confidence
+levels. These levels are then passed to the
+hypergeometric sample‑size calculator (``compute_hypergeometric``) defined in
+``inspections.py``. The resulting per‑risk‑unit sample sizes are stored in a
+mapping and later used by the inspection routine to select the appropriate number
+of sample units per risk unit.
+
+The RBS workflow consists of two stages:
+1. **Determine sample sizes per risk unit** – ``sample_rbs`` reads the compliance
+   lookup, extracts detection/confidence pairs, and computes the required number
+   of sample units for each risk unit using the hypergeometric formula.
+2. **Select and inspect units** – ``select_units_to_inspect`` (with ``sample_strategy``
+   ``rbs``) delegates to ``select_random_indexes_rbs`` which returns both the
+   sample‑unit indexes to inspect and a mapping of which inspection units they
+   belong to. The main inspection loop then iterates over these indexes, tracking
+   effort to completion and to detection as described below.
+
+The `rbs_calculator_grouping_variables` configuration represents a 
+mapping which informs the **risk‑based sampling (`rbs`)** 
+routine how to build *risk units* from the raw inspection data.  
+For more information on risk units see the `What a risk unit represents` section
+in `docs/consignments.md`.
+
+- The **key** is the PIS station name (e.g., `Miami`). If a consignment’s `INSPECTION_LOCATION_NAME` does not match any key, the entry under `default` is used.  
+- The **value** is an ordered list of data fields that should be 
+combined to define a unique risk unit (see description below for a *risk unit* represents). 
+Typical columns are `origin`, `material_type`, and optionally `producer`.
+
+How the code uses the `rbs_calculator_grouping_variables` configuration:
+
+1. **Lookup** – In `popsborder/inspections.py` the function `construct_risk_units`
+reads `config["inspection"]["rbs_calculator_grouping_variables"]` and selects 
+the appropriate list for the PIS station in question (or falls back to the `default` list).
+
+2. **Risk‑unit construction** – For each consignment  (`INSPECTION_NUMBER`) 
+the helper function `relabel_risk_units` (called from `construct_risk_units`)
+builds a composite key by concatenating the values of the chosen grouping columns.  
+
+3. **Unique identifier** – assigns a sequential integer to every 
+distinct composite key within the consignment.
+The final `RISK_UNIT` label is assembled as
+`<INSPECTION_NUMBER>_risk_unit_<sequential_id>`
+
+4. **Result** – The DataFrame returned by `construct_risk_units` contains 
+a `RISK_UNIT` column where each row belongs to the same risk unit if
+and only if it shares the same values for all variables listed in the
+configuration for that station.
 
 ## End strategy
 
